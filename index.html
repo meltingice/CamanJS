@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>CamanJS - Canvas Image Manipulation</title>
+	
+	<script type="text/javascript" src="https://github.com/meltingice/CamanJS/raw/master/caman.js"></script>
+	
+	<script type="text/javascript">
+	caman.init('img/example2.jpg', '#image-brightness', function () {
+		this.brightness(25);
+	});
+	
+	caman.init('img/example2.jpg', '#image-saturation', function () {
+		this.saturation(-100);
+	});
+	
+	caman.init('img/example2.jpg', '#image-contrast', function () {
+		this.contrast(20);
+	});
+	
+	caman.init('img/example2.jpg', '#image-combined', function () {
+		this.contrast(20);
+		this.saturation(-50);
+		this.brightness(5);
+	});
+	</script>
+</head>
+<body>
+
+<h1>Original Image</h1>
+<img src="img/example2.jpg" />
+
+<h1>Altered Image - Increased Brightness</h1>
+<canvas id="image-brightness"></canvas>
+
+<h1>Altered Image - Desaturated</h1>
+<canvas id="image-saturation"></canvas>
+
+<h1>Altered Image - Increased Contrast</h1>
+<canvas id="image-contrast"></canvas>
+
+<h1>Altered Image - Combined Effects</h1>
+<canvas id="image-combined"></canvas>
+
+</body>
+</html>
