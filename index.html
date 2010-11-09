@@ -3,9 +3,14 @@
 <head>
 	<title>CamanJS - Canvas Image Manipulation</title>
 	
+	<link type="text/css" rel="stylesheet" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" href="css/styles.css" />
+	
 	<script type="text/javascript" src="https://github.com/meltingice/CamanJS/raw/master/caman.js"></script>
 	
 	<script type="text/javascript">
+	caman.init('img/example2.jpg', '#image-original', function () { });
+	
 	caman.init('img/example2.jpg', '#image-brightness', function () {
 		this.brightness(25);
 	});
@@ -27,20 +32,37 @@
 </head>
 <body>
 
-<h1>Original Image</h1>
-<img src="img/example2.jpg" />
+<div id="header">
+	<h1>CamanJS</h1>
+	<p>CamanJS is an attempt at providing a simple to use interface for dynamically manipulating images completely in JS. It strives to provide much of the basic functionality you would find in something like Photoshop. By this I mean, image contrast, brightness, levels, saturation, etc. At this time, something as complex as the Clone Tool is out of the question (but if you're feeling brave, be my guest).</p>
+	
+	<p style="text-align: center;"><a href="http://github.com/meltingice/CamanJS">Fork me on GitHub</a></p>
+</div>
 
-<h1>Altered Image - Increased Brightness</h1>
-<canvas id="image-brightness"></canvas>
+<div class="image-wrap">
+	<h1>Original Image</h1>
+	<canvas id="image-original"></canvas>
+</div>
 
-<h1>Altered Image - Desaturated</h1>
-<canvas id="image-saturation"></canvas>
+<div class="image-wrap">
+	<h1>Altered Image - Increased Brightness</h1>
+	<canvas id="image-brightness"></canvas>
+</div>
 
-<h1>Altered Image - Increased Contrast</h1>
-<canvas id="image-contrast"></canvas>
+<div class="image-wrap">
+	<h1>Altered Image - Desaturated</h1>
+	<canvas id="image-saturation"></canvas>
+</div>
 
-<h1>Altered Image - Combined Effects</h1>
-<canvas id="image-combined"></canvas>
+<div class="image-wrap">
+	<h1>Altered Image - Increased Contrast</h1>
+	<canvas id="image-contrast"></canvas>
+</div>
+
+<div class="image-wrap">
+	<h1>Altered Image - Combined Effects</h1>
+	<canvas id="image-combined"></canvas>
+</div>
 
 </body>
 </html>
