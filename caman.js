@@ -165,8 +165,22 @@ var caman = {};
 						cxt.putImageData(image_data, 0, 0);
 					},
 					
-					colorize: function (r, g, b, adjust) {
-						var diff;
+					colorize: function () {
+						var diff, r, g, b, rgb, adjust;
+						
+						if (arguments.length === 2) {
+							rgb = caman.util.hex_to_rgb(arguments[0]);
+							r = rgb.r;
+							g = rgb.g;
+							b = rgb.b;
+							adjust = arguments[1];
+						} else if (arguments.length === 4) {
+							r = arguments[0];
+							g = arguments[1];
+							b = arguments[2];
+							adjust = arguments[3];
+						}
+						
 						this.pixel_loop(function (rgba) {
 							rgba.r -= (rgba.r - r) * (adjust / 100);
 							rgba.g -= (rgba.g - g) * (adjust / 100);
@@ -319,6 +333,20 @@ var caman = {};
 			    }
 			
 			    return {r: r * 255, g: g * 255, b: b * 255};
+			},
+			
+			hex_to_rgb: function (hex) {
+				var r, g, b;
+				
+				if (hex.charAt(0) === '#') {
+					hex = hex.substr(1);
+				}
+				
+				r = parseInt(hex.substr(0, 2), 16);
+				g = parseInt(hex.substr(2, 2), 16);
+				b = parseInt(hex.substr(4, 2), 16);
+				
+				return {r: r, g: g, b: b};
 			}
 		};
 	}());
