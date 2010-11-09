@@ -120,7 +120,7 @@ var caman = {};
 					},
 					
 					contrast: function (adjust) {
-						var r, g, b, contrast, chan;
+						var contrast, chan;
 						
 						contrast = Math.pow((100 + adjust) / 100, 2);
 						
@@ -141,6 +141,25 @@ var caman = {};
 							}
 							
 							return rgba;
+						});
+						
+						cxt.putImageData(image_data, 0, 0);
+					},
+					
+					hue: function (adjust) {
+						var hsv, rgb, h;
+						
+						this.pixel_loop(function (rgba) {
+							hsv = caman.util.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
+							h = hsv.h * 100;
+							h += Math.abs(adjust);
+							h = h % 100;
+							h /= 100;
+							hsv.h = h;
+							
+							rgb = caman.util.hsv_to_rgb(hsv.h, hsv.s, hsv.v);
+							
+							return {r: rgb.r, g: rgb.g, b: rgb.b, a: rgba.a};
 						});
 						
 						cxt.putImageData(image_data, 0, 0);
