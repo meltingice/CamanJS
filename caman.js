@@ -163,6 +163,19 @@ var caman = {};
 						});
 						
 						cxt.putImageData(image_data, 0, 0);
+					},
+					
+					colorize: function (r, g, b, adjust) {
+						var diff;
+						this.pixel_loop(function (rgba) {
+							rgba.r -= (rgba.r - r) * (adjust / 100);
+							rgba.g -= (rgba.g - g) * (adjust / 100);
+							rgba.b -= (rgba.b - b) * (adjust / 100);
+							
+							return rgba;
+						});
+						
+						cxt.putImageData(image_data, 0, 0);
 					}
 				};
 			}
