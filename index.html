@@ -27,11 +27,16 @@
 		this.hue(120);
 	});
 	
+	caman.init('img/example2.jpg', '#image-colorize', function () {
+		this.colorize(191, 58, 11, 30);
+	});
+	
 	caman.init('img/example2.jpg', '#image-combined', function () {
-		this.contrast(15);
-		this.hue(80);
-		this.saturation(-50);
-		this.brightness(10);
+		this.contrast(25);
+		this.hue(5);
+		this.colorize(191, 58, 11, 25);
+		this.saturation(-30);
+		this.brightness(5);
 	});
 	</script>
 </head>
@@ -67,6 +72,11 @@
 <div class="image-wrap">
 	<h1>Altered Image - Hue</h1>
 	<canvas id="image-hue"></canvas>
+</div>
+
+<div class="image-wrap">
+	<h1>Altered Image - Colorize</h1>
+	<canvas id="image-colorize"></canvas>
 </div>
 
 <div class="image-wrap">
