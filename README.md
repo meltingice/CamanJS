@@ -13,6 +13,46 @@ caman.init('path/to/image.jpg', '#canvas-id', function () {
 	this.saturation(-50);
 	// and so on...
 });
+
+
+//	Examples from http://meltingice.github.com/CamanJS/
+
+
+caman.init('img/example2.jpg', '#image-original', function () { });
+
+
+caman.init('img/example2.jpg', '#image-brightness', function () {
+	this.brightness(25);
+});
+
+
+caman.init('img/example2.jpg', '#image-saturation', function () {
+	this.saturation(-100);
+});
+
+
+caman.init('img/example2.jpg', '#image-contrast', function () {
+	this.contrast(20);
+});
+
+
+caman.init('img/example2.jpg', '#image-hue', function () {
+	this.hue(120);
+});
+
+
+caman.init('img/example2.jpg', '#image-colorize', function () {
+	this.colorize('#AF3D15', 30);
+});
+
+
+caman.init('img/example2.jpg', '#image-combined', function () {
+	this.contrast(25);
+	this.hue(5);
+	this.colorize('#AF3D15', 25);
+	this.saturation(-30);
+	this.brightness(5);
+});
 </pre>
 
 <h1>Project To-do</h1>
