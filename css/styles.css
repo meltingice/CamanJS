@@ -16,8 +16,8 @@ body {
 
 #header p {
     font-weight: 300;
-    line-height: 1.2em;
-    margin: 5px;
+    line-height: 1.3em;
+    margin: 10px 5px 15px 5px;
     text-align: center;
     letter-spacing: 0.2px;
 }
