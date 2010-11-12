@@ -56,13 +56,13 @@ Extending CamanJS is easy as well. It's accomplished by adding functions onto th
 </pre>
 
 <h2>Utility Functions</h2>
-Caman comes with a very useful set of utility functions that you may find useful when extending it.  In the main body of the function thats extending Caman, you can simply access them through this.util.func_name(). Their names should be pretty self explanatory:
+Caman comes with a set of utility functions that you may find very useful when extending it.  In the main body of the function thats extending Caman, you can simply access them through this.util.func_name(). Their names should be pretty self explanatory:
 
-* rgb_to_hsl
-* hsl_to_rgb
-* rgb_to_hsv
-* hsv_to_rgb
-* hex_to_rgb
+* rgb_to_hsl()
+* hsl_to_rgb()
+* rgb_to_hsv()
+* hsv_to_rgb()
+* hex_to_rgb()
 
 <h1>Project To-do</h1>
 * Implement a way to specify canvas elements by class instead of id, and apply effects to all found canvases.
