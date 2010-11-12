@@ -8,7 +8,7 @@
 				options = {
 					src: temp,
 					canvas: arguments[1] || '',
-					callback: arguments[2] || function () {}
+					ready: arguments[2] || function () {}
 				};
 			}
 			
@@ -37,7 +37,7 @@
 						this.image_data = this.context.getImageData(0, 0, img.width, img.height);
 						this.pixel_data = this.image_data.data;
 						
-						options.callback && options.callback.call(this);
+						options.ready && options.ready.call(this);
 						
 					}, that = this;
 				

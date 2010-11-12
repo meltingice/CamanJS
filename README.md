@@ -7,52 +7,50 @@ CamanJS is also not a canvas drawing library, per se.  It's main focus is manipu
 Using CamanJS is simple.  It goes something like this:
 
 <pre>
-caman.init('path/to/image.jpg', '#canvas-id', function () {
+Caman('path/to/image.jpg', '#canvas-id', function () {
 	this.brightness(10);
 	this.contrast(-5);
 	this.saturation(-50);
 	// and so on...
 });
+</pre>
 
+or you can use it like this:
 
-//	Examples from http://meltingice.github.com/CamanJS/
-
-
-caman.init('img/example2.jpg', '#image-original', function () { });
-
-
-caman.init('img/example2.jpg', '#image-brightness', function () {
-	this.brightness(25);
+<pre>
+Caman({
+	src: 'path/to/image.jpg',
+	canvas: '#canvas-id',
+	ready: function () {
+		this.brightness(10);
+		this.contrast(-5);
+		this.saturation(-50);
+		// and so on...
+	}
 });
+</pre>
 
+<h1>How to Extend</h1>
+Extending CamanJS is easy as well. It's accomplished by adding functions onto the manip object. Below is an example of how to do so:
 
-caman.init('img/example2.jpg', '#image-saturation', function () {
-	this.saturation(-100);
-});
-
-
-caman.init('img/example2.jpg', '#image-contrast', function () {
-	this.contrast(20);
-});
-
-
-caman.init('img/example2.jpg', '#image-hue', function () {
-	this.hue(120);
-});
-
-
-caman.init('img/example2.jpg', '#image-colorize', function () {
-	this.colorize('#AF3D15', 30);
-});
-
-
-caman.init('img/example2.jpg', '#image-combined', function () {
-	this.contrast(25);
-	this.hue(5);
-	this.colorize('#AF3D15', 25);
-	this.saturation(-30);
-	this.brightness(5);
-});
+<pre>
+(function (Caman) {
+	Caman.manip.fancy_filter = function (adjust) {
+	
+		// this.process will be run in a loop, and the
+		// rgba object represents the current pixel's rgba
+		// values. you *must* return the modified rgba object
+		// for it to work properly.
+		return this.process(function (rgba) {
+			rgba.r += adjust;
+			rgba.g -= adjust;
+			rgba.b += adjust * 2;
+			rgba.a = 0.9;
+			
+			return rgba;
+		});
+	};
+}(Caman));
 </pre>
 
 <h1>Project To-do</h1>
