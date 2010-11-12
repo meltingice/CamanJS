@@ -1,3 +1,5 @@
+<img src="https://github.com/meltingice/CamanJS/raw/master/demo/img/camanjs.png" />
+
 <h1>About the Project</h1>
 CamanJS is an attempt at providing a simple to use interface for dynamically manipulating images completely in JS.  It strives to provide much of the basic functionality you would find in something like Photoshop.  By this I mean, image contrast, brightness, levels, saturation, etc. At this time, something as complex as the Clone Tool is out of the question (but if you're feeling brave, be my guest).
 
