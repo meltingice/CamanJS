@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>CamanJS - Canvas Image Manipulation</title>
+	
+	<link type="text/css" rel="stylesheet" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" href="css/styles.css" />
+
+	<script type="text/javascript" src="https://github.com/meltingice/CamanJS/raw/master/caman.js"></script>
+
+	<script type="text/javascript">
+	Caman('img/example2.jpg', '#image-original', function () {});
+	
+	Caman('img/example2.jpg', '#image-brightness', function () {
+		this.brightness(30);
+	});
+	
+	Caman('img/example2.jpg', '#image-saturation', function () {
+		this.saturation(-100);
+	});
+	
+	Caman('img/example2.jpg', '#image-contrast', function () {
+		this.contrast(20);
+	});
+	
+	Caman('img/example2.jpg', '#image-hue', function () {
+		this.hue(120);
+	});
+	
+	Caman('img/example2.jpg', '#image-colorize', function () {
+		this.colorize('#AF3D15', 30);
+	});
+	
+	Caman('img/example2.jpg', '#image-combined', function () {
+		this.contrast(25);
+		this.hue(5);
+		this.colorize('#AF3D15', 25);
+		this.saturation(-30);
+		this.brightness(5);
+	});
+	</script>
+</head>
+<body>
+
+<div id="header">
+	<h1>CamanJS</h1>
+	<p>CamanJS is an attempt at providing a simple to use interface for dynamically manipulating images completely in JS. It strives to provide much of the basic functionality you would find in something like Photoshop. By this I mean, image contrast, brightness, levels, saturation, etc. At this time, something as complex as the Clone Tool is out of the question (but if you're feeling brave, be my guest).</p>
+	
+	<p style="text-align: center;"><a href="http://github.com/meltingice/CamanJS">Fork me on GitHub</a></p>
+</div>
+
+<div class="image-wrap">
+	<h1>Original Image</h1>
+	<canvas id="image-original"></canvas>
+</div>
+
+<div class="image-wrap">
+	<h1>Altered Image - Increased Brightness</h1>
+	<canvas id="image-brightness"></canvas>
+</div>
+
+<div class="image-wrap">
+	<h1>Altered Image - Desaturated</h1>
+	<canvas id="image-saturation"></canvas>
+</div>
+
+<div class="image-wrap">
+	<h1>Altered Image - Increased Contrast</h1>
+	<canvas id="image-contrast"></canvas>
+</div>
+
+<div class="image-wrap">
+	<h1>Altered Image - Hue</h1>
+	<canvas id="image-hue"></canvas>
+</div>
+
+<div class="image-wrap">
+	<h1>Altered Image - Colorize</h1>
+	<canvas id="image-colorize"></canvas>
+</div>
+
+<div class="image-wrap">
+	<h1>Altered Image - Combined Filters</h1>
+	<canvas id="image-combined"></canvas>
+</div>
+
+</body>
+</html>
