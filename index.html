@@ -5,33 +5,33 @@
 	
 	<link type="text/css" rel="stylesheet" href="css/reset.css" />
 	<link type="text/css" rel="stylesheet" href="css/styles.css" />
-	
+
 	<script type="text/javascript" src="https://github.com/meltingice/CamanJS/raw/master/caman.js"></script>
-	
+
 	<script type="text/javascript">
-	caman.init('img/example2.jpg', '#image-original', function () { });
+	Caman('img/example2.jpg', '#image-original', function () {});
 	
-	caman.init('img/example2.jpg', '#image-brightness', function () {
-		this.brightness(25);
+	Caman('img/example2.jpg', '#image-brightness', function () {
+		this.brightness(30);
 	});
 	
-	caman.init('img/example2.jpg', '#image-saturation', function () {
+	Caman('img/example2.jpg', '#image-saturation', function () {
 		this.saturation(-100);
 	});
 	
-	caman.init('img/example2.jpg', '#image-contrast', function () {
+	Caman('img/example2.jpg', '#image-contrast', function () {
 		this.contrast(20);
 	});
 	
-	caman.init('img/example2.jpg', '#image-hue', function () {
+	Caman('img/example2.jpg', '#image-hue', function () {
 		this.hue(120);
 	});
 	
-	caman.init('img/example2.jpg', '#image-colorize', function () {
+	Caman('img/example2.jpg', '#image-colorize', function () {
 		this.colorize('#AF3D15', 30);
 	});
 	
-	caman.init('img/example2.jpg', '#image-combined', function () {
+	Caman('img/example2.jpg', '#image-combined', function () {
 		this.contrast(25);
 		this.hue(5);
 		this.colorize('#AF3D15', 25);
@@ -80,7 +80,7 @@
 </div>
 
 <div class="image-wrap">
-	<h1>Altered Image - Combined Effects</h1>
+	<h1>Altered Image - Combined Filters</h1>
 	<canvas id="image-combined"></canvas>
 </div>
 
