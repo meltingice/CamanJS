@@ -38,7 +38,7 @@
     Caman.manip = Caman.prototype = {
       load: function(options) {
         var 
-          img,
+          img = document.createElement("img"), 
           imageReady = function( ) {
 
             var args  = arguments.length, 
@@ -86,7 +86,7 @@
         
         if ( typeof options !== "string" ) {
 
-          img = document.createElement("img");
+
           img.src = options.src; 
 
           if ( !Caman.ready ) {
