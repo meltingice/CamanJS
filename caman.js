@@ -1,43 +1,65 @@
+
+
+
 (function(global) {
 
   var Caman = (function(global) {
     
-    var forEach = Array.prototype.forEach, 
-        hasOwn  = Object.prototype.hasOwnProperty, 
-        slice = Array.prototype.slice, 
+    var  Caman, 
+    forEach = Array.prototype.forEach, 
+    hasOwn = Object.prototype.hasOwnProperty, 
+    slice = Array.prototype.slice; 
   
-    Caman = function(options) {
-      if (typeof options === "string") {
+    Caman = function( options ) {
+      if ( typeof options === "string" ) {
         var temp = options;
         
-        options = {
-          src: temp,
-          canvas: arguments[1] || "",
-          ready: arguments[2] || function() {}
-        };
+        if ( arguments.length === 1 ) {
+          options = temp;
+        } else {
+          options = {
+            src: temp,
+            canvas: arguments[1] || "",
+            ready: arguments[2] || false
+          };
+        }
+      }
+      
+      if ( options.context && options.canvas_id ) {
+        options = options.canvas_id;
       }
       
       return new Caman.manip.load(options);
     };
     
+    Caman.ready = false;
+    Caman.store = {};
+    Caman.procCache = {};
+        
     Caman.manip = Caman.prototype = {
       load: function(options) {
-        var img = document.createElement("img"),
-          imageReady = function() {
-            var canvas_id = options.canvas,
+        var 
+          img,
+          imageReady = function( ) {
+
+            var args  = arguments.length, 
+              canvas_id = !args ? options.canvas : arguments[0],
               canvas;
             
-            if (canvas_id.substr(0, 1) === "#") {
+            if ( !args && canvas_id.substr(0, 1) === "#") {
               canvas = document.getElementById(canvas_id.substr(1));
               if (!canvas) {
                 return;
               }  
+            } else {
+              
+              return Caman.store[canvas_id];
+            
+            
             }
             
-            canvas.width = img.width;
-            canvas.height = img.height;
-            
-            this.worker = Caman.worker();
+             
+            this.canvas_id = canvas_id;
             this.context = canvas.getContext("2d");
             this.context.drawImage(img, 0, 0);
             this.image_data = this.context.getImageData(0, 0, img.width, img.height);
@@ -47,17 +69,47 @@
               height: img.height
             };
             
-            options.ready && options.ready.call(this);
+            
+            this.worker = Caman.worker();
+            this.inProcess  = false;
+            this.queueItems = [];
+            this.queue = {};
+            
+            
+            
+            options.ready && options.ready.call(this, this);            
+          
+            Caman.store[canvas_id] = this;
+
+            return this;
             
           }, that = this;
+
+       
         
-        document.addEventListener("DOMContentLoaded", function() {
-          img.src = options.src;
-          img.onload = function() {
+        if ( typeof options !== "string" ) {
+
+          img = document.createElement("img");
+          img.src = options.src; 
+
+          if ( !Caman.ready ) {
+            document.addEventListener("DOMContentLoaded", function() {
+              Caman.ready = true;
+              
+              img.onload = function() {
+                  imageReady.call(that);  
+              };
+            }, false);        
+          } else {
+
+            img.onload = function() {
               imageReady.call(that);  
-          };
-        }, false);
-        
+            };
+          }
+        } else {
+          // Handle Caman('#index')
+          return Caman.store[options];
+        }
         return this;
       }
     };
@@ -65,9 +117,14 @@
     Caman.manip.load.prototype = Caman.manip;
 
     Caman.forEach = function( obj, fn, context ) {
-
+      
+      if ( !obj || !fn ) {
+        return {};
+      }
+      
+      context = context || this;
       // Use native whenever possible
-      if ( forEach ) {
+      if ( forEach && obj.forEach === forEach ) {
         return obj.forEach(fn, context);
       } 
 
@@ -90,12 +147,21 @@
       });
       return dest;      
     };
-
+    
     Caman.extend( Caman, {
       guid: function() {
         return +new Date();
       }, 
-      same: function ( base, test ) {
+      sizeOf: function ( obj ) {
+        var size = 0;
+        
+        for ( var prop in obj  ) {
+          size++;
+        }
+                
+        return size;
+      }, 
+      sameAs: function ( base, test ) {
         
         // only tests arrays
         // TODO: extend to object tests
@@ -110,10 +176,23 @@
         }
         return true;
       },
+      remove: function ( arr, item ) {
+        var ret = [];
+        
+        for ( var i = 0, len = arr.length; i < len; i++ ) {
+          if ( arr[i] !== item  ) {
+
+            ret.push(arr[i]);
+          }
+        }
+        arr = ret;
+        
+        return ret;      
+      },
       rgb_to_hsl: function(r, g, b) {
           r /= 255, g /= 255, b /= 255;
-          var max = Math.max(r, g, b), min = Math.min(r, g, b);
-          var h, s, l = (max + min) / 2;
+          var max = Math.max(r, g, b), min = Math.min(r, g, b), 
+              h, s, l = (max + min) / 2;
       
           if(max == min){
               h = s = 0; // achromatic
@@ -180,10 +259,10 @@
        */
       rgb_to_hsv: function(r, g, b){
           r = r/255, g = g/255, b = b/255;
-          var max = Math.max(r, g, b), min = Math.min(r, g, b);
-          var h, s, v = max;
-      
-          var d = max - min;
+          var max = Math.max(r, g, b), min = Math.min(r, g, b),
+              h, s, v = max,
+              d = max - min;
+              
           s = max == 0 ? 0 : d / max;
       
           if(max == min){
@@ -212,13 +291,12 @@
        * @return  Array           The RGB representation
        */
       hsv_to_rgb: function(h, s, v){
-          var r, g, b;
-      
-          var i = Math.floor(h * 6);
-          var f = h * 6 - i;
-          var p = v * (1 - s);
-          var q = v * (1 - f * s);
-          var t = v * (1 - (1 - f) * s);
+          var r, g, b,
+              i = Math.floor(h * 6),
+              f = h * 6 - i,
+              p = v * (1 - s),
+              q = v * (1 - f * s),
+              t = v * (1 - (1 - f) * s);
       
           switch(i % 6){
               case 0: r = v, g = t, b = p; break;
@@ -247,41 +325,140 @@
       }      
     });
     
+    
+    Caman.events  = {
+      types: [ "processStart", "processComplete" ],
+      fn: {
+        trigger: function ( target, type, data ) {
+          
 
+          var _target = target, _type = type, _data = data;
+        
+          if ( Caman.events.types.indexOf(target) !== -1 ) {
+            _target = this;
+            _type = target;
+            _data = type;
+          }
+        
+          if ( Caman.events.fn[_type] && Caman.sizeOf(Caman.events.fn[_type]) ) {
 
+            Caman.forEach(Caman.events.fn[_type], function ( obj, key ) {
+
+              obj.call(_target, _data);
+            
+            });
+          }
+        }, 
+        listen: function ( target, type, fn ) {
+
+          var _target = target, _type = type, _fn = fn;
+        
+          if ( Caman.events.types.indexOf(target) !== -1 ) {
+            _target = this;
+            _type = target;
+            _fn = type;
+          }        
+
+          if ( !Caman.events.fn[_type] ) {
+            Caman.events.fn[_type] = {};
+          }
+          
+          Caman.events.fn[_type][ _fn.toString() ] = _fn;
+          
+          return true;
+        }
+      },
+      cache: {} /*{
+        // [type] = { fn.toString() : fn }
+        //  types: processStart, processComplete
+      }*/
+    };
     
     Caman.manip.process = function( adjust, processFn ) {
-      var complete = false, self = this, dims = self.dimensions;
+      var self = this, dims = self.dimensions;
+      
 
-      this.worker.addEventListener( "DOMContentLoaded", function(event) {
-        var data = event.data, len;
-        
-        if ( !data.pixelData ) {
-          return;
-        }
-        
-        len = self.image_data.data.length;
-        
-        for ( ; len >=0; len-- ) {
-          // update with the new data. worker can't do this with CanvasPixelArray
-          if ( self.image_data.data[len] !== data.pixelData[len] ) {
-            // Only update the value has actually changed
-            self.image_data.data[len] = data.pixelData[len];
+      self.queueItems.push(processFn.name);
+      
+      if ( !self.queue[processFn.name] ) {
+        self.queue[processFn.name]  = {};
+      }
+      
+      self.queue[processFn.name].adjust = adjust;
+      self.queue[processFn.name].process = processFn;
+      
+      self.queue[processFn.name].fn =  (function (processFnName) {
+      
+        return function(event) {
+          
+          var data = event.data, len;
+          
+          if ( !data.pixelData ) {
+            return;
+          }          
+          
+          if ( !!self.queue[processFnName] && ( data.processFnName === processFnName ) ) {
+
+
+            Caman.trigger( "processStart", { completed: data.processFnName } );
+            
+            delete self.queue[processFnName];
+            
+
+
+            len = self.image_data.data.length;
+            
+            function commit() {
+              for ( ; len >= 0; len-- ) {
+                // update with the new data. worker can't do this with CanvasPixelArray
+                if ( self.image_data.data[len] !== data.pixelData[len] ) {
+                  // Only update the value has actually changed
+                  self.image_data.data[len] = self.pixel_data[len] = data.pixelData[len];
+                }
+              }
+              
+              self.context.putImageData(  self.image_data, 0, 0);
+              
+              self.queueItems = Caman.remove( self.queueItems, data.processFnName );
+
+              if ( self.queueItems.length ) {
+                var next = self.queueItems[0];
+                
+                self.worker.postMessage({
+                  "pixelData" : self.image_data.data,
+                  "processFn" : self.queue[next].process.toString(),
+                  "processFnName" : self.queue[next].process.name,
+                  "adjust": self.queue[next].adjust
+                });                  
+              }
+                            
+              self.inProcess = false;
+              Caman.trigger( "processComplete", { completed: data.processFnName } );              
+            }
+            
+            commit();
+
           }
-        }
-        
-        self.context.putImageData(  self.image_data, 0, 0);
-        
-        complete = true;
+
+          return self;
+        };          
+      })(processFn.name);      
       
-      }, false);
-      
-      //  Send message to worker to begin processing
-      this.worker.postMessage({
-        "pixelData" : self.context.getImageData(0, 0, dims.width, dims.height).data, 
-        "processFn" : processFn.toString(),
-        "adjust": adjust
-      });        
+
+      this.worker.addEventListener( "message", self.queue[processFn.name].fn, false);
+
+      if ( !this.inProcess ) {
+        
+        this.inProcess = true;
+
+        this.worker.postMessage({
+          "pixelData" : self.image_data.data,
+          "processFn" : processFn.toString(),
+          "processFnName" : processFn.name,
+          "adjust": adjust
+        });      
+      }
+        
 
       return this; 
     };
@@ -299,6 +476,7 @@
     return (global.Caman = Caman);
     
   })(global);
+  
 })(this);
 
 
@@ -324,12 +502,20 @@ onmessage = function( event ) {
   }  
   // TODO: add rest of data object
   postMessage({
-    "data" : data, 
-    "pixelData" : data.pixelData
+    "processFnName": data.processFnName, 
+    "pixelData" : data.pixelData,
+    "data" : data
   });
 };
 // WorkerGlobalScope //
-
+// Basic event system
+(function (Caman) {
+  
+  Caman.forEach( ["trigger", "listen"], function ( key ) {
+    Caman[key] = Caman.events.fn[key];
+  });  
+  
+})(Caman);
 // Basic library of effects/filters that is always loaded
 (function(Caman) {
 
@@ -338,7 +524,7 @@ onmessage = function( event ) {
     adjust = Math.floor(255 * (adjust / 100));
     
     // Note that process has 2 args now
-    return this.process( adjust,  function (adjust, rgba) {
+    return this.process( adjust,  function brightness(adjust, rgba) {
               // also pass the adjustment to the process callback
               rgba.r += adjust;
               rgba.g += adjust;
@@ -355,7 +541,7 @@ onmessage = function( event ) {
   Caman.manip.saturation = function(adjust) {
     adjust *= -1;
     
-    return this.process( adjust,  function (adjust, rgba) {
+    return this.process( adjust,  function saturation(adjust, rgba) {
                 var chan, max, diff;
                 max = Math.max(rgba.r, rgba.g, rgba.b);
                 
@@ -378,7 +564,7 @@ onmessage = function( event ) {
 
     adjust = Math.pow((100 + adjust) / 100, 2);
     
-    return this.process( adjust,  function (adjust, rgba) {  
+    return this.process( adjust,  function contrast(adjust, rgba) {  
         
               for ( var chan in rgba) {
                 if (rgba.hasOwnProperty(chan)) {
@@ -402,7 +588,7 @@ onmessage = function( event ) {
   Caman.manip.hue = function(adjust) {
     var hsv, rgb, h;
             
-    return this.process( adjust,  function (adjust, rgba) {
+    return this.process( adjust,  function hue(adjust, rgba) {
         hsv = Caman.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
         h = hsv.h * 100;
         h += Math.abs(adjust);
@@ -432,7 +618,8 @@ onmessage = function( event ) {
       level = arguments[3];
     }
     
-    return this.process( [ level, rgb ],  function ( adjust, rgba) {
+    
+    return this.process( [ level, rgb ],  function colorize( adjust, rgba) {
     
         rgba.r -= (rgba.r - adjust[1].r) * (adjust[0] / 100);
         rgba.g -= (rgba.g - adjust[1].g) * (adjust[0] / 100);
