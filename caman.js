@@ -1,6 +1,3 @@
-
-
-
 (function(global) {
 
   var Caman = (function(global) {
@@ -55,7 +52,9 @@
               return Caman.store[canvas_id];
             }
             
-             
+            canvas.width = img.width;
+            canvas.height = img.height;
+            
             this.canvas_id = canvas_id;
             this.context = canvas.getContext("2d");
             this.context.drawImage(img, 0, 0);
