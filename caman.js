@@ -34,7 +34,6 @@
     
     Caman.ready = false;
     Caman.store = {};
-    Caman.procCache = {};
         
     Caman.manip = Caman.prototype = {
       load: function(options) {
@@ -54,8 +53,6 @@
             } else {
               
               return Caman.store[canvas_id];
-            
-            
             }
             
              
@@ -331,7 +328,6 @@
       fn: {
         trigger: function ( target, type, data ) {
           
-
           var _target = target, _type = type, _data = data;
         
           if ( Caman.events.types.indexOf(target) !== -1 ) {
@@ -386,7 +382,6 @@
       
       self.queue[processFn.name].adjust = adjust;
       self.queue[processFn.name].process = processFn;
-      
       self.queue[processFn.name].fn =  (function (processFnName) {
       
         return function(event) {
