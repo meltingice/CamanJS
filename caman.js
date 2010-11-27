@@ -512,10 +512,23 @@
       return this; 
     };
     
+    Caman.get_library_path = function () {
+      var name = /(^|[\/\\])caman\.js(\?|$)/,
+          scripts = document.getElementsByTagName("script"),
+          src;
+          
+      for (var i = 0; i < scripts.length; i++) {
+        if (src = scripts[i].getAttribute('src')) {
+          if (src.match(name)) {
+            return src;
+          }
+        }
+      }
+    }
+    
     Caman.worker  = function() {
       
-      // need a solution to avoid 404 // global.location.pathname + 
-      var worker = new Worker( "../caman.js");
+      var worker = new Worker(this.get_library_path());
       
       worker.guid = Caman.guid();
 
