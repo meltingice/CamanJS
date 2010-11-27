@@ -27,10 +27,6 @@
 		this.contrast(50);
 	});
 	
-	Caman('img/example2.jpg', '#image-hue', function () {
-		this.hue(120);
-	});
-	
 	Caman('img/example2.jpg', '#image-colorize', function () {
 		this.colorize('#AF3D15', 60);
 	});
@@ -42,12 +38,10 @@
 		canvas.saturation(-30);
 		canvas.brightness(5);
 
-    	Caman.listen("processComplete", function( data ) {
-    	  console.log("processComlete: ", data);
-    	})
+    Caman.listen("processComplete", function( data ) {
+      console.log("processComlete: ", data);
+    })
 	});
-	
-	Caman('img/example2.jpg', '#image-original-2');
 	
 	</script>
 </head>
@@ -83,11 +77,6 @@
 </div>
 
 <div class="image-wrap">
-	<h1>Altered Image - Hue</h1>
-	<canvas id="image-hue"></canvas>
-</div>
-
-<div class="image-wrap">
 	<h1>Altered Image - Colorize</h1>
 	<canvas id="image-colorize"></canvas>
 </div>
@@ -95,10 +84,6 @@
 <div class="image-wrap">
 	<h1>Altered Image - Combined Filters</h1>
 	<canvas id="image-combined"></canvas>
-</div>
-<div class="image-wrap">
-	<h1>Original Image</h1>
-	<canvas id="image-original-2"></canvas>
 </div>
 
 </body>

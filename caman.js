@@ -185,25 +185,60 @@
         
         return ret;      
       },
+      
+      memo_get: function (key, d1, d2, d3) {
+        var index = String(d1) + String(d2) + String(d3);
+        
+        if (!this.memos || !this.memos[key]) {
+          return false;
+        }
+        
+        if (this.memos[key][index]) {
+          return this.memos[key][index];
+        }
+        
+        return false;
+      },
+      memo_set: function (key, d1, d2, d3, value) {
+        var index = String(d1) + String(d2) + String(d3);
+        
+        if (!this.memos) {
+          this.memos = {};
+        }
+        
+        if (!this.memos[key]) {
+          this.memos[key] = {};
+        }
+        
+        this.memos[key][index] = value;
+        
+        return value;
+      },
+      
       rgb_to_hsl: function(r, g, b) {
-          r /= 255, g /= 255, b /= 255;
-          var max = Math.max(r, g, b), min = Math.min(r, g, b), 
-              h, s, l = (max + min) / 2;
-      
-          if(max == min){
-              h = s = 0; // achromatic
-          }else{
-              var d = max - min;
-              s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-              switch(max){
-                  case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                  case g: h = (b - r) / d + 2; break;
-                  case b: h = (r - g) / d + 4; break;
-              }
-              h /= 6;
-          }
-      
-          return {h: h, s: s, l: l};
+        var value, result;
+        if (value = this.memo_get('rgbhsl', r, g, b)) {
+          return value;
+        }
+        
+        r /= 255, g /= 255, b /= 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b), 
+            h, s, l = (max + min) / 2;
+        
+        if(max == min){
+            h = s = 0; // achromatic
+        } else {
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch(max){
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+        
+        return this.memo_set('rgbhsl', r, g, b, {h: h, s: s, l: l});
       },
   
       /**
@@ -218,7 +253,11 @@
        * @return  Array           The RGB representation
        */
       hsl_to_rgb: function(h, s, l){
-          var r, g, b;
+          var r, g, b, value;
+          
+          if (value = this.memo_get('hslrgb', h, s, l)) {
+            return value;
+          }
       
           if(s == 0){
               r = g = b = l; // achromatic
@@ -238,8 +277,8 @@
               g = hue2rgb(p, q, h);
               b = hue2rgb(p, q, h - 1/3);
           }
-      
-          return {r: r * 255, g: g * 255, b: b * 255};
+          
+          return this.memo_set('hslrgb', h, s, l, {r: r * 255, g: g * 255, b: b * 255});
       },
   
       /**
@@ -254,6 +293,12 @@
        * @return  Array           The HSV representation
        */
       rgb_to_hsv: function(r, g, b){
+          var value;
+          
+          if (value = this.memo_get('rgbhsv', r, g, b)) {
+            return value;
+          }
+          
           r = r/255, g = g/255, b = b/255;
           var max = Math.max(r, g, b), min = Math.min(r, g, b),
               h, s, v = max,
@@ -272,7 +317,7 @@
               h /= 6;
           }
       
-          return {h: h, s: s, v: v};
+          return this.memo_set('rgbhsv', r, g, b, {h: h, s: s, v: v});
       },
   
       /**
@@ -287,6 +332,12 @@
        * @return  Array           The RGB representation
        */
       hsv_to_rgb: function(h, s, v){
+          var value;
+          
+          if (value = this.memo_get('hsvrgb', h, s, v)) {
+            return value;
+          }
+        
           var r, g, b,
               i = Math.floor(h * 6),
               f = h * 6 - i,
@@ -303,11 +354,15 @@
               case 5: r = v, g = p, b = q; break;
           }
       
-          return {r: r * 255, g: g * 255, b: b * 255};
+          return this.memo_set('hsvrgb', h, s, v, {r: r * 255, g: g * 255, b: b * 255});
       },
       
       hex_to_rgb: function(hex) {
-        var r, g, b;
+        var r, g, b, value;
+        
+        if (value = this.memo_get('hexrgb', hex, "", "")) {
+          return value;
+        }
         
         if (hex.charAt(0) === "#") {
           hex = hex.substr(1);
@@ -317,7 +372,7 @@
         g = parseInt(hex.substr(2, 2), 16);
         b = parseInt(hex.substr(4, 2), 16);
         
-        return {r: r, g: g, b: b};
+        return this.memo_set('hexrgb', hex, "", "", {r: r, g: g, b: b});
       }      
     });
     
@@ -510,6 +565,7 @@ onmessage = function( event ) {
   });  
   
 })(Caman);
+
 // Basic library of effects/filters that is always loaded
 (function(Caman) {
 
@@ -580,8 +636,7 @@ onmessage = function( event ) {
   };
   
   Caman.manip.hue = function(adjust) {
-    var hsv, rgb, h;
-            
+    var hsv, h;      
     return this.process( adjust,  function hue(adjust, rgba) {
         hsv = Caman.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
         h = hsv.h * 100;
