@@ -356,7 +356,99 @@
       
           return this.memo_set('hsvrgb', h, s, v, {r: r * 255, g: g * 255, b: b * 255});
       },
-      
+
+      /**
+       * Converts a RGB color value to the XYZ color space. Formulas
+       * are based on http://en.wikipedia.org/wiki/SRGB assuming that
+       * RGB values are sRGB.
+       * Assumes r, g, and b are contained in the set [0, 255] and
+       * returns x, y, and z.
+       *
+       * @param   Number  r       The red color value
+       * @param   Number  g       The green color value
+       * @param   Number  b       The blue color value
+       * @return  Array           The XYZ representation
+       */
+      rgb_to_xyz: function (r, g, b) {
+        var value;
+
+        if (value = Caman.memo_get('rgbxyz', r, g, b)) {
+          return value;
+        }
+
+        r = r / 255; g = g / 255; b = b / 255;
+
+        if (r > 0.04045) {
+          r = Math.pow((r + 0.055) / 1.055, 2.4);
+        } else {
+          r = r / 12.92;
+        }
+
+        if (g > 0.04045) {
+          g = Math.pow((g + 0.055) / 1.055, 2.4);
+        } else {
+          g = g / 12.92;
+        }
+
+        if (b > 0.04045) {
+          b = Math.pow((b + 0.055) / 1.055, 2.4);
+        } else {
+          b = b / 12.92;
+        }
+
+        var x = r * 0.4124 + g * 0.3576 + b * 0.1805;
+        var y = r * 0.2126 + g * 0.7152 + b * 0.0722;
+        var z = r * 0.0193 + g * 0.1192 + b * 0.9505;
+
+        return Caman.memo_set('rgbxyz', r, g, b, {x: x * 100, y: y * 100, z: z * 100});
+      },
+
+      /**
+       * Converts a XYZ color value to the sRGB color space. Formulas
+       * are based on http://en.wikipedia.org/wiki/SRGB and the resulting
+       * RGB value will be in the sRGB color space.
+       * Assumes x, y and z values are whatever they are and returns
+       * r, g and b in the set [0, 255].
+       *
+       * @param   Number  x       The X value
+       * @param   Number  y       The Y value
+       * @param   Number  z       The Z value
+       * @return  Array           The RGB representation
+       */
+      xyz_to_rgb: function (x, y, z) {
+        var value;
+
+        if (value = Caman.memo_get('xyzrgb', x, y, z)) {
+          return value;
+        }
+        x = x / 100; y = y / 100; z = z / 100;
+
+        var r, g, b;
+        r = (3.2406  * x) + (-1.5372 * y) + (-0.4986 * z);
+        g = (-0.9689 * x) + (1.8758  * y) + (0.0415  * z);
+        b = (0.0557  * x) + (-0.2040 * y) + (1.0570  * z);
+
+        if(r > 0.0031308) {
+          r = (1.055 * Math.pow(r, 0.4166666667)) - 0.055;
+        } else {
+          r = 12.92 * r;
+        }
+
+        if(g > 0.0031308) {
+          g = (1.055 * Math.pow(g, 0.4166666667)) - 0.055;
+        } else {
+          g = 12.92 * g;
+        }
+
+        if(b > 0.0031308) {
+          b = (1.055 * Math.pow(b, 0.4166666667)) - 0.055;
+        } else {
+          b = 12.92 * b;
+        }
+
+        return Caman.memo_set('xyzrgb', x, y, z, {r: r * 255, g: g * 255, b: b * 255});
+      },
+
       hex_to_rgb: function(hex) {
         var r, g, b, value;
         
@@ -373,7 +465,7 @@
         b = parseInt(hex.substr(4, 2), 16);
         
         return this.memo_set('hexrgb', hex, "", "", {r: r, g: g, b: b});
-      }      
+      }
     });
     
     
