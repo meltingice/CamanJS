@@ -449,6 +449,76 @@
         return Caman.memo_set('xyzrgb', x, y, z, {r: r * 255, g: g * 255, b: b * 255});
       },
 
+      xyz_to_lab: function(x, y, z) {
+        var value;
+
+        if (value = Caman.memo_get('xyzlab', x, y, z)) {
+          return value;
+        }
+
+        // D65 reference white point
+        var whiteX = 95.047, whiteY = 100.0, whiteZ = 108.883
+
+        x = x / whiteX; y = y / whiteY; z = z / whiteZ;
+
+        if (x > 0.008856451679) { // (6/29) ^ 3
+          x = Math.pow(x, 0.3333333333);
+        } else {
+          x = (7.787037037 * x) + 0.1379310345; // (1/3) * ((29/6) ^ 2)c + (4/29)
+        }
+
+        if (y > 0.008856451679) {
+          y = Math.pow(y, 0.3333333333);
+        } else {
+          y = (7.787037037 * y) + 0.1379310345;
+        }
+
+        if (z > 0.008856451679) {
+          z = Math.pow(z, 0.3333333333);
+        } else {
+          z = (7.787037037 * z) + 0.1379310345;
+        }
+
+        var l = 116 * y - 16;
+        var a = 500 * (x - y);
+        var b = 200 * (y - z);
+
+        return Caman.memo_set('xyzlab', x, y, z, {l: l, a: a, b: b});
+      },
+
+      lab_to_xyz: function(l, a, b) {
+        var value;
+
+        if (value = Caman.memo_get('labxyz', l, a, b)) {
+          return value;
+        }
+
+        var y = (l + 16) / 116;
+        var x = y + (a / 500);
+        var z = y - (b / 200);
+
+        if (x > 0.2068965517) { // 6 / 29
+          x = x * x * x;
+        } else {
+          x = 0.1284185493 * (x - 0.1379310345); // 3 * ((6 / 29) ^ 2) * (c - (4 / 29))
+        }
+
+        if (y > 0.2068965517) {
+          y = y * y * y;
+        } else {
+          y = 0.1284185493 * (y - 0.1379310345);
+        }
+
+        if (z > 0.2068965517) {
+          z = z * z * z;
+        } else {
+          z = 0.1284185493 * (z - 0.1379310345);
+        }
+
+        // D65 reference white point
+        return Caman.memo_set('labxyz', l, a, b, {x: x * 95.047, y: y * 100.0, z: z * 108.883});
+      },
+
       hex_to_rgb: function(hex) {
         var r, g, b, value;
         
