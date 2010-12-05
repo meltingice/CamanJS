@@ -88,20 +88,13 @@
 
           img.src = options.src; 
 
+          img.onload = function() {
+             imageReady.call(that);
+          };
           if ( !Caman.ready ) {
             document.addEventListener("DOMContentLoaded", function() {
               Caman.ready = true;
-              
-              img.onload = function() {
-                  imageReady.call(that);  
-              };
-            }, false);        
-          } else {
-
-            img.onload = function() {
-              imageReady.call(that);  
-            };
-          }
+	  }
         } else {
           // Handle Caman('#index')
           return Caman.store[options];
@@ -665,7 +658,7 @@
                   "processFn" : self.queue[next].process.toString(),
                   "processFnName" : self.queue[next].process.name,
                   "adjust": self.queue[next].adjust
-                });                  
+                });
               }
                             
               self.inProcess = false;
@@ -692,7 +685,7 @@
           "processFn" : processFn.toString(),
           "processFnName" : processFn.name,
           "adjust": adjust
-        });      
+        });
       }
         
 
@@ -752,8 +745,7 @@ onmessage = function( event ) {
   // TODO: add rest of data object
   postMessage({
     "processFnName": data.processFnName, 
-    "pixelData" : data.pixelData,
-    "data" : data
+    "pixelData" : data.pixelData
   });
 };
 // WorkerGlobalScope //
