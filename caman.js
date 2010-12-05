@@ -91,10 +91,14 @@
           img.onload = function() {
              imageReady.call(that);
           };
+          
           if ( !Caman.ready ) {
             document.addEventListener("DOMContentLoaded", function() {
               Caman.ready = true;
-	  }
+            }, false);          
+          }
+          
+          
         } else {
           // Handle Caman('#index')
           return Caman.store[options];
