@@ -449,6 +449,18 @@
         return Caman.memo_set('xyzrgb', x, y, z, {r: r * 255, g: g * 255, b: b * 255});
       },
 
+      /**
+       * Converts a XYZ color value to the CIELAB color space. Formulas
+       * are based on http://en.wikipedia.org/wiki/Lab_color_space
+       * The reference white point used in the conversion is D65.
+       * Assumes x, y and z values are whatever they are and returns
+       * L*, a* and b* values
+       *
+       * @param   Number  x       The X value
+       * @param   Number  y       The Y value
+       * @param   Number  z       The Z value
+       * @return  Array           The Lab representation
+       */
       xyz_to_lab: function(x, y, z) {
         var value;
 
@@ -486,6 +498,19 @@
         return Caman.memo_set('xyzlab', x, y, z, {l: l, a: a, b: b});
       },
 
+      /**
+       * Converts a L*, a*, b* color values from the CIELAB color space
+       * to the XYZ color space. Formulas are based on
+       * http://en.wikipedia.org/wiki/Lab_color_space
+       * The reference white point used in the conversion is D65.
+       * Assumes L*, a* and b* values are whatever they are and returns
+       * x, y and z values.
+       *
+       * @param   Number  l       The L* value
+       * @param   Number  a       The a* value
+       * @param   Number  b       The b* value
+       * @return  Array           The XYZ representation
+       */
       lab_to_xyz: function(l, a, b) {
         var value;
 
