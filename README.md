@@ -5,6 +5,8 @@ CamanJS is an attempt at providing a simple to use interface for dynamically man
 
 CamanJS is also not a canvas drawing library, per se.  It's main focus is manipulating images, not drawing new content.
 
+If you're looking for more information, <a href="http://blog.meltingice.net/programming/camanjs-javascript-image-manipulation/">here is a blog post</a> that describes the project some more.
+
 <h1>How to Use</h1>
 Using CamanJS is simple.  It goes something like this:
 
