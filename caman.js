@@ -183,7 +183,7 @@
         return ret;      
       },
       
-      memo_get: function (key, d1, d2, d3) {
+      getMemo: function (key, d1, d2, d3) {
         var index = String(d1) + String(d2) + String(d3);
         
         if (!this.memos || !this.memos[key]) {
@@ -196,7 +196,7 @@
         
         return false;
       },
-      memo_set: function (key, d1, d2, d3, value) {
+      setMemo: function (key, d1, d2, d3, value) {
         var index = String(d1) + String(d2) + String(d3);
         
         if (!this.memos) {
@@ -214,7 +214,7 @@
       
       rgb_to_hsl: function(r, g, b) {
         var value, result;
-        if (value = this.memo_get('rgbhsl', r, g, b)) {
+        if (value = this.getMemo('rgbhsl', r, g, b)) {
           return value;
         }
         
@@ -235,7 +235,7 @@
             h /= 6;
         }
         
-        return this.memo_set('rgbhsl', r, g, b, {h: h, s: s, l: l});
+        return this.setMemo('rgbhsl', r, g, b, {h: h, s: s, l: l});
       },
   
       /**
@@ -252,7 +252,7 @@
       hsl_to_rgb: function(h, s, l){
           var r, g, b, value;
           
-          if (value = this.memo_get('hslrgb', h, s, l)) {
+          if (value = this.getMemo('hslrgb', h, s, l)) {
             return value;
           }
       
@@ -275,7 +275,7 @@
               b = hue2rgb(p, q, h - 1/3);
           }
           
-          return this.memo_set('hslrgb', h, s, l, {r: r * 255, g: g * 255, b: b * 255});
+          return this.setMemo('hslrgb', h, s, l, {r: r * 255, g: g * 255, b: b * 255});
       },
   
       /**
@@ -292,7 +292,7 @@
       rgb_to_hsv: function(r, g, b){
           var value;
           
-          if (value = this.memo_get('rgbhsv', r, g, b)) {
+          if (value = this.getMemo('rgbhsv', r, g, b)) {
             return value;
           }
           
@@ -314,7 +314,7 @@
               h /= 6;
           }
       
-          return this.memo_set('rgbhsv', r, g, b, {h: h, s: s, v: v});
+          return this.setMemo('rgbhsv', r, g, b, {h: h, s: s, v: v});
       },
   
       /**
@@ -331,7 +331,7 @@
       hsv_to_rgb: function(h, s, v){
           var value;
           
-          if (value = this.memo_get('hsvrgb', h, s, v)) {
+          if (value = this.getMemo('hsvrgb', h, s, v)) {
             return value;
           }
         
@@ -351,7 +351,7 @@
               case 5: r = v, g = p, b = q; break;
           }
       
-          return this.memo_set('hsvrgb', h, s, v, {r: r * 255, g: g * 255, b: b * 255});
+          return this.setMemo('hsvrgb', h, s, v, {r: r * 255, g: g * 255, b: b * 255});
       },
 
       /**
@@ -369,7 +369,7 @@
       rgb_to_xyz: function (r, g, b) {
         var value;
 
-        if (value = Caman.memo_get('rgbxyz', r, g, b)) {
+        if (value = Caman.getMemo('rgbxyz', r, g, b)) {
           return value;
         }
 
@@ -397,7 +397,7 @@
         var y = r * 0.2126 + g * 0.7152 + b * 0.0722;
         var z = r * 0.0193 + g * 0.1192 + b * 0.9505;
 
-        return Caman.memo_set('rgbxyz', r, g, b, {x: x * 100, y: y * 100, z: z * 100});
+        return Caman.setMemo('rgbxyz', r, g, b, {x: x * 100, y: y * 100, z: z * 100});
       },
 
       /**
@@ -415,7 +415,7 @@
       xyz_to_rgb: function (x, y, z) {
         var value;
 
-        if (value = Caman.memo_get('xyzrgb', x, y, z)) {
+        if (value = Caman.getMemo('xyzrgb', x, y, z)) {
           return value;
         }
         x = x / 100; y = y / 100; z = z / 100;
@@ -443,7 +443,7 @@
           b = 12.92 * b;
         }
 
-        return Caman.memo_set('xyzrgb', x, y, z, {r: r * 255, g: g * 255, b: b * 255});
+        return Caman.setMemo('xyzrgb', x, y, z, {r: r * 255, g: g * 255, b: b * 255});
       },
 
       /**
@@ -461,7 +461,7 @@
       xyz_to_lab: function(x, y, z) {
         var value;
 
-        if (value = Caman.memo_get('xyzlab', x, y, z)) {
+        if (value = Caman.getMemo('xyzlab', x, y, z)) {
           return value;
         }
 
@@ -492,7 +492,7 @@
         var a = 500 * (x - y);
         var b = 200 * (y - z);
 
-        return Caman.memo_set('xyzlab', x, y, z, {l: l, a: a, b: b});
+        return Caman.setMemo('xyzlab', x, y, z, {l: l, a: a, b: b});
       },
 
       /**
@@ -511,7 +511,7 @@
       lab_to_xyz: function(l, a, b) {
         var value;
 
-        if (value = Caman.memo_get('labxyz', l, a, b)) {
+        if (value = Caman.getMemo('labxyz', l, a, b)) {
           return value;
         }
 
@@ -538,13 +538,13 @@
         }
 
         // D65 reference white point
-        return Caman.memo_set('labxyz', l, a, b, {x: x * 95.047, y: y * 100.0, z: z * 108.883});
+        return Caman.setMemo('labxyz', l, a, b, {x: x * 95.047, y: y * 100.0, z: z * 108.883});
       },
 
       hex_to_rgb: function(hex) {
         var r, g, b, value;
         
-        if (value = this.memo_get('hexrgb', hex, "", "")) {
+        if (value = this.getMemo('hexrgb', hex, "", "")) {
           return value;
         }
         
@@ -556,7 +556,7 @@
         g = parseInt(hex.substr(2, 2), 16);
         b = parseInt(hex.substr(4, 2), 16);
         
-        return this.memo_set('hexrgb', hex, "", "", {r: r, g: g, b: b});
+        return this.setMemo('hexrgb', hex, "", "", {r: r, g: g, b: b});
       }
     });
     
@@ -696,7 +696,7 @@
       return this; 
     };
     
-    Caman.get_library_path = function () {
+    Caman.getMyself = function () {
       var name = /(^|[\/\\])caman\.js(\?|$)/,
           scripts = document.getElementsByTagName("script"),
           src;
@@ -712,7 +712,7 @@
     
     Caman.worker  = function() {
       
-      var worker = new Worker(this.get_library_path());
+      var worker = new Worker( Caman.getMyself() );
       
       worker.guid = Caman.guid();
 
