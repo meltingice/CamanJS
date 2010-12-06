@@ -8,6 +8,22 @@ test("Caman is a function", function () {
 
 });
 
+module("Caman Utils");
+
+test("Caman is a function", function () {
+  expect(2);
+  
+  
+  ok( Caman.getMyself(), "Caman.getMyself() exists");
+  
+  equals( Caman.getMyself(), document.querySelectorAll('script[src*="caman.js"]')[0].getAttribute('src'), "Caman.getMyself() returns correctly when cross referenced" );
+
+
+});
+
+
+
+
 
 test("rgb_to_xyz and xyz_to_rgb are symmetric", function() {
   var rgbColors = [
