@@ -34,6 +34,47 @@ Caman({
 });
 </pre>
 
+You can now even save images after they've been modified!  With the current implementation, users will have to rename the file to something.(png|jpg) since they get redirected to the base64 encoding of the image and the browser doesn't know the file type.  The save() function defaults to png, but you can override this and specify either png or jpg.
+
+<pre>
+Caman('img/example.jpg', '#image-caman', function () {
+  this.saturation(-20);
+  this.brightness(10);
+  
+  // More info on finished() in events section below
+  this.finished(function () {
+    this.save('png'); // shows a download file prompt
+  });
+});
+</pre>
+
+<h1>Caman Events</h1>
+Currently CamanJS has three different events you can listen for, and it is very simple to add new events if you need to.
+
+* processStart
+  * fired when a single image filter begins manipulating an image
+* processComplete
+  * fired when a single image filter finishes manipulating an image
+* queueFinished
+  * fired when all image filters are done and an image is finished being updated
+  
+You may also find this extremely handy:
+
+<pre>
+Caman('img/example.jpg', '#image-caman', function () {
+  this.contrast(25);
+  this.hue(5);
+  this.colorize('#AF3D15', 25);
+  this.saturation(-30);
+  this.brightness(5);
+  
+  // Event helper that fires when *this* image is finished rendering
+  this.finished(function () {
+    console.log("Image finished rendering!");
+  });
+});
+</pre>
+
 <h1>How to Extend</h1>
 Extending CamanJS is easy as well. It's accomplished by adding functions onto the manip object. Below is an example of how to do so:
 
