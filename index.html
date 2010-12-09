@@ -10,32 +10,35 @@
 
 	<script type="text/javascript">
 
-	Caman('img/example2.jpg', '#image-original', function () {});
-	
-	Caman('img/example2.jpg', '#image-combined', function (canvas) {
-    var downloadButton = document.getElementById('download-image');
+    Caman('img/example2.jpg', '#image-original', function () {});
     
-    // download image event
-    downloadButton.onclick = function () {
-       canvas.save();
-    };
-    
-		this.contrast(25);
-		this.hue(5);
-		this.colorize('#AF3D15', 25);
-		this.saturation(-30);
-		this.brightness(5);
-    
-    this.finished(function () {
-      console.log("Combined filters image finished rendering!");
-      downloadButton.value = "Download Image";
-      downloadButton.disabled = false;
+    Caman('img/example2.jpg', '#image-combined', function (canvas) {
+      var downloadButton = document.getElementById('download-image');
+      
+      // download image event
+      downloadButton.onclick = function () {
+         canvas.save();
+      };
+      
+     this.contrast(25);
+     this.hue(5);
+     this.colorize('#AF3D15', 25);
+     this.saturation(-30);
+     this.brightness(5);
+      
+      this.finished(function () {
+        console.log("Combined filters image finished rendering!");
+        downloadButton.value = "Download Image";
+        downloadButton.disabled = false;
+        
+        document.getElementById('final-image').innerHTML = "";
+        document.getElementById('final-image').appendChild(this.toImage());
+      });
     });
-	});
-	
-	Caman.listen("processComplete", function( data ) {
-    console.log("processComlete: ", data);
-  });
+    
+    Caman.listen("processComplete", function( data ) {
+      console.log("processComlete: ", data);
+    });
   	
 	</script>
 </head>
@@ -62,6 +65,13 @@
 	<div id="download-button">
   	<input id="download-image" class="fancy-button-grey" type="button" value="Please wait..." disabled="true" />
   	<p>Note: you'll need to give the downloaded file a .png extension manually.</p>
+  </div>
+</div>
+
+<div class="image-wrap">
+  <h1>Final Modified Image as Image Object</h1>
+  <div id="final-image">
+    <p style="text-align: center">Please wait...</p>
   </div>
 </div>
 
