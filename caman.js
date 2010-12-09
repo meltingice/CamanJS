@@ -7,6 +7,19 @@
     hasOwn = Object.prototype.hasOwnProperty, 
     slice = Array.prototype.slice; 
   
+    /*
+     * CamanJS can accept arguments in 2 different formats:
+     * 
+     * Format 1:
+     *    Caman('path/to/image.jpg', '#canvas-id', function () {})
+     *
+     * Format 2:
+     *    Caman({
+     *      src: 'path/to/image.jpg',
+     *      canvas: '#canvas-id',
+     *      ready: function () {}
+     *    });
+     */
     Caman = function( options ) {
       if ( typeof options === "string" ) {
         var temp = options;
@@ -33,9 +46,19 @@
     Caman.store = {};
         
     Caman.manip = Caman.prototype = {
+      /*
+       * Sets up everything that needs to be done before the filter
+       * functions can be run. This includes loading the image into
+       * the canvas element and saving lots of different data about
+       * the image.
+       */
       load: function(options) {
         var 
           img = document.createElement("img"), 
+          
+          /*
+           * Called once the image is loaded from the server
+           */
           imageReady = function( ) {
 
             var args  = arguments.length, 
@@ -66,13 +89,10 @@
               height: img.height
             };
             
-            
             this.worker = Caman.worker();
             this.inProcess  = false;
             this.queueItems = [];
             this.queue = {};
-            
-            
             
             options.ready && options.ready.call(this, this);            
           
@@ -81,11 +101,8 @@
             return this;
             
           }, that = this;
-
-       
         
         if ( typeof options !== "string" ) {
-
 
           img.src = options.src; 
 
@@ -99,7 +116,6 @@
             }, false);          
           }
           
-          
         } else {
           // Handle Caman('#index')
           return Caman.store[options];
@@ -107,6 +123,11 @@
         return this;
       },
       
+      /*
+       * Grabs the canvas data, encodes it to Base64, then
+       * sets the browser location to the encoded data so that
+       * the user will be prompted to download it.
+       */
       save: function (type) {
         if (type) {
           type = type.toLowerCase();
@@ -116,8 +137,38 @@
           type = 'png';
         }
         
-        var data = this.canvas.toDataURL("image/" + type).replace("image/" + type, "image/octet-stream");
+        var data = this.toBase64(type).replace("image/" + type, "image/octet-stream");
         document.location.href = data;
+      },
+      
+      /*
+       * Takes the current canvas data, converts it to Base64, then
+       * sets it as the source of a new Image object and returns it.
+       */
+      toImage: function (type) {
+      	var img, data;
+        
+        data = this.toBase64(type);
+        
+        img = document.createElement('img');
+        img.src = data;
+        
+        return img;
+      },
+      
+      /*
+       * Grabs the current canvas data and Base64 encodes it.
+       */
+      toBase64: function (type) {
+      	if (type) {
+          type = type.toLowerCase();
+        }
+        
+        if (!type || (type !== 'png' && type !== 'jpg')) {
+          type = 'png';
+        }
+        
+        return this.canvas.toDataURL("image/" + type);
       },
       
       finished: function (callback) {
@@ -132,6 +183,10 @@
 
     Caman.manip.load.prototype = Caman.manip;
 
+    /*
+     * Utility forEach function for iterating over
+     * objects/arrays.
+     */
     Caman.forEach = function( obj, fn, context ) {
       
       if ( !obj || !fn ) {
@@ -152,6 +207,11 @@
 
       return obj;
     };
+    
+    /*
+     * Used for extending the Caman object, primarily to
+     * add new functionality to the base library.
+     */
     Caman.extend = function( obj ) {
       var dest = obj, src = slice.call(arguments, 1);
 
@@ -164,19 +224,38 @@
       return dest;      
     };
     
+    /*
+     * Some important additional functions that are included
+     * by default with the core library.
+     */
     Caman.extend( Caman, {
+      
+      /*
+       * Generates a unique ID based on the current time
+       */
       guid: function() {
         return +new Date();
-      }, 
+      },
+      
+      /*
+       * Returns the size of an object (the number of properties
+       * the object has)
+       */
       sizeOf: function ( obj ) {
-        var size = 0;
+        var size = 0,
+            prop;
         
-        for ( var prop in obj  ) {
+        for ( prop in obj  ) {
           size++;
         }
                 
         return size;
-      }, 
+      },
+      
+      /*
+       * Determines whether two given objects are the same based
+       * on their properties and values.
+       */
       sameAs: function ( base, test ) {
         
         // only tests arrays
@@ -192,20 +271,32 @@
         }
         return true;
       },
+      
+      /*
+       * Removes items with the given value from an array if they
+       * are present.
+       */
       remove: function ( arr, item ) {
         var ret = [];
         
         for ( var i = 0, len = arr.length; i < len; i++ ) {
           if ( arr[i] !== item  ) {
-
             ret.push(arr[i]);
           }
         }
+        
         arr = ret;
         
         return ret;      
       },
       
+      /*
+       * Data memoization - used to reduce the amount of processing
+       * needed by storing already found values in an object.
+       *
+       * If the value has already been stored, it is returned. Otherwise,
+       * this function will return false.
+       */
       getMemo: function (key, d1, d2, d3) {
         var index = String(d1) + String(d2) + String(d3);
         
@@ -219,6 +310,11 @@
         
         return false;
       },
+      
+      /*
+       * Data memoization - this function will store the given calculated
+       * value for future use if needed.
+       */
       setMemo: function (key, d1, d2, d3, value) {
         var index = String(d1) + String(d2) + String(d3);
         
@@ -235,6 +331,16 @@
         return value;
       },
       
+      /**
+       * Converts an RGB color to HSL.
+       * Assumes r, g, and b are in the set [0, 255] and
+       * returns h, s, and l in the set [0, 1].
+       *
+       * @param   Number  r   Red channel
+       * @param   Number  g   Green channel
+       * @param   Number  b   Blue channel
+       * @return              The HSL representation
+       */
       rgb_to_hsl: function(r, g, b) {
         var value, result;
         if (value = this.getMemo('rgbhsl', r, g, b)) {
@@ -564,6 +670,13 @@
         return Caman.setMemo('labxyz', l, a, b, {x: x * 95.047, y: y * 100.0, z: z * 108.883});
       },
 
+      /*
+       * Converts the hex representation of a color to RGB values.
+       * Hex value can optionally start with the hash (#).
+       *
+       * @param   String  hex   The colors hex value
+       * @return  Array         The RGB representation
+       */
       hex_to_rgb: function(hex) {
         var r, g, b, value;
         
@@ -583,10 +696,18 @@
       }
     });
     
-    
+    /*
+     * CamanJS event system
+     * Events can be subscribed to using Caman.listen() and events
+     * can be triggered using Caman.trigger().
+     */
     Caman.events  = {
       types: [ "processStart", "processComplete", "queueFinished" ],
       fn: {
+        
+        /*
+         * Triggers an event with the given target name.
+         */
         trigger: function ( target, type, data ) {
           
           var _target = target, _type = type, _data = data;
@@ -605,7 +726,12 @@
             
             });
           }
-        }, 
+        },
+        
+        /*
+         * Registers a callback function to be fired when a certain
+         * event occurs.
+         */
         listen: function ( target, type, fn ) {
 
           var _target = target, _type = type, _fn = fn;
@@ -654,14 +780,17 @@
           }          
           
           if ( !!self.queue[processFnName] && ( data.processFnName === processFnName ) ) {
-
-
-            Caman.trigger( "processStart", { id: self.canvas_id, completed: data.processFnName } );
+        
+        
+            Caman.trigger( "processStart", {
+              id: self.canvas_id, 
+              completed: data.processFnName
+            });
             
             delete self.queue[processFnName];
             
-
-
+        
+        
             len = self.image_data.data.length;
             
             function commit() {
@@ -676,7 +805,7 @@
               self.context.putImageData(  self.image_data, 0, 0);
               
               self.queueItems = Caman.remove( self.queueItems, data.processFnName );
-
+        
               if ( self.queueItems.length ) {
                 var next = self.queueItems[0];
                 
@@ -695,13 +824,12 @@
             }
             
             commit();
-
+        
           }
-
+        
           return self;
-        };          
-      })(processFn.name);      
-      
+      };          
+    }(processFn.name));
 
       this.worker.addEventListener( "message", self.queue[processFn.name].fn, false);
 
@@ -804,10 +932,6 @@ onmessage = function( event ) {
               return rgba;
             });
   };
-  
-  
-  
-  //  TODO: update the rest of the filter functions
 
   Caman.manip.saturation = function(adjust) {
     adjust *= -1;
