@@ -10,7 +10,7 @@
 
 	<script type="text/javascript">
 
-	Caman('img/example2.jpg', '#image-original');
+	Caman('img/example2.jpg', '#image-original', function () {});
 	
 
 	Caman('img/example2.jpg', '#image-brightness', function () {
@@ -37,11 +37,16 @@
 		canvas.colorize('#AF3D15', 25);
 		canvas.saturation(-30);
 		canvas.brightness(5);
-
-    Caman.listen("processComplete", function( data ) {
-      console.log("processComlete: ", data);
-    })
+    
+    canvas.finished(function () {
+      //this.save();
+      console.log("Combined filters image finished rendering!");
+    });
 	});
+	
+	Caman.listen("processComplete", function( data ) {
+    console.log("processComlete: ", data);
+  });
 	
 	</script>
 </head>

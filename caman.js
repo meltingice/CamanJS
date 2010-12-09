@@ -55,6 +55,7 @@
             canvas.width = img.width;
             canvas.height = img.height;
             
+            this.canvas = canvas;
             this.canvas_id = canvas_id;
             this.context = canvas.getContext("2d");
             this.context.drawImage(img, 0, 0);
@@ -104,6 +105,28 @@
           return Caman.store[options];
         }
         return this;
+      },
+      
+      save: function (type) {
+        if (type) {
+          type = type.toLowerCase();
+        }
+        
+        if (!type || (type !== 'png' && type !== 'jpg')) {
+          type = 'png';
+        }
+        
+        var data = this.canvas.toDataURL("image/" + type).replace("image/" + type, "image/octet-stream");
+        document.location.href = data;
+      },
+      
+      finished: function (callback) {
+        var that = this;
+        Caman.listen("queueFinished", function (data) {
+          if (data.id === that.canvas_id) {
+            callback.call(that);
+          }
+        });
       }
     };
 
@@ -562,7 +585,7 @@
     
     
     Caman.events  = {
-      types: [ "processStart", "processComplete" ],
+      types: [ "processStart", "processComplete", "queueFinished" ],
       fn: {
         trigger: function ( target, type, data ) {
           
@@ -633,7 +656,7 @@
           if ( !!self.queue[processFnName] && ( data.processFnName === processFnName ) ) {
 
 
-            Caman.trigger( "processStart", { completed: data.processFnName } );
+            Caman.trigger( "processStart", { id: self.canvas_id, completed: data.processFnName } );
             
             delete self.queue[processFnName];
             
@@ -663,10 +686,12 @@
                   "processFnName" : self.queue[next].process.name,
                   "adjust": self.queue[next].adjust
                 });
+              } else {
+                Caman.trigger( "queueFinished", {id: self.canvas_id} );
               }
                             
               self.inProcess = false;
-              Caman.trigger( "processComplete", { completed: data.processFnName } );              
+              Caman.trigger( "processComplete", { id: self.canvas_id, completed: data.processFnName } );              
             }
             
             commit();
