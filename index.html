@@ -10,39 +10,33 @@
 
 	<script type="text/javascript">
 
-	Caman('img/example2.jpg', '#image-original');
+	Caman('img/example2.jpg', '#image-original', function () {});
 	
-
-	Caman('img/example2.jpg', '#image-brightness', function () {
-		this.brightness(70);
+	Caman('img/example2.jpg', '#image-combined', function (canvas) {
+    var downloadButton = document.getElementById('download-image');
+    
+    // download image event
+    downloadButton.onclick = function () {
+       canvas.save();
+    };
+    
+		this.contrast(25);
+		this.hue(5);
+		this.colorize('#AF3D15', 25);
+		this.saturation(-30);
+		this.brightness(5);
+    
+    this.finished(function () {
+      console.log("Combined filters image finished rendering!");
+      downloadButton.value = "Download Image";
+      downloadButton.disabled = false;
+    });
 	});
 	
-
-	Caman('img/example2.jpg', '#image-saturation', function () {
-		this.saturation(-100);
-	});
-	
-
-	Caman('img/example2.jpg', '#image-contrast', function () {
-		this.contrast(50);
-	});
-	
-	Caman('img/example2.jpg', '#image-colorize', function () {
-		this.colorize('#AF3D15', 60);
-	});
-	
-	Caman('img/example2.jpg', '#image-combined', function ( canvas ) {
-		canvas.contrast(25);
-		canvas.hue(5);
-		canvas.colorize('#AF3D15', 25);
-		canvas.saturation(-30);
-		canvas.brightness(5);
-
-    Caman.listen("processComplete", function( data ) {
-      console.log("processComlete: ", data);
-    })
-	});
-	
+	Caman.listen("processComplete", function( data ) {
+    console.log("processComlete: ", data);
+  });
+  	
 	</script>
 </head>
 <body>
@@ -62,28 +56,13 @@
 </div>
 
 <div class="image-wrap">
-	<h1>Altered Image - Increased Brightness</h1>
-	<canvas id="image-brightness"></canvas>
-</div>
-
-<div class="image-wrap">
-	<h1>Altered Image - Desaturated</h1>
-	<canvas id="image-saturation"></canvas>
-</div>
-
-<div class="image-wrap">
-	<h1>Altered Image - Increased Contrast</h1>
-	<canvas id="image-contrast"></canvas>
-</div>
-
-<div class="image-wrap">
-	<h1>Altered Image - Colorize</h1>
-	<canvas id="image-colorize"></canvas>
-</div>
-
-<div class="image-wrap">
 	<h1>Altered Image - Combined Filters</h1>
 	<canvas id="image-combined"></canvas>
+	
+	<div id="download-button">
+  	<input id="download-image" class="fancy-button-grey" type="button" value="Please wait..." disabled="true" />
+  	<p>Note: you'll need to give the downloaded file a .png extension manually.</p>
+  </div>
 </div>
 
 </body>
