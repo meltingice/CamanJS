@@ -781,16 +781,13 @@
           
           if ( !!self.queue[processFnName] && ( data.processFnName === processFnName ) ) {
         
-        
             Caman.trigger( "processStart", {
               id: self.canvas_id, 
               completed: data.processFnName
             });
             
             delete self.queue[processFnName];
-            
-        
-        
+
             len = self.image_data.data.length;
             
             function commit() {
@@ -906,6 +903,7 @@ onmessage = function( event ) {
   });
 };
 // WorkerGlobalScope //
+
 // Basic event system
 (function (Caman) {
   
@@ -936,7 +934,7 @@ onmessage = function( event ) {
   Caman.manip.saturation = function(adjust) {
     adjust *= -1;
     
-    return this.process( adjust,  function saturation(adjust, rgba) {
+    return this.process( adjust, function saturation(adjust, rgba) {
                 var chan, max, diff;
                 max = Math.max(rgba.r, rgba.g, rgba.b);
                 
@@ -959,7 +957,7 @@ onmessage = function( event ) {
 
     adjust = Math.pow((100 + adjust) / 100, 2);
     
-    return this.process( adjust,  function contrast(adjust, rgba) {  
+    return this.process( adjust, function contrast(adjust, rgba) {  
         
               for ( var chan in rgba) {
                 if (rgba.hasOwnProperty(chan)) {
@@ -982,7 +980,7 @@ onmessage = function( event ) {
   
   Caman.manip.hue = function(adjust) {
     var hsv, h;      
-    return this.process( adjust,  function hue(adjust, rgba) {
+    return this.process( adjust, function hue(adjust, rgba) {
         hsv = Caman.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
         h = hsv.h * 100;
         h += Math.abs(adjust);
@@ -1009,9 +1007,9 @@ onmessage = function( event ) {
         g: arguments[1],
         b: arguments[2]        
       }
+      
       level = arguments[3];
     }
-    
     
     return this.process( [ level, rgb ],  function colorize( adjust, rgba) {
     
@@ -1020,6 +1018,36 @@ onmessage = function( event ) {
         rgba.b -= (rgba.b - adjust[1].b) * (adjust[0] / 100);
         
         return rgba;
+    });
+  };
+  
+  Caman.manip.invert = function () {
+    return this.process({}, function invert (adjust, rgba) {
+      rgba.r = 255 - rgba.r;
+      rgba.g = 255 - rgba.g;
+      rgba.b = 255 - rgba.b;
+      
+      return rgba;
+    });
+  };
+  
+  /*
+   * Applies a sepia filter to the image. Assumes adjustment is between 0 and 100,
+   * which represents how much the sepia filter is applied.
+   */
+  Caman.manip.sepia = function (adjust) {
+    if (adjust === undefined) {
+      adjust = 100;
+    }
+    
+    adjust = (adjust / 100);
+    
+    return this.process(adjust, function sepia (adjust, rgba) {
+      rgba.r = Math.min(255, (rgba.r * (1 - (.607 * adjust))) + (rgba.g * (.769 * adjust)) + (rgba.b * (.189 * adjust)));
+      rgba.g = Math.min(255, (rgba.r * (.349 * adjust)) + (rgba.g * (1 - (.314 * adjust))) + (rgba.b * (.168 * adjust)));
+      rgba.b = Math.min(255, (rgba.r * (.272 * adjust)) + (rgba.g * (.534 * adjust)) + (rgba.b * (1- (.869 * adjust))));
+      
+      return rgba;
     });
   };
   
