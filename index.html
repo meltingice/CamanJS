@@ -12,6 +12,13 @@
 
     Caman('img/example2.jpg', '#image-original', function () {});
     
+    Caman('img/example3.jpg', '#image-sepia', function () {
+      this.brightness(-5);
+      this.sepia(70);
+      this.colorize('#AF3D15', 5);
+      this.contrast(5);
+    });
+    
     Caman('img/example2.jpg', '#image-combined', function (canvas) {
       var downloadButton = document.getElementById('download-image');
       
@@ -20,11 +27,11 @@
          canvas.save();
       };
       
-     this.contrast(25);
-     this.hue(5);
-     this.colorize('#AF3D15', 25);
-     this.saturation(-30);
-     this.brightness(5);
+      this.contrast(25);
+      this.hue(5);
+      this.colorize('#AF3D15', 25);
+      this.saturation(-30);
+      this.brightness(5);
       
       this.finished(function () {
         console.log("Combined filters image finished rendering!");
@@ -56,6 +63,11 @@
 <div class="image-wrap">
 	<h1>Original Image</h1>
 	<canvas id="image-original"></canvas>
+</div>
+
+<div class="image-wrap">
+  <h1>Altered Image - Sepia (with a few other filters)</h1>
+  <canvas id="image-sepia"></canvas>
 </div>
 
 <div class="image-wrap">
