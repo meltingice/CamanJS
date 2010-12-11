@@ -84,6 +84,7 @@
             this.context.drawImage(img, 0, 0);
             this.image_data = this.context.getImageData(0, 0, img.width, img.height);
             this.pixel_data = this.image_data.data;
+            this.orig_pixel_data = this.image_data.data;
             this.dimensions = {
               width: img.width, 
               height: img.height
@@ -932,25 +933,25 @@ onmessage = function( event ) {
   };
 
   Caman.manip.saturation = function(adjust) {
+    var chan, max, diff;
     adjust *= -1;
     
     return this.process( adjust, function saturation(adjust, rgba) {
-                var chan, max, diff;
-                max = Math.max(rgba.r, rgba.g, rgba.b);
-                
-                for (chan in rgba) {
-                  if (rgba.hasOwnProperty(chan)) {
-                    if (rgba[chan] === max || chan === "a") {
-                        continue;
-                      }
-                      
-                      diff = max - rgba[chan];
-                      rgba[chan] += Math.ceil(diff * (adjust / 100));
-                  }
-                }
-                
-                return rgba;
-            });
+      max = Math.max(rgba.r, rgba.g, rgba.b);
+      
+      for (chan in rgba) {
+        if (rgba.hasOwnProperty(chan)) {
+          if (rgba[chan] === max || chan === "a") {
+              continue;
+            }
+            
+            diff = max - rgba[chan];
+            rgba[chan] += Math.ceil(diff * (adjust / 100));
+        }
+      }
+      
+      return rgba;
+    });
   };
   
   Caman.manip.contrast = function(adjust) {
@@ -959,23 +960,23 @@ onmessage = function( event ) {
     
     return this.process( adjust, function contrast(adjust, rgba) {  
         
-              for ( var chan in rgba) {
-                if (rgba.hasOwnProperty(chan)) {
-                  rgba[chan] /= 255;
-                  rgba[chan] -= 0.5;
-                  rgba[chan] *= adjust;
-                  rgba[chan] += 0.5;
-                  rgba[chan] *= 255;
-                  if (rgba[chan] > 255) {
-                    rgba[chan] = 255;
-                  } else if (rgba[chan] < 0) {
-                    rgba[chan] = 0;
-                  }
-                }
-              }
+      for ( var chan in rgba) {
+        if (rgba.hasOwnProperty(chan)) {
+          rgba[chan] /= 255;
+          rgba[chan] -= 0.5;
+          rgba[chan] *= adjust;
+          rgba[chan] += 0.5;
+          rgba[chan] *= 255;
+          if (rgba[chan] > 255) {
+            rgba[chan] = 255;
+          } else if (rgba[chan] < 0) {
+            rgba[chan] = 0;
+          }
+        }
+      }
               
-              return rgba;
-          });
+      return rgba;
+    });
   };
   
   Caman.manip.hue = function(adjust) {
