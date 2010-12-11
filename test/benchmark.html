@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CamanJS Benchmarking</title>
+  
+  <link type="text/css" rel="stylesheet" href="benchmark/styles.css" />
+  
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+  <script type="text/javascript" src="../caman.js"></script>
+  <script type="text/javascript" src="benchmark/benchmark.js"></script>
+</head>
+<body>
+
+  <div id="header">
+    <img src="benchmark/camanjs.png" alt="CamanJS" />
+  </div>
+
+  <div id="image-wrap">
+    
+  </div>
+
+  <div id="test-results-wrap">
+    <table id="test-results">
+      <tr id="test-header">
+        <td>Filter</td>
+      </tr>
+    </table>
+  </div>
+    
+  <script type="text/javascript">
+    benchmark.run(3, function (results) {
+      console.log(results);
+    });
+  </script>
+</body>
+</html>
