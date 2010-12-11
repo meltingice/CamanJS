@@ -99,7 +99,7 @@ Extending CamanJS is easy as well. It's accomplished by adding functions onto th
 </pre>
 
 <h2>Utility Functions</h2>
-Caman comes with a set of utility functions that you may find very useful when extending it.  In the main body of the function thats extending Caman, you can simply access them through Caman.func_name(). Their names should be pretty self explanatory:
+CamanJS comes with a set of utility functions that you may find very useful when extending it.  In the main body of the function thats extending CamanJS, you can simply access them through Caman.func_name(). Their names should be pretty self explanatory:
 
 * rgb_to_hsl()
 * hsl_to_rgb()
@@ -110,6 +110,11 @@ Caman comes with a set of utility functions that you may find very useful when e
 * xyz_to_lab()
 * lab_to_xyz()
 * hex_to_rgb()
+
+<h1>Testing</h1>
+CamanJS has both QUnit unit testing and a custom benchmarking page to monitor render times on a per-filter basis.  Simply open test/index.html for the QUnit tests, and test/benchmark.html for the benchmarking tests.
+
+If you add a filter, please edit test/benchmark/benchmark.js and add your filter (with appropriate args) to the list at the top of the file.
 
 <h1>Project To-do</h1>
 * Implement a way to specify canvas elements by class instead of id, and apply effects to all found canvases.
