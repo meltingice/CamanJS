@@ -5,7 +5,7 @@
     var  Caman, 
     forEach = Array.prototype.forEach, 
     hasOwn = Object.prototype.hasOwnProperty, 
-    slice = Array.prototype.slice; 
+    slice = Array.prototype.slice;
   
     /*
      * CamanJS can accept arguments in 2 different formats:
@@ -343,6 +343,11 @@
         this.memos[key][index] = value;
         
         return value;
+      },
+      
+      randomRange: function (min, max, float) {
+        var rand = min + (Math.random() * (max - min));
+        return typeof float == 'undefined' ? Math.round(rand) : rand.toFixed(float);
       },
       
       /**
@@ -967,6 +972,25 @@ onmessage = function( event ) {
     });
   };
   
+  /*
+   * An improved greyscale function that should make prettier results
+   * than simply using the saturation filter to remove color. There are
+   * no arguments, it simply makes the image greyscale with no in-between.
+   *
+   * Algorithm adopted from http://www.phpied.com/image-fun/
+   */
+  Caman.manip.greyscale = function () {
+    return this.process({}, function greyscale(adjust, rgba) {
+      var avg = 0.3 * rgba.r + 0.59 * rgba.g + 0.11 * rgba.b;
+      
+      rgba.r = avg;
+      rgba.g = avg;
+      rgba.b = avg;
+      
+      return rgba;
+    });
+  };
+  
   Caman.manip.contrast = function(adjust) {
 
     adjust = Math.pow((100 + adjust) / 100, 2);
@@ -1065,5 +1089,64 @@ onmessage = function( event ) {
       return rgba;
     });
   };
+  
+  /*
+   * Adjusts the gamma of the image. I would stick with low values to be safe.
+   */
+  Caman.manip.gamma = function (adjust) {
+    return this.process(adjust, function gamma(adjust, rgba) {
+      rgba.r = Math.pow(rgba.r / 255, adjust) * 255;
+      rgba.g = Math.pow(rgba.g / 255, adjust) * 255;
+      rgba.b = Math.pow(rgba.b / 255, adjust) * 255;
+      
+      return rgba;
+    });
+  };
+  
+  /*
+   * Adds noise to the image on a scale from 1 - 100
+   * However, the scale isn't constrained, so you can specify
+   * a value > 100 if you want a LOT of noise.
+   */
+  Caman.manip.noise = function (adjust) {
+    adjust = Math.abs(adjust) * 2.55;
+    return this.process(adjust, function noise(adjust, rgba) {
+      var rand = Caman.randomRange(adjust*-1, adjust);
+      rgba.r += rand;
+      rgba.g += rand;
+      rgba.b += rand;
+      
+      return rgba;
+    });
+  };
+  
+  /*
+   * Clips a color to max values when it falls outside of the specified range.
+   * User supplied value should be between 0 and 100.
+   */
+  Caman.manip.clip = function (adjust) {
+    adjust = Math.abs(adjust) * 2.55;
+    return this.process(adjust, function clip(adjust, rgba) {
+      if (rgba.r > 255 - adjust) {
+        rgba.r = 255;
+      } else if (rgba.r < adjust) {
+        rgba.r = 0;
+      }
+      
+      if (rgba.g > 255 - adjust) {
+        rgba.g = 255;
+      } else if (rgba.g < adjust) {
+        rgba.g = 0;
+      }
+      
+      if (rgba.b > 255 - adjust) {
+        rgba.b = 255;
+      } else if (rgba.b < adjust) {
+        rgba.b = 0;
+      }
+      
+      return rgba;
+    });
+  }
   
 }(Caman));

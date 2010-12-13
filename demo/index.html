@@ -13,7 +13,8 @@
     Caman('img/example2.jpg', '#image-original', function () {});
     
     Caman('img/example3.jpg', '#image-sepia', function () {
-      this.brightness(-5);
+      this.noise(5);
+      this.gamma(1.2);
       this.sepia(70);
       this.colorize('#AF3D15', 5);
       this.contrast(5);
