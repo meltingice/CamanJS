@@ -39,7 +39,8 @@ var benchmark = (function () {
     current_iteration = 1,
     last_iteration = 1,
     current_test = null,
-    finish_callback = null;
+    finish_callback = null,
+    plot = null;
     
     return {
       setUp: function () {
@@ -119,6 +120,27 @@ var benchmark = (function () {
           if (results.hasOwnProperty(filter)) {
             results[filter].avg = results[filter].times.average();
           }
+        }
+        
+        var chartData = [];
+        var tickNames = [];
+        var i = 1;
+        $.each(results, function (filter, data) {
+        	chartData.push({data: [[i, Math.round(data.avg)]], label: filter});
+        	tickNames.push([i, filter]);
+        	i++;
+        });
+        
+        if (plot === null) {
+        	plot = $.plot($("#test-graph"), chartData,
+        	{
+        		series: {
+        			bars: {show: true, barWidth: 1.0, align: "center"}
+        		},
+        		xaxis: {
+        			ticks: tickNames
+        		}
+        	});
         }
         
         finish_callback(results);

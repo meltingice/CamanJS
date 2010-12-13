@@ -40,7 +40,7 @@ body {
     color: #222222 !important;
 }
 
-#image-wrap {
+#image-wrap, #graph-wrap {
     width: 600px;
     height: 406px;
     margin: 20px auto;
@@ -52,4 +52,11 @@ body {
     -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+#graph-wrap { width: 800px !important; height: 300px !important; }
+
+#test-graph {
+  width: 800px;
+  height: 300px;
 }
