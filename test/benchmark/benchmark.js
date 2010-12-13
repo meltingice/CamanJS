@@ -2,10 +2,14 @@
 
 var test_filters = [
   {filter: 'brightness', args: [50]},
+  {filter: 'clip', args: [30]},
   {filter: 'colorize', args: ['#AF3D15', 20]},
   {filter: 'contrast', args: [20]},
+  {filter: 'gamma', args: [2.2]},
+  {filter: 'greyscale', args: []},
   {filter: 'hue', args: [10]},
   {filter: 'invert', args: []},
+  {filter: 'noise', args: [20]},
   {filter: 'saturation', args: [-50]},
   {filter: 'sepia', args: [50]}
 ];
@@ -139,7 +143,8 @@ var benchmark = (function () {
         		},
         		xaxis: {
         			ticks: tickNames
-        		}
+        		},
+        		legend: {show: false}
         	});
         }
         
