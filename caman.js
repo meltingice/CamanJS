@@ -299,6 +299,14 @@
        * this function will return false.
        */
       getMemo: function (key, d1, d2, d3) {
+        /*
+         * So it turns out that memoization is actually slowing down CamanJS and
+         * is likely the cause behind the memory errors in Firefox 3. Instead of
+         * completely removing this code, lets just return immediately in case
+         * the memoization can be improved in the future.
+         */
+        return false;
+        
         var index = String(d1) + String(d2) + String(d3);
         
         if (!this.memos || !this.memos[key]) {
@@ -317,6 +325,11 @@
        * value for future use if needed.
        */
       setMemo: function (key, d1, d2, d3, value) {
+        /*
+         * Memoziation is disabled for now, see getMemo() above.
+         */
+        return value;
+        
         var index = String(d1) + String(d2) + String(d3);
         
         if (!this.memos) {
@@ -959,14 +972,15 @@ onmessage = function( event ) {
     adjust = Math.pow((100 + adjust) / 100, 2);
     
     return this.process( adjust, function contrast(adjust, rgba) {  
-        
-      for ( var chan in rgba) {
+      var chan;
+      for (chan in rgba) {
         if (rgba.hasOwnProperty(chan)) {
           rgba[chan] /= 255;
           rgba[chan] -= 0.5;
           rgba[chan] *= adjust;
           rgba[chan] += 0.5;
           rgba[chan] *= 255;
+          
           if (rgba[chan] > 255) {
             rgba[chan] = 255;
           } else if (rgba[chan] < 0) {
