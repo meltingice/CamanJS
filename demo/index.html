@@ -10,7 +10,19 @@
 
 	<script type="text/javascript">
 
-    Caman('img/example2.jpg', '#image-original', function () {});
+	Caman('img/example3.jpg', '#image-original', function () {});
+	
+    Caman('img/example3.jpg', '#image-channels', function () {
+    	this.channels({
+    		red: 20,
+    		green: -5,
+    		blue: -10
+    	});
+    	
+    	this.gamma(1.2);
+    	this.brightness(5);
+    	this.contrast(5);
+    });
     
     Caman('img/example3.jpg', '#image-sepia', function () {
       this.noise(5);
@@ -67,12 +79,17 @@
 </div>
 
 <div class="image-wrap">
-  <h1>Altered Image - Sepia (with a few other filters)</h1>
+	<h1>Altered Image - Adjusted Channels + Others</h1>
+	<canvas id="image-channels"></canvas>
+</div>
+
+<div class="image-wrap">
+  <h1>Altered Image - Sepia & Noise + Others</h1>
   <canvas id="image-sepia"></canvas>
 </div>
 
 <div class="image-wrap">
-	<h1>Altered Image - Combined Filters</h1>
+	<h1>Altered Image - Multiple Filters</h1>
 	<canvas id="image-combined"></canvas>
 	
 	<div id="download-button">

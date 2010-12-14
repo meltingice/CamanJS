@@ -1147,6 +1147,65 @@ onmessage = function( event ) {
       
       return rgba;
     });
-  }
+  };
+  
+  /*
+   * Lets you modify the intensity of any combination of red, green, or blue channels.
+   * Options format (must specify 1 - 3 colors):
+   * {
+   *	red: 20,
+   *  green: -5,
+   *  blue: -40
+   * }
+   */
+  Caman.manip.channels = function (options) {
+  	if (typeof(options) !== 'object') {
+  		return;
+  	}
+  	
+  	for (var chan in options) {
+  		if (options.hasOwnProperty(chan)) {
+  			if (options[chan] == 0) {
+  				delete options[chan];
+  				continue;
+  			}
+  			
+  			options[chan] = options[chan] / 100;
+  		}
+  	}
+  	
+  	if (options.length === 0) {
+  		return;
+  	}
+  	
+  	return this.process(options, function channels(options, rgba) {
+  		if (options.red) {
+  			if (options.red > 0) {
+  				// fraction of the distance between current color and 255
+  				rgba.r = rgba.r + ((255 - rgba.r) * options.red);
+  			} else {
+  				rgba.r = rgba.r - (rgba.r * Math.abs(options.red));
+  			}
+  		}
+  		
+  		if (options.green) {
+  			if (options.green > 0) {
+  				rgba.g = rgba.g + ((255 - rgba.g) * options.green);
+  			} else {
+  				rgba.g = rgba.g - (rgba.g * Math.abs(options.green));
+  			}
+  		}
+  		
+  		if (options.blue) {
+  			if (options.blue > 0) {
+  				rgba.b = rgba.b + ((255 - rgba.b) * options.blue);
+  			} else {
+  				rgba.b = rgba.b - (rgba.b * Math.abs(options.blue));
+  			}
+  		}
+  		
+  		return rgba;
+  	});
+  };
   
 }(Caman));

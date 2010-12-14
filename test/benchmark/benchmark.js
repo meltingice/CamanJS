@@ -3,6 +3,7 @@
 var test_filters = [
   {filter: 'brightness', args: [50]},
   {filter: 'clip', args: [30]},
+  {filter: 'channels', args: [{red: 20, green: -5, blue: -10}]},
   {filter: 'colorize', args: ['#AF3D15', 20]},
   {filter: 'contrast', args: [20]},
   {filter: 'gamma', args: [2.2]},
