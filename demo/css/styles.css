@@ -88,3 +88,14 @@ body {
     font-weight: 300;
     color: #333333;
 }
+
+.loading {
+    text-align: center;
+    margin: 10px 0 0 0;
+}
+
+.loading p {
+    font-weight: 300;
+    margin: 0 0 3px 0;
+    color: #333333;
+}

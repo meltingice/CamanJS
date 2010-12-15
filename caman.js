@@ -762,10 +762,10 @@
           }        
 
           if ( !Caman.events.fn[_type] ) {
-            Caman.events.fn[_type] = {};
+            Caman.events.fn[_type] = [];
           }
-          
-          Caman.events.fn[_type][ _fn.toString() ] = _fn;
+
+          Caman.events.fn[_type].push(_fn);
           
           return true;
         }

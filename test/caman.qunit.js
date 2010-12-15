@@ -21,10 +21,6 @@ test("Caman is a function", function () {
 
 });
 
-
-
-
-
 test("rgb_to_xyz and xyz_to_rgb are symmetric", function() {
   var rgbColors = [
     {r: 127, g: 127, b: 127},

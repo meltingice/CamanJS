@@ -22,6 +22,10 @@
     	this.gamma(1.2);
     	this.brightness(5);
     	this.contrast(5);
+    	
+    	this.finished(function () {
+    	 document.getElementById('channels-loading').style.display = 'none';
+    	});
     });
     
     Caman('img/example3.jpg', '#image-sepia', function () {
@@ -30,6 +34,10 @@
       this.sepia(70);
       this.colorize('#AF3D15', 5);
       this.contrast(5);
+      
+      this.finished(function () {
+        document.getElementById('sepia-loading').style.display = 'none';
+      });
     });
     
     Caman('img/example2.jpg', '#image-combined', function (canvas) {
@@ -47,7 +55,8 @@
       this.brightness(5);
       
       this.finished(function () {
-        console.log("Combined filters image finished rendering!");
+        document.getElementById('combined-loading').style.display = 'none';
+        
         downloadButton.value = "Download Image";
         downloadButton.disabled = false;
         
@@ -64,13 +73,13 @@
 </head>
 <body>
 
+<a href="http://github.com/meltingice/CamanJS"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://assets1.github.com/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028?repo=&url=http%3A%2F%2Fs3.amazonaws.com%2Fgithub%2Fribbons%2Fforkme_right_orange_ff7600.png&path=" alt="Fork me on GitHub"></a>
+
 <div id="header">
 	<div id="header-logo">
 		<img src="img/camanjs.png" alt="CamanJS" />
 	</div>
 	<p>CamanJS is an attempt at providing a simple to use interface for dynamically manipulating images completely in JS. It strives to provide much of the basic functionality you would find in something like Photoshop. By this I mean, image contrast, brightness, levels, saturation, etc. At this time, something as complex as the Clone Tool is out of the question (but if you're feeling brave, be my guest).</p>
-	
-	<p style="text-align: center;"><a href="http://github.com/meltingice/CamanJS">Fork me on GitHub</a></p>
 </div>
 
 <div class="image-wrap">
@@ -81,16 +90,28 @@
 <div class="image-wrap">
 	<h1>Altered Image - Adjusted Channels + Others</h1>
 	<canvas id="image-channels"></canvas>
+	<div id="channels-loading" class="loading">
+	 <p>Rendering...</p>
+	 <img src="img/ajax-loader.gif" />
+	</div>
 </div>
 
 <div class="image-wrap">
   <h1>Altered Image - Sepia & Noise + Others</h1>
   <canvas id="image-sepia"></canvas>
+  <div id="sepia-loading" class="loading">
+    <p>Rendering...</p>
+    <img src="img/ajax-loader.gif" />
+	</div>
 </div>
 
 <div class="image-wrap">
 	<h1>Altered Image - Multiple Filters</h1>
 	<canvas id="image-combined"></canvas>
+	<div id="combined-loading" class="loading">
+    <p>Rendering...</p>
+    <img src="img/ajax-loader.gif" />
+	</div>
 	
 	<div id="download-button">
   	<input id="download-image" class="fancy-button-grey" type="button" value="Please wait..." disabled="true" />
