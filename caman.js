@@ -5,7 +5,7 @@
     var  Caman, 
     forEach = Array.prototype.forEach, 
     hasOwn = Object.prototype.hasOwnProperty, 
-    slice = Array.prototype.slice; 
+    slice = Array.prototype.slice;
   
     /*
      * CamanJS can accept arguments in 2 different formats:
@@ -84,6 +84,7 @@
             this.context.drawImage(img, 0, 0);
             this.image_data = this.context.getImageData(0, 0, img.width, img.height);
             this.pixel_data = this.image_data.data;
+            this.orig_pixel_data = this.image_data.data;
             this.dimensions = {
               width: img.width, 
               height: img.height
@@ -298,6 +299,14 @@
        * this function will return false.
        */
       getMemo: function (key, d1, d2, d3) {
+        /*
+         * So it turns out that memoization is actually slowing down CamanJS and
+         * is likely the cause behind the memory errors in Firefox 3. Instead of
+         * completely removing this code, lets just return immediately in case
+         * the memoization can be improved in the future.
+         */
+        return false;
+        
         var index = String(d1) + String(d2) + String(d3);
         
         if (!this.memos || !this.memos[key]) {
@@ -316,6 +325,11 @@
        * value for future use if needed.
        */
       setMemo: function (key, d1, d2, d3, value) {
+        /*
+         * Memoziation is disabled for now, see getMemo() above.
+         */
+        return value;
+        
         var index = String(d1) + String(d2) + String(d3);
         
         if (!this.memos) {
@@ -329,6 +343,11 @@
         this.memos[key][index] = value;
         
         return value;
+      },
+      
+      randomRange: function (min, max, float) {
+        var rand = min + (Math.random() * (max - min));
+        return typeof float == 'undefined' ? Math.round(rand) : rand.toFixed(float);
       },
       
       /**
@@ -743,10 +762,10 @@
           }        
 
           if ( !Caman.events.fn[_type] ) {
-            Caman.events.fn[_type] = {};
+            Caman.events.fn[_type] = [];
           }
-          
-          Caman.events.fn[_type][ _fn.toString() ] = _fn;
+
+          Caman.events.fn[_type].push(_fn);
           
           return true;
         }
@@ -932,25 +951,44 @@ onmessage = function( event ) {
   };
 
   Caman.manip.saturation = function(adjust) {
+    var chan, max, diff;
     adjust *= -1;
     
     return this.process( adjust, function saturation(adjust, rgba) {
-                var chan, max, diff;
-                max = Math.max(rgba.r, rgba.g, rgba.b);
-                
-                for (chan in rgba) {
-                  if (rgba.hasOwnProperty(chan)) {
-                    if (rgba[chan] === max || chan === "a") {
-                        continue;
-                      }
-                      
-                      diff = max - rgba[chan];
-                      rgba[chan] += Math.ceil(diff * (adjust / 100));
-                  }
-                }
-                
-                return rgba;
-            });
+      max = Math.max(rgba.r, rgba.g, rgba.b);
+      
+      for (chan in rgba) {
+        if (rgba.hasOwnProperty(chan)) {
+          if (rgba[chan] === max || chan === "a") {
+              continue;
+            }
+            
+            diff = max - rgba[chan];
+            rgba[chan] += Math.ceil(diff * (adjust / 100));
+        }
+      }
+      
+      return rgba;
+    });
+  };
+  
+  /*
+   * An improved greyscale function that should make prettier results
+   * than simply using the saturation filter to remove color. There are
+   * no arguments, it simply makes the image greyscale with no in-between.
+   *
+   * Algorithm adopted from http://www.phpied.com/image-fun/
+   */
+  Caman.manip.greyscale = function () {
+    return this.process({}, function greyscale(adjust, rgba) {
+      var avg = 0.3 * rgba.r + 0.59 * rgba.g + 0.11 * rgba.b;
+      
+      rgba.r = avg;
+      rgba.g = avg;
+      rgba.b = avg;
+      
+      return rgba;
+    });
   };
   
   Caman.manip.contrast = function(adjust) {
@@ -958,24 +996,25 @@ onmessage = function( event ) {
     adjust = Math.pow((100 + adjust) / 100, 2);
     
     return this.process( adjust, function contrast(adjust, rgba) {  
-        
-              for ( var chan in rgba) {
-                if (rgba.hasOwnProperty(chan)) {
-                  rgba[chan] /= 255;
-                  rgba[chan] -= 0.5;
-                  rgba[chan] *= adjust;
-                  rgba[chan] += 0.5;
-                  rgba[chan] *= 255;
-                  if (rgba[chan] > 255) {
-                    rgba[chan] = 255;
-                  } else if (rgba[chan] < 0) {
-                    rgba[chan] = 0;
-                  }
-                }
-              }
+      var chan;
+      for (chan in rgba) {
+        if (rgba.hasOwnProperty(chan)) {
+          rgba[chan] /= 255;
+          rgba[chan] -= 0.5;
+          rgba[chan] *= adjust;
+          rgba[chan] += 0.5;
+          rgba[chan] *= 255;
+          
+          if (rgba[chan] > 255) {
+            rgba[chan] = 255;
+          } else if (rgba[chan] < 0) {
+            rgba[chan] = 0;
+          }
+        }
+      }
               
-              return rgba;
-          });
+      return rgba;
+    });
   };
   
   Caman.manip.hue = function(adjust) {
@@ -1049,6 +1088,124 @@ onmessage = function( event ) {
       
       return rgba;
     });
+  };
+  
+  /*
+   * Adjusts the gamma of the image. I would stick with low values to be safe.
+   */
+  Caman.manip.gamma = function (adjust) {
+    return this.process(adjust, function gamma(adjust, rgba) {
+      rgba.r = Math.pow(rgba.r / 255, adjust) * 255;
+      rgba.g = Math.pow(rgba.g / 255, adjust) * 255;
+      rgba.b = Math.pow(rgba.b / 255, adjust) * 255;
+      
+      return rgba;
+    });
+  };
+  
+  /*
+   * Adds noise to the image on a scale from 1 - 100
+   * However, the scale isn't constrained, so you can specify
+   * a value > 100 if you want a LOT of noise.
+   */
+  Caman.manip.noise = function (adjust) {
+    adjust = Math.abs(adjust) * 2.55;
+    return this.process(adjust, function noise(adjust, rgba) {
+      var rand = Caman.randomRange(adjust*-1, adjust);
+      rgba.r += rand;
+      rgba.g += rand;
+      rgba.b += rand;
+      
+      return rgba;
+    });
+  };
+  
+  /*
+   * Clips a color to max values when it falls outside of the specified range.
+   * User supplied value should be between 0 and 100.
+   */
+  Caman.manip.clip = function (adjust) {
+    adjust = Math.abs(adjust) * 2.55;
+    return this.process(adjust, function clip(adjust, rgba) {
+      if (rgba.r > 255 - adjust) {
+        rgba.r = 255;
+      } else if (rgba.r < adjust) {
+        rgba.r = 0;
+      }
+      
+      if (rgba.g > 255 - adjust) {
+        rgba.g = 255;
+      } else if (rgba.g < adjust) {
+        rgba.g = 0;
+      }
+      
+      if (rgba.b > 255 - adjust) {
+        rgba.b = 255;
+      } else if (rgba.b < adjust) {
+        rgba.b = 0;
+      }
+      
+      return rgba;
+    });
+  };
+  
+  /*
+   * Lets you modify the intensity of any combination of red, green, or blue channels.
+   * Options format (must specify 1 - 3 colors):
+   * {
+   *	red: 20,
+   *  green: -5,
+   *  blue: -40
+   * }
+   */
+  Caman.manip.channels = function (options) {
+  	if (typeof(options) !== 'object') {
+  		return;
+  	}
+  	
+  	for (var chan in options) {
+  		if (options.hasOwnProperty(chan)) {
+  			if (options[chan] == 0) {
+  				delete options[chan];
+  				continue;
+  			}
+  			
+  			options[chan] = options[chan] / 100;
+  		}
+  	}
+  	
+  	if (options.length === 0) {
+  		return;
+  	}
+  	
+  	return this.process(options, function channels(options, rgba) {
+  		if (options.red) {
+  			if (options.red > 0) {
+  				// fraction of the distance between current color and 255
+  				rgba.r = rgba.r + ((255 - rgba.r) * options.red);
+  			} else {
+  				rgba.r = rgba.r - (rgba.r * Math.abs(options.red));
+  			}
+  		}
+  		
+  		if (options.green) {
+  			if (options.green > 0) {
+  				rgba.g = rgba.g + ((255 - rgba.g) * options.green);
+  			} else {
+  				rgba.g = rgba.g - (rgba.g * Math.abs(options.green));
+  			}
+  		}
+  		
+  		if (options.blue) {
+  			if (options.blue > 0) {
+  				rgba.b = rgba.b + ((255 - rgba.b) * options.blue);
+  			} else {
+  				rgba.b = rgba.b - (rgba.b * Math.abs(options.blue));
+  			}
+  		}
+  		
+  		return rgba;
+  	});
   };
   
 }(Caman));
