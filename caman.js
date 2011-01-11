@@ -839,6 +839,7 @@ Caman.manip.process = function (adjust, processFn) {
       var chan;
       for (chan in rgba) {
         if (rgba.hasOwnProperty(chan)) {
+          if (chan === 'a') { continue; }
           rgba[chan] /= 255;
           rgba[chan] -= 0.5;
           rgba[chan] *= adjust;
