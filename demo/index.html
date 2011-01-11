@@ -29,7 +29,6 @@
     });
     
     Caman('img/example3.jpg', '#image-sepia', function () {
-      this.noise(5);
       this.gamma(1.2);
       this.sepia(70);
       this.colorize('#AF3D15', 5);
@@ -48,9 +47,10 @@
          canvas.save();
       };
       
+      this.noise(5);
       this.contrast(25);
-      this.hue(5);
       this.colorize('#AF3D15', 25);
+      this.sepia(25);
       this.saturation(-30);
       this.brightness(5);
       
@@ -97,7 +97,7 @@
 </div>
 
 <div class="image-wrap">
-  <h1>Altered Image - Sepia & Noise + Others</h1>
+  <h1>Altered Image - Sepia + Others</h1>
   <canvas id="image-sepia"></canvas>
   <div id="sepia-loading" class="loading">
     <p>Rendering...</p>
