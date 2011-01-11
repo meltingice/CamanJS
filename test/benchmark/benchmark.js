@@ -192,7 +192,7 @@ var benchmark = (function () {
         
         this[test.filter].apply(this, test.args);
         
-        this.finished(function () {
+        this.render(function () {
           var time;
           
           end = new Date().getTime();
