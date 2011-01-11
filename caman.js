@@ -153,8 +153,10 @@ Caman.manip = Caman.prototype = {
   
   render: function (callback) {
     this.context.putImageData(this.image_data, 0, 0);
-        
-    callback.call(this);
+    
+    if (typeof callback === 'function') {
+      callback.call(this);
+    }
   }
 };
 

@@ -16,6 +16,8 @@ Caman('path/to/image.jpg', '#canvas-id', function () {
 	this.contrast(-5);
 	this.saturation(-50);
 	// and so on...
+	
+	this.render();
 });
 </pre>
 
@@ -30,6 +32,8 @@ Caman({
 		this.contrast(-5);
 		this.saturation(-50);
 		// and so on...
+		
+		this.render();
 	}
 });
 </pre>
@@ -42,7 +46,7 @@ Caman('img/example.jpg', '#image-caman', function () {
   this.brightness(10);
   
   // More info on finished() in events section below
-  this.finished(function () {
+  this.render(function () {
     this.save('png'); // shows a download file prompt
   });
 });
@@ -69,7 +73,7 @@ Caman('img/example.jpg', '#image-caman', function () {
   this.brightness(5);
   
   // Event helper that fires when *this* image is finished rendering
-  this.finished(function () {
+  this.render(function () {
     console.log("Image finished rendering!");
   });
 });
