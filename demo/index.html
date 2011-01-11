@@ -23,7 +23,7 @@
     	this.brightness(5);
     	this.contrast(5);
     	
-    	this.finished(function () {
+    	this.render(function () {
     	 document.getElementById('channels-loading').style.display = 'none';
     	});
     });
@@ -35,7 +35,7 @@
       this.colorize('#AF3D15', 5);
       this.contrast(5);
       
-      this.finished(function () {
+      this.render(function () {
         document.getElementById('sepia-loading').style.display = 'none';
       });
     });
@@ -54,7 +54,7 @@
       this.saturation(-30);
       this.brightness(5);
       
-      this.finished(function () {
+      this.render(function () {
         document.getElementById('combined-loading').style.display = 'none';
         
         downloadButton.value = "Download Image";
