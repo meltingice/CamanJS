@@ -38,7 +38,7 @@ Caman.manip = Caman.prototype = {
    */
   load: function(options) {
     var 
-      img = document.createElement("img"), 
+      img = document.createElement("img")
       
       /*
        * Called once the image is loaded from the server
@@ -67,6 +67,7 @@ Caman.manip = Caman.prototype = {
         this.context = canvas.getContext("2d");
         this.context.drawImage(img, 0, 0);
         this.image_data = this.context.getImageData(0, 0, img.width, img.height);
+        
         this.pixel_data = this.image_data.data;
 
         this.dimensions = {
@@ -81,6 +82,9 @@ Caman.manip = Caman.prototype = {
         return this;
         
       }, that = this;
+      
+    // Save the options for later use.
+    this.options = options;
     
     if ( typeof options !== "string" ) {
   
@@ -149,6 +153,11 @@ Caman.manip = Caman.prototype = {
     }
     
     return this.canvas.toDataURL("image/" + type);
+  },
+  
+  revert: function () {
+    this.options.ready = function () {};
+    this.load(this.options);
   },
   
   render: function (callback) {
