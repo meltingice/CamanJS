@@ -28,6 +28,7 @@ Caman = function ( options ) {
 
 Caman.ready = false;
 Caman.store = {};
+Caman.renderBlocks = 4;
 
 Caman.manip = Caman.prototype = {
   /*
@@ -74,6 +75,8 @@ Caman.manip = Caman.prototype = {
           width: img.width, 
           height: img.height
         };
+        
+        this.renderQueue = [];
         
         options.ready && options.ready.call(this, this);
       
@@ -130,7 +133,7 @@ Caman.manip = Caman.prototype = {
    * sets it as the source of a new Image object and returns it.
    */
   toImage: function (type) {
-  	var img, data;
+    var img, data;
     
     data = this.toBase64(type);
     
@@ -144,7 +147,7 @@ Caman.manip = Caman.prototype = {
    * Grabs the current canvas data and Base64 encodes it.
    */
   toBase64: function (type) {
-  	if (type) {
+    if (type) {
       type = type.toLowerCase();
     }
     
@@ -161,11 +164,13 @@ Caman.manip = Caman.prototype = {
   },
   
   render: function (callback) {
-    this.context.putImageData(this.image_data, 0, 0);
-    
-    if (typeof callback === 'function') {
-      callback.call(this);
-    }
+    this.processNext(function () {
+      this.context.putImageData(this.image_data, 0, 0);
+      
+      if (typeof callback === 'function') {
+        callback.call(this);
+      }
+    });    
   }
 };
 
@@ -751,27 +756,6 @@ Caman.events  = {
   }*/
 };
 
-Caman.manip.process = function (adjust, processFn) {
-  var n = this.pixel_data.length,
-  res = null;
-  
-  for (var i = 0; i < n; i += 4) {
-    res = processFn.call(null, adjust, {
-      r: this.pixel_data[i], 
-      g: this.pixel_data[i+1], 
-      b: this.pixel_data[i+2], 
-      a: this.pixel_data[i+3]
-    });
-    
-    this.pixel_data[i]   = res.r;
-    this.pixel_data[i+1] = res.g;
-    this.pixel_data[i+2] = res.b;
-    this.pixel_data[i+3] = res.a;
-  }
-  
-  Caman.trigger("processComplete", {id: this.canvas_id, completed: processFn.name});
-};
-
 // Basic event system
 (function (Caman) {
   
@@ -780,6 +764,100 @@ Caman.manip.process = function (adjust, processFn) {
   });  
   
 })(Caman);
+
+Caman.manip.executeFilter = function (adjust, processFn) {
+  var n = this.pixel_data.length,
+  res = null,
+  
+  // (n/4) == # of pixels in image
+  // Give remaining pixels to last block in case it doesn't
+  // divide evenly.
+  blockPixelLength = Math.floor((n / 4) / Caman.renderBlocks),
+  
+  // expand it again to make the loop easier.
+  blockN = blockPixelLength * 4,
+  
+  // add the remainder pixels to the last block.
+  lastBlockN = blockN + ((n / 4) % Caman.renderBlocks) * 4,
+  self = this,
+  
+  /*
+   * Renders a block of the image bounded by the start and end
+   * parameters.
+   */
+  render_block = function (bnum, start, end) {
+    console.log("BLOCK #" + bnum + " - Filter: " + processFn.name + ", Start: " + start + ", End: " + end);
+    setTimeout(function () {
+      for (var i = start; i < end; i += 4) {
+        res = processFn.call(null, adjust, {
+          r: self.pixel_data[i], 
+          g: self.pixel_data[i+1], 
+          b: self.pixel_data[i+2], 
+          a: self.pixel_data[i+3]
+        });
+        
+        self.pixel_data[i]   = res.r;
+        self.pixel_data[i+1] = res.g;
+        self.pixel_data[i+2] = res.b;
+        self.pixel_data[i+3] = res.a;
+      }
+      
+      block_finished(bnum);
+    }, 0);
+  },
+  
+  blocks_done = 0,
+  
+  // Called whenever a block finishes. It's used to determine when all blocks
+  // finish rendering.
+  block_finished = function (bnum) {
+    console.log("Block #" + bnum + " finished! Filter: " + processFn.name);
+    blocks_done++;
+
+    if (blocks_done == Caman.renderBlocks) {
+      console.log("Filter " + processFn.name + " finished!");
+      self.processNext();
+      Caman.trigger("processComplete", {id: self.canvas_id, completed: processFn.name});
+    }
+  };
+  
+  // Split the image into its blocks.
+  for (var j = 0; j < Caman.renderBlocks; j++) {
+    var start = j * blockN,
+    end = start + ((j == Caman.renderBlocks - 1) ? lastBlockN : blockN);
+    render_block(j, start, end);
+  }  
+};
+
+Caman.manip.process = function (adjust, processFn) {
+  // Since the block-based renderer is asynchronous, we simply build
+  // up a render queue and execute the filters in order once
+  // render() is called instead of executing them as they're called
+  // synchronously.
+  this.renderQueue.push({adjust: adjust, processFn: processFn});
+};
+
+/*
+ * Begins the render process if it's not started, or moves to the next
+ * filter in the queue and processes it. Calls the finishedFn callback
+ * when the render queue is empty.
+ */
+Caman.manip.processNext = function (finishedFn) {
+  if (typeof finishedFn === "function") {
+    this.finishedFn = finishedFn;
+  }
+  
+  if (this.renderQueue.length === 0) {
+    if (typeof this.finishedFn === "function") {
+      this.finishedFn.call(this);
+    }
+    
+    return;
+  }
+  
+  var next = this.renderQueue.shift();
+  this.executeFilter(next.adjust, next.processFn);
+};
 
 // Basic library of effects/filters that is always loaded
 (function(Caman) {
@@ -1003,59 +1081,59 @@ Caman.manip.process = function (adjust, processFn) {
    * Lets you modify the intensity of any combination of red, green, or blue channels.
    * Options format (must specify 1 - 3 colors):
    * {
-   *	red: 20,
+   *  red: 20,
    *  green: -5,
    *  blue: -40
    * }
    */
   Caman.manip.channels = function (options) {
-  	if (typeof(options) !== 'object') {
-  		return;
-  	}
-  	
-  	for (var chan in options) {
-  		if (options.hasOwnProperty(chan)) {
-  			if (options[chan] == 0) {
-  				delete options[chan];
-  				continue;
-  			}
-  			
-  			options[chan] = options[chan] / 100;
-  		}
-  	}
-  	
-  	if (options.length === 0) {
-  		return;
-  	}
-  	
-  	return this.process(options, function channels(options, rgba) {
-  		if (options.red) {
-  			if (options.red > 0) {
-  				// fraction of the distance between current color and 255
-  				rgba.r = rgba.r + ((255 - rgba.r) * options.red);
-  			} else {
-  				rgba.r = rgba.r - (rgba.r * Math.abs(options.red));
-  			}
-  		}
-  		
-  		if (options.green) {
-  			if (options.green > 0) {
-  				rgba.g = rgba.g + ((255 - rgba.g) * options.green);
-  			} else {
-  				rgba.g = rgba.g - (rgba.g * Math.abs(options.green));
-  			}
-  		}
-  		
-  		if (options.blue) {
-  			if (options.blue > 0) {
-  				rgba.b = rgba.b + ((255 - rgba.b) * options.blue);
-  			} else {
-  				rgba.b = rgba.b - (rgba.b * Math.abs(options.blue));
-  			}
-  		}
-  		
-  		return rgba;
-  	});
+    if (typeof(options) !== 'object') {
+      return;
+    }
+    
+    for (var chan in options) {
+      if (options.hasOwnProperty(chan)) {
+        if (options[chan] == 0) {
+          delete options[chan];
+          continue;
+        }
+        
+        options[chan] = options[chan] / 100;
+      }
+    }
+    
+    if (options.length === 0) {
+      return;
+    }
+    
+    return this.process(options, function channels(options, rgba) {
+      if (options.red) {
+        if (options.red > 0) {
+          // fraction of the distance between current color and 255
+          rgba.r = rgba.r + ((255 - rgba.r) * options.red);
+        } else {
+          rgba.r = rgba.r - (rgba.r * Math.abs(options.red));
+        }
+      }
+      
+      if (options.green) {
+        if (options.green > 0) {
+          rgba.g = rgba.g + ((255 - rgba.g) * options.green);
+        } else {
+          rgba.g = rgba.g - (rgba.g * Math.abs(options.green));
+        }
+      }
+      
+      if (options.blue) {
+        if (options.blue > 0) {
+          rgba.b = rgba.b + ((255 - rgba.b) * options.blue);
+        } else {
+          rgba.b = rgba.b - (rgba.b * Math.abs(options.blue));
+        }
+      }
+      
+      return rgba;
+    });
   };
   
 }(Caman));

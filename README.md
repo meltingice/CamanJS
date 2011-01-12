@@ -7,6 +7,29 @@ CamanJS is also not a canvas drawing library, per se.  It's main focus is manipu
 
 If you're looking for more information, <a href="http://blog.meltingice.net/programming/camanjs-javascript-image-manipulation/">here is a blog post</a> that describes the project some more.
 
+<h2>Block Renderer</h2>
+CamanJS now uses a block rendering system, which gives some notable benefits:
+
+* Image rendering is now asynchronous, which means page rendering is no longer blocked.
+* Slower filters (such as contrast) get a nice speed improvement due to render concurrency.
+
+The way the renderer works is:
+
+1. When each filter function is called, instead of rendering immediately, they are added to a render queue.
+2. When the render() function is called, THEN the rendering actually begins.
+3. The next filter is shifted off of the render queue and sent to the rendering function.
+4. The image is divided into X number of blocks, which are simply horizontal partitions in the image.
+5. The filter is performed on each block simultaneously by using setTimeout() with a 0ms timeout value. Using setTimeout() is what forces each block to render asynchronously, even if the timeout value is 0.
+6. When a block is finished being rendered, it calls a function that tracks the # of blocks that have finished. When all blocks have finished, it signals that the filter is finished rendering.
+7. If there are more filters in the render queue, then steps 3-6 happen for each until the queue empties.
+8. When the queue empties, the callback supplied to render() is called.
+
+The concurrency defaults to 4 blocks, but you can change this to whatever number you want by changing the Caman global variable renderBlocks:
+
+<pre>
+Caman.renderBlocks = 8; // even number recommended
+</pre>
+
 <h1>How to Use</h1>
 Using CamanJS is simple.  It goes something like this:
 
