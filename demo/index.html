@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>CamanJS - Canvas Image Manipulation</title>
+
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+	<title>CamanJS - Canvas Image Manipulation</title> 
 	
-	<link type="text/css" rel="stylesheet" href="css/reset.css" />
-	<link type="text/css" rel="stylesheet" href="css/styles.css" />
-
-	<script type="text/javascript" src="../caman.js"></script>
-
+	<link type="text/css" rel="stylesheet" href="css/reset.css" /> 
+	<link type="text/css" rel="stylesheet" href="css/styles.css" /> 
+ 
+	<script type="text/javascript" src="../caman.js"></script> 
+	
 	<script type="text/javascript">
-
-	Caman('img/example3.jpg', '#image-original', function () {});
 	
     Caman('img/example3.jpg', '#image-channels', function () {
     	this.channels({
@@ -64,67 +63,65 @@
         document.getElementById('final-image').appendChild(this.toImage());
       });
     });
-    
-    Caman.listen("processComplete", function( data ) {
-      console.log("processComlete: ", data);
-    });
   	
 	</script>
-</head>
-<body>
-
-<a href="http://github.com/meltingice/CamanJS"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://assets1.github.com/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028?repo=&url=http%3A%2F%2Fs3.amazonaws.com%2Fgithub%2Fribbons%2Fforkme_right_orange_ff7600.png&path=" alt="Fork me on GitHub"></a>
-
-<div id="header">
-	<div id="header-logo">
-		<img src="img/camanjs.png" alt="CamanJS" />
-	</div>
-	<p>CamanJS is an attempt at providing a simple to use interface for dynamically manipulating images completely in JS. It strives to provide much of the basic functionality you would find in something like Photoshop. By this I mean, image contrast, brightness, levels, saturation, etc. At this time, something as complex as the Clone Tool is out of the question (but if you're feeling brave, be my guest).</p>
-</div>
-
-<div class="image-wrap">
-	<h1>Original Image</h1>
-	<canvas id="image-original"></canvas>
-</div>
-
-<div class="image-wrap">
-	<h1>Altered Image - Adjusted Channels + Others</h1>
-	<canvas id="image-channels"></canvas>
-	<div id="channels-loading" class="loading">
-	 <p>Rendering...</p>
-	 <img src="img/ajax-loader.gif" />
-	</div>
-</div>
-
-<div class="image-wrap">
-  <h1>Altered Image - Sepia + Others</h1>
-  <canvas id="image-sepia"></canvas>
-  <div id="sepia-loading" class="loading">
-    <p>Rendering...</p>
-    <img src="img/ajax-loader.gif" />
-	</div>
-</div>
-
-<div class="image-wrap">
-	<h1>Altered Image - Multiple Filters</h1>
-	<canvas id="image-combined"></canvas>
-	<div id="combined-loading" class="loading">
-    <p>Rendering...</p>
-    <img src="img/ajax-loader.gif" />
-	</div>
+</head> 
+<body> 
+ 
+<a href="http://github.com/meltingice/CamanJS"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://assets1.github.com/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028?repo=&url=http%3A%2F%2Fs3.amazonaws.com%2Fgithub%2Fribbons%2Fforkme_right_orange_ff7600.png&path=" alt="Fork me on GitHub"></a> 
+ 
+<div id="header"> 
+	<div id="header-logo"> 
+		<a href="http://camanjs.com"><img src="img/camanjs.png" alt="CamanJS" /></a> 
+	</div> 
+	<p>CamanJS is an attempt at providing a simple to use interface for dynamically manipulating images completely in JS. It strives to provide much of the basic functionality you would find in something like Photoshop. By this I mean, image contrast, brightness, levels, saturation, etc. At this time, something as complex as the Clone Tool is out of the question (but if you're feeling brave, be my guest).</p> 
 	
-	<div id="download-button">
-  	<input id="download-image" class="fancy-button-grey" type="button" value="Please wait..." disabled="true" />
-  	<p>Note: you'll need to give the downloaded file a .png extension manually.</p>
-  </div>
-</div>
-
-<div class="image-wrap">
-  <h1>Final Modified Image as Image Object</h1>
-  <div id="final-image">
-    <p style="text-align: center">Please wait...</p>
-  </div>
-</div>
-
-</body>
-</html>
+	<p><a href="test/benchmark.html">CamanJS Benchmark</a></p> 
+</div> 
+ 
+<div class="image-wrap"> 
+	<h1>Original Image</h1> 
+	<img src="img/example3.jpg" alt="original" /> 
+</div> 
+ 
+<div class="image-wrap"> 
+	<h1>Altered Image - Adjusted Channels + Others</h1> 
+	<canvas id="image-channels"></canvas> 
+	<div id="channels-loading" class="loading"> 
+	 <p>Rendering...</p> 
+	 <img src="img/ajax-loader.gif" /> 
+	</div> 
+</div> 
+ 
+<div class="image-wrap"> 
+  <h1>Altered Image - Sepia + Others</h1> 
+  <canvas id="image-sepia"></canvas> 
+  <div id="sepia-loading" class="loading"> 
+    <p>Rendering...</p> 
+    <img src="img/ajax-loader.gif" /> 
+	</div> 
+</div> 
+ 
+<div class="image-wrap"> 
+	<h1>Altered Image - Multiple Filters</h1> 
+	<canvas id="image-combined"></canvas> 
+	<div id="combined-loading" class="loading"> 
+    <p>Rendering...</p> 
+    <img src="img/ajax-loader.gif" /> 
+	</div> 
+	
+	<div id="download-button"> 
+  	<input id="download-image" class="fancy-button-grey" type="button" value="Please wait..." disabled="true" /> 
+  	<p>Note: you'll need to give the downloaded file a .png extension manually.</p> 
+  </div> 
+</div> 
+ 
+<div class="image-wrap"> 
+  <h1>Final Modified Image as Image Object</h1> 
+  <div id="final-image"> 
+    <p style="text-align: center">Please wait...</p> 
+  </div> 
+</div> 
+ 
+</body> 
+</html> 
