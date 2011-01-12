@@ -730,8 +730,9 @@ Caman.manip.executeFilter = function (adjust, processFn) {
 
     if (blocks_done == Caman.renderBlocks) {
       console.log("Filter " + processFn.name + " finished!");
-      self.processNext();
       Caman.trigger("processComplete", {id: self.canvas_id, completed: processFn.name});
+      
+      self.processNext();
     }
   };
   
