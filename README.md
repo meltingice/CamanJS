@@ -71,6 +71,7 @@ Caman('img/example.jpg', '#image-caman', function () {
   // More info on finished() in events section below
   this.render(function () {
     this.save('png'); // shows a download file prompt
+    this.toBase64(); // base64 data URL representation of the image. useful if you want to upload the modified image.
   });
 });
 </pre>
@@ -82,8 +83,8 @@ Currently CamanJS has three different events you can listen for, and it is very 
   * fired when a single image filter begins manipulating an image
 * processComplete
   * fired when a single image filter finishes manipulating an image
-* queueFinished
-  * fired when all image filters are done and an image is finished being updated
+* renderFinished
+  * fired when all image filters are done and an image is finished being rendered
   
 You may also find this extremely handy:
 
@@ -95,7 +96,7 @@ Caman('img/example.jpg', '#image-caman', function () {
   this.saturation(-30);
   this.brightness(5);
   
-  // Event helper that fires when *this* image is finished rendering
+  // Callback to render() fires when this image is done rendering.
   this.render(function () {
     console.log("Image finished rendering!");
   });
@@ -103,17 +104,21 @@ Caman('img/example.jpg', '#image-caman', function () {
 </pre>
 
 <h1>How to Extend</h1>
-Extending CamanJS is easy as well. It's accomplished by adding functions onto the manip object. Below is an example of how to do so:
+Extending CamanJS is easy as well. It's accomplished by adding functions onto the manip object. Below is a simple example of how to do so:
 
 <pre>
 (function (Caman) {
 	Caman.manip.fancy_filter = function (adjust) {
 	
-		// this.process will be run in a loop, and the
+		// === IMPORTANT ===
+		// this.process() will be run in a loop, and the
 		// rgba object represents the current pixel's rgba
 		// values. you *must* return the modified rgba object
-		// for it to work properly.
-		return this.process(function (rgba) {
+		// for it to work properly and you *must* name the function
+		// passed in the 2nd argument to process() the same name as
+		// this filter.
+		
+		return this.process(adjust, function fancy_filter(rgba) {
 			rgba.r += adjust;
 			rgba.g -= adjust;
 			rgba.b += adjust * 2;
@@ -126,7 +131,7 @@ Extending CamanJS is easy as well. It's accomplished by adding functions onto th
 </pre>
 
 <h2>Utility Functions</h2>
-CamanJS comes with a set of utility functions that you may find very useful when extending it.  In the main body of the function thats extending CamanJS, you can simply access them through Caman.func_name(). Their names should be pretty self explanatory:
+CamanJS comes with a set of utility functions that you may find very useful when extending it.  In the main body of the function thats extending CamanJS, you can simply access them through Caman, e.g. Caman.rgb_to_hsl(). Their names should be pretty self explanatory:
 
 * rgb_to_hsl()
 * hsl_to_rgb()
