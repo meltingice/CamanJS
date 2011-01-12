@@ -35,6 +35,14 @@ Caman = function ( options ) {
   return new Caman.manip.load(options);
 };
 
+if (!('console' in window)) {
+  window.console = {
+    log: function () {},
+    info: function () {},
+    error: function () {}
+  };
+}
+
 Caman.ready = false;
 Caman.store = {};
 Caman.renderBlocks = 4;
