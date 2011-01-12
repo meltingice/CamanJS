@@ -1,3 +1,12 @@
+/*!
+ * CamanJS - Image Manipulation Library
+ * http://camanjs.com/
+ *
+ * Copyright 2011, Ryan LeFevre
+ * Licensed under the new BSD License.
+ * See LICENSE for more info.
+ */
+ 
 (function () {
 
 var forEach = Array.prototype.forEach,
@@ -766,22 +775,25 @@ Caman.manip.processNext = function (finishedFn) {
   this.executeFilter(next.adjust, next.processFn);
 };
 
-// Basic library of effects/filters that is always loaded
+// Expose Caman to the world!
+window.Caman = Caman;
+
+/****************************************************************************
+ * Below are a basic library of filters that are always loaded with CamanJS *
+ ****************************************************************************/
 (function(Caman) {
 
   Caman.manip.brightness = function(adjust) {
     
     adjust = Math.floor(255 * (adjust / 100));
     
-    // Note that process has 2 args now
     return this.process( adjust,  function brightness(adjust, rgba) {
-              // also pass the adjustment to the process callback
-              rgba.r += adjust;
-              rgba.g += adjust;
-              rgba.b += adjust;
-
-              return rgba;
-            });
+      rgba.r += adjust;
+      rgba.g += adjust;
+      rgba.b += adjust;
+      
+      return rgba;
+    });
   };
 
   Caman.manip.saturation = function(adjust) {
@@ -794,11 +806,11 @@ Caman.manip.processNext = function (finishedFn) {
       for (chan in rgba) {
         if (rgba.hasOwnProperty(chan)) {
           if (rgba[chan] === max || chan === "a") {
-              continue;
-            }
+            continue;
+          }
             
-            diff = max - rgba[chan];
-            rgba[chan] += Math.ceil(diff * (adjust / 100));
+          diff = max - rgba[chan];
+          rgba[chan] += Math.ceil(diff * (adjust / 100));
         }
       }
       
@@ -833,13 +845,18 @@ Caman.manip.processNext = function (finishedFn) {
       var chan;
       for (chan in rgba) {
         if (rgba.hasOwnProperty(chan)) {
+          // skip the alpha channel
           if (chan === 'a') { continue; }
+          
           rgba[chan] /= 255;
           rgba[chan] -= 0.5;
           rgba[chan] *= adjust;
           rgba[chan] += 0.5;
           rgba[chan] *= 255;
           
+          // While uglier, I found that using if statements are
+          // faster than calling Math.max() and Math.min() to bound
+          // the numbers.
           if (rgba[chan] > 255) {
             rgba[chan] = 255;
           } else if (rgba[chan] < 0) {
@@ -853,18 +870,19 @@ Caman.manip.processNext = function (finishedFn) {
   };
   
   Caman.manip.hue = function(adjust) {
-    var hsv, h;      
+    var hsv, h;
+       
     return this.process( adjust, function hue(adjust, rgba) {
-        hsv = Caman.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
-        h = hsv.h * 100;
-        h += Math.abs(adjust);
-        h = h % 100;
-        h /= 100;
-        hsv.h = h;
-        
-        rgb = Caman.hsv_to_rgb(hsv.h, hsv.s, hsv.v);
-        
-        return {r: rgb.r, g: rgb.g, b: rgb.b, a: rgba.a};
+      hsv = Caman.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
+      h = hsv.h * 100;
+      h += Math.abs(adjust);
+      h = h % 100;
+      h /= 100;
+      hsv.h = h;
+      
+      rgb = Caman.hsv_to_rgb(hsv.h, hsv.s, hsv.v);
+      
+      return {r: rgb.r, g: rgb.g, b: rgb.b, a: rgba.a};
     });
   };
   
@@ -873,20 +891,19 @@ Caman.manip.processNext = function (finishedFn) {
             
     if (arguments.length === 2) {
       rgb = Caman.hex_to_rgb(arguments[0]);
-
       level = arguments[1];
     } else if (arguments.length === 4) {
       rgb = {
         r: arguments[0],
         g: arguments[1],
         b: arguments[2]        
-      }
+      };
       
       level = arguments[3];
     }
     
     return this.process( [ level, rgb ],  function colorize( adjust, rgba) {
-    
+        // adjust[0] == level; adjust[1] == rgb;
         rgba.r -= (rgba.r - adjust[1].r) * (adjust[0] / 100);
         rgba.g -= (rgba.g - adjust[1].g) * (adjust[0] / 100);
         rgba.b -= (rgba.b - adjust[1].b) * (adjust[0] / 100);
@@ -1044,7 +1061,5 @@ Caman.manip.processNext = function (finishedFn) {
   };
   
 }(Caman));
-
-window.Caman = Caman;
 
 }());
