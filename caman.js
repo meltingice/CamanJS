@@ -270,61 +270,7 @@ Caman.extend( Caman, {
     
     return ret;      
   },
-  
-  /*
-   * Data memoization - used to reduce the amount of processing
-   * needed by storing already found values in an object.
-   *
-   * If the value has already been stored, it is returned. Otherwise,
-   * this function will return false.
-   */
-  getMemo: function (key, d1, d2, d3) {
-    /*
-     * So it turns out that memoization is actually slowing down CamanJS and
-     * is likely the cause behind the memory errors in Firefox 3. Instead of
-     * completely removing this code, lets just return immediately in case
-     * the memoization can be improved in the future.
-     */
-    return false;
     
-    var index = String(d1) + String(d2) + String(d3);
-    
-    if (!this.memos || !this.memos[key]) {
-      return false;
-    }
-    
-    if (this.memos[key][index]) {
-      return this.memos[key][index];
-    }
-    
-    return false;
-  },
-  
-  /*
-   * Data memoization - this function will store the given calculated
-   * value for future use if needed.
-   */
-  setMemo: function (key, d1, d2, d3, value) {
-    /*
-     * Memoziation is disabled for now, see getMemo() above.
-     */
-    return value;
-    
-    var index = String(d1) + String(d2) + String(d3);
-    
-    if (!this.memos) {
-      this.memos = {};
-    }
-    
-    if (!this.memos[key]) {
-      this.memos[key] = {};
-    }
-    
-    this.memos[key][index] = value;
-    
-    return value;
-  },
-  
   randomRange: function (min, max, float) {
     var rand = min + (Math.random() * (max - min));
     return typeof float == 'undefined' ? Math.round(rand) : rand.toFixed(float);
@@ -341,11 +287,7 @@ Caman.extend( Caman, {
    * @return              The HSL representation
    */
   rgb_to_hsl: function(r, g, b) {
-    var value, result;
-    if (value = this.getMemo('rgbhsl', r, g, b)) {
-      return value;
-    }
-    
+  
     r /= 255, g /= 255, b /= 255;
     var max = Math.max(r, g, b), min = Math.min(r, g, b), 
         h, s, l = (max + min) / 2;
@@ -363,7 +305,7 @@ Caman.extend( Caman, {
         h /= 6;
     }
     
-    return this.setMemo('rgbhsl', r, g, b, {h: h, s: s, l: l});
+    return {h: h, s: s, l: l};
   },
   
   /**
@@ -378,11 +320,7 @@ Caman.extend( Caman, {
    * @return  Array           The RGB representation
    */
   hsl_to_rgb: function(h, s, l){
-      var r, g, b, value;
-      
-      if (value = this.getMemo('hslrgb', h, s, l)) {
-        return value;
-      }
+      var r, g, b;
   
       if(s == 0){
           r = g = b = l; // achromatic
@@ -403,7 +341,7 @@ Caman.extend( Caman, {
           b = hue2rgb(p, q, h - 1/3);
       }
       
-      return this.setMemo('hslrgb', h, s, l, {r: r * 255, g: g * 255, b: b * 255});
+      return {r: r * 255, g: g * 255, b: b * 255};
   },
   
   /**
@@ -418,11 +356,6 @@ Caman.extend( Caman, {
    * @return  Array           The HSV representation
    */
   rgb_to_hsv: function(r, g, b){
-      var value;
-      
-      if (value = this.getMemo('rgbhsv', r, g, b)) {
-        return value;
-      }
       
       r = r/255, g = g/255, b = b/255;
       var max = Math.max(r, g, b), min = Math.min(r, g, b),
@@ -442,7 +375,7 @@ Caman.extend( Caman, {
           h /= 6;
       }
   
-      return this.setMemo('rgbhsv', r, g, b, {h: h, s: s, v: v});
+      return {h: h, s: s, v: v};
   },
   
   /**
@@ -457,11 +390,6 @@ Caman.extend( Caman, {
    * @return  Array           The RGB representation
    */
   hsv_to_rgb: function(h, s, v){
-      var value;
-      
-      if (value = this.getMemo('hsvrgb', h, s, v)) {
-        return value;
-      }
     
       var r, g, b,
           i = Math.floor(h * 6),
@@ -479,7 +407,7 @@ Caman.extend( Caman, {
           case 5: r = v, g = p, b = q; break;
       }
   
-      return this.setMemo('hsvrgb', h, s, v, {r: r * 255, g: g * 255, b: b * 255});
+      return {r: r * 255, g: g * 255, b: b * 255};
   },
   
   /**
@@ -495,11 +423,6 @@ Caman.extend( Caman, {
    * @return  Array           The XYZ representation
    */
   rgb_to_xyz: function (r, g, b) {
-    var value;
-  
-    if (value = Caman.getMemo('rgbxyz', r, g, b)) {
-      return value;
-    }
   
     r = r / 255; g = g / 255; b = b / 255;
   
@@ -525,7 +448,7 @@ Caman.extend( Caman, {
     var y = r * 0.2126 + g * 0.7152 + b * 0.0722;
     var z = r * 0.0193 + g * 0.1192 + b * 0.9505;
   
-    return Caman.setMemo('rgbxyz', r, g, b, {x: x * 100, y: y * 100, z: z * 100});
+    return {x: x * 100, y: y * 100, z: z * 100};
   },
   
   /**
@@ -541,11 +464,7 @@ Caman.extend( Caman, {
    * @return  Array           The RGB representation
    */
   xyz_to_rgb: function (x, y, z) {
-    var value;
-  
-    if (value = Caman.getMemo('xyzrgb', x, y, z)) {
-      return value;
-    }
+
     x = x / 100; y = y / 100; z = z / 100;
   
     var r, g, b;
@@ -571,7 +490,7 @@ Caman.extend( Caman, {
       b = 12.92 * b;
     }
   
-    return Caman.setMemo('xyzrgb', x, y, z, {r: r * 255, g: g * 255, b: b * 255});
+    return {r: r * 255, g: g * 255, b: b * 255};
   },
   
   /**
@@ -587,11 +506,6 @@ Caman.extend( Caman, {
    * @return  Array           The Lab representation
    */
   xyz_to_lab: function(x, y, z) {
-    var value;
-  
-    if (value = Caman.getMemo('xyzlab', x, y, z)) {
-      return value;
-    }
   
     // D65 reference white point
     var whiteX = 95.047, whiteY = 100.0, whiteZ = 108.883
@@ -620,7 +534,7 @@ Caman.extend( Caman, {
     var a = 500 * (x - y);
     var b = 200 * (y - z);
   
-    return Caman.setMemo('xyzlab', x, y, z, {l: l, a: a, b: b});
+    return {l: l, a: a, b: b};
   },
   
   /**
@@ -637,11 +551,6 @@ Caman.extend( Caman, {
    * @return  Array           The XYZ representation
    */
   lab_to_xyz: function(l, a, b) {
-    var value;
-  
-    if (value = Caman.getMemo('labxyz', l, a, b)) {
-      return value;
-    }
   
     var y = (l + 16) / 116;
     var x = y + (a / 500);
@@ -666,7 +575,7 @@ Caman.extend( Caman, {
     }
   
     // D65 reference white point
-    return Caman.setMemo('labxyz', l, a, b, {x: x * 95.047, y: y * 100.0, z: z * 108.883});
+    return {x: x * 95.047, y: y * 100.0, z: z * 108.883};
   },
   
   /*
@@ -677,11 +586,7 @@ Caman.extend( Caman, {
    * @return  Array         The RGB representation
    */
   hex_to_rgb: function(hex) {
-    var r, g, b, value;
-    
-    if (value = this.getMemo('hexrgb', hex, "", "")) {
-      return value;
-    }
+    var r, g, b;
     
     if (hex.charAt(0) === "#") {
       hex = hex.substr(1);
@@ -691,7 +596,7 @@ Caman.extend( Caman, {
     g = parseInt(hex.substr(2, 2), 16);
     b = parseInt(hex.substr(4, 2), 16);
     
-    return this.setMemo('hexrgb', hex, "", "", {r: r, g: g, b: b});
+    return {r: r, g: g, b: b};
   }
 });
 
@@ -848,6 +753,8 @@ Caman.manip.processNext = function (finishedFn) {
   }
   
   if (this.renderQueue.length === 0) {
+    Caman.trigger("renderFinished", {id: this.canvas_id});
+    
     if (typeof this.finishedFn === "function") {
       this.finishedFn.call(this);
     }
