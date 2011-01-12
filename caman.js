@@ -38,7 +38,7 @@ Caman.manip = Caman.prototype = {
    */
   load: function(options) {
     var 
-      img = document.createElement("img")
+      img = document.createElement("img"),
       
       /*
        * Called once the image is loaded from the server
