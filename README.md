@@ -124,6 +124,13 @@ Extending CamanJS is easy as well. It's accomplished by adding functions onto th
 			rgba.b += adjust * 2;
 			rgba.a = 0.9;
 			
+			// to get data about a pixel relative to this one currently
+			// being processed, you can use getPixel([horiz_offset], [vert_offset]);
+			var topLeft			= this.getPixel(-1, 1);
+			var topRight		= this.getPixel(1, 1);
+			var bottomLeft	= this.getPixel(-1, -1);
+			var bottomRight	= this.getPixel(1, -1);
+			
 			return rgba;
 		});
 	};
