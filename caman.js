@@ -698,66 +698,61 @@ Caman.events  = {
  * function):
  *    this.getPixel(1, -1);
  */
-Caman.manip.pixelInfo = function (loc) {
-  var self = this,
-  getPixelLoc = function (loc, horiz_offset, vert_offset) {
-  	return loc + (self.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
-  };
+Caman.manip.pixelInfo = function (loc, self) {
+  this.loc = loc;
+  this.manip = self;
+};
+  
+Caman.manip.pixelInfo.prototype.getPixelRelative = function (horiz_offset, vert_offset) {
+  // We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
+  // terms: -1 means down and +1 means up.
+  var newLoc = this.loc + (this.manip.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
+  
+  // error handling
+  if (newLoc > this.manip.pixel_data.length || newLoc < 0) {
+    return false;
+  }
   
   return {
-    loc: loc,
-    getPixelRelative: function (horiz_offset, vert_offset) {
-      // We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
-      // terms: -1 means down and +1 means up.
-      var newLoc = getPixelLoc(this.loc, horiz_offset, vert_offset);
-      
-      // error handling
-      if (newLoc > self.pixel_data.length || newLoc < 0) {
-        return false;
-      }
-      
-      return {
-        r: self.pixel_data[newLoc],
-        g: self.pixel_data[newLoc+1],
-        b: self.pixel_data[newLoc+2],
-        a: self.pixel_data[newLoc+3]
-      };
-    },
-    
-    putPixelRelative: function (horiz_offset, vert_offset, rgba) {
-    	var newLoc = getPixelLoc(this.loc, horiz_offset, vert_offset);
-    	
-    	// error handling
-      if (newLoc > self.pixel_data.length || newLoc < 0) {
-        return false;
-      }
-      
-      self.pixel_data[newLoc] 	= rgba.r;
-      self.pixel_data[newLoc+1]	= rgba.g;
-      self.pixel_data[newLoc+2] = rgba.b;
-      self.pixel_data[newLoc+3]	=	rgba.a;
-    },
-    
-    getPixel: function (x, y) {
-    	var newLoc = (y * self.dimensions + x) * 4;
-    	
-    	return {
-    		r: self.pixel_data[newLoc],
-    		g: self.pixel_data[newLoc+1],
-    		b: self.pixel_data[newLoc+2],
-    		a: self.pixel_data[newLoc+3]
-    	};
-    },
-    
-    putPixel: function (x, y, rgba) {
-    	var newLoc = (y * self.dimensions + x) * 4;
-    	
-    	self.pixel_data[newLoc] 	= rgba.r;
-      self.pixel_data[newLoc+1]	= rgba.g;
-      self.pixel_data[newLoc+2] = rgba.b;
-      self.pixel_data[newLoc+3]	=	rgba.a;
-    }
+    r: this.manip.pixel_data[newLoc],
+    g: this.manip.pixel_data[newLoc+1],
+    b: this.manip.pixel_data[newLoc+2],
+    a: this.manip.pixel_data[newLoc+3]
   };
+};
+    
+Caman.manip.pixelInfo.prototype.putPixelRelative = function (horiz_offset, vert_offset, rgba) {
+  var newLoc = this.loc + (this.manip.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
+  
+  // error handling
+  if (newLoc > this.manip.pixel_data.length || newLoc < 0) {
+    return false;
+  }
+  
+  this.manip.pixel_data[newLoc]   = rgba.r;
+  this.manip.pixel_data[newLoc+1] = rgba.g;
+  this.manip.pixel_data[newLoc+2] = rgba.b;
+  this.manip.pixel_data[newLoc+3] =  rgba.a;
+};
+    
+Caman.manip.pixelInfo.prototype.getPixel = function (x, y) {
+  var newLoc = (y * this.manip.dimensions.width + x) * 4;
+  
+  return {
+    r: this.manip.pixel_data[newLoc],
+    g: this.manip.pixel_data[newLoc+1],
+    b: this.manip.pixel_data[newLoc+2],
+    a: this.manip.pixel_data[newLoc+3]
+  };
+};
+    
+Caman.manip.pixelInfo.prototype.putPixel = function (x, y, rgba) {
+  var newLoc = (y * this.manip.dimensions.width + x) * 4;
+  
+  this.manip.pixel_data[newLoc]   = rgba.r;
+  this.manip.pixel_data[newLoc+1] = rgba.g;
+  this.manip.pixel_data[newLoc+2] = rgba.b;
+  this.manip.pixel_data[newLoc+3] = rgba.a;
 };
 
 /*
@@ -792,7 +787,7 @@ Caman.manip.executeFilter = function (adjust, processFn) {
     
     setTimeout(function () {
       for (var i = start; i < end; i += 4) {
-        res = processFn.call(self.pixelInfo(i), adjust, {
+        res = processFn.call(new self.pixelInfo(i, self), adjust, {
           r: self.pixel_data[i], 
           g: self.pixel_data[i+1], 
           b: self.pixel_data[i+2], 
