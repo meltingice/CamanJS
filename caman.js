@@ -699,14 +699,17 @@ Caman.events  = {
  *    this.getPixel(1, -1);
  */
 Caman.manip.pixelInfo = function (loc) {
-  var self = this;
+  var self = this,
+  getPixelLoc = function (loc, horiz_offset, vert_offset) {
+  	return loc + (self.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
+  };
   
   return {
     loc: loc,
-    getPixel: function (horiz_offset, vert_offset) {
+    getPixelRelative: function (horiz_offset, vert_offset) {
       // We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
       // terms: -1 means down and +1 means up.
-      var newLoc = this.loc + (self.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
+      var newLoc = getPixelLoc(this.loc, horiz_offset, vert_offset);
       
       // error handling
       if (newLoc > self.pixel_data.length || newLoc < 0) {
@@ -719,6 +722,40 @@ Caman.manip.pixelInfo = function (loc) {
         b: self.pixel_data[newLoc+2],
         a: self.pixel_data[newLoc+3]
       };
+    },
+    
+    putPixelRelative: function (horiz_offset, vert_offset, rgba) {
+    	var newLoc = getPixelLoc(this.loc, horiz_offset, vert_offset);
+    	
+    	// error handling
+      if (newLoc > self.pixel_data.length || newLoc < 0) {
+        return false;
+      }
+      
+      self.pixel_data[newLoc] 	= rgba.r;
+      self.pixel_data[newLoc+1]	= rgba.g;
+      self.pixel_data[newLoc+2] = rgba.b;
+      self.pixel_data[newLoc+3]	=	rgba.a;
+    },
+    
+    getPixel: function (x, y) {
+    	var newLoc = (y * self.dimensions + x) * 4;
+    	
+    	return {
+    		r: self.pixel_data[newLoc],
+    		g: self.pixel_data[newLoc+1],
+    		b: self.pixel_data[newLoc+2],
+    		a: self.pixel_data[newLoc+3]
+    	};
+    },
+    
+    putPixel: function (x, y, rgba) {
+    	var newLoc = (y * self.dimensions + x) * 4;
+    	
+    	self.pixel_data[newLoc] 	= rgba.r;
+      self.pixel_data[newLoc+1]	= rgba.g;
+      self.pixel_data[newLoc+2] = rgba.b;
+      self.pixel_data[newLoc+3]	=	rgba.a;
     }
   };
 };
@@ -766,8 +803,6 @@ Caman.manip.executeFilter = function (adjust, processFn) {
         self.pixel_data[i+1] = res.g;
         self.pixel_data[i+2] = res.b;
         self.pixel_data[i+3] = res.a;
-        
-        break;
       }
       
       block_finished(bnum);
