@@ -47,87 +47,6 @@ Caman.ready = false;
 Caman.store = {};
 Caman.renderBlocks = 4;
 
-/*
- * Object that represents a single pixel. Originally this was,
- * expressed with an object literal, but it has been changed in
- * order to speed up execution slightly. From a filter standpoint,
- * everything works exactly the same as it did before.
- */
-var RGBPixel = function (r, g, b, a) {
-  this.r = r;
-  this.g = g;
-  this.b = b;
-  this.a = a || 1;
-};
-
-RGBPixel.prototype.toHSL = function () {
-  return Caman.rgb_to_hsl(this.r, this.g, this.b);
-};
-
-RGBPixel.prototype.toHSV = function () {
-  return Caman.rgb_to_hsv(this.r, this.g, this.b);
-};
-
-RGBPixel.prototype.toXYZ = function () {
-  return Caman.rgb_to_xyz(this.r, this.g, this.b);
-};
-
-/*
- * Object representation of a pixel in HSL color format.
- */
-var HSLPixel = function (h, s, l) {
-  this.h = h;
-  this.s = s;
-  this.l = l;
-};
-
-HSLPixel.prototype.toRGB = function () {
-  return Caman.hsl_to_rgb(this.h, this.s, this.l);
-};
-
-/*
- * Object representation of a pixel in HSV color format.
- */
-var HSVPixel = function (h, s, v) {
-  this.h = h;
-  this.s = s;
-  this.v = v;
-};
-
-HSVPixel.prototype.toRGB = function () {
-  return Caman.hsv_to_rgb(this.h, this.s, this.v);
-};
-
-/*
- * Object representation of a pixel in XYZ color format.
- */
-var XYZPixel = function (x, y, z) {
-  this.x = x;
-  this.y = y;
-  this.z = z;
-};
-
-XYZPixel.prototype.toRGB = function () {
-  return Caman.xyz_to_rgb(this.x, this.y, this.z);
-};
-
-XYZPixel.prototype.toLAB = function () {
-  return Caman.xyz_to_lab(this.x, this.y, this.z);
-};
-
-/*
- * Object representation of a pixel in LAB color format.
- */
-var LABPixel = function (l, a, b) {
-  this.l = l;
-  this.a = a;
-  this.b = b;
-};
-
-LABPixel.prototype.toXYZ = function () {
-  return Caman.lab_to_xyz(this.l, this.a, this.b);
-};
-
 Caman.manip = Caman.prototype = {
   /*
    * Sets up everything that needs to be done before the filter
@@ -403,7 +322,7 @@ Caman.extend( Caman, {
         h /= 6;
     }
     
-    return new HSLPixel(h, s, l);
+    return {h: h, s: s, l: l};
   },
   
   /**
@@ -439,7 +358,7 @@ Caman.extend( Caman, {
           b = hue2rgb(p, q, h - 1/3);
       }
       
-      return new RGBPixel(r * 255, g * 255, b * 255);
+      return {r: r * 255, g: g * 255, b: b * 255};
   },
   
   /**
@@ -473,7 +392,7 @@ Caman.extend( Caman, {
           h /= 6;
       }
   
-      return new HSVPixel(h, s, v);
+      return {h: h, s: s, v: v};
   },
   
   /**
@@ -505,7 +424,7 @@ Caman.extend( Caman, {
           case 5: r = v, g = p, b = q; break;
       }
   
-      return new RGBPixel(r * 255, g * 255, b * 255);
+      return {r: r * 255, g: g * 255, b: b * 255};
   },
   
   /**
@@ -546,7 +465,7 @@ Caman.extend( Caman, {
     var y = r * 0.2126 + g * 0.7152 + b * 0.0722;
     var z = r * 0.0193 + g * 0.1192 + b * 0.9505;
   
-    return new XYZPixel(x * 100, y * 100, z * 100);
+    return {x: x * 100, y: y * 100, z: z * 100};
   },
   
   /**
@@ -588,7 +507,7 @@ Caman.extend( Caman, {
       b = 12.92 * b;
     }
   
-    return new RGBPixel(r * 255, g * 255, b * 255);
+    return {r: r * 255, g: g * 255, b: b * 255};
   },
   
   /**
@@ -632,7 +551,7 @@ Caman.extend( Caman, {
     var a = 500 * (x - y);
     var b = 200 * (y - z);
   
-    return new LABPixel(l, a, b);
+    return {l: l, a: a, b: b};
   },
   
   /**
@@ -673,7 +592,7 @@ Caman.extend( Caman, {
     }
   
     // D65 reference white point
-    return new XYZPixel(x * 95.047, y * 100.0, z * 108.883);
+    return {x: x * 95.047, y: y * 100.0, z: z * 108.883};
   },
   
   /*
@@ -694,7 +613,7 @@ Caman.extend( Caman, {
     g = parseInt(hex.substr(2, 2), 16);
     b = parseInt(hex.substr(4, 2), 16);
     
-    return new RGBPixel(r, g, b);
+    return {r: r, g: g, b: b};
   }
 });
 
@@ -794,12 +713,12 @@ Caman.manip.pixelInfo.prototype.getPixelRelative = function (horiz_offset, vert_
     return false;
   }
   
-  return new RGBPixel(
-    this.manip.pixel_data[newLoc],
-    this.manip.pixel_data[newLoc+1],
-    this.manip.pixel_data[newLoc+2],
-    this.manip.pixel_data[newLoc+3]
-  );
+  return {
+    r: this.manip.pixel_data[newLoc],
+    g: this.manip.pixel_data[newLoc+1],
+    b: this.manip.pixel_data[newLoc+2],
+    a: this.manip.pixel_data[newLoc+3]
+  };
 };
     
 Caman.manip.pixelInfo.prototype.putPixelRelative = function (horiz_offset, vert_offset, rgba) {
@@ -819,12 +738,12 @@ Caman.manip.pixelInfo.prototype.putPixelRelative = function (horiz_offset, vert_
 Caman.manip.pixelInfo.prototype.getPixel = function (x, y) {
   var newLoc = (y * this.manip.dimensions.width + x) * 4;
   
-  return new RGBPixel(
-    this.manip.pixel_data[newLoc],
-    this.manip.pixel_data[newLoc+1],
-    this.manip.pixel_data[newLoc+2],
-    this.manip.pixel_data[newLoc+3]
-  );
+  return {
+    r: this.manip.pixel_data[newLoc],
+    g: this.manip.pixel_data[newLoc+1],
+    b: this.manip.pixel_data[newLoc+2],
+    a: this.manip.pixel_data[newLoc+3]
+  };
 };
     
 Caman.manip.pixelInfo.prototype.putPixel = function (x, y, rgba) {
@@ -850,10 +769,10 @@ Caman.manip.executeFilter = function (adjust, processFn) {
   // (n/4) == # of pixels in image
   // Give remaining pixels to last block in case it doesn't
   // divide evenly.
-  blockRGBPixelLength = Math.floor((n / 4) / Caman.renderBlocks),
+  blockPixelLength = Math.floor((n / 4) / Caman.renderBlocks),
   
   // expand it again to make the loop easier.
-  blockN = blockRGBPixelLength * 4,
+  blockN = blockPixelLength * 4,
   
   // add the remainder pixels to the last block.
   lastBlockN = blockN + ((n / 4) % Caman.renderBlocks) * 4,
@@ -867,13 +786,13 @@ Caman.manip.executeFilter = function (adjust, processFn) {
     console.log("BLOCK #" + bnum + " - Filter: " + processFn.name + ", Start: " + start + ", End: " + end);
     
     setTimeout(function () {
-      for (var i = start; i < end; i += 4) {        
-        res = processFn.call(new self.pixelInfo(i, self), adjust, new RGBPixel(
-          self.pixel_data[i],
-          self.pixel_data[i+1],
-          self.pixel_data[i+2],
-          self.pixel_data[i+3]
-        ));
+      for (var i = start; i < end; i += 4) {
+        res = processFn.call(new self.pixelInfo(i, self), adjust, {
+          r: self.pixel_data[i], 
+          g: self.pixel_data[i+1], 
+          b: self.pixel_data[i+2], 
+          a: self.pixel_data[i+3]
+        });
         
         self.pixel_data[i]   = res.r;
         self.pixel_data[i+1] = res.g;
@@ -1039,14 +958,16 @@ window.Caman = Caman;
     var hsv, h;
        
     return this.process( adjust, function hue(adjust, rgba) {
-      hsv = rgba.toHSV();
+      hsv = Caman.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
       h = hsv.h * 100;
       h += Math.abs(adjust);
       h = h % 100;
       h /= 100;
       hsv.h = h;
       
-      return hsv.toRGB();
+      rgb = Caman.hsv_to_rgb(hsv.h, hsv.s, hsv.v);
+      
+      return {r: rgb.r, g: rgb.g, b: rgb.b, a: rgba.a};
     });
   };
   
