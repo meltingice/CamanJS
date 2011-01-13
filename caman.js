@@ -688,6 +688,19 @@ Caman.events  = {
 })(Caman);
 
 /*
+ * Object that represents a single pixel. Originally this was,
+ * expressed with an object literal, but it has been changed in
+ * order to speed up execution slightly. From a filter standpoint,
+ * everything works exactly the same as it did before.
+ */
+var Pixel = function (r, g, b, a) {
+  this.r = r;
+  this.g = g;
+  this.b = b;
+  this.a = a;
+};
+
+/*
  * Allows the currently rendering filter to get data about
  * surrounding pixels relative to the pixel currently being
  * processed. The data returned is identical in format to the
@@ -786,13 +799,13 @@ Caman.manip.executeFilter = function (adjust, processFn) {
     console.log("BLOCK #" + bnum + " - Filter: " + processFn.name + ", Start: " + start + ", End: " + end);
     
     setTimeout(function () {
-      for (var i = start; i < end; i += 4) {
-        res = processFn.call(new self.pixelInfo(i, self), adjust, {
-          r: self.pixel_data[i], 
-          g: self.pixel_data[i+1], 
-          b: self.pixel_data[i+2], 
-          a: self.pixel_data[i+3]
-        });
+      for (var i = start; i < end; i += 4) {        
+        res = processFn.call(new self.pixelInfo(i, self), adjust, new Pixel(
+          self.pixel_data[i],
+          self.pixel_data[i+1],
+          self.pixel_data[i+2],
+          self.pixel_data[i+3]
+        ));
         
         self.pixel_data[i]   = res.r;
         self.pixel_data[i+1] = res.g;
