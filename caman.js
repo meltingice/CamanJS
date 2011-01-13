@@ -777,14 +777,14 @@ Caman.events  = {
  * Example: to get data about the pixel to the top-right
  * of the currently processing pixel, you can call (within the process
  * function):
- *    this.getRGBPixel(1, -1);
+ *    this.getPixel(1, -1);
  */
 Caman.manip.pixelInfo = function (loc, self) {
   this.loc = loc;
   this.manip = self;
 };
   
-Caman.manip.pixelInfo.prototype.getRGBPixelRelative = function (horiz_offset, vert_offset) {
+Caman.manip.pixelInfo.prototype.getPixelRelative = function (horiz_offset, vert_offset) {
   // We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
   // terms: -1 means down and +1 means up.
   var newLoc = this.loc + (this.manip.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
@@ -794,15 +794,15 @@ Caman.manip.pixelInfo.prototype.getRGBPixelRelative = function (horiz_offset, ve
     return false;
   }
   
-  return {
-    r: this.manip.pixel_data[newLoc],
-    g: this.manip.pixel_data[newLoc+1],
-    b: this.manip.pixel_data[newLoc+2],
-    a: this.manip.pixel_data[newLoc+3]
-  };
+  return new RGBPixel(
+    this.manip.pixel_data[newLoc],
+    this.manip.pixel_data[newLoc+1],
+    this.manip.pixel_data[newLoc+2],
+    this.manip.pixel_data[newLoc+3]
+  );
 };
     
-Caman.manip.pixelInfo.prototype.putRGBPixelRelative = function (horiz_offset, vert_offset, rgba) {
+Caman.manip.pixelInfo.prototype.putPixelRelative = function (horiz_offset, vert_offset, rgba) {
   var newLoc = this.loc + (this.manip.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
   
   // error handling
@@ -816,18 +816,18 @@ Caman.manip.pixelInfo.prototype.putRGBPixelRelative = function (horiz_offset, ve
   this.manip.pixel_data[newLoc+3] =  rgba.a;
 };
     
-Caman.manip.pixelInfo.prototype.getRGBPixel = function (x, y) {
+Caman.manip.pixelInfo.prototype.getPixel = function (x, y) {
   var newLoc = (y * this.manip.dimensions.width + x) * 4;
   
-  return {
-    r: this.manip.pixel_data[newLoc],
-    g: this.manip.pixel_data[newLoc+1],
-    b: this.manip.pixel_data[newLoc+2],
-    a: this.manip.pixel_data[newLoc+3]
-  };
+  return new RGBPixel(
+    this.manip.pixel_data[newLoc],
+    this.manip.pixel_data[newLoc+1],
+    this.manip.pixel_data[newLoc+2],
+    this.manip.pixel_data[newLoc+3]
+  );
 };
     
-Caman.manip.pixelInfo.prototype.putRGBPixel = function (x, y, rgba) {
+Caman.manip.pixelInfo.prototype.putPixel = function (x, y, rgba) {
   var newLoc = (y * this.manip.dimensions.width + x) * 4;
   
   this.manip.pixel_data[newLoc]   = rgba.r;
