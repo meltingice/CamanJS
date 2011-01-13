@@ -687,6 +687,49 @@ Caman.events  = {
   
 })(Caman);
 
+/*
+ * Allows the currently rendering filter to get data about
+ * surrounding pixels relative to the pixel currently being
+ * processed. The data returned is identical in format to the
+ * rgba object provided in the process function.
+ *
+ * Example: to get data about the pixel to the top-right
+ * of the currently processing pixel, you can call (within the process
+ * function):
+ *		this.getPixel(1, -1);
+ */
+Caman.manip.pixelInfo = function (loc) {
+	var self = this;
+	
+	return {
+		loc: loc,
+		getPixel: function (horiz_offset, vert_offset) {
+			// We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
+			// terms: -1 means down and +1 means up.
+			var newLoc = this.loc + (self.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
+			
+			// error handling
+			if (newLoc > self.pixel_data.length || newLoc < 0) {
+				return false;
+			}
+			
+			return {
+				r: self.pixel_data[newLoc],
+				g: self.pixel_data[newLoc+1],
+				b: self.pixel_data[newLoc+2],
+				a: self.pixel_data[newLoc+3]
+			};
+		}
+	};
+};
+
+/*
+ * The core of the image rendering, this function executes
+ * the provided filter and updates the canvas pixel data
+ * accordingly. NOTE: this does not write the updated pixel
+ * data to the canvas. That happens when all filters are finished
+ * rendering in order to be as fast as possible.
+ */
 Caman.manip.executeFilter = function (adjust, processFn) {
   var n = this.pixel_data.length,
   res = null,
@@ -709,9 +752,10 @@ Caman.manip.executeFilter = function (adjust, processFn) {
    */
   render_block = function (bnum, start, end) {
     console.log("BLOCK #" + bnum + " - Filter: " + processFn.name + ", Start: " + start + ", End: " + end);
+    
     setTimeout(function () {
       for (var i = start; i < end; i += 4) {
-        res = processFn.call(null, adjust, {
+        res = processFn.call(self.pixelInfo(i), adjust, {
           r: self.pixel_data[i], 
           g: self.pixel_data[i+1], 
           b: self.pixel_data[i+2], 
@@ -722,6 +766,8 @@ Caman.manip.executeFilter = function (adjust, processFn) {
         self.pixel_data[i+1] = res.g;
         self.pixel_data[i+2] = res.b;
         self.pixel_data[i+3] = res.a;
+        
+        break;
       }
       
       block_finished(bnum);
