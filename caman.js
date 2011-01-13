@@ -696,31 +696,31 @@ Caman.events  = {
  * Example: to get data about the pixel to the top-right
  * of the currently processing pixel, you can call (within the process
  * function):
- *		this.getPixel(1, -1);
+ *    this.getPixel(1, -1);
  */
 Caman.manip.pixelInfo = function (loc) {
-	var self = this;
-	
-	return {
-		loc: loc,
-		getPixel: function (horiz_offset, vert_offset) {
-			// We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
-			// terms: -1 means down and +1 means up.
-			var newLoc = this.loc + (self.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
-			
-			// error handling
-			if (newLoc > self.pixel_data.length || newLoc < 0) {
-				return false;
-			}
-			
-			return {
-				r: self.pixel_data[newLoc],
-				g: self.pixel_data[newLoc+1],
-				b: self.pixel_data[newLoc+2],
-				a: self.pixel_data[newLoc+3]
-			};
-		}
-	};
+  var self = this;
+  
+  return {
+    loc: loc,
+    getPixel: function (horiz_offset, vert_offset) {
+      // We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
+      // terms: -1 means down and +1 means up.
+      var newLoc = this.loc + (self.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
+      
+      // error handling
+      if (newLoc > self.pixel_data.length || newLoc < 0) {
+        return false;
+      }
+      
+      return {
+        r: self.pixel_data[newLoc],
+        g: self.pixel_data[newLoc+1],
+        b: self.pixel_data[newLoc+2],
+        a: self.pixel_data[newLoc+3]
+      };
+    }
+  };
 };
 
 /*
