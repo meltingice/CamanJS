@@ -926,28 +926,47 @@ window.Caman = Caman;
 
     adjust = Math.pow((100 + adjust) / 100, 2);
     
-    return this.process( adjust, function contrast(adjust, rgba) {  
-      var chan;
-      for (chan in rgba) {
-        if (rgba.hasOwnProperty(chan)) {
-          // skip the alpha channel
-          if (chan === 'a') { continue; }
-          
-          rgba[chan] /= 255;
-          rgba[chan] -= 0.5;
-          rgba[chan] *= adjust;
-          rgba[chan] += 0.5;
-          rgba[chan] *= 255;
-          
-          // While uglier, I found that using if statements are
-          // faster than calling Math.max() and Math.min() to bound
-          // the numbers.
-          if (rgba[chan] > 255) {
-            rgba[chan] = 255;
-          } else if (rgba[chan] < 0) {
-            rgba[chan] = 0;
-          }
-        }
+    return this.process( adjust, function contrast(adjust, rgba) {
+      /* Red channel */
+      rgba.r /= 255;
+      rgba.r -= 0.5;
+      rgba.r *= adjust;
+      rgba.r += 0.5;
+      rgba.r *= 255;
+      
+      /* Green channel */
+      rgba.g /= 255;
+      rgba.g -= 0.5;
+      rgba.g *= adjust;
+      rgba.g += 0.5;
+      rgba.g *= 255;
+      
+      /* Blue channel */
+      rgba.b /= 255;
+      rgba.b -= 0.5;
+      rgba.b *= adjust;
+      rgba.b += 0.5;
+      rgba.b *= 255;
+      
+      // While uglier, I found that using if statements are
+      // faster than calling Math.max() and Math.min() to bound
+      // the numbers.
+      if (rgba.r > 255) {
+        rgba.r = 255;
+      } else if (rgba.r < 0) {
+        rgba.r = 0;
+      }
+      
+      if (rgba.g > 255) {
+        rgba.g = 255;
+      } else if (rgba.g < 0) {
+        rgba.g = 0;
+      }
+      
+      if (rgba.b > 255) {
+        rgba.b = 255;
+      } else if (rgba.b < 0) {
+        rgba.b = 0;
       }
               
       return rgba;
