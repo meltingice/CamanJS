@@ -126,10 +126,13 @@ Extending CamanJS is easy as well. It's accomplished by adding functions onto th
 			
 			// to get data about a pixel relative to this one currently
 			// being processed, you can use getPixel([horiz_offset], [vert_offset]);
-			var topLeft			= this.getPixel(-1, 1);
-			var topRight		= this.getPixel(1, 1);
-			var bottomLeft	= this.getPixel(-1, -1);
-			var bottomRight	= this.getPixel(1, -1);
+			var topLeft			= this.getPixelRelative(-1, 1);
+			var topRight		= this.getPixelRelative(1, 1);
+			var bottomLeft	= this.getPixelRelative(-1, -1);
+			var bottomRight	= this.getPixelRelative(1, -1);
+			
+			// gets a pixel from the canvas at the specified absolute coordinates
+			var absPixel		= this.getPixel(200, 300);
 			
 			return rgba;
 		});
