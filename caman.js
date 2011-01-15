@@ -614,6 +614,46 @@ Caman.extend( Caman, {
     b = parseInt(hex.substr(4, 2), 16);
     
     return {r: r, g: g, b: b};
+  },
+  
+  processKernel: function (adjust, kernel, divisor, bias) {
+    var val = {
+      r: 0,
+      g: 0,
+      b: 0
+    };
+    
+    for (var i = 0; i < adjust.length; i++) {
+      for (var j = 0; j < adjust[i].length; j++) {
+        val.r += (adjust[i][j] * kernel[i][j].r);
+        val.g += (adjust[i][j] * kernel[i][j].g);
+        val.b += (adjust[i][j] * kernel[i][j].b);
+      }
+    }
+    
+    val.r = (val.r / divisor) + bias;
+    val.g = (val.g / divisor) + bias;
+    val.b = (val.b / divisor) + bias;
+    
+    if (val.r > 255) {
+      val.r = 255;
+    } else if (val.r < 0) {
+      val.r = 0;
+    }
+
+    if (val.g > 255) {
+      val.g = 255;
+    } else if (val.g < 0) {
+      val.g = 0;
+    }
+    
+    if (val.b > 255) {
+      val.b = 255;
+    } else if (val.b < 0) {
+      val.b = 0;
+    }
+    
+    return val;
   }
 });
 
@@ -688,6 +728,15 @@ Caman.events  = {
 })(Caman);
 
 /*
+ * SINGLE = traverse the image 1 pixel at a time
+ * KERNEL = traverse the image using convolution kernels
+ */
+var ProcessType = {
+  SINGLE: 1,
+  KERNEL: 2
+};
+
+/*
  * Allows the currently rendering filter to get data about
  * surrounding pixels relative to the pixel currently being
  * processed. The data returned is identical in format to the
@@ -706,11 +755,11 @@ Caman.manip.pixelInfo = function (loc, self) {
 Caman.manip.pixelInfo.prototype.getPixelRelative = function (horiz_offset, vert_offset) {
   // We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
   // terms: -1 means down and +1 means up.
-  var newLoc = this.loc + (this.manip.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
+  var newLoc = this.loc + (this.manip.dimensions.width * 4 * (vert_offset * -1)) + (4 * horiz_offset);
   
   // error handling
   if (newLoc > this.manip.pixel_data.length || newLoc < 0) {
-    return false;
+    return {r: 0, g: 0, b: 0, a: 0};
   }
   
   return {
@@ -722,7 +771,7 @@ Caman.manip.pixelInfo.prototype.getPixelRelative = function (horiz_offset, vert_
 };
     
 Caman.manip.pixelInfo.prototype.putPixelRelative = function (horiz_offset, vert_offset, rgba) {
-  var newLoc = this.loc + (this.manip.dimensions.width * (vert_offset * -1)) + (4 * horiz_offset);
+  var newLoc = this.loc + (this.manip.dimensions.width * 4 * (vert_offset * -1)) + (4 * horiz_offset);
   
   // error handling
   if (newLoc > this.manip.pixel_data.length || newLoc < 0) {
@@ -762,7 +811,7 @@ Caman.manip.pixelInfo.prototype.putPixel = function (x, y, rgba) {
  * data to the canvas. That happens when all filters are finished
  * rendering in order to be as fast as possible.
  */
-Caman.manip.executeFilter = function (adjust, processFn) {
+Caman.manip.executeFilter = function (adjust, processFn, type) {
   var n = this.pixel_data.length,
   res = null,
   
@@ -812,20 +861,115 @@ Caman.manip.executeFilter = function (adjust, processFn) {
     console.log("Block #" + bnum + " finished! Filter: " + processFn.name);
     blocks_done++;
 
-    if (blocks_done == Caman.renderBlocks) {
+    if (blocks_done == Caman.renderBlocks || bnum == -1) {
       console.log("Filter " + processFn.name + " finished!");
       Caman.trigger("processComplete", {id: self.canvas_id, completed: processFn.name});
       
       self.processNext();
     }
+  },
+  
+  render_kernel = function () {
+    console.log("Rendering kernel - Filter: " + processFn.name);
+    
+    setTimeout(function () {
+      var kernel, pixelInfo, 
+      start, end, 
+      mod_pixel_data = new Array(n),
+      bias = adjust.bias,
+      divisor = adjust.divisor;
+      
+      adjust = adjust.adjust;
+      
+      if (adjust.length === 3) {
+        kernel = [[],[],[]];
+        start = self.dimensions.width * 4;
+        end = n - (self.dimensions.width * 4);
+      } else {
+        kernel = [[],[],[],[],[]];
+        start = self.dimensions.width * 8;
+        end = n - (self.dimensions.width * 8);
+      }
+      
+      for (var i = start; i < end; i += 4) {
+        pixelInfo = new self.pixelInfo(i, self);
+        
+        // kernel is a 3x3 or 5x5 2D array expressed as [x][y]
+        if (adjust.length == 3) {
+          kernel[0][0] = pixelInfo.getPixelRelative(-1, 1);  // top left
+          kernel[1][0] = pixelInfo.getPixelRelative(0, 1);   // top middle
+          kernel[2][0] = pixelInfo.getPixelRelative(1, 1);   // top right
+          
+          kernel[0][1] = pixelInfo.getPixelRelative(-1, 0);  // middle left
+          kernel[1][1] = pixelInfo.getPixelRelative(0, 0);   // middle middle (kernel)
+          kernel[2][1] = pixelInfo.getPixelRelative(1, 0);   // middle right
+          
+          kernel[0][2] = pixelInfo.getPixelRelative(-1, -1); // bottom left
+          kernel[1][2] = pixelInfo.getPixelRelative(0, -1);  // bottom middle
+          kernel[2][2] = pixelInfo.getPixelRelative(1, -1);  // bottom right
+        } else {
+          kernel[0][0] = pixelInfo.getPixelRelative(-2, 2);
+          kernel[1][0] = pixelInfo.getPixelRelative(-1, 2);
+          kernel[2][0] = pixelInfo.getPixelRelative(0, 2);
+          kernel[3][0] = pixelInfo.getPixelRelative(1, 2);
+          kernel[4][0] = pixelInfo.getPixelRelative(2, 2);
+          
+          kernel[0][1] = pixelInfo.getPixelRelative(-2, 1);
+          kernel[1][1] = pixelInfo.getPixelRelative(-1, 1);
+          kernel[2][1] = pixelInfo.getPixelRelative(0, 1);
+          kernel[3][1] = pixelInfo.getPixelRelative(1, 1);
+          kernel[4][1] = pixelInfo.getPixelRelative(2, 1);
+          
+          kernel[0][2] = pixelInfo.getPixelRelative(-2, 0);
+          kernel[1][2] = pixelInfo.getPixelRelative(-1, 0);
+          kernel[2][2] = pixelInfo.getPixelRelative(0, 0); // kernel
+          kernel[3][2] = pixelInfo.getPixelRelative(1, 0);
+          kernel[4][2] = pixelInfo.getPixelRelative(2, 0);
+          
+          kernel[0][3] = pixelInfo.getPixelRelative(-2, -1);
+          kernel[1][3] = pixelInfo.getPixelRelative(-1, -1);
+          kernel[2][3] = pixelInfo.getPixelRelative(0, -1);
+          kernel[3][3] = pixelInfo.getPixelRelative(1, -1);
+          kernel[4][3] = pixelInfo.getPixelRelative(2, -1);
+          
+          kernel[0][4] = pixelInfo.getPixelRelative(-2, -2);
+          kernel[1][4] = pixelInfo.getPixelRelative(-1, -2);
+          kernel[2][4] = pixelInfo.getPixelRelative(0, -2);
+          kernel[3][4] = pixelInfo.getPixelRelative(1, -2);
+          kernel[4][4] = pixelInfo.getPixelRelative(2, -2);
+        }
+        
+        // Execute the kernel processing function
+        res = processFn.call(pixelInfo, adjust, kernel, divisor, bias);
+
+        // Update the new pixel array since we can't modify the original
+        // until the convolutions are finished on the entire image.
+        mod_pixel_data[i]   = res.r;
+        mod_pixel_data[i+1] = res.g;
+        mod_pixel_data[i+2] = res.b;
+        mod_pixel_data[i+3] = 255;
+      }
+
+      // Update the actual canvas pixel data
+      for (i = start; i < end; i++) {
+        self.pixel_data[i] = mod_pixel_data[i];
+      }
+      
+      block_finished(-1);
+      
+    }, 0);
   };
   
-  // Split the image into its blocks.
-  for (var j = 0; j < Caman.renderBlocks; j++) {
-    var start = j * blockN,
-    end = start + ((j == Caman.renderBlocks - 1) ? lastBlockN : blockN);
-    render_block(j, start, end);
-  }  
+  if (type === ProcessType.SINGLE) {
+    // Split the image into its blocks.
+    for (var j = 0; j < Caman.renderBlocks; j++) {
+     var start = j * blockN,
+     end = start + ((j == Caman.renderBlocks - 1) ? lastBlockN : blockN);
+     render_block(j, start, end);
+    }
+  } else {
+    render_kernel();
+  }
 };
 
 Caman.manip.process = function (adjust, processFn) {
@@ -833,7 +977,17 @@ Caman.manip.process = function (adjust, processFn) {
   // up a render queue and execute the filters in order once
   // render() is called instead of executing them as they're called
   // synchronously.
-  this.renderQueue.push({adjust: adjust, processFn: processFn});
+  this.renderQueue.push({adjust: adjust, processFn: processFn, type: ProcessType.SINGLE});
+};
+
+Caman.manip.processKernel = function (adjust, divisor, bias) {
+  var data = {
+    adjust: adjust,
+    divisor: divisor || 1,
+    bias: bias || 0
+  };
+  
+  this.renderQueue.push({adjust: data, processFn: Caman.processKernel, type: ProcessType.KERNEL});
 };
 
 /*
@@ -857,7 +1011,7 @@ Caman.manip.processNext = function (finishedFn) {
   }
   
   var next = this.renderQueue.shift();
-  this.executeFilter(next.adjust, next.processFn);
+  this.executeFilter(next.adjust, next.processFn, next.type);
 };
 
 // Expose Caman to the world!
