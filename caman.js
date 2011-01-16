@@ -858,11 +858,19 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
   // Called whenever a block finishes. It's used to determine when all blocks
   // finish rendering.
   block_finished = function (bnum) {
-    console.log("Block #" + bnum + " finished! Filter: " + processFn.name);
+    if (bnum >= 0) {
+      console.log("Block #" + bnum + " finished! Filter: " + processFn.name);
+    }
+    
     blocks_done++;
 
     if (blocks_done == Caman.renderBlocks || bnum == -1) {
-      console.log("Filter " + processFn.name + " finished!");
+      if (bnum >= 0) {
+        console.log("Filter " + processFn.name + " finished!");
+      } else {
+        console.log("Kernel filter finished!");
+      }
+      
       Caman.trigger("processComplete", {id: self.canvas_id, completed: processFn.name});
       
       self.processNext();
@@ -870,16 +878,17 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
   },
   
   render_kernel = function () {
-    console.log("Rendering kernel - Filter: " + processFn.name);
-    
     setTimeout(function () {
       var kernel, pixelInfo, 
       start, end, 
       mod_pixel_data = new Array(n),
+      name = adjust.name,
       bias = adjust.bias,
       divisor = adjust.divisor;
       
       adjust = adjust.adjust;
+      
+      console.log("Rendering kernel - Filter: " + name);
       
       if (adjust.length === 3) {
         kernel = [[],[],[]];
@@ -980,8 +989,9 @@ Caman.manip.process = function (adjust, processFn) {
   this.renderQueue.push({adjust: adjust, processFn: processFn, type: ProcessType.SINGLE});
 };
 
-Caman.manip.processKernel = function (adjust, divisor, bias) {
+Caman.manip.processKernel = function (name, adjust, divisor, bias) {
   var data = {
+    name: name,
     adjust: adjust,
     divisor: divisor || 1,
     bias: bias || 0
