@@ -1332,6 +1332,76 @@ window.Caman = Caman;
     });
   };
   
+/*
+ * Curves implementation using Bezier curve equation.
+ *
+ * Params:
+ *    chan - [r, g, b, rgb]
+ *    start - [x, y] (start of curve; 0 - 255)
+ *    ctrl1 - [x, y] (control point 1; 0 - 255)
+ *    ctrl2 - [x, y] (control point 2; 0 - 255)
+ *    end   - [x, y] (end of curve; 0 - 255)
+ */
+Caman.manip.curves = function (chan, start, ctrl1, ctrl2, end) {
+  var Ax, Bx, Cx, Ay, By, Cy,
+  x0 = start[0], y0 = start[1],
+  x1 = ctrl1[0], y1 = ctrl1[1],
+  x2 = ctrl2[0], y2 = ctrl2[1],
+  x3 = end[0], y3 = end[1],
+  t, curveX, curveY;
+  
+  // Calculate our X and Y coefficients
+  Cx = 3 * (x1 - x0);
+  Bx = 3 * (x2 - x1) - Cx;
+  Ax = x3 - x0 - Cx - Bx;
+  
+  Cy = 3 * (y1 - y0);
+  By = 3 * (y2 - y1) - Cy;
+  Ay = y3 - y0 - Cy - By;
+  
+  if (typeof chan === 'string') {
+    if (chan == 'rgb') {
+      chan = ['r', 'g', 'b'];
+    } else {
+      chan = [chan];
+    }
+  }
+  
+  bezier = {};
+  
+  for (var i = 0; i < 1000; i++) {
+    t = i / 1000;
+    
+    curveX = Math.round((Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0);
+    curveY = Math.round((Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0);
+    
+    bezier[curveX] = curveY;
+  }
+  
+  // If our curve starts after x = 0, initialize it with a flat line until
+  // the curve begins.
+  if (start[0] > 0) {
+    for (i = 0; i < start[0]; i++) {
+      bezier[i] = start[1];
+    }
+  }
+  
+  // ... and the same with the end point
+  if (end[0] < 255) {
+    for (i = end[0]; i <= 255; i++) {
+      bezier[i] = end[1];
+    }
+  }
+  
+  return this.process({bezier: bezier, chans: chan}, function curves(opts, rgba) {
+    for (var i = 0; i < opts.chans.length; i++) {
+      rgba[opts.chans[i]] = opts.bezier[rgba[opts.chans[i]]];
+    }
+    
+    return rgba;
+  });
+};
+  
 }(Caman));
 
 }());
