@@ -10,9 +10,9 @@ Caman.manip.edgeEnhance = function () {
 
 Caman.manip.edgeDetect = function () {
   return this.processKernel('Edge Detect', [
-    [0, 1, 0],
-    [1, -4, 1],
-    [0, 1, 0]
+    [-1, -1, -1],
+    [-1, 8, -1],
+    [-1, -1, -1]
   ]);
 };
 
