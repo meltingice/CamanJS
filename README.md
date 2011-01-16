@@ -68,7 +68,6 @@ Caman('img/example.jpg', '#image-caman', function () {
   this.saturation(-20);
   this.brightness(10);
   
-  // More info on finished() in events section below
   this.render(function () {
     this.save('png'); // shows a download file prompt
     this.toBase64(); // base64 data URL representation of the image. useful if you want to upload the modified image.
@@ -108,6 +107,7 @@ Extending CamanJS is easy as well. It's accomplished by adding functions onto th
 
 <pre>
 (function (Caman) {
+	// Pixel-wise manipulation
 	Caman.manip.fancy_filter = function (adjust) {
 	
 		// === IMPORTANT ===
@@ -136,8 +136,24 @@ Extending CamanJS is easy as well. It's accomplished by adding functions onto th
 			
 			return rgba;
 		});
+		
+		// If you want to use a convolution kernel instead of manipulating each
+		// kernel directly, you can easily do it like this:
+		Caman.manip.convolutionFilter = function () {
+			return this.processKernel('Convolution Filter', [
+				[1, 1, 1],
+				[1, 1, 1],
+				[1, 1, 1]
+			], 9);
+		};
 	};
 }(Caman));
+</pre>
+
+The arguments to processKernel are:
+
+<pre>
+this.processKernel( Filter Name, Convolution Matrix (3x3 or 5x5), [Divisor], [Bias] );
 </pre>
 
 <h2>Utility Functions</h2>
