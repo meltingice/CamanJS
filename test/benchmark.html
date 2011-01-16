@@ -8,6 +8,9 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
   <script type="text/javascript" src="benchmark/flot/jquery.flot.min.js"></script>
   <script type="text/javascript" src="../caman.js"></script>
+  <script type="text/javascript" src="../plugins/blur.js"></script>
+  <script type="text/javascript" src="../plugins/edges.js"></script>
+  
   <script type="text/javascript">
   	Caman.renderBlocks = 4;
   </script>
@@ -23,6 +26,10 @@
 
   <div id="image-wrap">
     
+  </div>
+  
+  <div id="start">
+  	<input type="button" id="start-button" class="fancy-button-grey" value="Start Benchmark" />
   </div>
 
   <div id="test-results-wrap">
@@ -40,9 +47,11 @@
   </div>
     
   <script type="text/javascript">
-    benchmark.run(3, function (results) {
-      console.log(results);
-    });
+  	document.getElementById('start-button').onclick = function () {
+    	benchmark.run(3, function (results) {
+    	  console.log(results);
+    	});
+    };
   </script>
 </body>
 </html>

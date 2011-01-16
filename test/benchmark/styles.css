@@ -3,9 +3,38 @@ body {
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 
+.fancy-button-grey {
+    background-color: #f2f2f2;
+    background-image: -moz-linear-gradient(top, #f2f2f2, #dbdbdb); /* FF3.6 */
+    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #e8e8e8),color-stop(1, #d2d2d2)); /* Saf4+, Chrome */
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#e8e8e8', EndColorStr='#d2d2d2'); /* IE6,IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#e8e8e8', EndColorStr='#d2d2d2')"; /* IE8 */
+    border: 1px #b2b2b2 solid;
+    padding: 5px 10px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    color: #333333;
+}
+
+.fancy-button-grey:hover {
+    border: 1px #888888 solid;
+}
+
 #header {
     width: 620px;
     margin: 20px auto 10px auto;
+}
+
+#start {
+  text-align: center;
+}
+
+#start > input {
+  padding: 10px 15px;
 }
 
 #test-results-wrap {
@@ -54,9 +83,9 @@ body {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-#graph-wrap { width: 800px !important; height: 300px !important; }
+#graph-wrap { width: 1000px !important; height: 300px !important; }
 
 #test-graph {
-  width: 800px;
+  width: 1000px;
   height: 300px;
 }

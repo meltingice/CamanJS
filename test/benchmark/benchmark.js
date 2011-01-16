@@ -1,6 +1,7 @@
 (function ($, Caman) {
 
 var test_filters = [
+	// Standard filters
   {filter: 'brightness', args: [50]},
   {filter: 'clip', args: [30]},
   {filter: 'channels', args: [{red: 20, green: -5, blue: -10}]},
@@ -12,7 +13,18 @@ var test_filters = [
   {filter: 'invert', args: []},
   {filter: 'noise', args: [20]},
   {filter: 'saturation', args: [-50]},
-  {filter: 'sepia', args: [50]}
+  {filter: 'sepia', args: [50]},
+  
+  // Convolution kernel filters
+  {filter: 'boxBlur', args: []},
+  {filter: 'radialBlur', args: []},
+  {filter: 'heavyRadialBlur', args: []},
+  {filter: 'gaussianBlur', args: []},
+  {filter: 'motionBlur', args: [45]},
+  {filter: 'sharpen', args: []},
+  {filter: 'edgeEnhance', args: []},
+  {filter: 'edgeDetect', args: []},
+  {filter: 'emboss', args: []}
 ];
 
 Array.prototype.average = function () {
