@@ -987,6 +987,8 @@ Caman.manip.process = function (adjust, processFn) {
   // render() is called instead of executing them as they're called
   // synchronously.
   this.renderQueue.push({adjust: adjust, processFn: processFn, type: ProcessType.SINGLE});
+  
+  return this;
 };
 
 Caman.manip.processKernel = function (name, adjust, divisor, bias) {
@@ -998,6 +1000,8 @@ Caman.manip.processKernel = function (name, adjust, divisor, bias) {
   };
   
   this.renderQueue.push({adjust: data, processFn: Caman.processKernel, type: ProcessType.KERNEL});
+  
+  return this;
 };
 
 /*
