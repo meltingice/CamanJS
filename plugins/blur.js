@@ -26,6 +26,16 @@ Caman.manip.heavyRadialBlur = function () {
   ], 13);
 };
 
+Caman.manip.gaussianBlur = function () {
+  return this.processKernel('Gaussian Blur', [
+    [1, 4, 6, 4, 1],
+    [4, 16, 24, 16, 4],
+    [6, 24, 36, 24, 6],
+    [4, 16, 24, 16, 4],
+    [1, 4, 6, 4, 1]
+  ], 256);
+}
+
 Caman.manip.motionBlur = function (degrees) {
   var kernel;
   
