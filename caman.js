@@ -13,6 +13,13 @@ var forEach = Array.prototype.forEach,
 hasOwn = Object.prototype.hasOwnProperty,
 slice = Array.prototype.slice,
 
+/*
+ * The loader function is super-polymorphic. Lots of different
+ * ways to load content through CamanJS.
+ *
+ * All loading options:
+ *  
+ */
 Caman = function ( options ) {
   if ( typeof options === "string" ) {
     var temp = options;
@@ -107,17 +114,28 @@ Caman.manip = Caman.prototype = {
     this.options = options;
     
     if ( typeof options !== "string" ) {
-  
-      img.src = options.src; 
-  
-      img.onload = function() {
-         imageReady.call(that);
-      };
       
-      if ( !Caman.ready ) {
-        document.addEventListener("DOMContentLoaded", function() {
-          Caman.ready = true;
-        }, false);          
+      // We are using an already loaded image
+      if (options.image) {
+        if (options.canvas) {
+          // Load an image into an already-made canvas
+          
+        } else {
+          // Replace the image with a canvas element
+          
+        }
+      } else {
+        img.src = options.src; 
+    
+        img.onload = function() {
+           imageReady.call(that);
+        };
+        
+        if ( !Caman.ready ) {
+          document.addEventListener("DOMContentLoaded", function() {
+            Caman.ready = true;
+          }, false);          
+        }
       }
       
     } else {
@@ -1143,7 +1161,7 @@ window.Caman = Caman;
   
   Caman.manip.hue = function(adjust) {
     var hsv, h;
-       
+
     return this.process( adjust, function hue(adjust, rgba) {
       hsv = Caman.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
       h = hsv.h * 100;
@@ -1332,76 +1350,136 @@ window.Caman = Caman;
     });
   };
   
-/*
- * Curves implementation using Bezier curve equation.
- *
- * Params:
- *    chan - [r, g, b, rgb]
- *    start - [x, y] (start of curve; 0 - 255)
- *    ctrl1 - [x, y] (control point 1; 0 - 255)
- *    ctrl2 - [x, y] (control point 2; 0 - 255)
- *    end   - [x, y] (end of curve; 0 - 255)
- */
-Caman.manip.curves = function (chan, start, ctrl1, ctrl2, end) {
-  var Ax, Bx, Cx, Ay, By, Cy,
-  x0 = start[0], y0 = start[1],
-  x1 = ctrl1[0], y1 = ctrl1[1],
-  x2 = ctrl2[0], y2 = ctrl2[1],
-  x3 = end[0], y3 = end[1],
-  t, curveX, curveY;
-  
-  // Calculate our X and Y coefficients
-  Cx = 3 * (x1 - x0);
-  Bx = 3 * (x2 - x1) - Cx;
-  Ax = x3 - x0 - Cx - Bx;
-  
-  Cy = 3 * (y1 - y0);
-  By = 3 * (y2 - y1) - Cy;
-  Ay = y3 - y0 - Cy - By;
-  
-  if (typeof chan === 'string') {
-    if (chan == 'rgb') {
-      chan = ['r', 'g', 'b'];
-    } else {
-      chan = [chan];
-    }
-  }
-  
-  bezier = {};
-  
-  for (var i = 0; i < 1000; i++) {
-    t = i / 1000;
+  /*
+   * Curves implementation using Bezier curve equation.
+   *
+   * Params:
+   *    chan - [r, g, b, rgb]
+   *    start - [x, y] (start of curve; 0 - 255)
+   *    ctrl1 - [x, y] (control point 1; 0 - 255)
+   *    ctrl2 - [x, y] (control point 2; 0 - 255)
+   *    end   - [x, y] (end of curve; 0 - 255)
+   */
+  Caman.manip.curves = function (chan, start, ctrl1, ctrl2, end) {
+    var Ax, Bx, Cx, Ay, By, Cy,
+    x0 = start[0], y0 = start[1],
+    x1 = ctrl1[0], y1 = ctrl1[1],
+    x2 = ctrl2[0], y2 = ctrl2[1],
+    x3 = end[0], y3 = end[1],
+    t, curveX, curveY;
     
-    curveX = Math.round((Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0);
-    curveY = Math.round((Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0);
+    // Calculate our X and Y coefficients
+    Cx = 3 * (x1 - x0);
+    Bx = 3 * (x2 - x1) - Cx;
+    Ax = x3 - x0 - Cx - Bx;
     
-    bezier[curveX] = curveY;
-  }
-  
-  // If our curve starts after x = 0, initialize it with a flat line until
-  // the curve begins.
-  if (start[0] > 0) {
-    for (i = 0; i < start[0]; i++) {
-      bezier[i] = start[1];
-    }
-  }
-  
-  // ... and the same with the end point
-  if (end[0] < 255) {
-    for (i = end[0]; i <= 255; i++) {
-      bezier[i] = end[1];
-    }
-  }
-  
-  return this.process({bezier: bezier, chans: chan}, function curves(opts, rgba) {
-    for (var i = 0; i < opts.chans.length; i++) {
-      rgba[opts.chans[i]] = opts.bezier[rgba[opts.chans[i]]];
+    Cy = 3 * (y1 - y0);
+    By = 3 * (y2 - y1) - Cy;
+    Ay = y3 - y0 - Cy - By;
+    
+    if (typeof chan === 'string') {
+      if (chan == 'rgb') {
+        chan = ['r', 'g', 'b'];
+      } else {
+        chan = [chan];
+      }
     }
     
-    return rgba;
-  });
-};
-  
+    bezier = {};
+    
+    for (var i = 0; i < 1000; i++) {
+      t = i / 1000;
+      
+      curveX = Math.round((Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0);
+      curveY = Math.round((Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0);
+      
+      if (curveY > 255) {
+        curveY = 255;
+      } else if (curveY < 0) {
+        curveY = 0;
+      }
+      
+      bezier[curveX] = curveY;
+    }
+    
+    // If our curve starts after x = 0, initialize it with a flat line until
+    // the curve begins.
+    if (start[0] > 0) {
+      for (i = 0; i < start[0]; i++) {
+        bezier[i] = start[1];
+      }
+    }
+    
+    // ... and the same with the end point
+    if (end[0] < 255) {
+      for (i = end[0]; i <= 255; i++) {
+        bezier[i] = end[1];
+      }
+    }
+    
+    // Do a search for missing values in the bezier array and use linear interpolation
+    // to approximate their values.
+    var leftCoord, rightCoord, j, slope, bint;
+    if (bezier.length < 256) {
+      for (i = 0; i <= 255; i++) {
+        if (typeof bezier[i] === "undefined") {
+          // The value to the left will always be defined. We don't have to worry about
+          // when i = 0 because the starting point is guaranteed (I think...)
+          leftCoord = [i-1, bezier[i-1]];
+          
+          // Find the first value to the right that was found. Ideally this loop will break
+          // very quickly.
+          for (j = i; j <= 255; j++) {
+            if (typeof bezier[j] !== "undefined") {
+              rightCoord = [j, bezier[j]];
+              break;
+            }
+          }
+          
+          bezier[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
+        }
+      }
+    }
+    
+    // Edge case
+    if (typeof bezier[255] === "undefined") {
+      bezier[255] = bezier[254];
+    }
+    
+    console.log(bezier);
+    
+    return this.process({bezier: bezier, chans: chan}, function curves(opts, rgba) {
+      for (var i = 0; i < opts.chans.length; i++) {
+        rgba[opts.chans[i]] = opts.bezier[rgba[opts.chans[i]]];
+      }
+      
+      return rgba;
+    });
+  };
+
+  /*
+   * Adjusts the exposure of the image by using the curves function.
+   */
+  Caman.manip.exposure = function (adjust) {
+    var p, ctrl1, ctrl2;
+    
+    p = Math.abs(adjust) / 100;
+    
+
+    ctrl1 = [0, (255 * p)];
+    ctrl2 = [(255 - (255 * p)), 255];
+    
+    if (adjust < 0) {
+      ctrl1 = ctrl1.reverse();
+      ctrl2 = ctrl2.reverse();
+    }
+    
+    console.log("Ctrl 1: ", ctrl1);
+    console.log("Ctrl 2: ", ctrl2);
+    
+    return this.curves('rgb', [0, 0], ctrl1, ctrl2, [255, 255]);
+  };
+
 }(Caman));
 
 }());
