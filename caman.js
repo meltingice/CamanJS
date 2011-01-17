@@ -1446,8 +1446,6 @@ window.Caman = Caman;
       bezier[255] = bezier[254];
     }
     
-    console.log(bezier);
-    
     return this.process({bezier: bezier, chans: chan}, function curves(opts, rgba) {
       for (var i = 0; i < opts.chans.length; i++) {
         rgba[opts.chans[i]] = opts.bezier[rgba[opts.chans[i]]];
@@ -1473,9 +1471,6 @@ window.Caman = Caman;
       ctrl1 = ctrl1.reverse();
       ctrl2 = ctrl2.reverse();
     }
-    
-    console.log("Ctrl 1: ", ctrl1);
-    console.log("Ctrl 2: ", ctrl2);
     
     return this.curves('rgb', [0, 0], ctrl1, ctrl2, [255, 255]);
   };
