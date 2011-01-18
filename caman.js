@@ -1445,6 +1445,26 @@ window.Caman = Caman;
       return rgba;
     });
   };
+  
+  /*
+   * Adjusts the exposure of the image by using the curves function.
+   */
+  Caman.manip.exposure = function (adjust) {
+    var p, ctrl1, ctrl2;
+    
+    p = Math.abs(adjust) / 100;
+    
+
+    ctrl1 = [0, (255 * p)];
+    ctrl2 = [(255 - (255 * p)), 255];
+    
+    if (adjust < 0) {
+      ctrl1 = ctrl1.reverse();
+      ctrl2 = ctrl2.reverse();
+    }
+    
+    return this.curves('rgb', [0, 0], ctrl1, ctrl2, [255, 255]);
+  };
 
 }(Caman));
 
