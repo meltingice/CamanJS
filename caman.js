@@ -13,13 +13,6 @@ var forEach = Array.prototype.forEach,
 hasOwn = Object.prototype.hasOwnProperty,
 slice = Array.prototype.slice,
 
-/*
- * The loader function is super-polymorphic. Lots of different
- * ways to load content through CamanJS.
- *
- * All loading options:
- *  
- */
 Caman = function ( options ) {
   if ( typeof options === "string" ) {
     var temp = options;
@@ -115,27 +108,16 @@ Caman.manip = Caman.prototype = {
     
     if ( typeof options !== "string" ) {
       
-      // We are using an already loaded image
-      if (options.image) {
-        if (options.canvas) {
-          // Load an image into an already-made canvas
-          
-        } else {
-          // Replace the image with a canvas element
-          
-        }
-      } else {
-        img.src = options.src; 
+      img.src = options.src; 
     
-        img.onload = function() {
-           imageReady.call(that);
-        };
-        
-        if ( !Caman.ready ) {
-          document.addEventListener("DOMContentLoaded", function() {
-            Caman.ready = true;
-          }, false);          
-        }
+      img.onload = function() {
+         imageReady.call(that);
+      };
+      
+      if ( !Caman.ready ) {
+        document.addEventListener("DOMContentLoaded", function() {
+          Caman.ready = true;
+        }, false);          
       }
       
     } else {
@@ -768,6 +750,15 @@ var ProcessType = {
 Caman.manip.pixelInfo = function (loc, self) {
   this.loc = loc;
   this.manip = self;
+};
+
+Caman.manip.pixelInfo.prototype.locationXY = function () {
+  var x, y;
+  
+  y = this.manip.dimensions.height - Math.floor(this.loc / (this.manip.dimensions.width * 4));
+  x = ((this.loc % (this.manip.dimensions.width * 4)) / 4) - 1;
+  
+  return {x: x, y: y};
 };
   
 Caman.manip.pixelInfo.prototype.getPixelRelative = function (horiz_offset, vert_offset) {
@@ -1453,26 +1444,6 @@ window.Caman = Caman;
       
       return rgba;
     });
-  };
-
-  /*
-   * Adjusts the exposure of the image by using the curves function.
-   */
-  Caman.manip.exposure = function (adjust) {
-    var p, ctrl1, ctrl2;
-    
-    p = Math.abs(adjust) / 100;
-    
-
-    ctrl1 = [0, (255 * p)];
-    ctrl2 = [(255 - (255 * p)), 255];
-    
-    if (adjust < 0) {
-      ctrl1 = ctrl1.reverse();
-      ctrl2 = ctrl2.reverse();
-    }
-    
-    return this.curves('rgb', [0, 0], ctrl1, ctrl2, [255, 255]);
   };
 
 }(Caman));
