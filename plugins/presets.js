@@ -9,8 +9,8 @@ Caman.manip.crossProcess = function () {
     .contrast(5);
 };
 
-Caman.manip.vintage = function () {
-  return this
+Caman.manip.vintage = function (vignette) {
+  var ret = this
     .saturation(40)
     .contrast(5)
     .curves('r', [0, 0], [125, 100], [220, 230], [220, 255])
@@ -18,8 +18,13 @@ Caman.manip.vintage = function () {
     .curves('b', [0, 30], [0, 30], [255, 205], [255, 205])
     .colorize('#ff56aa', 10)
     .sepia(50)
-    .saturation(-20)
-    .vignette(120, 70);
+    .saturation(-20);
+    
+  if (vignette || typeof vignette === 'undefined') {
+    return this.vignette(80, 60);
+  }
+  
+  return ret;
 };
 
 }(Caman));
