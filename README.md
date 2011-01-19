@@ -11,7 +11,7 @@ If you're looking for more information, <a href="http://blog.meltingice.net/prog
 CamanJS now uses a block rendering system, which gives some notable benefits:
 
 * Image rendering is now asynchronous, which means page rendering is no longer blocked.
-* Slower filters (such as contrast) get a nice speed improvement due to render concurrency.
+* Slower filters get a nice speed improvement due to (fake) render concurrency.
 
 The way the renderer works is:
 
