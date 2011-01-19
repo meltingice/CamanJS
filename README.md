@@ -178,3 +178,9 @@ If you add a filter, please edit test/benchmark/benchmark.js and add your filter
 * Implement a way to specify canvas elements by class instead of id, and apply effects to all found canvases.
 * Add lots more adjustments/effects
 * Figure out if there's a way to load images cross-domain (don't think there is?)
+
+<h1>Project Contributors</h1>
+
+* <a href="http://twitter.com/meltingice">Ryan LeFevre</a> - Project Creator, Maintainer, and Lead Developer
+* <a href="http://twitter.com/rwaldron">Rick Waldron</a> - Plugin Architect and Developer
+* <a href="http://twitter.com/cezarsa">Cezar Sá Espinola</a> - Developer
