@@ -616,6 +616,72 @@ Caman.extend( Caman, {
     return {r: r, g: g, b: b};
   },
   
+  bezier: function (start, ctrl1, ctrl2, end, lowBound, highBound) {
+    var Ax, Bx, Cx, Ay, By, Cy,
+    x0 = start[0], y0 = start[1],
+    x1 = ctrl1[0], y1 = ctrl1[1],
+    x2 = ctrl2[0], y2 = ctrl2[1],
+    x3 = end[0], y3 = end[1],
+    t, curveX, curveY;
+    
+    // Calculate our X and Y coefficients
+    Cx = 3 * (x1 - x0);
+    Bx = 3 * (x2 - x1) - Cx;
+    Ax = x3 - x0 - Cx - Bx;
+    
+    Cy = 3 * (y1 - y0);
+    By = 3 * (y2 - y1) - Cy;
+    Ay = y3 - y0 - Cy - By;
+    
+    bezier = {};
+    
+    for (var i = 0; i < 1000; i++) {
+      t = i / 1000;
+      
+      curveX = Math.round((Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0);
+      curveY = Math.round((Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0);
+      
+      if (lowBound && curveY < lowBound) {
+        curveY = lowBound;
+      } else if (highBound && curveY > highBound) {
+        curveY = highBound;
+      }
+      
+      bezier[curveX] = curveY;
+    }
+    
+    // Do a search for missing values in the bezier array and use linear interpolation
+    // to approximate their values.
+    var leftCoord, rightCoord, j, slope, bint;
+    if (bezier.length < end[0] + 1) {
+      for (i = 0; i <= end[0]; i++) {
+        if (typeof bezier[i] === "undefined") {
+          // The value to the left will always be defined. We don't have to worry about
+          // when i = 0 because the starting point is guaranteed (I think...)
+          leftCoord = [i-1, bezier[i-1]];
+          
+          // Find the first value to the right that was found. Ideally this loop will break
+          // very quickly.
+          for (j = i; j <= end[0]; j++) {
+            if (typeof bezier[j] !== "undefined") {
+              rightCoord = [j, bezier[j]];
+              break;
+            }
+          }
+          
+          bezier[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
+        }
+      }
+    }
+    
+    // Edge case
+    if (typeof bezier[end[0]] === "undefined") {
+      bezier[end[0]] = bezier[254];
+    }
+    
+    return bezier;
+  },
+  
   processKernel: function (adjust, kernel, divisor, bias) {
     var val = {
       r: 0,
@@ -1352,21 +1418,7 @@ window.Caman = Caman;
    *    end   - [x, y] (end of curve; 0 - 255)
    */
   Caman.manip.curves = function (chan, start, ctrl1, ctrl2, end) {
-    var Ax, Bx, Cx, Ay, By, Cy,
-    x0 = start[0], y0 = start[1],
-    x1 = ctrl1[0], y1 = ctrl1[1],
-    x2 = ctrl2[0], y2 = ctrl2[1],
-    x3 = end[0], y3 = end[1],
-    t, curveX, curveY;
-    
-    // Calculate our X and Y coefficients
-    Cx = 3 * (x1 - x0);
-    Bx = 3 * (x2 - x1) - Cx;
-    Ax = x3 - x0 - Cx - Bx;
-    
-    Cy = 3 * (y1 - y0);
-    By = 3 * (y2 - y1) - Cy;
-    Ay = y3 - y0 - Cy - By;
+    var bezier;
     
     if (typeof chan === 'string') {
       if (chan == 'rgb') {
@@ -1376,22 +1428,7 @@ window.Caman = Caman;
       }
     }
     
-    bezier = {};
-    
-    for (var i = 0; i < 1000; i++) {
-      t = i / 1000;
-      
-      curveX = Math.round((Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0);
-      curveY = Math.round((Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0);
-      
-      if (curveY > 255) {
-        curveY = 255;
-      } else if (curveY < 0) {
-        curveY = 0;
-      }
-      
-      bezier[curveX] = curveY;
-    }
+    bezier = Caman.bezier(start, ctrl1, ctrl2, end, 0, 255);
     
     // If our curve starts after x = 0, initialize it with a flat line until
     // the curve begins.
@@ -1406,35 +1443,6 @@ window.Caman = Caman;
       for (i = end[0]; i <= 255; i++) {
         bezier[i] = end[1];
       }
-    }
-    
-    // Do a search for missing values in the bezier array and use linear interpolation
-    // to approximate their values.
-    var leftCoord, rightCoord, j, slope, bint;
-    if (bezier.length < 256) {
-      for (i = 0; i <= 255; i++) {
-        if (typeof bezier[i] === "undefined") {
-          // The value to the left will always be defined. We don't have to worry about
-          // when i = 0 because the starting point is guaranteed (I think...)
-          leftCoord = [i-1, bezier[i-1]];
-          
-          // Find the first value to the right that was found. Ideally this loop will break
-          // very quickly.
-          for (j = i; j <= 255; j++) {
-            if (typeof bezier[j] !== "undefined") {
-              rightCoord = [j, bezier[j]];
-              break;
-            }
-          }
-          
-          bezier[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
-        }
-      }
-    }
-    
-    // Edge case
-    if (typeof bezier[255] === "undefined") {
-      bezier[255] = bezier[254];
     }
     
     return this.process({bezier: bezier, chans: chan}, function curves(opts, rgba) {
