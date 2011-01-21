@@ -27,4 +27,15 @@ Caman.manip.vintage = function (vignette) {
   return ret;
 };
 
+Caman.manip.lomo = function() {
+  return this
+    .brightness(15)
+    .exposure(15)
+    .curves('rgb', [0, 0], [200, 0], [155, 255], [255, 255])
+    .saturation(-20)
+    .gamma(1.8)
+    .vignette(300, 50)
+    .brightness(5);
+};
+
 }(Caman));
