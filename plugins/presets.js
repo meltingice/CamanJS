@@ -21,7 +21,7 @@ Caman.manip.vintage = function (vignette) {
     .saturation(-20);
     
   if (vignette || typeof vignette === 'undefined') {
-    return this.vignette(80, 60);
+    return this.vignette(150, 100);
   }
   
   return ret;
