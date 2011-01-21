@@ -17,7 +17,7 @@
     // end = lightest part (0 vignette)
     end = start - size;
     
-    bezier = Caman.bezier([0, 100], [0, 50], [50, 20], [100, 0]);
+    bezier = Caman.bezier([0, 100], [20, 50], [50, 0], [100, 0]);
     
     return this.process({center: center, start: start, end: end, size: size, strength: strength, bezier: bezier}, function vignette(data, rgba) {
       // current pixel coordinates
