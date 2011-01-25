@@ -34,7 +34,7 @@ Caman.manip.lomo = function() {
     .curves('rgb', [0, 0], [200, 0], [155, 255], [255, 255])
     .saturation(-20)
     .gamma(1.8)
-    .vignette(300, 50)
+    .vignette(300, 60)
     .brightness(5);
 };
 
