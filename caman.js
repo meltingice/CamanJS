@@ -175,8 +175,8 @@ Caman.manip = Caman.prototype = {
     return this.canvas.toDataURL("image/" + type);
   },
   
-  revert: function () {
-    this.options.ready = function () {};
+  revert: function (ready) {
+    this.options.ready = ready || function () {};
     this.load(this.options);
   },
   
@@ -1166,9 +1166,9 @@ window.Caman = Caman;
   };
   
   Caman.manip.contrast = function(adjust) {
+		adjust = (adjust + 100) / 100;
+    adjust = Math.pow(adjust, 2);
 
-    adjust = Math.pow((100 + adjust) / 100, 2);
-    
     return this.process( adjust, function contrast(adjust, rgba) {
       /* Red channel */
       rgba.r /= 255;
