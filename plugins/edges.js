@@ -1,3 +1,11 @@
+/*
+ * NodeJS compatibility
+ */
+if (!Caman) {
+	var Caman = {manip:{}};
+	exports.plugins = Caman.manip;
+}
+
 (function (Caman) {
 
 Caman.manip.edgeEnhance = function () {
