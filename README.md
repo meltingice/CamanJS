@@ -7,15 +7,50 @@ CamanJS is also not a canvas drawing library, per se.  It's main focus is manipu
 
 If you're looking for more information, <a href="http://blog.meltingice.net/programming/camanjs-javascript-image-manipulation/">here is a blog post</a> that describes the project some more.
 
+<h1>Node Dependencies</h1>
+In order to run CamanJS in Node, we need to simulate the HTML canvas. Because of that, there are a few dependencies:
+
+<b>cairo</b>
+Cairo is a 2D graphics library that is required for node-canvas.  There is more information at the node-canvas page, but if you're on Mac OSX you can use Macports and do:
+
+<pre>
+sudo port install cairo
+</pre>
+
+<b>libjpeg</b>
+If you want to modify jpeg images, you're going to need libjpeg.  On Mac OSX with Macports, you can do:
+
+<pre>
+sudo port install jpeg
+</pre>
+
+<b>node-canvas</b>
+<a href="https://github.com/LearnBoost/node-canvas">Build from source</a> or if you have npm installed:
+
+<pre>
+npm install canvas
+</pre>
+
+Make sure you install node-canvas last, since it depends on all the previously mentioned requirements.
+
 <h1>How to Use</h1>
 Using CamanJS is simple.  It goes something like this:
 
 <pre>
-Caman('path/to/image.jpg', '#canvas-id', function () {
+Caman('path/to/image.jpg', function () {
 	this.brightness(10);
 	this.contrast(-5);
 	this.saturation(-50);
 	// and so on...
+	
+	this.render(function () {
+		/*
+		 * Currently only supports writing to PNG files.
+		 * 2nd parameter forces CamanJS to overwrite the output
+		 * file if it already exists.
+		 */
+		this.save("path/to/output.png", true);
+	});
 });
 </pre>
 
@@ -34,20 +69,6 @@ Caman({
 });
 </pre>
 
-You can now even save images after they've been modified!  With the current implementation, users will have to rename the file to something.(png|jpg) since they get redirected to the base64 encoding of the image and the browser doesn't know the file type.  The save() function defaults to png, but you can override this and specify either png or jpg.
-
-<pre>
-Caman('img/example.jpg', '#image-caman', function () {
-  this.saturation(-20);
-  this.brightness(10);
-  
-  // More info on finished() in events section below
-  this.finished(function () {
-    this.save('png'); // shows a download file prompt
-  });
-});
-</pre>
-
 <h1>Caman Events</h1>
 Currently CamanJS has three different events you can listen for, and it is very simple to add new events if you need to.
 
@@ -60,25 +81,18 @@ Currently CamanJS has three different events you can listen for, and it is very 
   
 You may also find this extremely handy:
 
-<pre>
-Caman('img/example.jpg', '#image-caman', function () {
-  this.contrast(25);
-  this.hue(5);
-  this.colorize('#AF3D15', 25);
-  this.saturation(-30);
-  this.brightness(5);
-  
-  // Event helper that fires when *this* image is finished rendering
-  this.finished(function () {
-    console.log("Image finished rendering!");
-  });
-});
-</pre>
-
 <h1>How to Extend</h1>
 Extending CamanJS is easy as well. It's accomplished by adding functions onto the manip object. Below is an example of how to do so:
 
 <pre>
+/*
+ * NodeJS compatibility
+ */
+if (!Caman) {
+	var Caman = {manip:{}};
+	exports.plugins = Caman.manip;
+}
+
 (function (Caman) {
 	Caman.manip.fancy_filter = function (adjust) {
 	
@@ -119,4 +133,3 @@ If you add a filter, please edit test/benchmark/benchmark.js and add your filter
 <h1>Project To-do</h1>
 * Implement a way to specify canvas elements by class instead of id, and apply effects to all found canvases.
 * Add lots more adjustments/effects
-* Figure out if there's a way to load images cross-domain (don't think there is?)
