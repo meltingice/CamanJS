@@ -8,9 +8,11 @@ CamanJS is also not a canvas drawing library, per se.  It's main focus is manipu
 If you're looking for more information, <a href="http://blog.meltingice.net/programming/camanjs-javascript-image-manipulation/">here is a blog post</a> that describes the project some more.
 
 <h1>Node Dependencies</h1>
+
 In order to run CamanJS in Node, we need to simulate the HTML canvas. Because of that, there are a few dependencies:
 
 <b>cairo</b>
+
 Cairo is a 2D graphics library that is required for node-canvas.  There is more information at the node-canvas page, but if you're on Mac OSX you can use Macports and do:
 
 <pre>
@@ -18,6 +20,7 @@ sudo port install cairo
 </pre>
 
 <b>libjpeg</b>
+
 If you want to modify jpeg images, you're going to need libjpeg.  On Mac OSX with Macports, you can do:
 
 <pre>
@@ -25,6 +28,7 @@ sudo port install jpeg
 </pre>
 
 <b>node-canvas</b>
+
 <a href="https://github.com/LearnBoost/node-canvas">Build from source</a> or if you have npm installed:
 
 <pre>
