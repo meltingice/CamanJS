@@ -1,10 +1,19 @@
 /*!
- * CamanJS - Image Manipulation Library
+ * CamanJS - Pure HTML5 Javascript (Ca)nvas (Man)ipulation
  * http://camanjs.com/
  *
  * Copyright 2011, Ryan LeFevre
  * Licensed under the new BSD License.
  * See LICENSE for more info.
+ *
+ * Project Contributors:
+ * 	Rick Waldron - Plugin Architect and Developer
+ *		Twitter: @rwaldron
+ *		GitHub: http://github.com/rwldrn
+ *
+ * 	Cezar S‡ Espinola - Developer
+ *		Twitter: @cezarsa
+ *		GitHub: http://github.com/cezarsa
  */
  
 (function () {
