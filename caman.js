@@ -11,7 +11,7 @@
  *		Twitter: @rwaldron
  *		GitHub: http://github.com/rwldrn
  *
- * 	Cezar S‡ Espinola - Developer
+ * 	Cezar Sa Espinola - Developer
  *		Twitter: @cezarsa
  *		GitHub: http://github.com/cezarsa
  */
