@@ -44,7 +44,15 @@ Caman('path/to/image.jpg', '#canvas-id', function () {
 });
 </pre>
 
-or you can use it like this:
+You can also directly point to an image if you don't want to create a separate canvas element.  In this case, the image element will be replaced with the canvas element, and the canvas will be drawn with the image content:
+
+<pre>
+Caman("#image-id", function () {
+	this.contrast(-5).render();
+});
+</pre>
+
+Finally, you can also use it like this:
 
 <pre>
 Caman({
