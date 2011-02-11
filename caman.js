@@ -19,6 +19,11 @@ Caman = function ( options ) {
         
     if ( arguments.length === 1 ) {
       options = temp;
+    } else if ( arguments.length === 2) {
+    	options = {
+    		image: temp,
+    		ready: arguments[1] || false
+    	};
     } else {
       options = {
         src: temp,
@@ -61,22 +66,23 @@ Caman.manip = Caman.prototype = {
       /*
        * Called once the image is loaded from the server
        */
-      imageReady = function( ) {
+      imageReady = function( loaded_canvas ) {
   
         var args  = arguments.length, 
           canvas_id = !args ? options.canvas : arguments[0],
-          canvas;
+          canvas = loaded_canvas || null;
         
-        if ( !args && canvas_id.substr(0, 1) === "#") {
-          canvas = document.getElementById(canvas_id.substr(1));
-          if (!canvas) {
-            return;
-          }  
-        } else {
-          
-          return Caman.store[canvas_id];
-        }
-        
+        if (!canvas) {
+        	if ( !args && canvas_id.substr(0, 1) === "#") {
+	          canvas = document.getElementById(canvas_id.substr(1));
+	          if (!canvas) {
+	            return;
+	          }  
+	        } else {
+	          return Caman.store[canvas_id];
+	        }
+        }      
+
         canvas.width = img.width;
         canvas.height = img.height;
         
@@ -84,6 +90,7 @@ Caman.manip = Caman.prototype = {
         this.canvas_id = canvas_id;
         this.context = canvas.getContext("2d");
         this.context.drawImage(img, 0, 0);
+
         this.image_data = this.context.getImageData(0, 0, img.width, img.height);
         
         this.pixel_data = this.image_data.data;
@@ -107,19 +114,38 @@ Caman.manip = Caman.prototype = {
     this.options = options;
     
     if ( typeof options !== "string" ) {
-      
-      img.src = options.src; 
-    
-      img.onload = function() {
-         imageReady.call(that);
-      };
-      
-      if ( !Caman.ready ) {
-        document.addEventListener("DOMContentLoaded", function() {
+    	if (options.image) {
+    		// Converting an image element to a canvas element
+    		document.addEventListener("DOMContentLoaded", function() {
+	    		var canvas = document.createElement('canvas'),
+	    		image = document.getElementById(options.image.substr(1));
+	    		
+	    		img = image;
+	    		
+	    		canvas.id = image.id;
+    			
+    			image.parentNode.replaceChild(canvas, image);
+
           Caman.ready = true;
-        }, false);          
-      }
-      
+          
+          img.onload = function () {
+          	imageReady.call(that, canvas);
+          };
+        }, false);
+    		
+    	} else {
+    		img.src = options.src; 
+
+	      img.onload = function() {
+	         imageReady.call(that);
+	      };
+	      
+	      if ( !Caman.ready ) {
+	        document.addEventListener("DOMContentLoaded", function() {
+	          Caman.ready = true;
+	        }, false);          
+	      }
+    	}
     } else {
       // Handle Caman('#index')
       return Caman.store[options];
