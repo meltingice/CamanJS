@@ -7,6 +7,9 @@ CamanJS is also not a canvas drawing library, per se.  It's main focus is manipu
 
 If you're looking for more information, <a href="http://blog.meltingice.net/programming/camanjs-javascript-image-manipulation/">here is a blog post</a> that describes the project some more.
 
+<h2>NodeJS Compatibility</h2>
+There is now a version of CamanJS that is made to work with NodeJS.  It has all of the functionality of the normal browser version, including plugins.  Take a look at the <a href="https://github.com/meltingice/CamanJS/tree/node">node branch</a> for more information.
+
 <h2>Block Renderer</h2>
 CamanJS now uses a block rendering system, which gives some notable benefits:
 
