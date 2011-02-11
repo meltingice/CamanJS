@@ -7,13 +7,13 @@
  * See LICENSE for more info.
  *
  * Project Contributors:
- * 	Rick Waldron - Plugin Architect and Developer
- *		Twitter: @rwaldron
- *		GitHub: http://github.com/rwldrn
+ *   Rick Waldron - Plugin Architect and Developer
+ *    Twitter: @rwaldron
+ *    GitHub: http://github.com/rwldrn
  *
- * 	Cezar Sa Espinola - Developer
- *		Twitter: @cezarsa
- *		GitHub: http://github.com/cezarsa
+ *   Cezar Sa Espinola - Developer
+ *    Twitter: @cezarsa
+ *    GitHub: http://github.com/cezarsa
  */
  
 (function () {
@@ -29,10 +29,10 @@ Caman = function ( options ) {
     if ( arguments.length === 1 ) {
       options = temp;
     } else if ( arguments.length === 2) {
-    	options = {
-    		image: temp,
-    		ready: arguments[1] || false
-    	};
+      options = {
+        image: temp,
+        ready: arguments[1] || false
+      };
     } else {
       options = {
         src: temp,
@@ -82,14 +82,14 @@ Caman.manip = Caman.prototype = {
           canvas = loaded_canvas || null;
         
         if (!canvas) {
-        	if ( !args && canvas_id.substr(0, 1) === "#") {
-	          canvas = document.getElementById(canvas_id.substr(1));
-	          if (!canvas) {
-	            return;
-	          }  
-	        } else {
-	          return Caman.store[canvas_id];
-	        }
+          if ( !args && canvas_id.substr(0, 1) === "#") {
+            canvas = document.getElementById(canvas_id.substr(1));
+            if (!canvas) {
+              return;
+            }  
+          } else {
+            return Caman.store[canvas_id];
+          }
         }      
 
         canvas.width = img.width;
@@ -123,38 +123,38 @@ Caman.manip = Caman.prototype = {
     this.options = options;
     
     if ( typeof options !== "string" ) {
-    	if (options.image) {
-    		// Converting an image element to a canvas element
-    		document.addEventListener("DOMContentLoaded", function() {
-	    		var canvas = document.createElement('canvas'),
-	    		image = document.getElementById(options.image.substr(1));
-	    		
-	    		img = image;
-	    		
-	    		canvas.id = image.id;
-    			
-    			image.parentNode.replaceChild(canvas, image);
+      if (options.image) {
+        // Converting an image element to a canvas element
+        document.addEventListener("DOMContentLoaded", function() {
+          var canvas = document.createElement('canvas'),
+          image = document.getElementById(options.image.substr(1));
+          
+          img = image;
+          
+          canvas.id = image.id;
+          
+          image.parentNode.replaceChild(canvas, image);
 
           Caman.ready = true;
           
           img.onload = function () {
-          	imageReady.call(that, canvas);
+            imageReady.call(that, canvas);
           };
         }, false);
-    		
-    	} else {
-    		img.src = options.src; 
+        
+      } else {
+        img.src = options.src; 
 
-	      img.onload = function() {
-	         imageReady.call(that);
-	      };
-	      
-	      if ( !Caman.ready ) {
-	        document.addEventListener("DOMContentLoaded", function() {
-	          Caman.ready = true;
-	        }, false);          
-	      }
-    	}
+        img.onload = function() {
+           imageReady.call(that);
+        };
+        
+        if ( !Caman.ready ) {
+          document.addEventListener("DOMContentLoaded", function() {
+            Caman.ready = true;
+          }, false);          
+        }
+      }
     } else {
       // Handle Caman('#index')
       return Caman.store[options];
@@ -1201,7 +1201,7 @@ window.Caman = Caman;
   };
   
   Caman.manip.contrast = function(adjust) {
-		adjust = (adjust + 100) / 100;
+    adjust = (adjust + 100) / 100;
     adjust = Math.pow(adjust, 2);
 
     return this.process( adjust, function contrast(adjust, rgba) {
