@@ -81,10 +81,24 @@ Caman('img/example.jpg', '#image-caman', function () {
   
   this.render(function () {
     this.save('png'); // shows a download file prompt
-    this.toBase64(); // base64 data URL representation of the image. useful if you want to upload the modified image.
+
+    // or...
+    this.toBase64(); //  base64 data URL representation of the image. useful if you want to upload the modified image.
   });
 });
 </pre>
+
+<h1>Editing Remote Images</h1>
+CamanJS can even edit images that are stored remotely. Since the browser enforces a same-origin policy for editing canvas data, we have to load the image data via a local proxy.
+
+CamanJS comes with a PHP proxy (you're welcome to add a proxy in the language of your choice) that you can use in the proxies folder. Before you use CamanJS for editing, all you have to do to enable the proxy is:
+
+<pre>
+// Will use the PHP proxy in the proxies folder. You can also specify a URL instead of calling useProxy().
+Caman.remoteProxy = Caman.useProxy('php');
+</pre>
+
+If no proxy is defined when a remote image is attempted to be edited, an error will be thrown.
 
 <h1>Caman Events</h1>
 Currently CamanJS has three different events you can listen for, and it is very simple to add new events if you need to.
@@ -188,7 +202,6 @@ If you add a filter, please edit test/benchmark/benchmark.js and add your filter
 <h1>Project To-do</h1>
 * Implement a way to specify canvas elements by class instead of id, and apply effects to all found canvases.
 * Add lots more adjustments/effects
-* Figure out if there's a way to load images cross-domain (don't think there is?)
 
 <h1>Project Contributors</h1>
 
