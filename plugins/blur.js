@@ -84,11 +84,17 @@ Caman.manip.motionBlur = function (degrees) {
   return this.processKernel('Motion Blur', kernel, 5);
 };
 
-Caman.manip.sharpen = function () {
+Caman.manip.sharpen = function (amt) {
+  if (!amt) {
+    amt = 1;
+  } else {
+    amt /= 100;
+  }
+  
   return this.processKernel('Sharpen', [
-    [0, -1, 0],
-    [-1, 5, -1],
-    [0, -1, 0],
+    [0, -amt, 0],
+    [-amt, 4 * amt + 1, -amt],
+    [0, -amt, 0],
   ]);
 };
 
