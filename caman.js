@@ -61,6 +61,25 @@ Caman.ready = false;
 Caman.store = {};
 Caman.renderBlocks = 4;
 
+Caman.remoteProxy = "";
+
+/*
+ * Here we define the proxies that ship with CamanJS for easy
+ * usage.
+ */
+Caman.useProxy = function (lang) {
+	// define cases where file extensions don't match the language name
+	var langToExt = {
+		ruby: 'rb',
+		python: 'py',
+		perl: 'pl'
+	};
+	
+	lang = langToExt[lang.toLowerCase()] || lang.toLowerCase();
+	
+	return "proxies/caman_proxy." + lang;
+};
+
 Caman.manip = Caman.prototype = {
   /*
    * Sets up everything that needs to be done before the filter
@@ -79,7 +98,8 @@ Caman.manip = Caman.prototype = {
   
         var args  = arguments.length, 
           canvas_id = !args ? options.canvas : arguments[0],
-          canvas = loaded_canvas || null;
+          canvas = loaded_canvas || null,
+          that = this;
         
         if (!canvas) {
           if ( !args && canvas_id.substr(0, 1) === "#") {
@@ -90,8 +110,8 @@ Caman.manip = Caman.prototype = {
           } else {
             return Caman.store[canvas_id];
           }
-        }      
-
+        }
+        
         canvas.width = img.width;
         canvas.height = img.height;
         
@@ -100,8 +120,7 @@ Caman.manip = Caman.prototype = {
         this.context = canvas.getContext("2d");
         this.context.drawImage(img, 0, 0);
 
-        this.image_data = this.context.getImageData(0, 0, img.width, img.height);
-        
+	      this.image_data = this.context.getImageData(0, 0, img.width, img.height);  			
         this.pixel_data = this.image_data.data;
 
         this.dimensions = {
@@ -117,7 +136,27 @@ Caman.manip = Caman.prototype = {
   
         return this;
         
-      }, that = this;
+      },
+      
+      remoteCheck = function () {
+      	// Check to see if image is remote or not
+    		if (Caman.isRemote(img.src)) {
+    			if (!Caman.remoteProxy.length) {
+    			  console.info("Attempting to load remote image without a configured proxy, URL: " + img.src);
+    			  return;
+    			} else {
+    			  if (Caman.isRemote(Caman.remoteProxy)) {
+    			  	console.info("Cannot use a remote proxy for loading remote images due to same-origin policy");
+    			  	return;
+    			  }
+    			  
+    			  // We have a remote proxy setup properly, so lets alter the image src
+    			  img.src = Caman.remoteProxy + "?url=" + encodeURIComponent(img.src);
+    			}
+    		}
+      },
+      
+      that = this;
       
     // Save the options for later use.
     this.options = options;
@@ -130,9 +169,11 @@ Caman.manip = Caman.prototype = {
           image = document.getElementById(options.image.substr(1));
           
           img = image;
-          
           canvas.id = image.id;
           
+          remoteCheck();
+          
+          // Replace the image with the canvas
           image.parentNode.replaceChild(canvas, image);
 
           Caman.ready = true;
@@ -143,7 +184,9 @@ Caman.manip = Caman.prototype = {
         }, false);
         
       } else {
-        img.src = options.src; 
+        img.src = options.src;
+        
+        remoteCheck();
 
         img.onload = function() {
            imageReady.call(that);
@@ -303,6 +346,24 @@ Caman.extend( Caman, {
       }
     }
     return true;
+  },
+  
+  isRemote: function (url) {
+  	var domain_regex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/,
+  	test_domain;
+  	
+  	if (!url || !url.length) {
+  		return;
+  	}
+  	
+  	var matches = url.match(domain_regex);
+  	if (matches) {
+  		test_domain = matches[1];
+
+  		return test_domain != document.domain;
+  	} else {
+  		return false;
+  	}
   },
   
   /*
