@@ -1101,11 +1101,20 @@ Caman.manip.process = function (adjust, processFn) {
   return this;
 };
 
-Caman.manip.processKernel = function (name, adjust, divisor, bias) {
+Caman.manip.processKernel = function (name, adjust, divisor, bias) {  
+  if (!divisor) {
+    divisor = 0;
+    for (var i = 0; i < adjust.length; i++) {
+      for (var j = 0; j < adjust[i].length; j++) {
+        divisor += adjust[i][j];
+      }
+    }
+  }
+  
   var data = {
     name: name,
     adjust: adjust,
-    divisor: divisor || 1,
+    divisor: divisor,
     bias: bias || 0
   };
   
