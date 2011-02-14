@@ -107,4 +107,23 @@ Caman.manip.orangePeel = function () {
 		.gamma(1.4);
 };
 
+Caman.manip.love = function () {
+	return this
+		.brightness(5)
+		.exposure(8)
+		.colorize('#c42007', 30)
+		.vibrance(50)
+		.gamma(1.3);
+};
+
+Caman.manip.grungy = function () {
+	return this
+		.saturation(-60)
+		.contrast(5)
+		.clip(25)
+		.noise(5)
+		.gamma(1.3)
+		.vignette(200, 30);
+};
+
 }(Caman));
