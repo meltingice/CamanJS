@@ -1251,6 +1251,32 @@ window.Caman = Caman;
     });
   };
   
+  Caman.manip.vibrance = function (adjust) {
+  	var max, avg, amt, diff;
+  	adjust *= -1;
+  	
+  	return this.process( adjust, function vibrance(adjust, rgba) {
+  		max = Math.max(rgba.r, rgba.g, rgba.b);
+  		
+  		// Calculate difference between max color and other colors
+  		avg = (rgba.r + rgba.g + rgba.b) / 3;
+  		amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
+  		
+  		for (chan in rgba) {
+  			if (rgba.hasOwnProperty(chan)) {
+  				if (rgba[chan] === max || chan == "a") {
+  					continue;
+  				}
+  				
+  				diff = max - rgba[chan];
+  				rgba[chan] += Math.ceil(diff * amt);
+  			}
+  		}
+  		
+  		return rgba;
+  	});
+  };
+  
   /*
    * An improved greyscale function that should make prettier results
    * than simply using the saturation filter to remove color. There are
