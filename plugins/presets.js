@@ -65,9 +65,10 @@ Caman.manip.clarity = function (grey) {
 Caman.manip.sinCity = function () {
   return this
     .contrast(100)
-    .brightness(5)
+    .brightness(15)
     .exposure(10)
     .curves('rgb', [0,0], [100, 0], [155, 255], [255, 255])
+    .clip(30)
     .greyscale();
 };
 
