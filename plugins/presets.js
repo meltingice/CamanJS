@@ -46,4 +46,44 @@ Caman.manip.lomo = function() {
     .brightness(5);
 };
 
+Caman.manip.clarity = function (grey) {
+	var manip = this
+		.vibrance(20)
+    .curves('rgb', [5, 0], [130, 150], [190, 220], [250, 255])
+    .sharpen(15)
+    .vignette(250, 20);
+    
+   if (grey) {
+   	this
+   		.greyscale()
+   		.contrast(4);
+   }
+   
+   return manip;
+};
+
+Caman.manip.sinCity = function () {
+	this
+		.contrast(100)
+		.brightness(5)
+		.exposure(10)
+		.curves('rgb', [0,0], [100, 0], [155, 255], [255, 255])
+		.greyscale()
+		.render();
+};
+
+Caman.manip.sunrise = function () {
+	this
+		.exposure(3.5)
+		.saturation(-5)
+		.vibrance(50)
+		.sepia(60)
+		.colorize('#e87b22', 10)
+		.channels({red: 8, blue: 8})
+		.contrast(5)
+		.gamma(1.2)
+		.vignette(250, 25)
+		.render()
+};
+
 }(Caman));
