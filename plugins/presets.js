@@ -63,17 +63,16 @@ Caman.manip.clarity = function (grey) {
 };
 
 Caman.manip.sinCity = function () {
-	this
+	return this
 		.contrast(100)
 		.brightness(5)
 		.exposure(10)
 		.curves('rgb', [0,0], [100, 0], [155, 255], [255, 255])
-		.greyscale()
-		.render();
+		.greyscale();
 };
 
 Caman.manip.sunrise = function () {
-	this
+	return this
 		.exposure(3.5)
 		.saturation(-5)
 		.vibrance(50)
@@ -82,8 +81,19 @@ Caman.manip.sunrise = function () {
 		.channels({red: 8, blue: 8})
 		.contrast(5)
 		.gamma(1.2)
-		.vignette(250, 25)
-		.render()
+		.vignette(250, 25);
+};
+
+Caman.manip.crossProcess = function () {
+	return this
+		.exposure(5)
+		.colorize('#e87b22', 4)
+		.sepia(20)
+		.channels({blue: 8, red: 3})
+		.curves('b', [0, 0], [100, 150], [180, 180], [255, 255])
+		.contrast(15)
+		.vibrance(75)
+		.gamma(1.6);
 };
 
 }(Caman));
