@@ -25,8 +25,8 @@ if (!Caman) {
     // end = lightest part (0 vignette)
     end = start - size;
     
-    bezier = Caman.bezier([0, 100], [20, 50], [50, 0], [100, 0]);
-    
+    //bezier = Caman.bezier([0, 100], [20, 50], [50, 0], [100, 0]);
+    bezier = Caman.bezier([0, 1], [30, 30], [70, 60], [100, 80]);
     return this.process({center: center, start: start, end: end, size: size, strength: strength, bezier: bezier}, function vignette(data, rgba) {
       // current pixel coordinates
       loc = this.locationXY();
@@ -36,11 +36,12 @@ if (!Caman) {
       
       if (dist > data.end) {
         // % of vignette
-        div = (data.bezier[100 - Math.round(((dist - data.end) / data.size) * 100)] * strength) / 100;
+        div = Math.max(1, ((data.bezier[Math.round(((dist - data.end) / data.size) * 100)]/10) * strength));
         
-        rgba.r = rgba.r - (rgba.r * div);
-        rgba.g = rgba.g - (rgba.g * div);
-        rgba.b = rgba.b - (rgba.b * div);
+        // Use gamma to adjust the vignette - much better results
+        rgba.r = Math.pow(rgba.r / 255, div) * 255;
+	      rgba.g = Math.pow(rgba.g / 255, div) * 255;
+	      rgba.b = Math.pow(rgba.b / 255, div) * 255;
       }
       
       return rgba;
