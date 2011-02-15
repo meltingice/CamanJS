@@ -8,15 +8,6 @@ if (!Caman) {
 
 (function (Caman) {
 
-Caman.manip.crossProcess = function () {
-  return this
-    .curves('r', [0, 0], [130, 50], [125, 205], [255, 255])
-    .curves('b', [0, 50], [20, 120], [235, 135], [255, 255])
-    .curves('g', [0, 0], [130, 50], [125, 205], [255, 255])
-    .brightness(3)
-    .contrast(5);
-};
-
 Caman.manip.vintage = function (vignette) {
   var ret = this
     .saturation(40)
@@ -118,11 +109,11 @@ Caman.manip.love = function () {
 
 Caman.manip.grungy = function () {
 	return this
+    .gamma(1.5)
+		.clip(25)
 		.saturation(-60)
 		.contrast(5)
-		.clip(25)
 		.noise(5)
-		.gamma(1.3)
 		.vignette(200, 30);
 };
 
