@@ -156,7 +156,7 @@ Caman.manip = Caman.prototype = {
     		}
       },
       
-      that = this;
+      that = this, startFn;
       
     // Save the options for later use.
     this.options = options;
@@ -164,7 +164,7 @@ Caman.manip = Caman.prototype = {
     if ( typeof options !== "string" ) {
       if (options.image) {
         // Converting an image element to a canvas element
-        document.addEventListener("DOMContentLoaded", function() {
+        startFn = function() {
           var canvas = document.createElement('canvas'),
           image = document.getElementById(options.image.substr(1));
           
@@ -181,7 +181,13 @@ Caman.manip = Caman.prototype = {
           img.onload = function () {
             imageReady.call(that, canvas);
           };
-        }, false);
+        };
+        
+        if (!document.getElementById(options.image.substr(1))) {
+        	document.addEventListener("DOMContentLoaded", startFn, false);
+        } else {
+        	startFn();
+        }
         
       } else {
         img.src = options.src;
