@@ -22,31 +22,54 @@ var forEach = Array.prototype.forEach,
 hasOwn = Object.prototype.hasOwnProperty,
 slice = Array.prototype.slice,
 
-Caman = function ( options ) {
-  if ( typeof options === "string" ) {
-    var temp = options;
-        
-    if ( arguments.length === 1 ) {
-      options = temp;
-    } else if ( arguments.length === 2) {
-      options = {
-        image: temp,
-        ready: arguments[1] || false
-      };
+Caman = function () {
+  if (arguments.length == 1) {
+    // 1 argument = init image or retrieve manip object
+
+    if (Caman.store[arguments[0]]) {
+    
+      // Already initialized, return manip object
+      return Caman.store[arguments[0]];
+      
     } else {
-      options = {
-        src: temp,
-        canvas: arguments[1] || "",
-        ready: arguments[2] || false
-      };
+    
+      // Not initialized; load Caman
+      return new Caman.manip.loadImage(arguments[0]);
+      
+    }
+  } else if (arguments.length == 2) {
+    // 2 arguments - init image and/or invoke callback
+    
+    if (Caman.store[arguments[0]]) {
+      // Already initialized, invoke callback with manip set to 'this'
+      return arguments[1].call(Caman.store[arguments[0]], Caman.store[arguments[0]]);
+    } else {
+      if (typeof arguments[1] === 'function') {
+      
+        // Not initialized; load Caman into image then invoke callback and return manip
+        return new Caman.manip.loadImage(arguments[0], arguments[1]);
+        
+      } else if (typeof arguments[1] === 'string') {
+      
+        // Not initialized; load image URL into canvas and return manip
+        return new Caman.manip.loadCanvas(arguments[0], arguments[1]);
+        
+      }
+    }
+  } else if (arguments.length == 3) {
+    // 3 arguments - init image URL into canvas and invoke callback
+    if (Caman.store[arguments[0]]) {
+    
+      // Already initialized; invoke callback and return manip
+      return arguments[2].call(Caman.store[arguments[1]], Caman.store[arguments[1]]);
+      
+    } else {
+    
+      // Not initialized; load image into canvas, invoke callback, and return manip
+      return new Caman.manip.loadCanvas(arguments[0], arguments[1], arguments[2]);
+      
     }
   }
-      
-  if ( options.context && options.canvas_id ) {
-    options = options.canvas_id;
-  }
-      
-  return new Caman.manip.load(options);
 };
 
 if (!('console' in window)) {
@@ -80,149 +103,125 @@ Caman.useProxy = function (lang) {
 	return "proxies/caman_proxy." + lang;
 };
 
-Caman.manip = Caman.prototype = {
-  /*
-   * Sets up everything that needs to be done before the filter
-   * functions can be run. This includes loading the image into
-   * the canvas element and saving lots of different data about
-   * the image.
-   */
-  load: function(options) {
-    var 
-      img = document.createElement("img"),
-      
-      /*
-       * Called once the image is loaded from the server
-       */
-      imageReady = function( loaded_canvas ) {
-  
-        var args  = arguments.length, 
-          canvas_id,
-          canvas = loaded_canvas || null,
-          that = this;
-          
-				if (!args) {
-					if (options.canvas) {
-						canvas_id = options.canvas;
-					} else {
-						canvas_id = options.image;
-					}
-				} else {
-					canvas_id = arguments[0];
-				}
-
-        if (!canvas) {
-          if ( !args && canvas_id.substr(0, 1) === "#") {
-            canvas = document.getElementById(canvas_id.substr(1));
-            if (!canvas) {
-              return;
-            }  
-          } else {
-            return Caman.store[canvas_id];
-          }
-        }
-        
-        canvas.width = img.width;
-        canvas.height = img.height;
-        
-        this.canvas = canvas;
-        this.canvas_id = canvas_id;
-        this.context = canvas.getContext("2d");
-        this.context.drawImage(img, 0, 0);
-
-	      this.image_data = this.context.getImageData(0, 0, img.width, img.height);  			
-        this.pixel_data = this.image_data.data;
-
-        this.dimensions = {
-          width: img.width, 
-          height: img.height
-        };
-        
-        this.renderQueue = [];
-        
-        options.ready && options.ready.call(this, this);
-
-        Caman.store[canvas_id] = this;
-  
-        return this;
-        
-      },
-      
-      remoteCheck = function () {
-      	// Check to see if image is remote or not
-    		if (Caman.isRemote(img.src)) {
-    			if (!Caman.remoteProxy.length) {
-    			  console.info("Attempting to load remote image without a configured proxy, URL: " + img.src);
-    			  return;
-    			} else {
-    			  if (Caman.isRemote(Caman.remoteProxy)) {
-    			  	console.info("Cannot use a remote proxy for loading remote images due to same-origin policy");
-    			  	return;
-    			  }
-    			  
-    			  // We have a remote proxy setup properly, so lets alter the image src
-    			  img.src = Caman.remoteProxy + "?url=" + encodeURIComponent(img.src);
-    			}
-    		}
-      },
-      
-      that = this, startFn;
-
-    if ( typeof options !== "string" ) {
-      if (options.image) {
-        // Converting an image element to a canvas element
-        startFn = function() {
-          var canvas = document.createElement('canvas'),
-          image = document.getElementById(options.image.substr(1));
-          
-          img = image;
-          canvas.id = image.id;
-          
-          remoteCheck();
-          
-          // Replace the image with the canvas
-          image.parentNode.replaceChild(canvas, image);
-
-          Caman.ready = true;
-          
-          options.canvas = options.image;
-          options.src = image.src;
-          delete options.image;
-                    
-          that.options = options;
-          
-          img.onload = function () {
-            imageReady.call(that, canvas);
-          };
-        };
-        
-        if (!document.getElementById(options.image.substr(1))) {
-        	document.addEventListener("DOMContentLoaded", startFn, false);
-        } else {
-        	startFn();
-        }
-        
-      } else {
-        img.src = options.src;
-        
-        remoteCheck();
-
-        img.onload = function() {
-           imageReady.call(that);
-        };
-        
-        this.options = options;
-        
-        if ( !Caman.ready ) {
-          document.addEventListener("DOMContentLoaded", function() {
-            Caman.ready = true;
-          }, false);          
-        }
-      }
+Caman.remoteCheck = function (src) {
+  // Check to see if image is remote or not
+  if (Caman.isRemote(src)) {
+    if (!Caman.remoteProxy.length) {
+      console.info("Attempting to load remote image without a configured proxy, URL: " + src);
+      return;
     } else {
-      // Handle Caman('#index')
-      return Caman.store[options];
+      if (Caman.isRemote(Caman.remoteProxy)) {
+      	console.info("Cannot use a remote proxy for loading remote images due to same-origin policy");
+      	return;
+      }
+      
+      // We have a remote proxy setup properly, so lets alter the image src
+      return Caman.remoteProxy + "?url=" + encodeURIComponent(src);
     }
+  }
+};
+
+var finishInit = function (image, canvas, callback) {
+  canvas.width = image.width;
+  canvas.height = image.height;
+  
+  this.canvas = canvas;
+  this.context = canvas.getContext("2d");
+  this.context.drawImage(image, 0, 0);
+  
+	this.image_data = this.context.getImageData(0, 0, image.width, image.height);  			
+  this.pixel_data = this.image_data.data;
+  
+  this.dimensions = {
+    width: image.width, 
+    height: image.height
+  };
+  
+  this.renderQueue = [];
+  
+  Caman.store[this.canvas_id] = this;
+  
+  callback.call(this, this);
+  
+  return this;
+};
+
+Caman.manip = Caman.prototype = {
+  loadImage: function (image_id, callback) {
+    var domLoaded,
+    self = this,
+    startFn = function () {
+      var canvas = document.createElement('canvas'),
+      image = document.getElementById(image_id.substr(1)),
+      proxyURL = Caman.remoteCheck(image.src);
+
+      canvas.id = image.id;
+      image.parentNode.replaceChild(canvas, image);
+      
+      if (proxyURL) {
+        // Image is remote. Reload image via proxy
+        image.src = proxyURL;
+      }
+      
+      // Store the canvas ID
+      this.canvas_id = image_id;
+      
+      // Ugh... Firefox 4 has some timing issues here
+      image.onload = function () {
+        finishInit.call(self, image, canvas, callback);
+      };
+      
+      return this;
+    };
+
+    // Default callback
+    callback = callback || function () {};
+
+    // Need to see if DOM is loaded
+    domLoaded = document.getElementById(image_id.substr(1)) != null;
+    if (domLoaded) {
+      startFn.call(this);
+    } else {
+      document.addEventListener("DOMContentLoaded", function () {
+        startFn.call(self);
+      }, false);
+    }
+    
+    return this;
+  },
+  
+  loadCanvas: function (url, canvas_id, callback) {
+    var domLoaded,
+    self = this,
+    startFn = function () {
+      var canvas = document.getElementById(canvas_id.substr(1)),
+      image = document.createElement('img'),
+      proxyURL = Caman.remoteCheck(url);
+      
+      if (proxyURL) {
+        image.src = proxyURL;
+      }
+      
+      this.canvas_id = canvas_id;
+
+      image.onload = function () {
+        finishInit.call(self, image, canvas, callback);
+      };
+    };
+
+    // Default callback
+    callback = callback || function () {};
+    
+    // Need to see if DOM is loaded
+    domLoaded = document.getElementById(canvas_id.substr(1)) != null;
+    if (domLoaded) {
+      startFn.call(this);
+    } else {
+      document.addEventListener("DOMContentLoaded", function () {
+        startFn.call(self);
+      }, false);
+    }
+    
     return this;
   },
   
@@ -290,7 +289,8 @@ Caman.manip = Caman.prototype = {
   }
 };
 
-Caman.manip.load.prototype = Caman.manip;
+Caman.manip.loadImage.prototype = Caman.manip;
+Caman.manip.loadCanvas.prototype = Caman.manip;
 
 /*
  * Utility forEach function for iterating over
