@@ -97,10 +97,20 @@ Caman.manip = Caman.prototype = {
       imageReady = function( loaded_canvas ) {
   
         var args  = arguments.length, 
-          canvas_id = !args ? options.canvas : arguments[0],
+          canvas_id,
           canvas = loaded_canvas || null,
           that = this;
-        
+          
+				if (!args) {
+					if (options.canvas) {
+						canvas_id = options.canvas;
+					} else {
+						canvas_id = options.image;
+					}
+				} else {
+					canvas_id = arguments[0];
+				}
+
         if (!canvas) {
           if ( !args && canvas_id.substr(0, 1) === "#") {
             canvas = document.getElementById(canvas_id.substr(1));
@@ -131,7 +141,7 @@ Caman.manip = Caman.prototype = {
         this.renderQueue = [];
         
         options.ready && options.ready.call(this, this);
-      
+
         Caman.store[canvas_id] = this;
   
         return this;
@@ -157,10 +167,7 @@ Caman.manip = Caman.prototype = {
       },
       
       that = this, startFn;
-      
-    // Save the options for later use.
-    this.options = options;
-    
+
     if ( typeof options !== "string" ) {
       if (options.image) {
         // Converting an image element to a canvas element
@@ -177,6 +184,12 @@ Caman.manip = Caman.prototype = {
           image.parentNode.replaceChild(canvas, image);
 
           Caman.ready = true;
+          
+          options.canvas = options.image;
+          options.src = image.src;
+          delete options.image;
+                    
+          that.options = options;
           
           img.onload = function () {
             imageReady.call(that, canvas);
@@ -197,6 +210,8 @@ Caman.manip = Caman.prototype = {
         img.onload = function() {
            imageReady.call(that);
         };
+        
+        this.options = options;
         
         if ( !Caman.ready ) {
           document.addEventListener("DOMContentLoaded", function() {
