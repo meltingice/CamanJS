@@ -166,6 +166,11 @@ Caman.manip = Caman.prototype = {
       // Store the canvas ID
       this.canvas_id = image_id;
       
+      this.options = {
+        canvas: image_id,
+        image: image.src
+      };
+      
       // Ugh... Firefox 4 has some timing issues here
       image.onload = function () {
         finishInit.call(self, image, canvas, callback);
@@ -200,9 +205,16 @@ Caman.manip = Caman.prototype = {
       
       if (proxyURL) {
         image.src = proxyURL;
+      } else {
+        image.src = url;
       }
       
       this.canvas_id = canvas_id;
+      
+      this.options = {
+        canvas: canvas_id,
+        image: image.src
+      };
 
       image.onload = function () {
         finishInit.call(self, image, canvas, callback);
@@ -274,8 +286,7 @@ Caman.manip = Caman.prototype = {
   },
   
   revert: function (ready) {
-    this.options.ready = ready || function () {};
-    this.load(this.options);
+    this.loadCanvas(this.options.image, this.options.canvas, ready);
   },
   
   render: function (callback) {
