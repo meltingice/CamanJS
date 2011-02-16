@@ -103,7 +103,7 @@ Caman.useProxy = function (lang) {
 	return "proxies/caman_proxy." + lang;
 };
 
-Caman.remoteCheck = function (src) {
+var remoteCheck = function (src) {
   // Check to see if image is remote or not
   if (Caman.isRemote(src)) {
     if (!Caman.remoteProxy.length) {
@@ -153,7 +153,7 @@ Caman.manip = Caman.prototype = {
     startFn = function () {
       var canvas = document.createElement('canvas'),
       image = document.getElementById(image_id.substr(1)),
-      proxyURL = Caman.remoteCheck(image.src);
+      proxyURL = remoteCheck(image.src);
 
       canvas.id = image.id;
       image.parentNode.replaceChild(canvas, image);
@@ -201,7 +201,7 @@ Caman.manip = Caman.prototype = {
     startFn = function () {
       var canvas = document.getElementById(canvas_id.substr(1)),
       image = document.createElement('img'),
-      proxyURL = Caman.remoteCheck(url);
+      proxyURL = remoteCheck(url);
       
       if (proxyURL) {
         image.src = proxyURL;
