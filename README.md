@@ -55,23 +55,6 @@ Caman("#image-id", function () {
 });
 </pre>
 
-Finally, you can also use it like this:
-
-<pre>
-Caman({
-	src: 'path/to/image.jpg',
-	canvas: '#canvas-id',
-	ready: function () {
-		this.brightness(10);
-		this.contrast(-5);
-		this.saturation(-50);
-		// and so on...
-		
-		this.render();
-	}
-});
-</pre>
-
 You can now even save images after they've been modified!  With the current implementation, users will have to rename the file to something.(png|jpg) since they get redirected to the base64 encoding of the image and the browser doesn't know the file type.  The save() function defaults to png, but you can override this and specify either png or jpg.
 
 <pre>
