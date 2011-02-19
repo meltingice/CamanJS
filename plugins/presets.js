@@ -117,4 +117,23 @@ Caman.manip.grungy = function () {
 		.vignette(200, 30);
 };
 
+Caman.manip.jarques = function () {
+	return this
+    .saturation(-35)
+    .curves('b', [20, 0], [90, 120], [186, 144], [255, 230])
+    .curves('r', [0, 0], [144, 90], [138, 120], [255, 255])
+    .curves('g', [10, 0], [115, 105], [148, 100], [255, 248])
+    .curves('rgb', [0, 0], [120, 100], [128, 140], [255, 255])
+    .sharpen(20);
+};
+
+Caman.manip.pinhole = function () {
+	return this
+		.greyscale()
+		.sepia(10)
+		.exposure(10)
+		.contrast(15)
+		.vignette(250, 35);
+};
+
 }(Caman));
