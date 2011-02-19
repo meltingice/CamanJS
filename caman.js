@@ -168,7 +168,7 @@ Caman.manip = Caman.prototype = {
       
       if($(image_id) === null || $(image_id).nodeName.toLowerCase() !== 'img') {
         // element doesn't exist or isn't an image
-				throw "Given element ID isn't an image: " + image_id;
+        throw "Given element ID isn't an image: " + image_id;
       }
 
       canvas.id = image.id;
@@ -220,9 +220,9 @@ Caman.manip = Caman.prototype = {
       proxyURL = remoteCheck(url);
       
       if ($(canvas_id) === null || $(canvas_id).nodeName.toLowerCase() !== 'canvas') {
-    		// element doesn't exist or isn't a canvas
-    		throw "Given element ID isn't a canvas: " + canvas_id;
-    	}
+        // element doesn't exist or isn't a canvas
+        throw "Given element ID isn't a canvas: " + canvas_id;
+      }
       
       if (proxyURL) {
         image.src = proxyURL;
