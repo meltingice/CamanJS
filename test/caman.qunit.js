@@ -1,7 +1,38 @@
+var remoteImg = "http://camanjs.com/imgs/logo.png",
+reset = function (id) {
+	if (id.substr(0, 1) == '#') {
+		id = id.substr(1);
+	}
+	
+	var canvas = document.getElementById(id),
+	image = document.createElement('img');
+	image.src = 'testimg.jpg';
+	image.style.display = 'none';
+	
+	canvas.parentNode.replaceChild(image, canvas);
+};
+
+module("Caman Core Library");
+
 test("Caman is a function", function () {
-  expect(1);
+  expect(2);
   
   ok(Caman, "Caman exists");
+  ok(typeof Caman == "function", "Caman is a function");
+});
+
+test("Invoking Caman() with one argument", function () {
+	expect(3);
+	
+	var existing_image = Caman("#test-image");
+	reset("#test-image");
+	
+	ok(typeof existing_image == "object", "Invoking on valid ID returns object");
+	ok(typeof existing_image.render == "function", "Returned object is Caman.manip");
+	
+	raises(function () {
+		Caman("#test-invalid");
+	}, "Raises exception when invoked on an invalid element");
 });
 
 module("Caman Utils");
