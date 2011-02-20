@@ -22,17 +22,28 @@ var forEach = Array.prototype.forEach,
 hasOwn = Object.prototype.hasOwnProperty,
 slice = Array.prototype.slice,
 
+// Helper function since document.getElementById()
+// is a mouthful. Note that this will not conflict
+// with jQuery since this $ variable does not exist
+// in the global window scope.
+$ = function (id) {
+  if (id.substr(0, 1) == '#') {
+    id = id.substr(1);
+  }
+  
+  return document.getElementById(id);
+},
+
 Caman = function () {
   if (arguments.length == 1) {
     // 1 argument = init image or retrieve manip object
 
-    if (Caman.store[arguments[0]]) {
-    
-      // Already initialized, return manip object
+    if (Caman.store[arguments[0]]) {      
+      
       return Caman.store[arguments[0]];
       
     } else {
-    
+          
       // Not initialized; load Caman
       return new Caman.manip.loadImage(arguments[0]);
       
@@ -45,12 +56,12 @@ Caman = function () {
       return arguments[1].call(Caman.store[arguments[0]], Caman.store[arguments[0]]);
     } else {
       if (typeof arguments[1] === 'function') {
-      
+        
         // Not initialized; load Caman into image then invoke callback and return manip
         return new Caman.manip.loadImage(arguments[0], arguments[1]);
         
       } else if (typeof arguments[1] === 'string') {
-      
+        
         // Not initialized; load image URL into canvas and return manip
         return new Caman.manip.loadCanvas(arguments[0], arguments[1]);
         
@@ -64,7 +75,7 @@ Caman = function () {
       return arguments[2].call(Caman.store[arguments[1]], Caman.store[arguments[1]]);
       
     } else {
-    
+      
       // Not initialized; load image into canvas, invoke callback, and return manip
       return new Caman.manip.loadCanvas(arguments[0], arguments[1], arguments[2]);
       
@@ -91,16 +102,16 @@ Caman.remoteProxy = "";
  * usage.
  */
 Caman.useProxy = function (lang) {
-	// define cases where file extensions don't match the language name
-	var langToExt = {
-		ruby: 'rb',
-		python: 'py',
-		perl: 'pl'
-	};
-	
-	lang = langToExt[lang.toLowerCase()] || lang.toLowerCase();
-	
-	return "proxies/caman_proxy." + lang;
+  // define cases where file extensions don't match the language name
+  var langToExt = {
+    ruby: 'rb',
+    python: 'py',
+    perl: 'pl'
+  };
+  
+  lang = langToExt[lang.toLowerCase()] || lang.toLowerCase();
+  
+  return "proxies/caman_proxy." + lang;
 };
 
 var remoteCheck = function (src) {
@@ -111,8 +122,8 @@ var remoteCheck = function (src) {
       return;
     } else {
       if (Caman.isRemote(Caman.remoteProxy)) {
-      	console.info("Cannot use a remote proxy for loading remote images due to same-origin policy");
-      	return;
+        console.info("Cannot use a remote proxy for loading remote images due to same-origin policy");
+        return;
       }
       
       // We have a remote proxy setup properly, so lets alter the image src
@@ -129,7 +140,7 @@ var finishInit = function (image, canvas, callback) {
   this.context = canvas.getContext("2d");
   this.context.drawImage(image, 0, 0);
   
-	this.image_data = this.context.getImageData(0, 0, image.width, image.height);  			
+  this.image_data = this.context.getImageData(0, 0, image.width, image.height);        
   this.pixel_data = this.image_data.data;
   
   this.dimensions = {
@@ -152,8 +163,13 @@ Caman.manip = Caman.prototype = {
     self = this,
     startFn = function () {
       var canvas = document.createElement('canvas'),
-      image = document.getElementById(image_id.substr(1)),
+      image = $(image_id),
       proxyURL = remoteCheck(image.src);
+      
+      if($(image_id) === null || $(image_id).nodeName.toLowerCase() !== 'img') {
+        // element doesn't exist or isn't an image
+        throw "Given element ID isn't an image: " + image_id;
+      }
 
       canvas.id = image.id;
       image.parentNode.replaceChild(canvas, image);
@@ -183,7 +199,7 @@ Caman.manip = Caman.prototype = {
     callback = callback || function () {};
 
     // Need to see if DOM is loaded
-    domLoaded = document.getElementById(image_id.substr(1)) != null;
+    domLoaded = ($(image_id) !== null);
     if (domLoaded) {
       startFn.call(this);
     } else {
@@ -199,9 +215,14 @@ Caman.manip = Caman.prototype = {
     var domLoaded,
     self = this,
     startFn = function () {
-      var canvas = document.getElementById(canvas_id.substr(1)),
+      var canvas = $(canvas_id),
       image = document.createElement('img'),
       proxyURL = remoteCheck(url);
+      
+      if ($(canvas_id) === null || $(canvas_id).nodeName.toLowerCase() !== 'canvas') {
+        // element doesn't exist or isn't a canvas
+        throw "Given element ID isn't a canvas: " + canvas_id;
+      }
       
       if (proxyURL) {
         image.src = proxyURL;
@@ -225,7 +246,7 @@ Caman.manip = Caman.prototype = {
     callback = callback || function () {};
     
     // Need to see if DOM is loaded
-    domLoaded = document.getElementById(canvas_id.substr(1)) != null;
+    domLoaded = ($(canvas_id) !== null);
     if (domLoaded) {
       startFn.call(this);
     } else {
@@ -381,21 +402,21 @@ Caman.extend( Caman, {
   },
   
   isRemote: function (url) {
-  	var domain_regex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/,
-  	test_domain;
-  	
-  	if (!url || !url.length) {
-  		return;
-  	}
-  	
-  	var matches = url.match(domain_regex);
-  	if (matches) {
-  		test_domain = matches[1];
+    var domain_regex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/,
+    test_domain;
+    
+    if (!url || !url.length) {
+      return;
+    }
+    
+    var matches = url.match(domain_regex);
+    if (matches) {
+      test_domain = matches[1];
 
-  		return test_domain != document.domain;
-  	} else {
-  		return false;
-  	}
+      return test_domain != document.domain;
+    } else {
+      return false;
+    }
   },
   
   /*
@@ -433,7 +454,10 @@ Caman.extend( Caman, {
    */
   rgb_to_hsl: function(r, g, b) {
   
-    r /= 255, g /= 255, b /= 255;
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    
     var max = Math.max(r, g, b), min = Math.min(r, g, b), 
         h, s, l = (max + min) / 2;
     
@@ -453,6 +477,15 @@ Caman.extend( Caman, {
     return {h: h, s: s, l: l};
   },
   
+  hue_to_rgb: function (p, q, t) {
+    if(t < 0) t += 1;
+    if(t > 1) t -= 1;
+    if(t < 1/6) return p + (q - p) * 6 * t;
+    if(t < 1/2) return q;
+    if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  },
+  
   /**
    * Converts an HSL color value to RGB. Conversion formula
    * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
@@ -467,23 +500,14 @@ Caman.extend( Caman, {
   hsl_to_rgb: function(h, s, l){
       var r, g, b;
   
-      if(s == 0){
+      if(s === 0){
           r = g = b = l; // achromatic
       } else {
-          function hue2rgb(p, q, t){
-              if(t < 0) t += 1;
-              if(t > 1) t -= 1;
-              if(t < 1/6) return p + (q - p) * 6 * t;
-              if(t < 1/2) return q;
-              if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-              return p;
-          }
-  
           var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
           var p = 2 * l - q;
-          r = hue2rgb(p, q, h + 1/3);
-          g = hue2rgb(p, q, h);
-          b = hue2rgb(p, q, h - 1/3);
+          r = this.hue_to_rgb(p, q, h + 1/3);
+          g = this.hue_to_rgb(p, q, h);
+          b = this.hue_to_rgb(p, q, h - 1/3);
       }
       
       return {r: r * 255, g: g * 255, b: b * 255};
@@ -502,12 +526,15 @@ Caman.extend( Caman, {
    */
   rgb_to_hsv: function(r, g, b){
       
-      r = r/255, g = g/255, b = b/255;
+      r = r/255;
+      g = g/255;
+      b = b/255;
+      
       var max = Math.max(r, g, b), min = Math.min(r, g, b),
           h, s, v = max,
           d = max - min;
           
-      s = max == 0 ? 0 : d / max;
+      s = max === 0 ? 0 : d / max;
   
       if(max == min){
           h = 0; // achromatic
@@ -544,12 +571,36 @@ Caman.extend( Caman, {
           t = v * (1 - (1 - f) * s);
   
       switch(i % 6){
-          case 0: r = v, g = t, b = p; break;
-          case 1: r = q, g = v, b = p; break;
-          case 2: r = p, g = v, b = t; break;
-          case 3: r = p, g = q, b = v; break;
-          case 4: r = t, g = p, b = v; break;
-          case 5: r = v, g = p, b = q; break;
+          case 0: 
+            r = v;
+            g = t;
+            b = p;
+            break;
+          case 1:
+            r = q;
+            g = v;
+            b = p;
+            break;
+          case 2:
+            r = p;
+            g = v;
+            b = t;
+            break;
+          case 3:
+            r = p;
+            g = q;
+            b = v;
+            break;
+          case 4:
+            r = t;
+            g = p;
+            b = v;
+            break;
+          case 5:
+            r = v;
+            g = p;
+            b = q;
+            break;
       }
   
       return {r: r * 255, g: g * 255, b: b * 255};
@@ -653,7 +704,7 @@ Caman.extend( Caman, {
   xyz_to_lab: function(x, y, z) {
   
     // D65 reference white point
-    var whiteX = 95.047, whiteY = 100.0, whiteZ = 108.883
+    var whiteX = 95.047, whiteY = 100.0, whiteZ = 108.883;
   
     x = x / whiteX; y = y / whiteY; z = z / whiteZ;
   
@@ -750,7 +801,8 @@ Caman.extend( Caman, {
     x1 = ctrl1[0], y1 = ctrl1[1],
     x2 = ctrl2[0], y2 = ctrl2[1],
     x3 = end[0], y3 = end[1],
-    t, curveX, curveY;
+    t, curveX, curveY,
+    bezier = {};
     
     // Calculate our X and Y coefficients
     Cx = 3 * (x1 - x0);
@@ -760,8 +812,6 @@ Caman.extend( Caman, {
     Cy = 3 * (y1 - y0);
     By = 3 * (y2 - y1) - Cy;
     Ay = y3 - y0 - Cy - By;
-    
-    bezier = {};
     
     for (var i = 0; i < 1000; i++) {
       t = i / 1000;
@@ -1028,7 +1078,32 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
   
   // add the remainder pixels to the last block.
   lastBlockN = blockN + ((n / 4) % Caman.renderBlocks) * 4,
+
   self = this,
+  
+  blocks_done = 0,
+  
+  // Called whenever a block finishes. It's used to determine when all blocks
+  // finish rendering.
+  block_finished = function (bnum) {
+    if (bnum >= 0) {
+      console.log("Block #" + bnum + " finished! Filter: " + processFn.name);
+    }
+    
+    blocks_done++;
+
+    if (blocks_done == Caman.renderBlocks || bnum == -1) {
+      if (bnum >= 0) {
+        console.log("Filter " + processFn.name + " finished!");
+      } else {
+        console.log("Kernel filter finished!");
+      }
+      
+      Caman.trigger("processComplete", {id: self.canvas_id, completed: processFn.name});
+      
+      self.processNext();
+    }
+  },
   
   /*
    * Renders a block of the image bounded by the start and end
@@ -1056,35 +1131,11 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
     }, 0);
   },
   
-  blocks_done = 0,
-  
-  // Called whenever a block finishes. It's used to determine when all blocks
-  // finish rendering.
-  block_finished = function (bnum) {
-    if (bnum >= 0) {
-      console.log("Block #" + bnum + " finished! Filter: " + processFn.name);
-    }
-    
-    blocks_done++;
-
-    if (blocks_done == Caman.renderBlocks || bnum == -1) {
-      if (bnum >= 0) {
-        console.log("Filter " + processFn.name + " finished!");
-      } else {
-        console.log("Kernel filter finished!");
-      }
-      
-      Caman.trigger("processComplete", {id: self.canvas_id, completed: processFn.name});
-      
-      self.processNext();
-    }
-  },
-  
   render_kernel = function () {
     setTimeout(function () {
       var kernel, pixelInfo, 
       start, end, 
-      mod_pixel_data = new Array(n),
+      mod_pixel_data = [],
       name = adjust.name,
       bias = adjust.bias,
       divisor = adjust.divisor;
@@ -1262,10 +1313,12 @@ window.Caman = Caman;
   };
 
   Caman.manip.saturation = function(adjust) {
-    var chan, max, diff;
+    var max, diff;
     adjust *= -1;
     
     return this.process( adjust, function saturation(adjust, rgba) {
+      var chan;
+      
       max = Math.max(rgba.r, rgba.g, rgba.b);
       
       for (chan in rgba) {
@@ -1284,29 +1337,31 @@ window.Caman = Caman;
   };
   
   Caman.manip.vibrance = function (adjust) {
-  	var max, avg, amt, diff;
-  	adjust *= -1;
-  	
-  	return this.process( adjust, function vibrance(adjust, rgba) {
-  		max = Math.max(rgba.r, rgba.g, rgba.b);
-  		
-  		// Calculate difference between max color and other colors
-  		avg = (rgba.r + rgba.g + rgba.b) / 3;
-  		amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
-  		
-  		for (chan in rgba) {
-  			if (rgba.hasOwnProperty(chan)) {
-  				if (rgba[chan] === max || chan == "a") {
-  					continue;
-  				}
-  				
-  				diff = max - rgba[chan];
-  				rgba[chan] += Math.ceil(diff * amt);
-  			}
-  		}
-  		
-  		return rgba;
-  	});
+    var max, avg, amt, diff;
+    adjust *= -1;
+    
+    return this.process( adjust, function vibrance(adjust, rgba) {
+      var chan;
+      
+      max = Math.max(rgba.r, rgba.g, rgba.b);
+      
+      // Calculate difference between max color and other colors
+      avg = (rgba.r + rgba.g + rgba.b) / 3;
+      amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
+      
+      for (chan in rgba) {
+        if (rgba.hasOwnProperty(chan)) {
+          if (rgba[chan] === max || chan == "a") {
+            continue;
+          }
+          
+          diff = max - rgba[chan];
+          rgba[chan] += Math.ceil(diff * amt);
+        }
+      }
+      
+      return rgba;
+    });
   };
   
   /*
@@ -1383,6 +1438,8 @@ window.Caman = Caman;
     var hsv, h;
 
     return this.process( adjust, function hue(adjust, rgba) {
+      var rgb;
+      
       hsv = Caman.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
       h = hsv.h * 100;
       h += Math.abs(adjust);
@@ -1444,9 +1501,9 @@ window.Caman = Caman;
     adjust = (adjust / 100);
     
     return this.process(adjust, function sepia (adjust, rgba) {
-      rgba.r = Math.min(255, (rgba.r * (1 - (.607 * adjust))) + (rgba.g * (.769 * adjust)) + (rgba.b * (.189 * adjust)));
-      rgba.g = Math.min(255, (rgba.r * (.349 * adjust)) + (rgba.g * (1 - (.314 * adjust))) + (rgba.b * (.168 * adjust)));
-      rgba.b = Math.min(255, (rgba.r * (.272 * adjust)) + (rgba.g * (.534 * adjust)) + (rgba.b * (1- (.869 * adjust))));
+      rgba.r = Math.min(255, (rgba.r * (1 - (0.607 * adjust))) + (rgba.g * (0.769 * adjust)) + (rgba.b * (0.189 * adjust)));
+      rgba.g = Math.min(255, (rgba.r * (0.349 * adjust)) + (rgba.g * (1 - (0.314 * adjust))) + (rgba.b * (0.168 * adjust)));
+      rgba.b = Math.min(255, (rgba.r * (0.272 * adjust)) + (rgba.g * (0.534 * adjust)) + (rgba.b * (1- (0.869 * adjust))));
       
       return rgba;
     });
@@ -1527,7 +1584,7 @@ window.Caman = Caman;
     
     for (var chan in options) {
       if (options.hasOwnProperty(chan)) {
-        if (options[chan] == 0) {
+        if (options[chan] === 0) {
           delete options[chan];
           continue;
         }
@@ -1581,7 +1638,7 @@ window.Caman = Caman;
    *    end   - [x, y] (end of curve; 0 - 255)
    */
   Caman.manip.curves = function (chan, start, ctrl1, ctrl2, end) {
-    var bezier;
+    var bezier, i;
     
     if (typeof chan === 'string') {
       if (chan == 'rgb') {
@@ -1640,3 +1697,336 @@ window.Caman = Caman;
 }(Caman));
 
 }());
+/*global Caman: true, exports: true */
+
+/*
+ * NodeJS compatibility
+ */
+if (!Caman && typeof exports == "object") {
+	var Caman = {manip:{}};
+	exports.plugins = Caman.manip;
+}
+
+(function (Caman) {
+
+Caman.manip.boxBlur = function () {
+  return this.processKernel('Box Blur', [
+    [1, 1, 1],
+    [1, 1, 1],
+    [1, 1, 1]
+  ]);
+};
+
+Caman.manip.radialBlur = function () {
+  return this.processKernel('Radial Blur', [
+    [0, 1, 0],
+    [1, 1, 1],
+    [0, 1, 0]
+  ], 5);
+};
+
+Caman.manip.heavyRadialBlur = function () {
+  return this.processKernel('Heavy Radial Blur', [
+    [0, 0, 1, 0, 0],
+    [0, 1, 1, 1, 0],
+    [1, 1, 1, 1, 1],
+    [0, 1, 1, 1, 0],
+    [0, 0, 1, 0, 0]
+  ], 13);
+};
+
+Caman.manip.gaussianBlur = function () {
+  return this.processKernel('Gaussian Blur', [
+    [1, 4, 6, 4, 1],
+    [4, 16, 24, 16, 4],
+    [6, 24, 36, 24, 6],
+    [4, 16, 24, 16, 4],
+    [1, 4, 6, 4, 1]
+  ], 256);
+};
+
+Caman.manip.motionBlur = function (degrees) {
+  var kernel;
+  
+  if (degrees === 0 || degrees == 180) {
+    kernel = [
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0]
+    ];
+  } else if ((degrees > 0 && degrees < 90) || (degrees > 180 && degrees < 270)) {
+    kernel = [
+      [0, 0, 0, 0, 1],
+      [0, 0, 0, 1, 0],
+      [0, 0, 1, 0, 0],
+      [0, 1, 0, 0, 0],
+      [1, 0, 0, 0, 0]
+    ];
+  } else if (degrees == 90 || degrees == 270) {
+    kernel = [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0]
+    ];
+  } else {
+    kernel = [
+      [1, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0],
+      [0, 0, 0, 0, 1]
+    ];
+  }
+  
+  return this.processKernel('Motion Blur', kernel, 5);
+};
+
+Caman.manip.sharpen = function (amt) {
+  if (!amt) {
+    amt = 1;
+  } else {
+    amt /= 100;
+  }
+  
+  return this.processKernel('Sharpen', [
+    [0, -amt, 0],
+    [-amt, 4 * amt + 1, -amt],
+    [0, -amt, 0]
+  ]);
+};
+
+}(Caman));
+/*global Caman: true, exports: true */
+
+/*
+ * NodeJS compatibility
+ */
+if (!Caman && typeof exports == "object") {
+	var Caman = {manip:{}};
+	exports.plugins = Caman.manip;
+}
+
+(function (Caman) {
+  
+  Caman.manip.vignette = function (size, strength) {
+    var center, start, end, loc, dist, div, bezier;
+    
+    if (!strength) {
+      strength = 0.6;
+    } else {
+      strength /= 100;
+    }
+    
+    center = [(this.dimensions.width / 2), (this.dimensions.height / 2)];
+    
+    // start = darkest part
+    start = Math.sqrt(Math.pow(center[0], 2) + Math.pow(center[1], 2)); // corner to center dist
+    
+    // end = lightest part (0 vignette)
+    end = start - size;
+    
+    //bezier = Caman.bezier([0, 100], [20, 50], [50, 0], [100, 0]);
+    bezier = Caman.bezier([0, 1], [30, 30], [70, 60], [100, 80]);
+    return this.process({center: center, start: start, end: end, size: size, strength: strength, bezier: bezier}, function vignette(data, rgba) {
+      // current pixel coordinates
+      loc = this.locationXY();
+      
+      // distance between center of image and current pixel
+      dist = Math.sqrt(Math.pow(loc.x - data.center[0], 2) + Math.pow(loc.y - data.center[1], 2));
+      
+      if (dist > data.end) {
+        // % of vignette
+        div = Math.max(1, ((data.bezier[Math.round(((dist - data.end) / data.size) * 100)]/10) * strength));
+        
+        // Use gamma to adjust the vignette - much better results
+        rgba.r = Math.pow(rgba.r / 255, div) * 255;
+	      rgba.g = Math.pow(rgba.g / 255, div) * 255;
+	      rgba.b = Math.pow(rgba.b / 255, div) * 255;
+      }
+      
+      return rgba;
+    });
+  };
+}(Caman));
+/*global Caman: true, exports: true */
+
+/*
+ * NodeJS compatibility
+ */
+if (!Caman && typeof exports == "object") {
+	var Caman = {manip:{}};
+	exports.plugins = Caman.manip;
+}
+
+(function (Caman) {
+
+Caman.manip.edgeEnhance = function () {
+  return this.processKernel('Edge Enhance', [
+    [0, 0, 0],
+    [-1, 1, 0],
+    [0, 0, 0]
+  ]);
+};
+
+Caman.manip.edgeDetect = function () {
+  return this.processKernel('Edge Detect', [
+    [-1, -1, -1],
+    [-1, 8, -1],
+    [-1, -1, -1]
+  ]);
+};
+
+Caman.manip.emboss = function () {
+  return this.processKernel('Emboss', [
+    [-2, -1, 0],
+    [-1, 1, 1],
+    [0, 1, 2]
+  ]);
+};
+
+}(Caman));
+/*global Caman: true, exports: true */
+
+/*
+ * NodeJS compatibility
+ */
+if (!Caman && typeof exports == "object") {
+	var Caman = {manip:{}};
+	exports.plugins = Caman.manip;
+}
+
+(function (Caman) {
+
+Caman.manip.vintage = function (vignette) {
+  var ret = this
+    .saturation(40)
+    .contrast(5)
+    .curves('r', [0, 0], [125, 100], [220, 230], [220, 255])
+    .curves('g', [0, 0], [120, 120], [128, 190], [255, 255])
+    .curves('b', [0, 30], [0, 30], [255, 205], [255, 205])
+    .colorize('#ff56aa', 10)
+    .sepia(50)
+    .saturation(-20);
+    
+  if (vignette || typeof vignette === 'undefined') {
+    return this.vignette(250, 25);
+  }
+  
+  return ret;
+};
+
+Caman.manip.lomo = function() {
+  return this
+    .brightness(15)
+    .exposure(15)
+    .curves('rgb', [0, 0], [200, 0], [155, 255], [255, 255])
+    .saturation(-20)
+    .gamma(1.8)
+    .vignette(300, 60)
+    .brightness(5);
+};
+
+Caman.manip.clarity = function (grey) {
+  var manip = this
+    .vibrance(20)
+    .curves('rgb', [5, 0], [130, 150], [190, 220], [250, 255])
+    .sharpen(15)
+    .vignette(250, 20);
+    
+   if (grey) {
+     this
+       .greyscale()
+       .contrast(4);
+   }
+   
+   return manip;
+};
+
+Caman.manip.sinCity = function () {
+  return this
+    .contrast(100)
+    .brightness(15)
+    .exposure(10)
+    .curves('rgb', [0,0], [100, 0], [155, 255], [255, 255])
+    .clip(30)
+    .greyscale();
+};
+
+Caman.manip.sunrise = function () {
+  return this
+    .exposure(3.5)
+    .saturation(-5)
+    .vibrance(50)
+    .sepia(60)
+    .colorize('#e87b22', 10)
+    .channels({red: 8, blue: 8})
+    .contrast(5)
+    .gamma(1.2)
+    .vignette(250, 25);
+};
+
+Caman.manip.crossProcess = function () {
+  return this
+    .exposure(5)
+    .colorize('#e87b22', 4)
+    .sepia(20)
+    .channels({blue: 8, red: 3})
+    .curves('b', [0, 0], [100, 150], [180, 180], [255, 255])
+    .contrast(15)
+    .vibrance(75)
+    .gamma(1.6);
+};
+
+Caman.manip.orangePeel = function () {
+	return this
+		.curves('rgb', [0, 0], [100, 50], [140, 200], [255, 255])
+		.vibrance(-30)
+		.saturation(-30)
+		.colorize('#ff9000', 30)
+		.contrast(-5)
+		.gamma(1.4);
+};
+
+Caman.manip.love = function () {
+	return this
+		.brightness(5)
+		.exposure(8)
+		.colorize('#c42007', 30)
+		.vibrance(50)
+		.gamma(1.3);
+};
+
+Caman.manip.grungy = function () {
+	return this
+    .gamma(1.5)
+		.clip(25)
+		.saturation(-60)
+		.contrast(5)
+		.noise(5)
+		.vignette(200, 30);
+};
+
+Caman.manip.jarques = function () {
+	return this
+    .saturation(-35)
+    .curves('b', [20, 0], [90, 120], [186, 144], [255, 230])
+    .curves('r', [0, 0], [144, 90], [138, 120], [255, 255])
+    .curves('g', [10, 0], [115, 105], [148, 100], [255, 248])
+    .curves('rgb', [0, 0], [120, 100], [128, 140], [255, 255])
+    .sharpen(20);
+};
+
+Caman.manip.pinhole = function () {
+	return this
+		.greyscale()
+		.sepia(10)
+		.exposure(10)
+		.contrast(15)
+		.vignette(250, 35);
+};
+
+}(Caman));

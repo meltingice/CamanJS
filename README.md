@@ -1,4 +1,4 @@
-<img src="https://github.com/meltingice/CamanJS/raw/master/demo/img/camanjs.png" />
+<img src="http://camanjs.com/imgs/logo.png" />
 
 <h1>About the Project</h1>
 The main focus of CamanJS is manipulating images using the HTML5 canvas and Javascript. It's a combination of a simple-to-use interface with advanced and efficient image/canvas editing techniques. It is also completely library independent and can be safely used next to jQuery, YUI, Scriptaculous, MooTools, etc.
@@ -34,6 +34,19 @@ Caman.renderBlocks = 8; // even number recommended
 </pre>
 
 <h1>How to Use</h1>
+
+<h2>Building CamanJS Yourself</h2>
+CamanJS is built into the dist folder. The copies of CamanJS that are already in the folder are kept up-to-date; however, if you make any modifications to CamanJS and wish to combine all of the plugins and minify the code, you will have to re-build it yourself.  Building CamanJS also runs JSHint on the code to check for syntax and formatting errors, which are reported at build time.
+
+Building CamanJS requires NodeJS to be installed. To build, simply run:
+
+<pre>
+node Makefile.js
+</pre>
+
+The copies of CamanJS that are in the dist folder will be overwritten with the newly built copies. The 'full' copies include all of the plugins, while the non-full copies are simply the core library.
+
+<h2>Basic Usage</h2>
 Using CamanJS is simple.  It goes something like this:
 
 <pre>

@@ -1,7 +1,9 @@
+/*global Caman: true, exports: true */
+
 /*
  * NodeJS compatibility
  */
-if (!Caman) {
+if (!Caman && typeof exports == "object") {
 	var Caman = {manip:{}};
 	exports.plugins = Caman.manip;
 }
