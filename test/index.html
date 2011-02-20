@@ -4,8 +4,12 @@
 	<title>Caman.js</title>
 	<link rel="stylesheet" href="qunit/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="qunit/qunit.js"></script>
-  <script type="text/javascript" src="../caman.js"></script>
+  <script type="text/javascript" src="../dist/caman.full.js"></script>
 	<script type="text/javascript" src="caman.qunit.js"></script>
+	
+	<style type="text/css">
+    #test-canvas, #test-image, #test-invalid { display: none; }
+	</style>
 
 </head>
 <body>
@@ -16,8 +20,8 @@
 	<ol id="qunit-tests"></ol>
 	<div id="qunit-fixture">test markup</div>
 	
-	<canvas id="test-canvas" style="display:none"></canvas>
-	<img id="test-image" src="testimg.jpg" style="display:none" />
+	<canvas id="test-canvas"></canvas>
+	<img id="test-image" src="testimg.jpg" />
 	<div id="test-invalid"></div>
 </body>
 </html>
