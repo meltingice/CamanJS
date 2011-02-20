@@ -4,28 +4,26 @@
  * NodeJS compatibility
  */
 if (!Caman && typeof exports == "object") {
-	var Caman = {manip:{}};
-	exports.plugins = Caman.manip;
+  var Caman = {manip:{}};
+  exports.plugins = Caman.manip;
 }
 
 (function (Caman) {
 
 Caman.manip.vintage = function (vignette) {
-  var ret = this
-    .saturation(40)
-    .contrast(5)
-    .curves('r', [0, 0], [125, 100], [220, 230], [220, 255])
-    .curves('g', [0, 0], [120, 120], [128, 190], [255, 255])
-    .curves('b', [0, 30], [0, 30], [255, 205], [255, 205])
-    .colorize('#ff56aa', 10)
-    .sepia(50)
-    .saturation(-20);
-    
+  this
+    .greyscale()
+    .contrast(5);
+  
   if (vignette || typeof vignette === 'undefined') {
-    return this.vignette(250, 25);
+    this.vignette(250, 25);
   }
   
-  return ret;
+  return this
+    .noise(3)
+    .sepia(100)
+    .channels({red: 8, blue: 2, green: 4})
+    .gamma(0.87);
 };
 
 Caman.manip.lomo = function() {
@@ -91,36 +89,36 @@ Caman.manip.crossProcess = function () {
 };
 
 Caman.manip.orangePeel = function () {
-	return this
-		.curves('rgb', [0, 0], [100, 50], [140, 200], [255, 255])
-		.vibrance(-30)
-		.saturation(-30)
-		.colorize('#ff9000', 30)
-		.contrast(-5)
-		.gamma(1.4);
+  return this
+    .curves('rgb', [0, 0], [100, 50], [140, 200], [255, 255])
+    .vibrance(-30)
+    .saturation(-30)
+    .colorize('#ff9000', 30)
+    .contrast(-5)
+    .gamma(1.4);
 };
 
 Caman.manip.love = function () {
-	return this
-		.brightness(5)
-		.exposure(8)
-		.colorize('#c42007', 30)
-		.vibrance(50)
-		.gamma(1.3);
+  return this
+    .brightness(5)
+    .exposure(8)
+    .colorize('#c42007', 30)
+    .vibrance(50)
+    .gamma(1.3);
 };
 
 Caman.manip.grungy = function () {
-	return this
+  return this
     .gamma(1.5)
-		.clip(25)
-		.saturation(-60)
-		.contrast(5)
-		.noise(5)
-		.vignette(200, 30);
+    .clip(25)
+    .saturation(-60)
+    .contrast(5)
+    .noise(5)
+    .vignette(200, 30);
 };
 
 Caman.manip.jarques = function () {
-	return this
+  return this
     .saturation(-35)
     .curves('b', [20, 0], [90, 120], [186, 144], [255, 230])
     .curves('r', [0, 0], [144, 90], [138, 120], [255, 255])
@@ -130,12 +128,12 @@ Caman.manip.jarques = function () {
 };
 
 Caman.manip.pinhole = function () {
-	return this
-		.greyscale()
-		.sepia(10)
-		.exposure(10)
-		.contrast(15)
-		.vignette(250, 35);
+  return this
+    .greyscale()
+    .sepia(10)
+    .exposure(10)
+    .contrast(15)
+    .vignette(250, 35);
 };
 
 }(Caman));
