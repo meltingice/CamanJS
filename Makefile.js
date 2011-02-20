@@ -3,7 +3,6 @@
 var fs = require('fs'),
 jsmin = require('./build/jsmin').jsmin,
 jshint = require('./build/jshint').JSHINT,
-jsmin = require('jsmin').jsmin,
 
 BUILD_DIR   = 'build',
 DIST_DIR    = 'dist',
