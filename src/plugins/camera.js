@@ -1,7 +1,9 @@
+/*global Caman: true, exports: true */
+
 /*
  * NodeJS compatibility
  */
-if (!Caman) {
+if (!Caman && typeof exports == "object") {
 	var Caman = {manip:{}};
 	exports.plugins = Caman.manip;
 }
@@ -12,7 +14,7 @@ if (!Caman) {
     var center, start, end, loc, dist, div, bezier;
     
     if (!strength) {
-      strength = .6;
+      strength = 0.6;
     } else {
       strength /= 100;
     }
