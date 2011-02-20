@@ -1,5 +1,5 @@
 var remoteImg = "http://camanjs.com/imgs/logo.png",
-reset = function (id) {
+resetImage = function (id) {
   if (id.substr(0, 1) == '#') {
     id = id.substr(1);
   }
@@ -10,6 +10,21 @@ reset = function (id) {
   image.src = 'testimg.jpg';
   
   canvas.parentNode.replaceChild(image, canvas);
+  
+  if (Caman.store['#' + id]) {
+    delete Caman.store['#' + id];
+  }
+},
+resetCanvas = function (id) {
+  if (id.substr(0, 1) == '#') {
+    id = id.substr(1);
+  }
+  
+  var canvas = document.getElementById(id),
+  new_canvas = document.createElement('canvas');
+  new_canvas.id = id;
+  
+  canvas.parentNode.replaceChild(new_canvas, canvas);
   
   if (Caman.store['#' + id]) {
     delete Caman.store['#' + id];
@@ -35,7 +50,7 @@ test("Invoking Caman() with one argument", function () {
     Caman("#test-invalid");
   }, "Raises exception when invoked on an invalid element");
   
-  reset("#test-image");
+  resetImage("#test-image");
 });
 
 asyncTest("Invoking Caman() with two arguments", function () {
@@ -43,6 +58,8 @@ asyncTest("Invoking Caman() with two arguments", function () {
   var existing_image = Caman("#test-image", function () {
     ok(typeof this.render === "function", "Callback is fired with Caman.manip as context");
     ok(typeof Caman("#test-image").render === "function", "Invoking on an already initialized element returns Caman.manip");
+    
+    resetImage("#test-image");
     
     start();
   });
@@ -59,8 +76,6 @@ asyncTest("Invoking Caman() with two arguments", function () {
   raises(function () {
     Caman("testimg.jpg", "#test-invalid");
   }, "Raises exception when invoked with an invalid Canvas element");
-  
-  reset("#test-image");
 });
 
 asyncTest("Invoking Caman() with three arguments", function () {
@@ -68,6 +83,8 @@ asyncTest("Invoking Caman() with three arguments", function () {
   var caman = Caman("testimg.jpg", "#test-canvas", function () {
     ok(typeof this.render === "function", "Callback is fired with Caman.manip as context");
     ok(typeof Caman("#test-canvas").render === "function", "Invoking on an already initialized element returns Caman.manip");
+    
+    resetCanvas("#test-canvas");
     
     start();
   });
@@ -77,6 +94,28 @@ asyncTest("Invoking Caman() with three arguments", function () {
   raises(function () {
     Caman("testimg.jpg", "#test-invalid", function () {});
   }, "Raises exception when invoked with an invalid Canvas element");
+});
+
+module("Remote Images");
+
+asyncTest("Invoking Caman with a remote image and the PHP proxy", function () {
+  
+  Caman.remoteProxy = '../proxies/caman_proxy.php';
+  
+  var caman = Caman(remoteImg, "#test-canvas", function () {
+    ok(typeof this.render === "function", "Callback is fired with Caman.manip as context");
+    ok(typeof Caman("#test-canvas").render === "function", "Invoking on an already initialized element returns Caman.manip");
+    
+    this.brightness(1).render(function () {
+      ok(typeof this === "object", "No security exceptions thrown when canvas is modified");
+      
+      resetCanvas("#test-canvas");
+      
+      start();
+    });
+  });
+  
+  ok(typeof caman.render === "function", "Returned object is Caman.manip");
 });
 
 module("Caman Utils");
