@@ -16,6 +16,7 @@
  *    GitHub: http://github.com/cezarsa
  */
  
+/*global Caman: true */
 (function () {
 
 var forEach = Array.prototype.forEach,
@@ -94,6 +95,7 @@ if (!('console' in window)) {
 Caman.ready = false;
 Caman.store = {};
 Caman.renderBlocks = 4;
+
 Caman.remoteProxy = "";
 
 /*
@@ -112,20 +114,6 @@ Caman.useProxy = function (lang) {
   
   return "proxies/caman_proxy." + lang;
 };
-
-Caman.uniqid = (function () {
-  var id = 0;
-  
-  return {
-    get: function () {
-      return id++;
-    },
-    
-    reset: function () {
-      id = 0;
-    }
-  };
-}());
 
 var remoteCheck = function (src) {
   // Check to see if image is remote or not
@@ -210,20 +198,6 @@ Caman.manip = Caman.prototype = {
 
     // Default callback
     callback = callback || function () {};
-    
-    // Check to see if we've been passed a DOM node or a string representing
-    // the node's ID
-    if (typeof image_id === "object" && image_id.nodeName.toLowerCase() == "img") {
-      // DOM node
-      var element = image_id;
-      
-      if (image_id.id) {
-        image_id = element.id;
-      } else {
-        image_id = "caman-" + Caman.uniqid.get();
-        element.id = image_id;
-      }
-    }
 
     // Need to see if DOM is loaded
     domLoaded = ($(image_id) !== null);
@@ -271,20 +245,6 @@ Caman.manip = Caman.prototype = {
 
     // Default callback
     callback = callback || function () {};
-    
-    // Check to see if we've been passed a DOM node or a string representing
-    // the node's ID
-    if (typeof canvas_id === "object" && canvas_id.nodeName.toLowerCase() == "canvas") {
-      // DOM node
-      var element = canvas_id;
-      
-      if (canvas_id.id) {
-        canvas_id = element.id;
-      } else {
-        canvas_id = "caman-" + Caman.uniqid.get();
-        element.id = canvas_id;
-      }
-    }
     
     // Need to see if DOM is loaded
     domLoaded = ($(canvas_id) !== null);
@@ -1335,9 +1295,12 @@ Caman.manip.processNext = function (finishedFn) {
 // Expose Caman to the world!
 window.Caman = Caman;
 
-/****************************************************************************
- * Below are a basic library of filters that are always loaded with CamanJS *
- ****************************************************************************/
+}());
+/*!
+ * Below are all of the built-in filters that are a part
+ * of the CamanJS core library.
+ */
+ 
 (function(Caman) {
 
   Caman.manip.brightness = function(adjust) {
@@ -1736,5 +1699,3 @@ window.Caman = Caman;
   };
 
 }(Caman));
-
-}());

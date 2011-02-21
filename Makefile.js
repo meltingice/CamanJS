@@ -9,12 +9,18 @@ DIST_DIR    = 'dist',
 SRC_DIR     = 'src',
 PLUGIN_DIR  = SRC_DIR + '/plugins',
 
+CORE_LIB = ['core', 'filters'],
+
 jshint_opts = {devel: true, forin: true, undef: true, browser: true};
 
 // First lets jsmin the caman.js source file to get
 // things rolling.
-var caman = fs.readFileSync(SRC_DIR + '/caman.js', 'UTF-8');
 console.log("Loading Caman source...");
+
+var caman = "";
+CORE_LIB.forEach(function (file) {
+  caman += fs.readFileSync(SRC_DIR + "/" + file + ".js", 'UTF-8') + "\n";
+});
 
 if ( jshint(caman, jshint_opts) ) {
   console.log("JSHint PASSED - caman.js");
