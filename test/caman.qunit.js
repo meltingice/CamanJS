@@ -51,6 +51,14 @@ test("Invoking Caman() with one argument", function () {
   }, "Raises exception when invoked on an invalid element");
   
   resetImage("#test-image");
+  
+  var withdom = Caman(document.getElementById('test-image'));
+  ok(typeof withdom.render == "function", "Invoking by passing a DOM node returns Caman.manip");
+  
+  resetImage("#test-image");
+  
+  var withclassdom = Caman(document.getElementsByClassName('test-image')[0]);
+  ok(typeof withclassdom.render == "function", "Invoking by passing a DOM node with no ID returns Caman.manip");
 });
 
 asyncTest("Invoking Caman() with two arguments", function () {
@@ -119,6 +127,14 @@ asyncTest("Invoking Caman with a remote image and the PHP proxy", function () {
 });
 
 module("Caman Utils");
+
+test("uniqid", function () {
+  Caman.uniqid.reset();
+  
+  ok(typeof Caman.uniqid === "object", "Caman.uniqid is defined");
+  equal(Caman.uniqid.get(), 0, "Expect 0");
+  equal(Caman.uniqid.get(), 1, "Expect 1");
+});
 
 test("rgb_to_xyz and xyz_to_rgb are symmetric", function() {
   var rgbColors = [
