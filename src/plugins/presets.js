@@ -136,4 +136,15 @@ Caman.manip.pinhole = function () {
     .vignette(250, 35);
 };
 
+Caman.manip.oldBoot = function () {
+  return this
+    .saturation(-20)
+    .vibrance(-50)
+    .gamma(1.1)
+    .sepia(30)
+    .channels({red: -10, blue: 5})
+    .curves('rgb', [0, 0], [80, 50], [128, 230], [255, 255])
+    .vignette(250, 30);
+};
+
 }(Caman));
