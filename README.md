@@ -204,3 +204,4 @@ If you add a filter, please edit test/benchmark/benchmark.js and add your filter
 * <a href="http://twitter.com/meltingice">Ryan LeFevre</a> - Project Creator, Maintainer, and Lead Developer
 * <a href="http://twitter.com/rwaldron">Rick Waldron</a> - Plugin Architect and Developer
 * <a href="http://twitter.com/cezarsa">Cezar Sá Espinola</a> - Developer
+* <a href="http://twitter.com/jarques">Jarques Pretorius</a> - Logo Designer
