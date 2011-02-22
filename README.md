@@ -159,7 +159,7 @@ Extending CamanJS is easy as well. It's accomplished by adding functions onto th
 		});
 		
 		// If you want to use a convolution kernel instead of manipulating each
-		// kernel directly, you can easily do it like this:
+		// pixel directly, you can easily do it like this:
 		Caman.manip.convolutionFilter = function () {
 			return this.processKernel('Convolution Filter', [
 				[1, 1, 1],
