@@ -4,6 +4,26 @@
  */
  
 (function(Caman) {
+  Caman.manip.fillColor = function () {
+    var color;
+    if (arguments.length == 1) {
+      color = Caman.hex_to_rgb(arguments[0]);
+    } else {
+      color = {
+        r: arguments[0],
+        g: arguments[1],
+        b: arguments[2]
+      };
+    }
+    
+    return this.process( color, function fillColor(color, rgba) {
+      rgba.r = color.r;
+      rgba.g = color.g;
+      rgba.b = color.b;
+      
+      return rgba;
+    });
+  };
 
   Caman.manip.brightness = function(adjust) {
     

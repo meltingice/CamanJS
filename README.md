@@ -51,12 +51,12 @@ Using CamanJS is simple.  It goes something like this:
 
 <pre>
 Caman('path/to/image.jpg', '#canvas-id', function () {
-	this.brightness(10);
-	this.contrast(-5);
-	this.saturation(-50);
-	// and so on...
-	
-	this.render();
+  this.brightness(10);
+  this.contrast(-5);
+  this.saturation(-50);
+  // and so on...
+  
+  this.render();
 });
 </pre>
 
@@ -64,7 +64,7 @@ You can also directly point to an image if you don't want to create a separate c
 
 <pre>
 Caman("#image-id", function () {
-	this.contrast(-5).render();
+  this.contrast(-5).render();
 });
 </pre>
 
@@ -82,6 +82,91 @@ Caman('img/example.jpg', '#image-caman', function () {
     this.toBase64(); //  base64 data URL representation of the image. useful if you want to upload the modified image.
   });
 });
+</pre>
+
+<h2>CamanJS Layering System</h2>
+CamanJS now supports a powerful layering system, much like the one you would find in Photoshop or GIMP.  Here's an example of how it works:
+
+<pre>
+Caman('#test', function () {
+  this.brightness(10);
+  
+  /*
+   * Creates a new layer. Everything called inside the callback argument will be applied
+   * to the new layer. Layers have some special layer-only functions such as setBlendingMode(),
+   * opacity(), and copyParent(). In order to access the standard filters, you need to access them
+   * through this.filter.
+   */
+  this.newLayer(function () {
+  	// There are many blending modes, more below.
+    this.setBlendingMode('multiply');
+    this.opacity(10);
+    this.copyParent();
+    
+    this.filter.gamma(0.8);
+    this.filter.contrast(50);
+    
+    /*
+     * Yep, you can stack multiple layers! The further a layer is nested, the higher up on the layer
+     * stack it will be.
+     */
+    this.newLayer(function () {
+      this.setBlendingMode('softLight');
+      this.opacity(10);
+      this.fillColor('#f49600');
+      this.render();
+    });
+    
+    this.filter.exposure(10);
+          
+    this.render();
+  });
+  
+  this.exposure(20);
+  this.gamma(0.8);
+  this.render();
+});
+</pre>
+
+<h3>Layer Blending Modes</h3>
+These are all of the layer blending modes currently supported by CamanJS. You can also add new blending modes via plugins if you need some special functionality.
+
+* normal
+* multiply
+* screen
+* overlay
+* difference
+* addition
+* exclusion
+* softLight
+
+If you wish to add your own blending mode:
+
+<pre>
+(function (Caman) {
+
+// Extend this blenders object
+Caman.extend(Caman.manip.blenders, {
+	/*
+	 * This function will be iterated over in a pixel-by-pixel fashion.
+	 * Both arguments are rgba objects:
+	 *		rgbaLayer.r, rgbaLayer.g, rgbaLayer.b
+	 *
+	 * The first argument is the current pixel from the layer, and the second
+	 * argument is the current pixel from the parent canvas (the canvas below
+	 * the current layer).
+	 */
+	someBlender: function (rgbaLayer, rgbaParent) {
+		rgbaParent.r = rgbaLayer.r * 2 - rgbaParent.r;
+		rgbaParent.g = rgbaLayer.g * 1.5 - rgbaParent.g;
+		rgbaParent.b = rgbaLayer.b * 2.5 - rgbaParent.b;
+		
+		// Important! Remember to return the updated rgba object!
+		return rgbaParent;
+	}
+});
+
+}(Caman));
 </pre>
 
 <h1>Editing Remote Images</h1>
@@ -128,46 +213,46 @@ Extending CamanJS is easy as well. It's accomplished by adding functions onto th
 
 <pre>
 (function (Caman) {
-	// Pixel-wise manipulation
-	Caman.manip.fancy_filter = function (adjust) {
-	
-		// === IMPORTANT ===
-		// this.process() will be run in a loop, and the
-		// rgba object represents the current pixel's rgba
-		// values. you *must* return the modified rgba object
-		// for it to work properly and you *must* name the function
-		// passed in the 2nd argument to process() the same name as
-		// this filter.
-		
-		return this.process(adjust, function fancy_filter(rgba) {
-			rgba.r += adjust;
-			rgba.g -= adjust;
-			rgba.b += adjust * 2;
-			rgba.a = 0.9;
-			
-			// to get data about a pixel relative to this one currently
-			// being processed, you can use getPixel([horiz_offset], [vert_offset]);
-			var topLeft			= this.getPixelRelative(-1, 1);
-			var topRight		= this.getPixelRelative(1, 1);
-			var bottomLeft	= this.getPixelRelative(-1, -1);
-			var bottomRight	= this.getPixelRelative(1, -1);
-			
-			// gets a pixel from the canvas at the specified absolute coordinates
-			var absPixel		= this.getPixel(200, 300);
-			
-			return rgba;
-		});
-		
-		// If you want to use a convolution kernel instead of manipulating each
-		// pixel directly, you can easily do it like this:
-		Caman.manip.convolutionFilter = function () {
-			return this.processKernel('Convolution Filter', [
-				[1, 1, 1],
-				[1, 1, 1],
-				[1, 1, 1]
-			], 9);
-		};
-	};
+  // Pixel-wise manipulation
+  Caman.manip.fancy_filter = function (adjust) {
+  
+    // === IMPORTANT ===
+    // this.process() will be run in a loop, and the
+    // rgba object represents the current pixel's rgba
+    // values. you *must* return the modified rgba object
+    // for it to work properly and you *must* name the function
+    // passed in the 2nd argument to process() the same name as
+    // this filter.
+    
+    return this.process(adjust, function fancy_filter(rgba) {
+      rgba.r += adjust;
+      rgba.g -= adjust;
+      rgba.b += adjust * 2;
+      rgba.a = 0.9;
+      
+      // to get data about a pixel relative to this one currently
+      // being processed, you can use getPixel([horiz_offset], [vert_offset]);
+      var topLeft      = this.getPixelRelative(-1, 1);
+      var topRight    = this.getPixelRelative(1, 1);
+      var bottomLeft  = this.getPixelRelative(-1, -1);
+      var bottomRight  = this.getPixelRelative(1, -1);
+      
+      // gets a pixel from the canvas at the specified absolute coordinates
+      var absPixel    = this.getPixel(200, 300);
+      
+      return rgba;
+    });
+    
+    // If you want to use a convolution kernel instead of manipulating each
+    // pixel directly, you can easily do it like this:
+    Caman.manip.convolutionFilter = function () {
+      return this.processKernel('Convolution Filter', [
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1]
+      ], 9);
+    };
+  };
 }(Caman));
 </pre>
 
