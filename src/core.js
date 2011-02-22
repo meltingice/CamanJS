@@ -148,6 +148,12 @@ var remoteCheck = function (src) {
 };
 
 var finishInit = function (image, canvas, callback) {
+  var self = this;
+  
+  // Used for saving pixel layers
+  this.pixelStack = [];
+  this.layerStack = [];
+  
   canvas.width = image.width;
   canvas.height = image.height;
   
@@ -155,7 +161,7 @@ var finishInit = function (image, canvas, callback) {
   this.context = canvas.getContext("2d");
   this.context.drawImage(image, 0, 0);
   
-  this.image_data = this.context.getImageData(0, 0, image.width, image.height);        
+  this.image_data = this.context.getImageData(0, 0, image.width, image.height);
   this.pixel_data = this.image_data.data;
   
   this.dimensions = {
@@ -526,7 +532,9 @@ Caman.events  = {
  */
 var ProcessType = {
   SINGLE: 1,
-  KERNEL: 2
+  KERNEL: 2,
+  LAYER_DEQUEUE: 3,
+  LAYER_FINISHED: 4
 };
 
 /*
@@ -605,6 +613,210 @@ Caman.manip.pixelInfo.prototype.putPixel = function (x, y, rgba) {
   this.manip.pixel_data[newLoc+2] = rgba.b;
   this.manip.pixel_data[newLoc+3] = rgba.a;
 };
+
+/*
+ * The CamanJS layering system
+ */
+Caman.manip.canvasQueue = [];
+
+Caman.manip.newLayer = function (callback) {
+  var layer = new Caman.manip.canvasLayer(this);
+  this.canvasQueue.push(layer);
+  this.renderQueue.push({type: ProcessType.LAYER_DEQUEUE});
+  
+  callback.call(layer);
+
+  return this;
+};
+ 
+Caman.manip.canvasLayer = function (manip) {  
+  // Default options
+  this.options = {
+    blendingMode: 'normal',
+    opacity: 255
+  };
+  
+  // Create a blank and invisible canvas and append it to the document
+  this.layerID = Caman.uniqid.get();
+  this.canvas = document.createElement('canvas');
+  this.canvas.id = 'camanlayer-' + this.layerID;
+  this.canvas.width = manip.dimensions.width;
+  this.canvas.height = manip.dimensions.height;
+  this.canvas.style.display = 'none';
+  
+  document.body.appendChild(this.canvas);
+  
+  this.context = this.canvas.getContext("2d");
+  this.context.createImageData(this.canvas.width, this.canvas.height);
+  this.image_data = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+  this.pixel_data = this.image_data.data;
+
+  this.__defineGetter__("filter", function () {
+    return manip;
+  });
+
+  return this;
+};
+
+Caman.manip.canvasLayer.prototype.newLayer = function (callback) {
+  return this.filter.newLayer.call(this.filter, callback);
+};
+
+Caman.manip.canvasLayer.prototype.destroy = function () {
+  var canvas = document.getElementById(this.canvas.id);
+  canvas.parentNode.removeChild(canvas);
+};
+
+Caman.manip.canvasLayer.prototype.setBlendingMode = function (mode) {
+  this.options.blendingMode = mode;
+  return this;
+};
+
+Caman.manip.canvasLayer.prototype.opacity = function (opacity) {
+  this.options.opacity = (opacity / 100);
+  return this;
+};
+
+Caman.manip.canvasLayer.prototype.copyParent = function () {
+  var parentData = this.filter.pixel_data;
+  
+  for (var i = 0; i < this.pixel_data.length; i += 4) {
+    this.pixel_data[i]    = parentData[i];
+    this.pixel_data[i+1]  = parentData[i+1];
+    this.pixel_data[i+2]  = parentData[i+2];
+    this.pixel_data[i+3]  = parentData[i+3];
+  }
+  
+  return this;
+};
+
+Caman.manip.canvasLayer.prototype.fillColor = function () {
+  this.filter.fillColor.apply(this.filter, arguments);
+};
+
+Caman.manip.canvasLayer.prototype.render = function () {
+  this.filter.renderQueue.push({type: ProcessType.LAYER_FINISHED});
+};
+
+Caman.manip.canvasLayer.prototype.applyToParent = function () {
+  var parentData = this.filter.pixelStack[this.filter.pixelStack.length - 1],
+  layerData = this.filter.pixel_data,
+  rgbaParent = {},
+  rgbaLayer = {};
+  
+  for (var i = 0; i < layerData.length; i += 4) {
+    rgbaParent = {
+      r: parentData[i],
+      g: parentData[i+1],
+      b: parentData[i+2],
+      a: parentData[i+3]
+    };
+    
+    rgbaLayer = {
+      r: layerData[i],
+      g: layerData[i+1],
+      b: layerData[i+2],
+      a: layerData[i+3]
+    };
+    
+    rgbaParent = this.blenders[this.options.blendingMode](rgbaLayer, rgbaParent);
+    
+    parentData[i]   = rgbaParent.r - ((rgbaParent.r - rgbaLayer.r) * this.options.opacity);
+    parentData[i+1] = rgbaParent.g - ((rgbaParent.g - rgbaLayer.g) * this.options.opacity);
+    parentData[i+2] = rgbaParent.b - ((rgbaParent.b - rgbaLayer.b) * this.options.opacity);
+    parentData[i+3] = 255;
+  }
+};
+
+// Blending functions
+Caman.manip.canvasLayer.prototype.blenders = {
+  normal: function (rgbaLayer, rgbaParent) {
+    rgbaParent.r = rgbaLayer.r;
+    rgbaParent.g = rgbaLayer.g;
+    rgbaParent.b = rgbaLayer.b;
+    
+    return rgbaParent;
+  },
+  
+  multiply: function (rgbaLayer, rgbaParent) {
+    rgbaParent.r = (rgbaLayer.r * rgbaParent.r) / 255;
+    rgbaParent.g = (rgbaLayer.g * rgbaParent.g) / 255;
+    rgbaParent.b = (rgbaLayer.b * rgbaParent.b) / 255;
+    
+    return rgbaParent;
+  },
+  
+  screen: function (rgbaLayer, rgbaParent) {
+    rgbaParent.r = 255 - (((255 - rgbaLayer.r) * (255 - rgbaParent.r)) / 255);
+    rgbaParent.g = 255 - (((255 - rgbaLayer.g) * (255 - rgbaParent.g)) / 255);
+    rgbaParent.b = 255 - (((255 - rgbaLayer.b) * (255 - rgbaParent.b)) / 255);
+    
+    return rgbaParent;
+  },
+  
+  overlay: function (rgbaLayer, rgbaParent) {
+    rgbaParent.r = 
+      (rgbaParent.r > 128) ? 
+        255 - 2 * (255 - rgbaLayer.r) * (255 - rgbaParent.r) / 255: 
+        (rgbaParent.r * rgbaLayer.r * 2) / 255;
+        
+    rgbaParent.g = 
+      (rgbaParent.g > 128) ? 
+        255 - 2 * (255 - rgbaLayer.g) * (255 - rgbaParent.g) / 255: 
+        (rgbaParent.g * rgbaLayer.g * 2) / 255;
+        
+    rgbaParent.b = 
+      (rgbaParent.b > 128) ? 
+        255 - 2 * (255 - rgbaLayer.b) * (255 - rgbaParent.b) / 255: 
+        (rgbaParent.b * rgbaLayer.b * 2) / 255;
+    
+    return rgbaParent;
+  },
+  
+  difference: function (rgbaLayer, rgbaParent) {
+    rgbaParent.r = rgbaLayer.r - rgbaParent.r;
+    rgbaParent.g = rgbaLayer.g - rgbaParent.g;
+    rgbaParent.b = rgbaLayer.b - rgbaParent.b;
+    
+    return rgbaParent;
+  },
+  
+  addition: function (rgbaLayer, rgbaParent) {
+    rgbaParent.r = rgbaParent.r + rgbaLayer.r;
+    rgbaParent.g = rgbaParent.g + rgbaLayer.g;
+    rgbaParent.b = rgbaParent.b + rgbaLayer.b;
+    
+    return rgbaParent;
+  },
+  
+  exclusion: function (rgbaLayer, rgbaParent) {
+    rgbaParent.r = 128 - 2 * (rgbaParent.r - 128) * (rgbaLayer.r - 128) / 255;
+    rgbaParent.g = 128 - 2 * (rgbaParent.g - 128) * (rgbaLayer.g - 128) / 255;
+    rgbaParent.b = 128 - 2 * (rgbaParent.b - 128) * (rgbaLayer.b - 128) / 255;
+    
+    return rgbaParent;
+  },
+  
+  softLight: function (rgbaLayer, rgbaParent) {
+    rgbaParent.r = 
+      (rgbaParent.r > 128) ? 
+        255 - ((255 - rgbaParent.r) * (255 - (rgbaLayer.r - 128))) / 255 : 
+        (rgbaParent.r * (rgbaLayer.r + 128)) / 255;
+      
+    rgbaParent.g = 
+      (rgbaParent.g > 128) ? 
+        255 - ((255 - rgbaParent.g) * (255 - (rgbaLayer.g - 128))) / 255 : 
+        (rgbaParent.g * (rgbaLayer.g + 128)) / 255;
+    
+    rgbaParent.b = (rgbaParent.b > 128) ? 
+      255 - ((255 - rgbaParent.b) * (255 - (rgbaLayer.b - 128))) / 255 : 
+      (rgbaParent.b * (rgbaLayer.b + 128)) / 255;
+      
+    return rgbaParent;
+  }
+};
+
+Caman.manip.blenders = Caman.manip.canvasLayer.prototype.blenders;
 
 /*
  * The core of the image rendering, this function executes
@@ -784,6 +996,33 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
   }
 };
 
+Caman.manip.executeLayer = function (layer) {
+  this.pushContext(layer);
+  this.processNext();
+};
+
+Caman.manip.pushContext = function (layer) {
+  console.log("PUSH LAYER!");
+  
+  this.currentLayer = layer;
+  this.pixelStack.push(this.pixel_data);
+  this.layerStack.push(layer);
+  
+  this.pixel_data = layer.pixel_data;
+};
+
+Caman.manip.popContext = function () {
+  console.log("POP LAYER!");
+  
+  this.pixel_data = this.pixelStack.pop();
+  this.layerStack.pop().destroy();
+  this.currentLayer = this.layerStack[this.layerStack.length -1];
+};
+
+Caman.manip.applyCurrentLayer = function () {
+  this.currentLayer.applyToParent();
+};
+
 Caman.manip.process = function (adjust, processFn) {
   // Since the block-based renderer is asynchronous, we simply build
   // up a render queue and execute the filters in order once
@@ -837,7 +1076,17 @@ Caman.manip.processNext = function (finishedFn) {
   }
   
   var next = this.renderQueue.shift();
-  this.executeFilter(next.adjust, next.processFn, next.type);
+  
+  if (next.type == ProcessType.LAYER_DEQUEUE) {
+    var layer = this.canvasQueue.shift();
+    this.executeLayer(layer);
+  } else if (next.type == ProcessType.LAYER_FINISHED) {
+    this.applyCurrentLayer();
+    this.popContext();
+    this.processNext();
+  } else {
+    this.executeFilter(next.adjust, next.processFn, next.type);
+  }
 };
 
 // Expose Caman to the world!
