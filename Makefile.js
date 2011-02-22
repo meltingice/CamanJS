@@ -9,7 +9,7 @@ DIST_DIR    = 'dist',
 SRC_DIR     = 'src',
 PLUGIN_DIR  = SRC_DIR + '/plugins',
 
-CORE_LIB = ['core', 'filters'],
+CORE_LIB = ['core', 'util', 'filters'],
 
 jshint_opts = {devel: true, forin: true, undef: true, browser: true};
 
