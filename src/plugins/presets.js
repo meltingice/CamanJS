@@ -147,4 +147,33 @@ Caman.manip.oldBoot = function () {
     .vignette(250, 30);
 };
 
+Caman.manip.glowingSun = function () {
+  this.brightness(10);
+    
+  this.newLayer(function () {
+    this.setBlendingMode('multiply');
+    this.opacity(10);
+    this.copyParent();
+    
+    this.filter.gamma(0.8);
+    this.filter.contrast(50);
+    
+    this.newLayer(function () {
+      this.setBlendingMode('softLight');
+      this.opacity(10);
+      this.fillColor('#f49600');
+      this.render();
+    });
+    
+    this.filter.exposure(10);
+          
+    this.render();
+  });
+  
+  this.exposure(20);
+  this.gamma(0.8);
+  
+  return this.vignette(250, 20);
+};
+
 }(Caman));
