@@ -511,10 +511,7 @@ Caman.events  = {
       return true;
     }
   },
-  cache: {} /*{
-    // [type] = { fn.toString() : fn }
-    //  types: processStart, processComplete
-  }*/
+  cache: {} 
 };
 
 // Basic event system
@@ -529,6 +526,8 @@ Caman.events  = {
 /*
  * SINGLE = traverse the image 1 pixel at a time
  * KERNEL = traverse the image using convolution kernels
+ * LAYER_DEQUEUE = shift a layer off the canvasQueue
+ * LAYER_FINISHED = finished processing a layer
  */
 var ProcessType = {
   SINGLE: 1,
@@ -633,7 +632,7 @@ Caman.manip.canvasLayer = function (manip) {
   // Default options
   this.options = {
     blendingMode: 'normal',
-    opacity: 255
+    opacity: 1.0
   };
   
   // Create a blank and invisible canvas and append it to the document
