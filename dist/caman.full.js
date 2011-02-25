@@ -414,48 +414,6 @@ Caman.extend = function( obj ) {
   return dest;      
 };
 
-Caman.extend( Caman, {
-  processKernel: function (adjust, kernel, divisor, bias) {
-    var val = {
-      r: 0,
-      g: 0,
-      b: 0
-    };
-    
-    for (var i = 0; i < adjust.length; i++) {
-      for (var j = 0; j < adjust[i].length; j++) {
-        val.r += (adjust[i][j] * kernel[i][j].r);
-        val.g += (adjust[i][j] * kernel[i][j].g);
-        val.b += (adjust[i][j] * kernel[i][j].b);
-      }
-    }
-    
-    val.r = (val.r / divisor) + bias;
-    val.g = (val.g / divisor) + bias;
-    val.b = (val.b / divisor) + bias;
-    
-    if (val.r > 255) {
-      val.r = 255;
-    } else if (val.r < 0) {
-      val.r = 0;
-    }
-
-    if (val.g > 255) {
-      val.g = 255;
-    } else if (val.g < 0) {
-      val.g = 0;
-    }
-    
-    if (val.b > 255) {
-      val.b = 255;
-    } else if (val.b < 0) {
-      val.b = 0;
-    }
-    
-    return val;
-  }
-});
-
 /*
  * CamanJS event system
  * Events can be subscribed to using Caman.listen() and events
@@ -819,6 +777,51 @@ Caman.manip.canvasLayer.prototype.blenders = {
 Caman.manip.blenders = Caman.manip.canvasLayer.prototype.blenders;
 
 /*
+ * Convolution kernel processing
+ */
+Caman.extend( Caman, {
+  processKernel: function (adjust, kernel, divisor, bias) {
+    var val = {
+      r: 0,
+      g: 0,
+      b: 0
+    };
+    
+    for (var i = 0; i < adjust.length; i++) {
+      for (var j = 0; j < adjust[i].length; j++) {
+        val.r += (adjust[i][j] * kernel[i][j].r);
+        val.g += (adjust[i][j] * kernel[i][j].g);
+        val.b += (adjust[i][j] * kernel[i][j].b);
+      }
+    }
+    
+    val.r = (val.r / divisor) + bias;
+    val.g = (val.g / divisor) + bias;
+    val.b = (val.b / divisor) + bias;
+    
+    if (val.r > 255) {
+      val.r = 255;
+    } else if (val.r < 0) {
+      val.r = 0;
+    }
+
+    if (val.g > 255) {
+      val.g = 255;
+    } else if (val.g < 0) {
+      val.g = 0;
+    }
+    
+    if (val.b > 255) {
+      val.b = 255;
+    } else if (val.b < 0) {
+      val.b = 0;
+    }
+    
+    return val;
+  }
+});
+
+/*
  * The core of the image rendering, this function executes
  * the provided filter and updates the canvas pixel data
  * accordingly. NOTE: this does not write the updated pixel
@@ -894,75 +897,42 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
   
   render_kernel = function () {
     setTimeout(function () {
-      var kernel, pixelInfo, 
+      var kernel = [],
+      pixelInfo, 
       start, end, 
       mod_pixel_data = [],
       name = adjust.name,
       bias = adjust.bias,
-      divisor = adjust.divisor;
+      divisor = adjust.divisor,
+      builder_start,
+      builder_end,
+      i, j, k;
       
       adjust = adjust.adjust;
       
+      builder_start = (adjust.length - 1) / 2;
+      builder_end = builder_start * -1;
+      
       console.log("Rendering kernel - Filter: " + name);
       
-      if (adjust.length === 3) {
-        kernel = [[],[],[]];
-        start = self.dimensions.width * 4;
-        end = n - (self.dimensions.width * 4);
-      } else {
-        kernel = [[],[],[],[],[]];
-        start = self.dimensions.width * 8;
-        end = n - (self.dimensions.width * 8);
+      start = self.dimensions.width * 4 * ((adjust.length - 1) / 2);
+      end = n - (self.dimensions.width * 4 * ((adjust.length - 1) / 2));
+      
+      // Prepare the convolution kernel array
+      for (i = 0; i < adjust.length; i++) {
+        kernel[i] = [];
       }
       
-      for (var i = start; i < end; i += 4) {
+      for (i = start; i < end; i += 4) {
         pixelInfo = new self.pixelInfo(i, self);
         
-        // kernel is a 3x3 or 5x5 2D array expressed as [x][y]
-        if (adjust.length == 3) {
-          kernel[0][0] = pixelInfo.getPixelRelative(-1, 1);  // top left
-          kernel[1][0] = pixelInfo.getPixelRelative(0, 1);   // top middle
-          kernel[2][0] = pixelInfo.getPixelRelative(1, 1);   // top right
-          
-          kernel[0][1] = pixelInfo.getPixelRelative(-1, 0);  // middle left
-          kernel[1][1] = pixelInfo.getPixelRelative(0, 0);   // middle middle (kernel)
-          kernel[2][1] = pixelInfo.getPixelRelative(1, 0);   // middle right
-          
-          kernel[0][2] = pixelInfo.getPixelRelative(-1, -1); // bottom left
-          kernel[1][2] = pixelInfo.getPixelRelative(0, -1);  // bottom middle
-          kernel[2][2] = pixelInfo.getPixelRelative(1, -1);  // bottom right
-        } else {
-          kernel[0][0] = pixelInfo.getPixelRelative(-2, 2);
-          kernel[1][0] = pixelInfo.getPixelRelative(-1, 2);
-          kernel[2][0] = pixelInfo.getPixelRelative(0, 2);
-          kernel[3][0] = pixelInfo.getPixelRelative(1, 2);
-          kernel[4][0] = pixelInfo.getPixelRelative(2, 2);
-          
-          kernel[0][1] = pixelInfo.getPixelRelative(-2, 1);
-          kernel[1][1] = pixelInfo.getPixelRelative(-1, 1);
-          kernel[2][1] = pixelInfo.getPixelRelative(0, 1);
-          kernel[3][1] = pixelInfo.getPixelRelative(1, 1);
-          kernel[4][1] = pixelInfo.getPixelRelative(2, 1);
-          
-          kernel[0][2] = pixelInfo.getPixelRelative(-2, 0);
-          kernel[1][2] = pixelInfo.getPixelRelative(-1, 0);
-          kernel[2][2] = pixelInfo.getPixelRelative(0, 0); // kernel
-          kernel[3][2] = pixelInfo.getPixelRelative(1, 0);
-          kernel[4][2] = pixelInfo.getPixelRelative(2, 0);
-          
-          kernel[0][3] = pixelInfo.getPixelRelative(-2, -1);
-          kernel[1][3] = pixelInfo.getPixelRelative(-1, -1);
-          kernel[2][3] = pixelInfo.getPixelRelative(0, -1);
-          kernel[3][3] = pixelInfo.getPixelRelative(1, -1);
-          kernel[4][3] = pixelInfo.getPixelRelative(2, -1);
-          
-          kernel[0][4] = pixelInfo.getPixelRelative(-2, -2);
-          kernel[1][4] = pixelInfo.getPixelRelative(-1, -2);
-          kernel[2][4] = pixelInfo.getPixelRelative(0, -2);
-          kernel[3][4] = pixelInfo.getPixelRelative(1, -2);
-          kernel[4][4] = pixelInfo.getPixelRelative(2, -2);
+        // Fill the convolution kernel with values
+        for (j = builder_start; j >= builder_end; j--) {
+          for (k = builder_end; k <= builder_start; k++) {
+            kernel[k + ((adjust.length - 1) / 2)][((adjust.length - 1) / 2) - j] = pixelInfo.getPixelRelative(k, j);
+          }
         }
-        
+                
         // Execute the kernel processing function
         res = processFn.call(pixelInfo, adjust, kernel, divisor, bias);
 
