@@ -71,13 +71,20 @@ Caman("#image-id", function () {
 });
 </pre>
 
-<h3>jQuery Plugin</h3>
-If you use jQuery already on your site, CamanJS automatically registers itself as a jQuery plugin. To use it, you can do:
+<h3>JS Library Adapters</h3>
+If you are already using a popular JS library on your site (such as jQuery, Mootools, ExtJS, etc), then there may be an adapter for CamanJS that integrates it with that library. Remember, CamanJS is fully standalone and isn't dependent on any library, but the option is there if you like a more tightly integrated environment.
+
+All adapters are located in the adapters/ folder. Simply include them after you include CamanJS.
 
 <pre>
+&lt;script type="text/javascript" src="caman.full.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="adapters/jquery.js"&gt;&lt;/script&gt;
+
+&lt;script type="text/javascript"&gt;
 $("#caman-image").caman(function() {
   this.brightness(10).render();
 });
+&lt;/script&gt;
 </pre>
 
 <h3>Saving Images</h3>

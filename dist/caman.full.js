@@ -92,17 +92,6 @@ if (!('console' in window)) {
   };
 }
 
-/*
- * If jQuery is present, automatically make Caman a plugin
- */
-if (window.jQuery) {
-	window.jQuery.fn.caman = function (callback) {
-		return this.each(function () {
-			Caman(this, callback);
-		});
-	};
-}
-
 Caman.ready = false;
 Caman.store = {};
 Caman.renderBlocks = 4;
