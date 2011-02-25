@@ -162,12 +162,9 @@ Caman.manip.glowingSun = function () {
       this.setBlendingMode('softLight');
       this.opacity(10);
       this.fillColor('#f49600');
-      this.render();
     });
     
     this.filter.exposure(10);
-          
-    this.render();
   });
   
   this.exposure(20);
