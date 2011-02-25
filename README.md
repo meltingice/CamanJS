@@ -118,7 +118,7 @@ Caman('#test', function () {
    * through this.filter.
    */
   this.newLayer(function () {
-  	// There are many blending modes, more below.
+    // There are many blending modes, more below.
     this.setBlendingMode('multiply');
     this.opacity(10);
     this.copyParent();
@@ -164,23 +164,23 @@ If you wish to add your own blending mode:
 
 // Extend this blenders object
 Caman.extend(Caman.manip.blenders, {
-	/*
-	 * This function will be iterated over in a pixel-by-pixel fashion.
-	 * Both arguments are rgba objects:
-	 *		rgbaLayer.r, rgbaLayer.g, rgbaLayer.b
-	 *
-	 * The first argument is the current pixel from the layer, and the second
-	 * argument is the current pixel from the parent canvas (the canvas below
-	 * the current layer).
-	 */
-	someBlender: function (rgbaLayer, rgbaParent) {
-		rgbaParent.r = rgbaLayer.r * 2 - rgbaParent.r;
-		rgbaParent.g = rgbaLayer.g * 1.5 - rgbaParent.g;
-		rgbaParent.b = rgbaLayer.b * 2.5 - rgbaParent.b;
-		
-		// Important! Remember to return the updated rgba object!
-		return rgbaParent;
-	}
+  /*
+   * This function will be iterated over in a pixel-by-pixel fashion.
+   * Both arguments are rgba objects:
+   *    rgbaLayer.r, rgbaLayer.g, rgbaLayer.b
+   *
+   * The first argument is the current pixel from the layer, and the second
+   * argument is the current pixel from the parent canvas (the canvas below
+   * the current layer).
+   */
+  someBlender: function (rgbaLayer, rgbaParent) {
+    rgbaParent.r = rgbaLayer.r * 2 - rgbaParent.r;
+    rgbaParent.g = rgbaLayer.g * 1.5 - rgbaParent.g;
+    rgbaParent.b = rgbaLayer.b * 2.5 - rgbaParent.b;
+    
+    // Important! Remember to return the updated rgba object!
+    return rgbaParent;
+  }
 });
 
 }(Caman));
