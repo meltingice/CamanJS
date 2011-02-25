@@ -28,7 +28,7 @@ slice = Array.prototype.slice,
 // with jQuery since this $ variable does not exist
 // in the global window scope.
 $ = function (id) {
-  if (id.substr(0, 1) == '#') {
+  if (id[0] == '#') {
     id = id.substr(1);
   }
   
@@ -321,8 +321,7 @@ Caman.manip = Caman.prototype = {
       type = 'png';
     }
     
-    var data = this.toBase64(type).replace("image/" + type, "image/octet-stream");
-    document.location.href = data;
+    document.location.href = this.toBase64(type).replace("image/" + type, "image/octet-stream");
   },
   
   /*
@@ -330,12 +329,10 @@ Caman.manip = Caman.prototype = {
    * sets it as the source of a new Image object and returns it.
    */
   toImage: function (type) {
-    var img, data;
-    
-    data = this.toBase64(type);
+    var img;
     
     img = document.createElement('img');
-    img.src = data;
+    img.src = this.toBase64(type);
     
     return img;
   },
@@ -602,8 +599,6 @@ Caman.manip.canvasLayer = function (manip) {
   this.canvas.height = manip.dimensions.height;
   this.canvas.style.display = 'none';
   
-  document.body.appendChild(this.canvas);
-  
   this.context = this.canvas.getContext("2d");
   this.context.createImageData(this.canvas.width, this.canvas.height);
   this.image_data = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
@@ -618,11 +613,6 @@ Caman.manip.canvasLayer = function (manip) {
 
 Caman.manip.canvasLayer.prototype.newLayer = function (callback) {
   return this.filter.newLayer.call(this.filter, callback);
-};
-
-Caman.manip.canvasLayer.prototype.destroy = function () {
-  var canvas = document.getElementById(this.canvas.id);
-  canvas.parentNode.removeChild(canvas);
 };
 
 Caman.manip.canvasLayer.prototype.setBlendingMode = function (mode) {
@@ -974,10 +964,10 @@ Caman.manip.executeLayer = function (layer) {
 Caman.manip.pushContext = function (layer) {
   console.log("PUSH LAYER!");
   
-  this.currentLayer = layer;
+  this.layerStack.push(this.currentLayer);
   this.pixelStack.push(this.pixel_data);
-  this.layerStack.push(layer);
   
+  this.currentLayer = layer;
   this.pixel_data = layer.pixel_data;
 };
 
@@ -985,8 +975,7 @@ Caman.manip.popContext = function () {
   console.log("POP LAYER!");
   
   this.pixel_data = this.pixelStack.pop();
-  this.layerStack.pop().destroy();
-  this.currentLayer = this.layerStack[this.layerStack.length -1];
+  this.currentLayer = this.layerStack.pop();
 };
 
 Caman.manip.applyCurrentLayer = function () {
