@@ -621,9 +621,10 @@ Caman.manip.canvasQueue = [];
 Caman.manip.newLayer = function (callback) {
   var layer = new Caman.manip.canvasLayer(this);
   this.canvasQueue.push(layer);
-  this.renderQueue.push({type: ProcessType.LAYER_DEQUEUE});
-  
+
+  this.renderQueue.push({type: ProcessType.LAYER_DEQUEUE});  
   callback.call(layer);
+  this.renderQueue.push({type: ProcessType.LAYER_FINISHED});
 
   return this;
 };
@@ -693,9 +694,9 @@ Caman.manip.canvasLayer.prototype.fillColor = function () {
   this.filter.fillColor.apply(this.filter, arguments);
 };
 
-Caman.manip.canvasLayer.prototype.render = function () {
-  this.filter.renderQueue.push({type: ProcessType.LAYER_FINISHED});
-};
+// Leaving this here for compatibility reasons. It is NO
+// LONGER REQUIRED at the end of the layer.
+Caman.manip.canvasLayer.prototype.render = function () {};
 
 Caman.manip.canvasLayer.prototype.applyToParent = function () {
   var parentData = this.filter.pixelStack[this.filter.pixelStack.length - 1],
@@ -2375,12 +2376,9 @@ Caman.manip.glowingSun = function () {
       this.setBlendingMode('softLight');
       this.opacity(10);
       this.fillColor('#f49600');
-      this.render();
     });
     
     this.filter.exposure(10);
-          
-    this.render();
   });
   
   this.exposure(20);
