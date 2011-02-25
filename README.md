@@ -71,7 +71,17 @@ Caman("#image-id", function () {
 });
 </pre>
 
-You can now even save images after they've been modified!  With the current implementation, users will have to rename the file to something.(png|jpg) since they get redirected to the base64 encoding of the image and the browser doesn't know the file type.  The save() function defaults to png, but you can override this and specify either png or jpg.
+<h3>jQuery Plugin</h3>
+If you use jQuery already on your site, CamanJS automatically registers itself as a jQuery plugin. To use it, you can do:
+
+<pre>
+$("#caman-image").caman(function() {
+  this.brightness(10).render();
+});
+</pre>
+
+<h3>Saving Images</h3>
+You can also save images after they've been modified!  With the current implementation, users will have to rename the file to something.(png|jpg) since they get redirected to the base64 encoding of the image and the browser doesn't know the file type.  The save() function defaults to png, but you can override this and specify either png or jpg.
 
 <pre>
 Caman('img/example.jpg', '#image-caman', function () {
