@@ -7,6 +7,10 @@
  * See LICENSE for more info.
  *
  * Project Contributors:
+ *   Ryan LeFevre - Lead Developer and Project Maintainer
+ *    Twitter: @meltingice
+ *    GitHUb: http://github.com/meltingice
+ *
  *   Rick Waldron - Plugin Architect and Developer
  *    Twitter: @rwaldron
  *    GitHub: http://github.com/rwldrn
@@ -488,7 +492,8 @@ var ProcessType = {
   SINGLE: 1,
   KERNEL: 2,
   LAYER_DEQUEUE: 3,
-  LAYER_FINISHED: 4
+  LAYER_FINISHED: 4,
+  LOAD_OVERLAY: 5
 };
 
 /*
@@ -594,7 +599,6 @@ Caman.manip.canvasLayer = function (manip) {
   // Create a blank and invisible canvas and append it to the document
   this.layerID = Caman.uniqid.get();
   this.canvas = document.createElement('canvas');
-  this.canvas.id = 'camanlayer-' + this.layerID;
   this.canvas.width = manip.dimensions.width;
   this.canvas.height = manip.dimensions.height;
   this.canvas.style.display = 'none';
@@ -640,6 +644,22 @@ Caman.manip.canvasLayer.prototype.copyParent = function () {
 
 Caman.manip.canvasLayer.prototype.fillColor = function () {
   this.filter.fillColor.apply(this.filter, arguments);
+  return this;
+};
+
+Caman.manip.canvasLayer.prototype.overlayImage = function (image) {
+  if (image[0] == '#') {
+    image = $(image).src;
+  } else if (typeof image === "object") {
+    image = image.src;
+  }
+  
+  // Some problem, skip to prevent errors
+  if (!image) return;
+  
+  this.filter.renderQueue.push({type: ProcessType.LOAD_OVERLAY, src: image, layer: this});
+  
+  return this;
 };
 
 // Leaving this here for compatibility reasons. It is NO
@@ -650,8 +670,9 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
   var parentData = this.filter.pixelStack[this.filter.pixelStack.length - 1],
   layerData = this.filter.pixel_data,
   rgbaParent = {},
-  rgbaLayer = {};
-  
+  rgbaLayer = {},
+  result = {};
+
   for (var i = 0; i < layerData.length; i += 4) {
     rgbaParent = {
       r: parentData[i],
@@ -667,11 +688,11 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
       a: layerData[i+3]
     };
     
-    rgbaParent = this.blenders[this.options.blendingMode](rgbaLayer, rgbaParent);
+    result = this.blenders[this.options.blendingMode](rgbaLayer, rgbaParent);
     
-    parentData[i]   = rgbaParent.r - ((rgbaParent.r - rgbaLayer.r) * this.options.opacity);
-    parentData[i+1] = rgbaParent.g - ((rgbaParent.g - rgbaLayer.g) * this.options.opacity);
-    parentData[i+2] = rgbaParent.b - ((rgbaParent.b - rgbaLayer.b) * this.options.opacity);
+    parentData[i]   = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)));
+    parentData[i+1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)));
+    parentData[i+2] = rgbaParent.b - ((rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255)));
     parentData[i+3] = 255;
   }
 };
@@ -679,88 +700,99 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
 // Blending functions
 Caman.manip.canvasLayer.prototype.blenders = {
   normal: function (rgbaLayer, rgbaParent) {
-    rgbaParent.r = rgbaLayer.r;
-    rgbaParent.g = rgbaLayer.g;
-    rgbaParent.b = rgbaLayer.b;
-    
-    return rgbaParent;
+    return {
+      r: rgbaLayer.r,
+      g: rgbaLayer.g,
+      b: rgbaLayer.b,
+      a: 255
+    };
   },
   
   multiply: function (rgbaLayer, rgbaParent) {
-    rgbaParent.r = (rgbaLayer.r * rgbaParent.r) / 255;
-    rgbaParent.g = (rgbaLayer.g * rgbaParent.g) / 255;
-    rgbaParent.b = (rgbaLayer.b * rgbaParent.b) / 255;
-    
-    return rgbaParent;
+    return {
+      r: (rgbaLayer.r * rgbaParent.r) / 255,
+      g: (rgbaLayer.g * rgbaParent.g) / 255,
+      b: (rgbaLayer.b * rgbaParent.b) / 255,
+      a: 255
+    };
   },
   
   screen: function (rgbaLayer, rgbaParent) {
-    rgbaParent.r = 255 - (((255 - rgbaLayer.r) * (255 - rgbaParent.r)) / 255);
-    rgbaParent.g = 255 - (((255 - rgbaLayer.g) * (255 - rgbaParent.g)) / 255);
-    rgbaParent.b = 255 - (((255 - rgbaLayer.b) * (255 - rgbaParent.b)) / 255);
-    
-    return rgbaParent;
+    return {
+      r: 255 - (((255 - rgbaLayer.r) * (255 - rgbaParent.r)) / 255),
+      g: 255 - (((255 - rgbaLayer.g) * (255 - rgbaParent.g)) / 255),
+      b: 255 - (((255 - rgbaLayer.b) * (255 - rgbaParent.b)) / 255),
+      a: 255
+    };
   },
   
   overlay: function (rgbaLayer, rgbaParent) {
-    rgbaParent.r = 
+    var result = {};
+    result.r = 
       (rgbaParent.r > 128) ? 
         255 - 2 * (255 - rgbaLayer.r) * (255 - rgbaParent.r) / 255: 
         (rgbaParent.r * rgbaLayer.r * 2) / 255;
         
-    rgbaParent.g = 
+    result.g = 
       (rgbaParent.g > 128) ? 
         255 - 2 * (255 - rgbaLayer.g) * (255 - rgbaParent.g) / 255: 
         (rgbaParent.g * rgbaLayer.g * 2) / 255;
         
-    rgbaParent.b = 
+    result.b = 
       (rgbaParent.b > 128) ? 
         255 - 2 * (255 - rgbaLayer.b) * (255 - rgbaParent.b) / 255: 
         (rgbaParent.b * rgbaLayer.b * 2) / 255;
     
-    return rgbaParent;
+    result.a = 255;
+    return result;
   },
   
   difference: function (rgbaLayer, rgbaParent) {
-    rgbaParent.r = rgbaLayer.r - rgbaParent.r;
-    rgbaParent.g = rgbaLayer.g - rgbaParent.g;
-    rgbaParent.b = rgbaLayer.b - rgbaParent.b;
-    
-    return rgbaParent;
+    return {
+      r: rgbaLayer.r - rgbaParent.r,
+      g: rgbaLayer.g - rgbaParent.g,
+      b: rgbaLayer.b - rgbaParent.b,
+      a: 255
+    };
   },
   
   addition: function (rgbaLayer, rgbaParent) {
-    rgbaParent.r = rgbaParent.r + rgbaLayer.r;
-    rgbaParent.g = rgbaParent.g + rgbaLayer.g;
-    rgbaParent.b = rgbaParent.b + rgbaLayer.b;
-    
-    return rgbaParent;
+    return {
+      r: rgbaParent.r + rgbaLayer.r,
+      g: rgbaParent.g + rgbaLayer.g,
+      b: rgbaParent.b + rgbaLayer.b,
+      a: 255
+    };
   },
   
   exclusion: function (rgbaLayer, rgbaParent) {
-    rgbaParent.r = 128 - 2 * (rgbaParent.r - 128) * (rgbaLayer.r - 128) / 255;
-    rgbaParent.g = 128 - 2 * (rgbaParent.g - 128) * (rgbaLayer.g - 128) / 255;
-    rgbaParent.b = 128 - 2 * (rgbaParent.b - 128) * (rgbaLayer.b - 128) / 255;
-    
-    return rgbaParent;
+    return {
+      r: 128 - 2 * (rgbaParent.r - 128) * (rgbaLayer.r - 128) / 255,
+      g: 128 - 2 * (rgbaParent.g - 128) * (rgbaLayer.g - 128) / 255,
+      b: 128 - 2 * (rgbaParent.b - 128) * (rgbaLayer.b - 128) / 255,
+      a: 255
+    };
   },
   
   softLight: function (rgbaLayer, rgbaParent) {
-    rgbaParent.r = 
+    var result = {};
+    
+    result.r = 
       (rgbaParent.r > 128) ? 
         255 - ((255 - rgbaParent.r) * (255 - (rgbaLayer.r - 128))) / 255 : 
         (rgbaParent.r * (rgbaLayer.r + 128)) / 255;
       
-    rgbaParent.g = 
+    result.g = 
       (rgbaParent.g > 128) ? 
         255 - ((255 - rgbaParent.g) * (255 - (rgbaLayer.g - 128))) / 255 : 
         (rgbaParent.g * (rgbaLayer.g + 128)) / 255;
     
-    rgbaParent.b = (rgbaParent.b > 128) ? 
+    result.b = (rgbaParent.b > 128) ? 
       255 - ((255 - rgbaParent.b) * (255 - (rgbaLayer.b - 128))) / 255 : 
       (rgbaParent.b * (rgbaLayer.b + 128)) / 255;
       
-    return rgbaParent;
+    result.a = 255;
+    return result;
   }
 };
 
@@ -982,6 +1014,27 @@ Caman.manip.applyCurrentLayer = function () {
   this.currentLayer.applyToParent();
 };
 
+Caman.manip.loadOverlay = function (layer, src) {
+  var proxyUrl = remoteCheck(src),
+  self = this;
+  
+  if (proxyUrl) {
+    src = proxyUrl;
+  }
+  
+  var img = document.createElement('img');
+  img.onload = function () {
+    layer.context.drawImage(img, 0, 0, self.dimensions.width, self.dimensions.height);
+    layer.image_data = layer.context.getImageData(0, 0, self.dimensions.width, self.dimensions.height);
+    layer.pixel_data = layer.image_data.data;
+    
+    self.pixel_data = layer.pixel_data;
+    
+    self.processNext();
+  };
+  img.src = src;
+};
+
 Caman.manip.process = function (adjust, processFn) {
   // Since the block-based renderer is asynchronous, we simply build
   // up a render queue and execute the filters in order once
@@ -1043,6 +1096,8 @@ Caman.manip.processNext = function (finishedFn) {
     this.applyCurrentLayer();
     this.popContext();
     this.processNext();
+  } else if (next.type == ProcessType.LOAD_OVERLAY) {
+    this.loadOverlay(next.layer, next.src);
   } else {
     this.executeFilter(next.adjust, next.processFn, next.type);
   }
@@ -1577,6 +1632,7 @@ Caman.extend(Caman, {
       rgba.r = color.r;
       rgba.g = color.g;
       rgba.b = color.b;
+      rgba.a = 255;
       
       return rgba;
     });
