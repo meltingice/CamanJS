@@ -163,7 +163,7 @@ Caman.manip.glowingSun = function () {
   
   this.newLayer(function () {
     this.setBlendingMode('softLight');
-    this.opacity(30);
+    this.opacity(80);
     this.fillColor('#f49600');
   });
   
