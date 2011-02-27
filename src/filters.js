@@ -20,6 +20,7 @@
       rgba.r = color.r;
       rgba.g = color.g;
       rgba.b = color.b;
+      rgba.a = 255;
       
       return rgba;
     });

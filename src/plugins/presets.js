@@ -152,19 +152,19 @@ Caman.manip.glowingSun = function () {
     
   this.newLayer(function () {
     this.setBlendingMode('multiply');
-    this.opacity(10);
+    this.opacity(80);
     this.copyParent();
     
     this.filter.gamma(0.8);
     this.filter.contrast(50);
     
-    this.newLayer(function () {
-      this.setBlendingMode('softLight');
-      this.opacity(10);
-      this.fillColor('#f49600');
-    });
-    
     this.filter.exposure(10);
+  });
+  
+  this.newLayer(function () {
+    this.setBlendingMode('softLight');
+    this.opacity(20);
+    this.fillColor('#f49600');
   });
   
   this.exposure(20);
