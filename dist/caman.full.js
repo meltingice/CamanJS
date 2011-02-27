@@ -2392,7 +2392,7 @@ Caman.manip.glowingSun = function () {
   
   this.newLayer(function () {
     this.setBlendingMode('softLight');
-    this.opacity(20);
+    this.opacity(30);
     this.fillColor('#f49600');
   });
   
