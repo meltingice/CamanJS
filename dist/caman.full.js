@@ -976,6 +976,8 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
     }, 0);
   };
   
+  Caman.trigger("processStart", {id: this.canvas_id, start: processFn.name});
+  
   if (type === ProcessType.SINGLE) {
     // Split the image into its blocks.
     for (var j = 0; j < Caman.renderBlocks; j++) {
