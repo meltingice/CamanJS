@@ -212,7 +212,7 @@ Caman.manip.hazyDays = function () {
   this.curves('g', [20, 0], [128, 128], [128, 128], [235, 255]);
   this.curves('b', [20, 0], [128, 108], [128, 128], [235, 255]);
   
-  this.vignette(250, 20);
+  return this.vignette(250, 20);
 };
 
 }(Caman));
