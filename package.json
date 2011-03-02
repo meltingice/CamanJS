@@ -1,0 +1,20 @@
+{
+  "name": "camanjs",
+  "version": "1.0.0",
+  "description": "Pure Javascript (Ca)nvas (Man)ipulation. Easy to use, but powerful, image manipulation library including preset filters.",
+  "keywords": ["canvas", "image", "manipulate", "filter", "image manipulation"],
+  "homepage": "http://camanjs.com",
+  "author": {
+    "name": "Ryan LeFevre",
+    "email": "meltingice8917@gmail.com",
+    "url": "http://meltingice.net"
+  },
+  "main": "./dist/caman.full.js",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/meltingice/CamanJS.git"
+  },
+  "dependencies": {
+    "canvas": "*"
+  }
+}
