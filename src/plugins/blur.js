@@ -1,7 +1,9 @@
+/*global Caman: true, exports: true */
+
 /*
  * NodeJS compatibility
  */
-if (!Caman) {
+if (!Caman && typeof exports == "object") {
 	var Caman = {manip:{}};
 	exports.plugins = Caman.manip;
 }
@@ -42,12 +44,12 @@ Caman.manip.gaussianBlur = function () {
     [4, 16, 24, 16, 4],
     [1, 4, 6, 4, 1]
   ], 256);
-}
+};
 
 Caman.manip.motionBlur = function (degrees) {
   var kernel;
   
-  if (degrees == 0 || degrees == 180) {
+  if (degrees === 0 || degrees == 180) {
     kernel = [
       [0, 0, 1, 0, 0],
       [0, 0, 1, 0, 0],
@@ -84,11 +86,17 @@ Caman.manip.motionBlur = function (degrees) {
   return this.processKernel('Motion Blur', kernel, 5);
 };
 
-Caman.manip.sharpen = function () {
+Caman.manip.sharpen = function (amt) {
+  if (!amt) {
+    amt = 1;
+  } else {
+    amt /= 100;
+  }
+  
   return this.processKernel('Sharpen', [
-    [0, -1, 0],
-    [-1, 5, -1],
-    [0, -1, 0],
+    [0, -amt, 0],
+    [-amt, 4 * amt + 1, -amt],
+    [0, -amt, 0]
   ]);
 };
 
