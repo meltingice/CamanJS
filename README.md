@@ -17,9 +17,22 @@ In order to run CamanJS in Node, we need to simulate the HTML canvas. Because of
 * <a href="https://github.com/LearnBoost/node-canvas">node-canvas</a>
 
 <h1>How to Use</h1>
+
+<h2>Install</h2>
+CamanJS is now a part of npm. Simply run:
+
+<pre>
+npm install caman
+</pre>
+
+It will install the node-canvas dependency if you don't have it installed already.
+
+<h2>Usage</h2>
 Using CamanJS is simple.  It goes something like this:
 
 <pre>
+var Caman = require('caman').Caman;
+
 Caman('path/to/image.jpg', function () {
 	this.brightness(10);
 	this.contrast(-5);
