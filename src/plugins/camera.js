@@ -10,8 +10,20 @@ if (!Caman && typeof exports == "object") {
 
 (function (Caman) {
   
+  /*
+   * If size is a string and ends with %, its a percentage. Otherwise,
+   * its an absolute number of pixels.
+   */
   Caman.manip.vignette = function (size, strength) {
     var center, start, end, loc, dist, div, bezier;
+
+    if (typeof size === "string" && size.substr(-1) == "%") {
+      if (this.dimensions.height > this.dimensions.width) {
+        size = this.dimensions.width * (Number(size.substr(0, size.length - 1)) / 100);
+      } else {
+        size = this.dimensions.height * (Number(size.substr(0, size.length - 1)) / 100);
+      }
+    }
     
     if (!strength) {
       strength = 0.6;
@@ -27,7 +39,6 @@ if (!Caman && typeof exports == "object") {
     // end = lightest part (0 vignette)
     end = start - size;
     
-    //bezier = Caman.bezier([0, 100], [20, 50], [50, 0], [100, 0]);
     bezier = Caman.bezier([0, 1], [30, 30], [70, 60], [100, 80]);
     return this.process({center: center, start: start, end: end, size: size, strength: strength, bezier: bezier}, function vignette(data, rgba) {
       // current pixel coordinates
