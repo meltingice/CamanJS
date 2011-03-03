@@ -9,7 +9,7 @@
  * Project Contributors:
  *   Ryan LeFevre - Lead Developer and Project Maintainer
  *    Twitter: @meltingice
- *    GitHUb: http://github.com/meltingice
+ *    GitHub: http://github.com/meltingice
  *
  *   Rick Waldron - Plugin Architect and Developer
  *    Twitter: @rwaldron

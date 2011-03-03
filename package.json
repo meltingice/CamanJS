@@ -1,7 +1,7 @@
 {
   "name": "caman",
   "version": "1.0.0",
-  "description": "Pure Javascript (Ca)nvas (Man)ipulation. Easy to use, but powerful, image manipulation library including preset filters.",
+  "description": "Pure Javascript (Ca)nvas (Man)ipulation. Easy to use, but powerful, image manipulation library.",
   "keywords": ["canvas", "image", "manipulate", "filter", "image manipulation"],
   "homepage": "http://camanjs.com",
   "author": {
@@ -9,6 +9,16 @@
     "email": "meltingice8917@gmail.com",
     "url": "http://meltingice.net"
   },
+  "contributors": [
+    {
+      "name": "Rick Waldron",
+      "url": "http://github.com/rwldrn"
+    },
+    {
+      "name": "Cezar Sa Espinola",
+      "url": "http://github.com/cezarsa"
+    }
+  ],
   "main": "./dist/caman.full.js",
   "repository": {
     "type": "git",
