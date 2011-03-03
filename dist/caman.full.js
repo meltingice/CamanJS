@@ -2152,8 +2152,20 @@ if (!Caman && typeof exports == "object") {
 
 (function (Caman) {
   
+  /*
+   * If size is a string and ends with %, its a percentage. Otherwise,
+   * its an absolute number of pixels.
+   */
   Caman.manip.vignette = function (size, strength) {
     var center, start, end, loc, dist, div, bezier;
+
+    if (typeof size === "string" && size.substr(-1) == "%") {
+      if (this.dimensions.height > this.dimensions.width) {
+        size = this.dimensions.width * (Number(size.substr(0, size.length - 1)) / 100);
+      } else {
+        size = this.dimensions.height * (Number(size.substr(0, size.length - 1)) / 100);
+      }
+    }
     
     if (!strength) {
       strength = 0.6;
@@ -2169,7 +2181,6 @@ if (!Caman && typeof exports == "object") {
     // end = lightest part (0 vignette)
     end = start - size;
     
-    //bezier = Caman.bezier([0, 100], [20, 50], [50, 0], [100, 0]);
     bezier = Caman.bezier([0, 1], [30, 30], [70, 60], [100, 80]);
     return this.process({center: center, start: start, end: end, size: size, strength: strength, bezier: bezier}, function vignette(data, rgba) {
       // current pixel coordinates
@@ -2244,17 +2255,17 @@ if (!Caman && typeof exports == "object") {
 Caman.manip.vintage = function (vignette) {
   this
     .greyscale()
-    .contrast(5);
-  
-  if (vignette || typeof vignette === 'undefined') {
-    this.vignette(250, 25);
-  }
-  
-  return this
+    .contrast(5)
     .noise(3)
     .sepia(100)
     .channels({red: 8, blue: 2, green: 4})
     .gamma(0.87);
+    
+	if (vignette || typeof vignette === 'undefined') {
+    this.vignette("40%", 30);
+  }
+  
+  return this;
 };
 
 Caman.manip.lomo = function() {
@@ -2264,7 +2275,7 @@ Caman.manip.lomo = function() {
     .curves('rgb', [0, 0], [200, 0], [155, 255], [255, 255])
     .saturation(-20)
     .gamma(1.8)
-    .vignette(300, 60)
+    .vignette("50%", 60)
     .brightness(5);
 };
 
@@ -2273,7 +2284,7 @@ Caman.manip.clarity = function (grey) {
     .vibrance(20)
     .curves('rgb', [5, 0], [130, 150], [190, 220], [250, 255])
     .sharpen(15)
-    .vignette(250, 20);
+    .vignette("45%", 20);
     
    if (grey) {
      this
@@ -2304,7 +2315,7 @@ Caman.manip.sunrise = function () {
     .channels({red: 8, blue: 8})
     .contrast(5)
     .gamma(1.2)
-    .vignette(250, 25);
+    .vignette("55%", 25);
 };
 
 Caman.manip.crossProcess = function () {
@@ -2345,7 +2356,7 @@ Caman.manip.grungy = function () {
     .saturation(-60)
     .contrast(5)
     .noise(5)
-    .vignette(200, 30);
+    .vignette("50%", 30);
 };
 
 Caman.manip.jarques = function () {
@@ -2364,7 +2375,7 @@ Caman.manip.pinhole = function () {
     .sepia(10)
     .exposure(10)
     .contrast(15)
-    .vignette(250, 35);
+    .vignette("60%", 35);
 };
 
 Caman.manip.oldBoot = function () {
@@ -2375,7 +2386,7 @@ Caman.manip.oldBoot = function () {
     .sepia(30)
     .channels({red: -10, blue: 5})
     .curves('rgb', [0, 0], [80, 50], [128, 230], [255, 255])
-    .vignette(250, 30);
+    .vignette("60%", 30);
 };
 
 Caman.manip.glowingSun = function () {
@@ -2401,7 +2412,7 @@ Caman.manip.glowingSun = function () {
   this.exposure(20);
   this.gamma(0.8);
   
-  return this.vignette(250, 20);
+  return this.vignette("45%", 20);
 };
 
 Caman.manip.hazyDays = function () {
@@ -2443,7 +2454,7 @@ Caman.manip.hazyDays = function () {
   this.curves('g', [20, 0], [128, 128], [128, 128], [235, 255]);
   this.curves('b', [20, 0], [128, 108], [128, 128], [235, 255]);
   
-  return this.vignette(250, 20);
+  return this.vignette("45%", 20);
 };
 
 }(Caman));
