@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-var fs = require('fs'),
-jsmin = require('./build/jsmin').jsmin,
-jshint = require('./build/jshint').JSHINT,
+var fs = require("fs"),
+jsmin = require("./build/jsmin").jsmin,
+jshint = require("./build/jshint").JSHINT,
 
-BUILD_DIR   = 'build',
-DIST_DIR    = 'dist',
-SRC_DIR     = 'src',
-PLUGIN_DIR  = SRC_DIR + '/plugins',
+BUILD_DIR   = "build",
+DIST_DIR    = "dist",
+SRC_DIR     = "src",
+PLUGIN_DIR  = SRC_DIR + "/plugins",
 
-CORE_LIB = ['core', 'util', 'filters'],
+CORE_LIB = ["core", "util", "filters"],
 
 jshint_opts = {devel: true, forin: true, undef: true, browser: true};
 
@@ -19,7 +19,7 @@ console.log("Loading Caman source...");
 
 var caman = "";
 CORE_LIB.forEach(function (file) {
-  caman += fs.readFileSync(SRC_DIR + "/" + file + ".js", 'UTF-8') + "\n";
+  caman += fs.readFileSync(SRC_DIR + "/" + file + ".js", "UTF-8") + "\n";
 });
 
 if ( jshint(caman, jshint_opts) ) {
@@ -30,7 +30,7 @@ if ( jshint(caman, jshint_opts) ) {
     console.log(err.id + " line " + err.line + ": " + err.reason);
   });
   
-  console.log('---------------------------------');
+  console.log("---------------------------------");
 }
 
 // Include plugins in the build files
@@ -38,7 +38,7 @@ var plugin_src,
 plugins = "";
 
 fs.readdirSync(PLUGIN_DIR).forEach(function (plugin) {
-  plugin_src = fs.readFileSync(PLUGIN_DIR + '/' + plugin, 'UTF-8');
+  plugin_src = fs.readFileSync(PLUGIN_DIR + "/" + plugin, "UTF-8");
   
   if ( jshint(plugin_src, jshint_opts) ) {
     console.log("JSHint PASSED - " + plugin);
@@ -48,7 +48,7 @@ fs.readdirSync(PLUGIN_DIR).forEach(function (plugin) {
       console.log(err.id + " line " + err.line + ": " + err.reason);
     });
     
-    console.log('---------------------------------');
+    console.log("---------------------------------");
   }
   
   plugins += "\n" + plugin_src;
@@ -62,11 +62,11 @@ try {
 }
 
 // Without plugins
-fs.writeFileSync(DIST_DIR + '/caman.js', caman);
-fs.writeFileSync(DIST_DIR + '/caman.min.js', jsmin(caman));
+fs.writeFileSync(DIST_DIR + "/caman.js", caman);
+fs.writeFileSync(DIST_DIR + "/caman.min.js", jsmin(caman));
 
 // With plugins
-fs.writeFileSync(DIST_DIR + '/caman.full.js', caman + plugins);
-fs.writeFileSync(DIST_DIR + '/caman.full.min.js', jsmin(caman + plugins));
+fs.writeFileSync(DIST_DIR + "/caman.full.js", caman + plugins);
+fs.writeFileSync(DIST_DIR + "/caman.full.min.js", jsmin(caman + plugins));
 
 console.log("\nFinished!");

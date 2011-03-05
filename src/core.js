@@ -32,7 +32,7 @@ slice = Array.prototype.slice,
 // with jQuery since this $ variable does not exist
 // in the global window scope.
 $ = function (id) {
-  if (id[0] == '#') {
+  if (id[0] == "#") {
     id = id.substr(1);
   }
   
@@ -57,15 +57,15 @@ Caman = function () {
     // 2 arguments - init image and/or invoke callback
     
     if (Caman.store[arguments[0]]) {
-      // Already initialized, invoke callback with manip set to 'this'
+      // Already initialized, invoke callback with manip set to "this"
       return arguments[1].call(Caman.store[arguments[0]], Caman.store[arguments[0]]);
     } else {
-      if (typeof arguments[1] === 'function') {
+      if (typeof arguments[1] === "function") {
         
         // Not initialized; load Caman into image then invoke callback and return manip
         return new Caman.manip.loadImage(arguments[0], arguments[1]);
         
-      } else if (typeof arguments[1] === 'string') {
+      } else if (typeof arguments[1] === "string") {
         
         // Not initialized; load image URL into canvas and return manip
         return new Caman.manip.loadCanvas(arguments[0], arguments[1]);
@@ -88,7 +88,7 @@ Caman = function () {
   }
 };
 
-if (!('console' in window)) {
+if (!("console" in window)) {
   window.console = {
     log: function () {},
     info: function () {},
@@ -107,11 +107,11 @@ Caman.remoteProxy = "";
  * usage.
  */
 Caman.useProxy = function (lang) {
-  // define cases where file extensions don't match the language name
+  // define cases where file extensions don"t match the language name
   var langToExt = {
-    ruby: 'rb',
-    python: 'py',
-    perl: 'pl'
+    ruby: "rb",
+    python: "py",
+    perl: "pl"
   };
   
   lang = langToExt[lang.toLowerCase()] || lang.toLowerCase();
@@ -187,11 +187,11 @@ Caman.manip = Caman.prototype = {
     var domLoaded,
     self = this,
     startFn = function () {
-      var canvas = document.createElement('canvas'),
+      var canvas = document.createElement("canvas"),
       image = $(image_id),
       proxyURL = remoteCheck(image.src);
       
-      if($(image_id) === null || $(image_id).nodeName.toLowerCase() !== 'img') {
+      if($(image_id) === null || $(image_id).nodeName.toLowerCase() !== "img") {
         // element doesn't exist or isn't an image
         throw "Given element ID isn't an image: " + image_id;
       }
@@ -255,10 +255,10 @@ Caman.manip = Caman.prototype = {
     self = this,
     startFn = function () {
       var canvas = $(canvas_id),
-      image = document.createElement('img'),
+      image = document.createElement("img"),
       proxyURL = remoteCheck(url);
       
-      if ($(canvas_id) === null || $(canvas_id).nodeName.toLowerCase() !== 'canvas') {
+      if ($(canvas_id) === null || $(canvas_id).nodeName.toLowerCase() !== "canvas") {
         // element doesn't exist or isn't a canvas
         throw "Given element ID isn't a canvas: " + canvas_id;
       }
@@ -321,8 +321,8 @@ Caman.manip = Caman.prototype = {
       type = type.toLowerCase();
     }
     
-    if (!type || (type !== 'png' && type !== 'jpg')) {
-      type = 'png';
+    if (!type || (type !== "png" && type !== "jpg")) {
+      type = "png";
     }
     
     document.location.href = this.toBase64(type).replace("image/" + type, "image/octet-stream");
@@ -335,7 +335,7 @@ Caman.manip = Caman.prototype = {
   toImage: function (type) {
     var img;
     
-    img = document.createElement('img');
+    img = document.createElement("img");
     img.src = this.toBase64(type);
     
     return img;
@@ -349,8 +349,8 @@ Caman.manip = Caman.prototype = {
       type = type.toLowerCase();
     }
     
-    if (!type || (type !== 'png' && type !== 'jpg')) {
-      type = 'png';
+    if (!type || (type !== "png" && type !== "jpg")) {
+      type = "png";
     }
     
     return this.canvas.toDataURL("image/" + type);
@@ -364,7 +364,7 @@ Caman.manip = Caman.prototype = {
     this.processNext(function () {
       this.context.putImageData(this.image_data, 0, 0);
       
-      if (typeof callback === 'function') {
+      if (typeof callback === "function") {
         callback.call(this);
       }
     });    
@@ -592,16 +592,16 @@ Caman.manip.newLayer = function (callback) {
 Caman.manip.canvasLayer = function (manip) {  
   // Default options
   this.options = {
-    blendingMode: 'normal',
+    blendingMode: "normal",
     opacity: 1.0
   };
   
   // Create a blank and invisible canvas and append it to the document
   this.layerID = Caman.uniqid.get();
-  this.canvas = document.createElement('canvas');
+  this.canvas = document.createElement("canvas");
   this.canvas.width = manip.dimensions.width;
   this.canvas.height = manip.dimensions.height;
-  this.canvas.style.display = 'none';
+  this.canvas.style.display = "none";
   
   this.context = this.canvas.getContext("2d");
   this.context.createImageData(this.canvas.width, this.canvas.height);
@@ -648,7 +648,7 @@ Caman.manip.canvasLayer.prototype.fillColor = function () {
 };
 
 Caman.manip.canvasLayer.prototype.overlayImage = function (image) {
-  if (image[0] == '#') {
+  if (image[0] == "#") {
     image = $(image).src;
   } else if (typeof image === "object") {
     image = image.src;
@@ -1024,7 +1024,7 @@ Caman.manip.loadOverlay = function (layer, src) {
     src = proxyUrl;
   }
   
-  var img = document.createElement('img');
+  var img = document.createElement("img");
   img.onload = function () {
     layer.context.drawImage(img, 0, 0, self.dimensions.width, self.dimensions.height);
     layer.image_data = layer.context.getImageData(0, 0, self.dimensions.width, self.dimensions.height);

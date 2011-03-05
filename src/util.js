@@ -78,7 +78,7 @@ Caman.extend(Caman, {
     
   randomRange: function (min, max, float) {
     var rand = min + (Math.random() * (max - min));
-    return typeof float == 'undefined' ? Math.round(rand) : rand.toFixed(float);
+    return typeof float == "undefined" ? Math.round(rand) : rand.toFixed(float);
   },
   
   /**

@@ -305,7 +305,7 @@
    * }
    */
   Caman.manip.channels = function (options) {
-    if (typeof(options) !== 'object') {
+    if (typeof(options) !== "object") {
       return;
     }
     
@@ -367,9 +367,9 @@
   Caman.manip.curves = function (chan, start, ctrl1, ctrl2, end) {
     var bezier, i;
     
-    if (typeof chan === 'string') {
-      if (chan == 'rgb') {
-        chan = ['r', 'g', 'b'];
+    if (typeof chan === "string") {
+      if (chan == "rgb") {
+        chan = ["r", "g", "b"];
       } else {
         chan = [chan];
       }
@@ -418,7 +418,7 @@
       ctrl2 = ctrl2.reverse();
     }
     
-    return this.curves('rgb', [0, 0], ctrl1, ctrl2, [255, 255]);
+    return this.curves("rgb", [0, 0], ctrl1, ctrl2, [255, 255]);
   };
 
 }(Caman));

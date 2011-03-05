@@ -11,7 +11,7 @@ if (!Caman && typeof exports == "object") {
 (function (Caman) {
 
 Caman.manip.boxBlur = function () {
-  return this.processKernel('Box Blur', [
+  return this.processKernel("Box Blur", [
     [1, 1, 1],
     [1, 1, 1],
     [1, 1, 1]
@@ -19,7 +19,7 @@ Caman.manip.boxBlur = function () {
 };
 
 Caman.manip.radialBlur = function () {
-  return this.processKernel('Radial Blur', [
+  return this.processKernel("Radial Blur", [
     [0, 1, 0],
     [1, 1, 1],
     [0, 1, 0]
@@ -27,7 +27,7 @@ Caman.manip.radialBlur = function () {
 };
 
 Caman.manip.heavyRadialBlur = function () {
-  return this.processKernel('Heavy Radial Blur', [
+  return this.processKernel("Heavy Radial Blur", [
     [0, 0, 1, 0, 0],
     [0, 1, 1, 1, 0],
     [1, 1, 1, 1, 1],
@@ -37,7 +37,7 @@ Caman.manip.heavyRadialBlur = function () {
 };
 
 Caman.manip.gaussianBlur = function () {
-  return this.processKernel('Gaussian Blur', [
+  return this.processKernel("Gaussian Blur", [
     [1, 4, 6, 4, 1],
     [4, 16, 24, 16, 4],
     [6, 24, 36, 24, 6],
@@ -83,7 +83,7 @@ Caman.manip.motionBlur = function (degrees) {
     ];
   }
   
-  return this.processKernel('Motion Blur', kernel, 5);
+  return this.processKernel("Motion Blur", kernel, 5);
 };
 
 Caman.manip.sharpen = function (amt) {
@@ -93,7 +93,7 @@ Caman.manip.sharpen = function (amt) {
     amt /= 100;
   }
   
-  return this.processKernel('Sharpen', [
+  return this.processKernel("Sharpen", [
     [0, -amt, 0],
     [-amt, 4 * amt + 1, -amt],
     [0, -amt, 0]
