@@ -570,44 +570,20 @@ Caman.manip.blenders = Caman.manip.canvasLayer.prototype.blenders;
 /*
  * Convolution kernel processing
  */
-Caman.extend( Caman, {
+Caman.extend( Caman, {  
   processKernel: function (adjust, kernel, divisor, bias) {
-    var val = {
-      r: 0,
-      g: 0,
-      b: 0
-    };
+    var val = {r: 0, g: 0, b: 0};
     
-    for (var i = 0; i < adjust.length; i++) {
-      for (var j = 0; j < adjust[i].length; j++) {
-        val.r += (adjust[i][j] * kernel[i][j].r);
-        val.g += (adjust[i][j] * kernel[i][j].g);
-        val.b += (adjust[i][j] * kernel[i][j].b);
-      }
+    for (var i = 0, len = adjust.length; i < len; i++) {
+      val.r += adjust[i] * kernel[i * 3];
+      val.g += adjust[i] * kernel[i * 3 + 1];
+      val.b += adjust[i] * kernel[i * 3 + 2];
     }
     
     val.r = (val.r / divisor) + bias;
     val.g = (val.g / divisor) + bias;
     val.b = (val.b / divisor) + bias;
-    
-    if (val.r > 255) {
-      val.r = 255;
-    } else if (val.r < 0) {
-      val.r = 0;
-    }
 
-    if (val.g > 255) {
-      val.g = 255;
-    } else if (val.g < 0) {
-      val.g = 0;
-    }
-    
-    if (val.b > 255) {
-      val.b = 255;
-    } else if (val.b < 0) {
-      val.b = 0;
-    }
-    
     return val;
   }
 });
@@ -668,13 +644,14 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
     console.log("BLOCK #" + bnum + " - Filter: " + processFn.name + ", Start: " + start + ", End: " + end);
     
     setTimeout(function () {
+      var data = {r: 0, g: 0, b: 0, a: 0};
       for (var i = start; i < end; i += 4) {
-        res = processFn.call(new self.pixelInfo(i, self), adjust, {
-          r: self.pixel_data[i], 
-          g: self.pixel_data[i+1], 
-          b: self.pixel_data[i+2], 
-          a: self.pixel_data[i+3]
-        });
+        data.r = self.pixel_data[i];
+        data.g = self.pixel_data[i+1];
+        data.b = self.pixel_data[i+2];
+        data.a = self.pixel_data[i+3];
+        
+        res = processFn.call(new self.pixelInfo(i, self), adjust, data);
         
         self.pixel_data[i]   = res.r;
         self.pixel_data[i+1] = res.g;
@@ -689,38 +666,40 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
   render_kernel = function () {
     setTimeout(function () {
       var kernel = [],
-      pixelInfo, 
+      pixelInfo, pixel,
       start, end, 
-      mod_pixel_data = [],
+      mod_pixel_data,
       name = adjust.name,
       bias = adjust.bias,
       divisor = adjust.divisor,
-      builder_start,
-      builder_end,
+      adjustSize,
+      builder, builder_index,
       i, j, k;
       
       adjust = adjust.adjust;
+      adjustSize = Math.sqrt(adjust.length);
       
-      builder_start = (adjust.length - 1) / 2;
-      builder_end = builder_start * -1;
+      mod_pixel_data = [];
       
       console.log("Rendering kernel - Filter: " + name);
       
-      start = self.dimensions.width * 4 * ((adjust.length - 1) / 2);
-      end = n - (self.dimensions.width * 4 * ((adjust.length - 1) / 2));
+      start = self.dimensions.width * 4 * ((adjustSize - 1) / 2);
+      end = n - (self.dimensions.width * 4 * ((adjustSize - 1) / 2));
       
-      // Prepare the convolution kernel array
-      for (i = 0; i < adjust.length; i++) {
-        kernel[i] = [];
-      }
+      builder = (adjustSize - 1) / 2;
       
       for (i = start; i < end; i += 4) {
         pixelInfo = new self.pixelInfo(i, self);
         
-        // Fill the convolution kernel with values
-        for (j = builder_start; j >= builder_end; j--) {
-          for (k = builder_end; k <= builder_start; k++) {
-            kernel[k + ((adjust.length - 1) / 2)][((adjust.length - 1) / 2) - j] = pixelInfo.getPixelRelative(k, j);
+        builder_index = 0;
+        for (j = -builder; j <= builder; j++) {
+          for (k = builder; k >= -builder; k--) {
+            pixel = pixelInfo.getPixelRelative(j, k);
+            kernel[builder_index * 3]     = pixel.r;
+            kernel[builder_index * 3 + 1] = pixel.g;
+            kernel[builder_index * 3 + 2] = pixel.b;
+            
+            builder_index++;
           }
         }
                 
@@ -735,7 +714,8 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
         mod_pixel_data[i+3] = 255;
       }
 
-      // Update the actual canvas pixel data
+      // Update the actual canvas pixel data. Unfortunately we have to set
+      // this one by one.
       for (i = start; i < end; i++) {
         self.pixel_data[i] = mod_pixel_data[i];
       }
@@ -814,10 +794,9 @@ Caman.manip.process = function (adjust, processFn) {
 Caman.manip.processKernel = function (name, adjust, divisor, bias) {  
   if (!divisor) {
     divisor = 0;
-    for (var i = 0; i < adjust.length; i++) {
-      for (var j = 0; j < adjust[i].length; j++) {
-        divisor += adjust[i][j];
-      }
+
+    for (var i = 0, len = adjust.length; i < len; i++) {
+      divisor += adjust[i];
     }
   }
   
@@ -832,6 +811,7 @@ Caman.manip.processKernel = function (name, adjust, divisor, bias) {
   
   return this;
 };
+
 
 /*
  * Begins the render process if it's not started, or moves to the next
