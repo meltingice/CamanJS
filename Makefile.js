@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
 var fs = require('fs'),
+exec = require('child_process').exec,
 jsmin = require('./build/jsmin').jsmin,
 jshint = require('./build/jshint').JSHINT,
 
 BUILD_DIR   = 'build',
 DIST_DIR    = 'dist',
 SRC_DIR     = 'src',
-PLUGIN_DIR  = SRC_DIR + '/plugins',
+PLUGIN_DIR  = SRC_DIR + '/plugins/plugins',
 
 CORE_LIB = ['core', 'util', 'filters'],
 
@@ -37,36 +38,56 @@ if ( jshint(caman, jshint_opts) ) {
 var plugin_src,
 plugins = "";
 
-fs.readdirSync(PLUGIN_DIR).forEach(function (plugin) {
-  plugin_src = fs.readFileSync(PLUGIN_DIR + '/' + plugin, 'UTF-8');
-  
-  if ( jshint(plugin_src, jshint_opts) ) {
-    console.log("JSHint PASSED - " + plugin);
-  } else {
-    console.log("JSHint ERROR! - " + plugin);
-    jshint.errors.forEach(function (err) {
-      console.log(err.id + " line " + err.line + ": " + err.reason);
-    });
-    
-    console.log('---------------------------------');
-  }
-  
-  plugins += "\n" + plugin_src;
-});
-
-// Create dist folder if it doesn't exist
+// Make sure plugins submodule is initialized first
 try {
-  fs.statSync(DIST_DIR);
+  fs.readdirSync(PLUGIN_DIR);
+  finish();
 } catch (e) {
-  fs.mkdirSync(DIST_DIR, 0775);
+  console.log("####################################");
+  console.log("It looks like the CamanJS-Plugins submodule hasn't");
+  console.log("been initialized yet. Let me fix that for you.");
+  console.log("####################################");
+  
+  exec('git submodule init', function () {
+    exec('git submodule update --recursive', function () {
+      finish();
+    });
+  });
 }
 
-// Without plugins
-fs.writeFileSync(DIST_DIR + '/caman.js', caman);
-fs.writeFileSync(DIST_DIR + '/caman.min.js', jsmin(caman));
 
-// With plugins
-fs.writeFileSync(DIST_DIR + '/caman.full.js', caman + plugins);
-fs.writeFileSync(DIST_DIR + '/caman.full.min.js', jsmin(caman + plugins));
-
-console.log("\nFinished!");
+function finish() {
+  fs.readdirSync(PLUGIN_DIR).forEach(function (plugin) {
+    plugin_src = fs.readFileSync(PLUGIN_DIR + '/' + plugin, 'UTF-8');
+    
+    if ( jshint(plugin_src, jshint_opts) ) {
+      console.log("JSHint PASSED - " + plugin);
+    } else {
+      console.log("JSHint ERROR! - " + plugin);
+      jshint.errors.forEach(function (err) {
+        console.log(err.id + " line " + err.line + ": " + err.reason);
+      });
+      
+      console.log('---------------------------------');
+    }
+    
+    plugins += "\n" + plugin_src;
+  });
+  
+  // Create dist folder if it doesn't exist
+  try {
+    fs.statSync(DIST_DIR);
+  } catch (e) {
+    fs.mkdirSync(DIST_DIR, 0775);
+  }
+  
+  // Without plugins
+  fs.writeFileSync(DIST_DIR + '/caman.js', caman);
+  fs.writeFileSync(DIST_DIR + '/caman.min.js', jsmin(caman));
+  
+  // With plugins
+  fs.writeFileSync(DIST_DIR + '/caman.full.js', caman + plugins);
+  fs.writeFileSync(DIST_DIR + '/caman.full.min.js', jsmin(caman + plugins));
+  
+  console.log("\nFinished!");
+}
