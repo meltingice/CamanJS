@@ -7,6 +7,31 @@ CamanJS is very easy to extend with new filters and plugins, and it comes with a
 
 For more information, I highly recommend taking a look at the <a href="http://camanjs.com">official website</a> where there is more comprehensive documentation and interactive demos. You can also <a href="https://github.com/meltingice/CamanJS/wiki">read the wiki</a> for some basic information about the project and how to use it.
 
+<h2>Cloning the Project</h2>
+CamanJS uses git submodules in order to organize things a bit better. Because of this, you have a few options in making sure you get all the required files.
+
+<b>Recursive Clone</b>
+Recommended if you haven't cloned the project yet.
+
+<pre>
+git clone --recursive https://github.com/meltingice/CamanJS.git
+</pre>
+
+<b>Submodule Init</b>
+If you have cloned the project already, you can do (after pulling the latest changes):
+
+<pre>
+git submodule init
+git submodule update
+</pre>
+
+<b>Makefile</b>
+The NodeJS powered Makefile for the project will automatically check to make sure you've initialized the submodules, and if you haven't, will do so for you. Simply run:
+
+<pre>
+node Makefile.js
+</pre>
+
 <h2>CDN JS Hosting</h2>
 CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from <a href="http://ajax.cdnjs.com/ajax/libs/camanjs/2.0/caman.full.min.js">this URL</a> for usage on your site.
 
