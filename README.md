@@ -11,6 +11,7 @@ For more information, I highly recommend taking a look at the <a href="http://ca
 CamanJS uses git submodules in order to organize things a bit better. Because of this, you have a few options in making sure you get all the required files.
 
 <b>Recursive Clone</b>
+
 Recommended if you haven't cloned the project yet.
 
 <pre>
@@ -18,6 +19,7 @@ git clone --recursive https://github.com/meltingice/CamanJS.git
 </pre>
 
 <b>Submodule Init</b>
+
 If you have cloned the project already, you can do (after pulling the latest changes):
 
 <pre>
@@ -26,6 +28,7 @@ git submodule update
 </pre>
 
 <b>Makefile</b>
+
 The NodeJS powered Makefile for the project will automatically check to make sure you've initialized the submodules, and if you haven't, will do so for you. Simply run:
 
 <pre>
