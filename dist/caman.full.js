@@ -2444,4 +2444,66 @@ Caman.manip.hazyDays = function () {
   return this.vignette("45%", 20);
 };
 
+Caman.manip.herMajesty = function () {
+  this.brightness(40);
+  this.colorize('#ea1c5d', 10);
+  this.curves('b', [0, 10], [128, 180], [190, 190], [255, 255]);
+  
+  this.newLayer(function () {
+    this.setBlendingMode('overlay');
+    this.opacity(50);
+    this.copyParent();
+    
+    this.filter.gamma(0.7);
+    this.newLayer(function () {
+      this.setBlendingMode('normal');
+      this.opacity(60);
+      this.fillColor('#ea1c5d');
+    });
+  });
+  
+  this.newLayer(function () {
+    this.setBlendingMode('multiply');
+    this.opacity(60);
+    this.copyParent();
+    
+    this.filter.saturation(50);
+    this.filter.hue(90);
+    this.filter.contrast(10);
+  });
+  
+  this.gamma(1.4);
+  this.vibrance(-30);
+  
+  this.newLayer(function () {
+    this.opacity(10);
+    this.fillColor('#e5f0ff');
+  });
+  
+  return this;
+};
+
+Caman.manip.nostalgia = function () {
+  this
+    .saturation(20)
+    .gamma(1.4)
+    .greyscale()
+    .contrast(5)
+    .sepia(100)
+    .channels({red: 8, blue: 2, green: 4})
+    .gamma(0.8)
+    .contrast(5)
+    .exposure(10);
+    
+  this.newLayer(function () {
+    this.setBlendingMode('overlay');
+    this.copyParent();
+    this.opacity(55);
+    
+    this.filter.gaussianBlur();
+  });
+    
+  return this.vignette("50%", 30);
+};
+
 }(Caman));
