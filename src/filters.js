@@ -41,22 +41,26 @@
 
   Caman.manip.saturation = function(adjust) {
     var max, diff;
-    adjust *= -1;
+    adjust *= -0.01;
     
     return this.process( adjust, function saturation(adjust, rgba) {
       var chan;
       
       max = Math.max(rgba.r, rgba.g, rgba.b);
       
-      for (chan in rgba) {
-        if (rgba.hasOwnProperty(chan)) {
-          if (rgba[chan] === max || chan === "a") {
-            continue;
-          }
-            
-          diff = max - rgba[chan];
-          rgba[chan] += Math.ceil(diff * (adjust / 100));
-        }
+      if (rgba.r !== max) {
+        diff = max - rgba.r;
+        rgba.r += diff * adjust;
+      }
+      
+      if (rgba.g !== max) {
+        diff = max - rgba.g;
+        rgba.g += diff * adjust; 
+      }
+      
+      if (rgba.b !== max) {
+        diff = max - rgba.b;
+        rgba.b += diff * adjust;
       }
       
       return rgba;
@@ -76,15 +80,19 @@
       avg = (rgba.r + rgba.g + rgba.b) / 3;
       amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
       
-      for (chan in rgba) {
-        if (rgba.hasOwnProperty(chan)) {
-          if (rgba[chan] === max || chan == "a") {
-            continue;
-          }
-          
-          diff = max - rgba[chan];
-          rgba[chan] += Math.ceil(diff * amt);
-        }
+      if (rgba.r !== max) {
+        diff = max - rgba.r;
+        rgba.r += diff * amt;
+      }
+      
+      if (rgba.g !== max) {
+        diff = max - rgba.g;
+        rgba.g += diff * amt;
+      }
+      
+      if (rgba.b !== max) {
+        diff = max - rgba.b;
+        rgba.b += diff * amt;
       }
       
       return rgba;

@@ -805,7 +805,7 @@ Caman.extend( Caman, {
   processKernel: function (adjust, kernel, divisor, bias) {
     var val = {r: 0, g: 0, b: 0};
     
-    for (var i = 0; i < adjust.length; i++) {
+    for (var i = 0, len = adjust.length; i < len; i++) {
       val.r += adjust[i] * kernel[i * 3];
       val.g += adjust[i] * kernel[i * 3 + 1];
       val.b += adjust[i] * kernel[i * 3 + 2];
@@ -814,26 +814,7 @@ Caman.extend( Caman, {
     val.r = (val.r / divisor) + bias;
     val.g = (val.g / divisor) + bias;
     val.b = (val.b / divisor) + bias;
-    
-    /*
-    if (val[0] > 255) {
-      val[0] = 255;
-    } else if (val[0] < 0) {
-      val.r = 0;
-    }
 
-    if (val.g > 255) {
-      val.g = 255;
-    } else if (val.g < 0) {
-      val.g = 0;
-    }
-    
-    if (val.b > 255) {
-      val.b = 255;
-    } else if (val.b < 0) {
-      val.b = 0;
-    }
-    */
     return val;
   }
 });
@@ -894,13 +875,14 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
     console.log("BLOCK #" + bnum + " - Filter: " + processFn.name + ", Start: " + start + ", End: " + end);
     
     setTimeout(function () {
+      var data = {r: 0, g: 0, b: 0, a: 0};
       for (var i = start; i < end; i += 4) {
-        res = processFn.call(new self.pixelInfo(i, self), adjust, {
-          r: self.pixel_data[i], 
-          g: self.pixel_data[i+1], 
-          b: self.pixel_data[i+2], 
-          a: self.pixel_data[i+3]
-        });
+        data.r = self.pixel_data[i];
+        data.g = self.pixel_data[i+1];
+        data.b = self.pixel_data[i+2];
+        data.a = self.pixel_data[i+3];
+        
+        res = processFn.call(new self.pixelInfo(i, self), adjust, data);
         
         self.pixel_data[i]   = res.r;
         self.pixel_data[i+1] = res.g;
@@ -963,7 +945,8 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
         mod_pixel_data[i+3] = 255;
       }
 
-      // Update the actual canvas pixel data
+      // Update the actual canvas pixel data. Unfortunately we have to set
+      // this one by one.
       for (i = start; i < end; i++) {
         self.pixel_data[i] = mod_pixel_data[i];
       }
@@ -1047,10 +1030,9 @@ Caman.manip.process = function (adjust, processFn) {
 Caman.manip.processKernel = function (name, adjust, divisor, bias) {  
   if (!divisor) {
     divisor = 0;
-    for (var i = 0; i < adjust.length; i++) {
-      for (var j = 0; j < adjust[i].length; j++) {
-        divisor += adjust[i][j];
-      }
+
+    for (var i = 0, len = adjust.length; i < len; i++) {
+      divisor += adjust[i];
     }
   }
   
@@ -1652,22 +1634,26 @@ Caman.extend(Caman, {
 
   Caman.manip.saturation = function(adjust) {
     var max, diff;
-    adjust *= -1;
+    adjust *= -0.01;
     
     return this.process( adjust, function saturation(adjust, rgba) {
       var chan;
       
       max = Math.max(rgba.r, rgba.g, rgba.b);
       
-      for (chan in rgba) {
-        if (rgba.hasOwnProperty(chan)) {
-          if (rgba[chan] === max || chan === "a") {
-            continue;
-          }
-            
-          diff = max - rgba[chan];
-          rgba[chan] += Math.ceil(diff * (adjust / 100));
-        }
+      if (rgba.r !== max) {
+        diff = max - rgba.r;
+        rgba.r += diff * adjust;
+      }
+      
+      if (rgba.g !== max) {
+        diff = max - rgba.g;
+        rgba.g += diff * adjust; 
+      }
+      
+      if (rgba.b !== max) {
+        diff = max - rgba.b;
+        rgba.b += diff * adjust;
       }
       
       return rgba;
@@ -1687,15 +1673,19 @@ Caman.extend(Caman, {
       avg = (rgba.r + rgba.g + rgba.b) / 3;
       amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
       
-      for (chan in rgba) {
-        if (rgba.hasOwnProperty(chan)) {
-          if (rgba[chan] === max || chan == "a") {
-            continue;
-          }
-          
-          diff = max - rgba[chan];
-          rgba[chan] += Math.ceil(diff * amt);
-        }
+      if (rgba.r !== max) {
+        diff = max - rgba.r;
+        rgba.r += diff * amt;
+      }
+      
+      if (rgba.g !== max) {
+        diff = max - rgba.g;
+        rgba.g += diff * amt;
+      }
+      
+      if (rgba.b !== max) {
+        diff = max - rgba.b;
+        rgba.b += diff * amt;
       }
       
       return rgba;
