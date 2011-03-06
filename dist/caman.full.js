@@ -1812,37 +1812,37 @@ if (!Caman && typeof exports == "object") {
 
 Caman.manip.boxBlur = function () {
   return this.processKernel('Box Blur', [
-    [1, 1, 1],
-    [1, 1, 1],
-    [1, 1, 1]
+    1, 1, 1,
+    1, 1, 1,
+    1, 1, 1
   ]);
 };
 
 Caman.manip.radialBlur = function () {
   return this.processKernel('Radial Blur', [
-    [0, 1, 0],
-    [1, 1, 1],
-    [0, 1, 0]
+    0, 1, 0,
+    1, 1, 1,
+    0, 1, 0
   ], 5);
 };
 
 Caman.manip.heavyRadialBlur = function () {
   return this.processKernel('Heavy Radial Blur', [
-    [0, 0, 1, 0, 0],
-    [0, 1, 1, 1, 0],
-    [1, 1, 1, 1, 1],
-    [0, 1, 1, 1, 0],
-    [0, 0, 1, 0, 0]
+    0, 0, 1, 0, 0,
+    0, 1, 1, 1, 0,
+    1, 1, 1, 1, 1,
+    0, 1, 1, 1, 0,
+    0, 0, 1, 0, 0
   ], 13);
 };
 
 Caman.manip.gaussianBlur = function () {
   return this.processKernel('Gaussian Blur', [
-    [1, 4, 6, 4, 1],
-    [4, 16, 24, 16, 4],
-    [6, 24, 36, 24, 6],
-    [4, 16, 24, 16, 4],
-    [1, 4, 6, 4, 1]
+    1, 4, 6, 4, 1,
+    4, 16, 24, 16, 4,
+    6, 24, 36, 24, 6,
+    4, 16, 24, 16, 4,
+    1, 4, 6, 4, 1
   ], 256);
 };
 
@@ -1851,35 +1851,35 @@ Caman.manip.motionBlur = function (degrees) {
   
   if (degrees === 0 || degrees == 180) {
     kernel = [
-      [0, 0, 1, 0, 0],
-      [0, 0, 1, 0, 0],
-      [0, 0, 1, 0, 0],
-      [0, 0, 1, 0, 0],
-      [0, 0, 1, 0, 0]
+      0, 0, 1, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 1, 0, 0
     ];
   } else if ((degrees > 0 && degrees < 90) || (degrees > 180 && degrees < 270)) {
     kernel = [
-      [0, 0, 0, 0, 1],
-      [0, 0, 0, 1, 0],
-      [0, 0, 1, 0, 0],
-      [0, 1, 0, 0, 0],
-      [1, 0, 0, 0, 0]
+      0, 0, 0, 0, 1,
+      0, 0, 0, 1, 0,
+      0, 0, 1, 0, 0,
+      0, 1, 0, 0, 0,
+      1, 0, 0, 0, 0
     ];
   } else if (degrees == 90 || degrees == 270) {
     kernel = [
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0],
-      [1, 1, 1, 1, 1],
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0]
+      0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0,
+      1, 1, 1, 1, 1,
+      0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0
     ];
   } else {
     kernel = [
-      [1, 0, 0, 0, 0],
-      [0, 1, 0, 0, 0],
-      [0, 0, 1, 0, 0],
-      [0, 0, 0, 1, 0],
-      [0, 0, 0, 0, 1]
+      1, 0, 0, 0, 0,
+      0, 1, 0, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1
     ];
   }
   
@@ -1894,9 +1894,9 @@ Caman.manip.sharpen = function (amt) {
   }
   
   return this.processKernel('Sharpen', [
-    [0, -amt, 0],
-    [-amt, 4 * amt + 1, -amt],
-    [0, -amt, 0]
+    0, -amt, 0,
+    -amt, 4 * amt + 1, -amt,
+    0, -amt, 0
   ]);
 };
 
@@ -2216,6 +2216,68 @@ Caman.manip.hazyDays = function () {
   this.curves('b', [20, 0], [128, 108], [128, 128], [235, 255]);
   
   return this.vignette("45%", 20);
+};
+
+Caman.manip.herMajesty = function () {
+  this.brightness(40);
+  this.colorize('#ea1c5d', 10);
+  this.curves('b', [0, 10], [128, 180], [190, 190], [255, 255]);
+  
+  this.newLayer(function () {
+    this.setBlendingMode('overlay');
+    this.opacity(50);
+    this.copyParent();
+    
+    this.filter.gamma(0.7);
+    this.newLayer(function () {
+      this.setBlendingMode('normal');
+      this.opacity(60);
+      this.fillColor('#ea1c5d');
+    });
+  });
+  
+  this.newLayer(function () {
+    this.setBlendingMode('multiply');
+    this.opacity(60);
+    this.copyParent();
+    
+    this.filter.saturation(50);
+    this.filter.hue(90);
+    this.filter.contrast(10);
+  });
+  
+  this.gamma(1.4);
+  this.vibrance(-30);
+  
+  this.newLayer(function () {
+    this.opacity(10);
+    this.fillColor('#e5f0ff');
+  });
+  
+  return this;
+};
+
+Caman.manip.nostalgia = function () {
+  this
+    .saturation(20)
+    .gamma(1.4)
+    .greyscale()
+    .contrast(5)
+    .sepia(100)
+    .channels({red: 8, blue: 2, green: 4})
+    .gamma(0.8)
+    .contrast(5)
+    .exposure(10);
+    
+  this.newLayer(function () {
+    this.setBlendingMode('overlay');
+    this.copyParent();
+    this.opacity(55);
+    
+    this.filter.gaussianBlur();
+  });
+    
+  return this.vignette("50%", 30);
 };
 
 }(Caman));
