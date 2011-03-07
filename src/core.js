@@ -292,6 +292,13 @@ Caman.manip = Caman.prototype = {
         throw "Given element ID isn't a canvas: " + canvas_id;
       }
       
+      if (canvas.width) {
+        image.width = canvas.width;
+      }
+      if (canvas.height) {
+        image.height = canvas.height;
+      }
+      
       image.onload = function () {
         finishInit.call(self, image, canvas, callback);
       };
