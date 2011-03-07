@@ -158,12 +158,28 @@ var finishInit = function (image, canvas, callback) {
   this.pixelStack = [];
   this.layerStack = [];
   
+  var old_height = image.height, old_width = image.width;
+  if (image.style.width || image.style.height) {
+    if (image.style.width) {
+      image.width = parseInt(image.style.width, 10);
+      
+      if (image.style.height) {
+        image.height = parseInt(image.style.height, 10);
+      } else {
+        image.height = image.width * old_height / old_width;
+      }
+    } else if (image.style.height) {
+      image.height = parseInt(image.style.height, 10);
+      image.width = image.height * old_width / old_height;
+    }
+  }
+  
   canvas.width = image.width;
   canvas.height = image.height;
   
   this.canvas = canvas;
   this.context = canvas.getContext("2d");
-  this.context.drawImage(image, 0, 0);
+  this.context.drawImage(image, 0, 0, image.width, image.height);
   
   this.image_data = this.context.getImageData(0, 0, image.width, image.height);
   this.pixel_data = this.image_data.data;
