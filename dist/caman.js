@@ -186,10 +186,9 @@ Caman.manip = Caman.prototype = {
   loadImage: function (image_id, callback) {
     var domLoaded,
     self = this,
+    image, proxyURL,
     startFn = function () {
-      var canvas = document.createElement('canvas'),
-      image = $(image_id),
-      proxyURL = remoteCheck(image.src);
+      var canvas = document.createElement('canvas');
       
       if($(image_id) === null || $(image_id).nodeName.toLowerCase() !== 'img') {
         // element doesn't exist or isn't an image
@@ -199,11 +198,6 @@ Caman.manip = Caman.prototype = {
       canvas.id = image.id;
       image.parentNode.replaceChild(canvas, image);
       
-      if (proxyURL) {
-        // Image is remote. Reload image via proxy
-        image.src = proxyURL;
-      }
-      
       // Store the canvas ID
       this.canvas_id = image_id;
       
@@ -212,10 +206,7 @@ Caman.manip = Caman.prototype = {
         image: image.src
       };
       
-      // Ugh... Firefox 4 has some timing issues here
-      image.onload = function () {
-        finishInit.call(self, image, canvas, callback);
-      };
+      finishInit.call(self, image, canvas, callback);
       
       return this;
     };
@@ -240,10 +231,32 @@ Caman.manip = Caman.prototype = {
     // Need to see if DOM is loaded
     domLoaded = ($(image_id) !== null);
     if (domLoaded) {
-      startFn.call(this);
+      image = $(image_id);
+      proxyURL = remoteCheck(image.src);
+      
+      if (proxyURL) {
+        // Image is remote. Reload image via proxy
+        image.src = proxyURL;
+        
+        image.onload = function () {
+          startFn.call(self);
+        };
+      } else {
+        startFn.call(this);
+      }
     } else {
       document.addEventListener("DOMContentLoaded", function () {
-        startFn.call(self);
+        image = $(image_id);
+        proxyURL = remoteCheck(image.src);
+        
+        if (proxyURL) {
+          // Image is remote. Reload image via proxy
+          image.src = proxyURL;
+        }
+        
+        image.onload = function () {
+          startFn.call(self);
+        };
       }, false);
     }
     
@@ -263,6 +276,10 @@ Caman.manip = Caman.prototype = {
         throw "Given element ID isn't a canvas: " + canvas_id;
       }
       
+      image.onload = function () {
+        finishInit.call(self, image, canvas, callback);
+      };
+      
       if (proxyURL) {
         image.src = proxyURL;
       } else {
@@ -274,10 +291,6 @@ Caman.manip = Caman.prototype = {
       this.options = {
         canvas: canvas_id,
         image: image.src
-      };
-
-      image.onload = function () {
-        finishInit.call(self, image, canvas, callback);
       };
     };
 
