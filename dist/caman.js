@@ -268,7 +268,13 @@ Caman.manip = Caman.prototype = {
           startFn.call(self);
         };
       } else {
-        startFn.call(this);
+        if (image.complete) {
+          startFn.call(this);
+        } else {
+          image.onload = function () {
+            startFn.call(this);
+          };
+        }
       }
     } else {
       document.addEventListener("DOMContentLoaded", function () {
