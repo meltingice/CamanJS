@@ -159,17 +159,19 @@ var finishInit = function (image, canvas, callback) {
   this.layerStack = [];
   
   var old_height = image.height, old_width = image.width;
-  if (image.style.width || image.style.height) {
-    if (image.style.width) {
-      image.width = parseInt(image.style.width, 10);
+  var new_width = image.dataset.camanwidth || canvas.dataset.camanwidth;
+  var new_height = image.dataset.camanheight || canvas.dataset.camanheight;
+  if (new_width || new_height) {
+    if (new_width) {
+      image.width = parseInt(new_width, 10);
       
-      if (image.style.height) {
-        image.height = parseInt(image.style.height, 10);
+      if (new_height) {
+        image.height = parseInt(new_height, 10);
       } else {
         image.height = image.width * old_height / old_width;
       }
-    } else if (image.style.height) {
-      image.height = parseInt(image.style.height, 10);
+    } else if (new_height) {
+      image.height = parseInt(new_height, 10);
       image.width = image.height * old_width / old_height;
     }
   }
@@ -177,8 +179,8 @@ var finishInit = function (image, canvas, callback) {
   canvas.width = image.width;
   canvas.height = image.height;
   
-  this.canvas = canvas;
-  this.context = canvas.getContext("2d");
+  this.canvas = canvas;  
+  this.context = this.canvas.getContext("2d");
   this.context.drawImage(image, 0, 0, image.width, image.height);
   
   this.image_data = this.context.getImageData(0, 0, image.width, image.height);
@@ -212,6 +214,14 @@ Caman.manip = Caman.prototype = {
       }
 
       canvas.id = image.id;
+      
+      if (image.dataset.camanwidth) {
+        canvas.dataset.camanwidth = image.dataset.camanwidth;
+      }
+      if (image.dataset.camanheight) {
+        canvas.dataset.camanheight = image.dataset.camanheight;
+      }
+      
       image.parentNode.replaceChild(canvas, image);
       
       // Store the canvas ID
@@ -290,13 +300,6 @@ Caman.manip = Caman.prototype = {
       if ($(canvas_id) === null || $(canvas_id).nodeName.toLowerCase() !== 'canvas') {
         // element doesn't exist or isn't a canvas
         throw "Given element ID isn't a canvas: " + canvas_id;
-      }
-      
-      if (canvas.width) {
-        image.width = canvas.width;
-      }
-      if (canvas.height) {
-        image.height = canvas.height;
       }
       
       image.onload = function () {
