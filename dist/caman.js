@@ -272,7 +272,7 @@ Caman.manip = Caman.prototype = {
           startFn.call(this);
         } else {
           image.onload = function () {
-            startFn.call(this);
+            startFn.call(self);
           };
         }
       }
