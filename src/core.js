@@ -159,8 +159,8 @@ var finishInit = function (image, canvas, callback) {
   this.layerStack = [];
   
   var old_height = image.height, old_width = image.width;
-  var new_width = image.dataset.camanwidth || canvas.dataset.camanwidth;
-  var new_height = image.dataset.camanheight || canvas.dataset.camanheight;
+  var new_width = image.getAttribute('data-camanwidth') || canvas.getAttribute('data-camanwidth');
+  var new_height = image.getAttribute('data-camanheight') || canvas.getAttribute('data-camanheight');
   if (new_width || new_height) {
     if (new_width) {
       image.width = parseInt(new_width, 10);
@@ -215,11 +215,11 @@ Caman.manip = Caman.prototype = {
 
       canvas.id = image.id;
       
-      if (image.dataset.camanwidth) {
-        canvas.dataset.camanwidth = image.dataset.camanwidth;
+      if (image.getAttribute('data-camanwidth')) {
+        canvas.setAttribute('data-camanwidth', image.getAttribute('data-camanwidth'));
       }
-      if (image.dataset.camanheight) {
-        canvas.dataset.camanheight = image.dataset.camanheight;
+      if (image.getAttribute('data-camanheight')) {
+        canvas.setAttribute('data-camanheight', image.getAttribute('data-camanheight'));
       }
       
       image.parentNode.replaceChild(canvas, image);
