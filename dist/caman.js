@@ -181,6 +181,7 @@ var finishInit = function (image, canvas, callback) {
   
   this.canvas = canvas;  
   this.context = this.canvas.getContext("2d");
+  
   this.context.drawImage(image, 0, 0, image.width, image.height);
   
   this.image_data = this.context.getImageData(0, 0, image.width, image.height);
@@ -532,6 +533,7 @@ Caman.events  = {
  * KERNEL = traverse the image using convolution kernels
  * LAYER_DEQUEUE = shift a layer off the canvasQueue
  * LAYER_FINISHED = finished processing a layer
+ * LOAD_OVERLAY = load a local/remote image into the layer canvas
  */
 var ProcessType = {
   SINGLE: 1,
@@ -550,10 +552,10 @@ var ProcessType = {
  * Example: to get data about the pixel to the top-right
  * of the currently processing pixel, you can call (within the process
  * function):
- *    this.getPixel(1, -1);
+ *    this.getPixelRelative(1, -1);
  */
-Caman.manip.pixelInfo = function (loc, self) {
-  this.loc = loc;
+Caman.manip.pixelInfo = function (self) {
+  this.loc = 0;
   this.manip = self;
 };
 
@@ -595,7 +597,7 @@ Caman.manip.pixelInfo.prototype.putPixelRelative = function (horiz_offset, vert_
   this.manip.pixel_data[newLoc]   = rgba.r;
   this.manip.pixel_data[newLoc+1] = rgba.g;
   this.manip.pixel_data[newLoc+2] = rgba.b;
-  this.manip.pixel_data[newLoc+3] =  rgba.a;
+  this.manip.pixel_data[newLoc+3] = rgba.a;
 };
     
 Caman.manip.pixelInfo.prototype.getPixel = function (x, y) {
@@ -921,13 +923,16 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
     
     setTimeout(function () {
       var data = {r: 0, g: 0, b: 0, a: 0};
+      var pixelInfo = new self.pixelInfo(self);
+      
       for (var i = start; i < end; i += 4) {
+        pixelInfo.loc = i;
         data.r = self.pixel_data[i];
         data.g = self.pixel_data[i+1];
         data.b = self.pixel_data[i+2];
         data.a = self.pixel_data[i+3];
         
-        res = processFn.call(new self.pixelInfo(i, self), adjust, data);
+        res = processFn.call(pixelInfo, adjust, data);
         
         self.pixel_data[i]   = res.r;
         self.pixel_data[i+1] = res.g;
@@ -963,9 +968,10 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
       end = n - (self.dimensions.width * 4 * ((adjustSize - 1) / 2));
       
       builder = (adjustSize - 1) / 2;
+      pixelInfo = new self.pixelInfo(self);
       
       for (i = start; i < end; i += 4) {
-        pixelInfo = new self.pixelInfo(i, self);
+        pixelInfo.loc = i;
         
         builder_index = 0;
         for (j = -builder; j <= builder; j++) {
