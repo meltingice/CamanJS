@@ -23,15 +23,19 @@ CORE_LIB.forEach(function (file) {
   caman += fs.readFileSync(SRC_DIR + "/" + file + ".js", 'UTF-8') + "\n";
 });
 
-if ( jshint(caman, jshint_opts) ) {
-  console.log("JSHint PASSED - caman.js");
-} else {
-  console.log("JSHint ERROR! - caman.js");
-  jshint.errors.forEach(function (err) {
-    console.log(err.id + " line " + err.line + ": " + err.reason);
-  });
-  
-  console.log('---------------------------------');
+try {
+  if ( jshint(caman, jshint_opts) ) {
+    console.log("JSHint PASSED - caman.js");
+  } else {
+    console.log("JSHint ERROR! - caman.js");
+    jshint.errors.forEach(function (err) {
+      console.log(err.id + " line " + err.line + ": " + err.reason);
+    });
+    
+    console.log('---------------------------------');
+  }
+} catch (e) {
+  console.log("JSHint FAILED: " + e.message);
 }
 
 // Include plugins in the build files

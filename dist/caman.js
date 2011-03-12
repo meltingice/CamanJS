@@ -98,6 +98,7 @@ if (!('console' in window)) {
 
 Caman.ready = false;
 Caman.store = {};
+Caman.plugin = {};
 Caman.renderBlocks = 4;
 
 Caman.remoteProxy = "";
@@ -534,13 +535,15 @@ Caman.events  = {
  * LAYER_DEQUEUE = shift a layer off the canvasQueue
  * LAYER_FINISHED = finished processing a layer
  * LOAD_OVERLAY = load a local/remote image into the layer canvas
+ * PLUGIN = executes a plugin function that isn't pixelwise or kernel
  */
 var ProcessType = {
   SINGLE: 1,
   KERNEL: 2,
   LAYER_DEQUEUE: 3,
   LAYER_FINISHED: 4,
-  LOAD_OVERLAY: 5
+  LOAD_OVERLAY: 5,
+  PLUGIN: 6
 };
 
 /*
@@ -1099,6 +1102,18 @@ Caman.manip.processKernel = function (name, adjust, divisor, bias) {
   return this;
 };
 
+Caman.manip.processPlugin = function (plugin, args) {
+  this.renderQueue.push({type: ProcessType.PLUGIN, plugin: plugin, args: args});
+  return this;
+};
+
+Caman.manip.executePlugin = function (plugin, args) {
+  console.log("Executing plugin: " + plugin);
+  Caman.plugin[plugin].apply(this, args);
+  console.log("Plugin " + plugin + " finished!");
+  this.processNext();
+};
+
 /*
  * Begins the render process if it's not started, or moves to the next
  * filter in the queue and processes it. Calls the finishedFn callback
@@ -1130,6 +1145,8 @@ Caman.manip.processNext = function (finishedFn) {
     this.processNext();
   } else if (next.type == ProcessType.LOAD_OVERLAY) {
     this.loadOverlay(next.layer, next.src);
+  } else if (next.type == ProcessType.PLUGIN) {
+    this.executePlugin(next.plugin, next.args);
   } else {
     this.executeFilter(next.adjust, next.processFn, next.type);
   }
