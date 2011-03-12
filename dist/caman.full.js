@@ -39,6 +39,12 @@ $ = function (id) {
   return document.getElementById(id);
 },
 
+clampRGB = function (value) {
+  if (value > 255) return 255;
+  else if (value < 0) return 0;
+  return value;
+},
+
 Caman = function () {
   if (arguments.length == 1) {
     // 1 argument = init image or retrieve manip object
@@ -739,6 +745,10 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
     };
     
     result = this.blenders[this.options.blendingMode](rgbaLayer, rgbaParent);
+    
+    result.r = clampRGB(result.r);
+    result.g = clampRGB(result.g);
+    result.b = clampRGB(result.b);
     
     parentData[i]   = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)));
     parentData[i+1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)));
@@ -2593,6 +2603,37 @@ Caman.manip.hemingway = function () {
   this.curves('rgb', [0, 10], [120, 90], [180, 200], [235, 255]);
   this.channels({red: 5, green: -2});
   this.exposure(15);
+  
+  return this;
+};
+
+Caman.manip.loveBug = function () {
+  this.greyscale();
+  this.colorize('#005ef7', 30);
+  
+  this.newLayer(function () {
+    this.setBlendingMode('multiply');
+    this.opacity(30);
+    this.copyParent();
+    
+    this.filter.gamma(1.6);
+  });
+  
+  this.contrast(10);
+  
+  this.newLayer(function () {
+    this.setBlendingMode('exclusion');
+    this.opacity(40);
+    this.copyParent();
+    
+    this.filter.gamma(1.4);    
+    this.filter.colorize('#ff00d0', 50);
+    this.filter.vignette("50%", 40);
+    this.filter.stackBlur(3);
+  });
+  
+  this.exposure(15);
+  this.vignette("40%", 20);
   
   return this;
 };
