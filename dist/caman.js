@@ -39,6 +39,12 @@ $ = function (id) {
   return document.getElementById(id);
 },
 
+clampRGB = function (value) {
+  if (value > 255) return 255;
+  else if (value < 0) return 0;
+  return value;
+},
+
 Caman = function () {
   if (arguments.length == 1) {
     // 1 argument = init image or retrieve manip object
@@ -739,6 +745,10 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
     };
     
     result = this.blenders[this.options.blendingMode](rgbaLayer, rgbaParent);
+    
+    result.r = clampRGB(result.r);
+    result.g = clampRGB(result.g);
+    result.b = clampRGB(result.b);
     
     parentData[i]   = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)));
     parentData[i+1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)));
