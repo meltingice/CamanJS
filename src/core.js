@@ -572,7 +572,7 @@ Caman.manip.pixelInfo.prototype.locationXY = function () {
   var x, y;
   
   y = this.manip.dimensions.height - Math.floor(this.loc / (this.manip.dimensions.width * 4));
-  x = ((this.loc % (this.manip.dimensions.width * 4)) / 4) - 1;
+  x = ((this.loc % (this.manip.dimensions.width * 4)) / 4);
   
   return {x: x, y: y};
 };

@@ -572,7 +572,7 @@ Caman.manip.pixelInfo.prototype.locationXY = function () {
   var x, y;
   
   y = this.manip.dimensions.height - Math.floor(this.loc / (this.manip.dimensions.width * 4));
-  x = ((this.loc % (this.manip.dimensions.width * 4)) / 4) - 1;
+  x = ((this.loc % (this.manip.dimensions.width * 4)) / 4);
   
   return {x: x, y: y};
 };
@@ -1665,6 +1665,10 @@ Caman.extend(Caman, {
     }
     
     return bezier;
+  },
+  
+  distance: function (x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
 });
 
