@@ -32,7 +32,7 @@ git submodule update
 The NodeJS powered Makefile for the project will automatically check to make sure you've initialized the submodules, and if you haven't, will do so for you. Simply run:
 
 <pre>
-node Makefile.js
+make
 </pre>
 
 <h2>CDN JS Hosting</h2>
