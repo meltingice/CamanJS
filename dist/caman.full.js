@@ -2412,12 +2412,15 @@ if (!Caman && typeof exports == "object") {
         radialDist = Caman.distance(loc.x, loc.y, opts.corners[0].x, opts.corners[0].y);
         amt = (radialDist - opts.cornerRadius) / opts.maxDist;
       } else if (loc.x >= opts.corners[1].x && loc.y >= opts.corners[1].y) {
+        // top-right corner
         radialDist = Caman.distance(loc.x, loc.y, opts.corners[1].x, opts.corners[1].y);
         amt = (radialDist - opts.cornerRadius) / opts.maxDist;
       } else if (loc.x >= opts.corners[2].x && loc.y <= opts.corners[2].y) {
+        // bottom-right corner
         radialDist = Caman.distance(loc.x, loc.y, opts.corners[2].x, opts.corners[2].y);
         amt = (radialDist - opts.cornerRadius) / opts.maxDist;
       } else if (loc.x <= opts.corners[3].x && loc.y <= opts.corners[3].y) {
+        // bottom-left corner
         radialDist = Caman.distance(loc.x, loc.y, opts.corners[3].x, opts.corners[3].y);
         amt = (radialDist - opts.cornerRadius) / opts.maxDist;
       }
@@ -2788,6 +2791,27 @@ OTHER DEALINGS IN THE SOFTWARE.
 
     opts.angle *= Math.PI / 180;
     var gradient = getLinearGradientMap(this.dimensions.width, this.dimensions.height, opts.center.x, opts.center.y, opts.angle, opts.focusWidth, true);
+    return this.processPlugin("compoundBlur", [gradient, opts.startRadius, opts.radiusFactor, opts.steps]);
+  };
+  
+  Caman.manip.vignetteBlur = function (opts) {
+    var self = this;
+    var defaults = {
+      size: 50,
+      center: {x: self.dimensions.width / 2, y: self.dimensions.height / 2},
+      startRadius: 3,
+      radiusFactor: 1.5,
+      steps: 3
+    };
+    
+    opts = Caman.extend(defaults, opts);
+    
+    var max = (this.dimensions.width < this.dimensions.height) ? this.dimensions.height : this.dimensions.width;
+    var radius1 = (max / 2) - opts.size;
+    var radius2 = (max / 2);
+    
+    console.log(radius1, radius2);
+    var gradient = getRadialGradientMap(this.dimensions.width, this.dimensions.height, opts.center.x, opts.center.y, radius1, radius2);
     return this.processPlugin("compoundBlur", [gradient, opts.startRadius, opts.radiusFactor, opts.steps]);
   };
 
