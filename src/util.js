@@ -1,8 +1,95 @@
-/*!
- * These are all of the utility functions used in CamanJS
+/*
+ * Utility functions that help out in various areas of CamanJS.
  */
  
 (function (Caman) {
+
+var forEach = Array.prototype.forEach,
+hasOwn = Object.prototype.hasOwnProperty,
+slice = Array.prototype.slice;
+
+Caman.plugin = {};
+
+/*
+ * Utility forEach function for iterating over
+ * objects/arrays.
+ */
+Caman.forEach = function( obj, fn, context ) {
+  
+  if ( !obj || !fn ) {
+    return {};
+  }
+  
+  context = context || this;
+  // Use native whenever possible
+  if ( forEach && obj.forEach === forEach ) {
+    return obj.forEach(fn, context);
+  } 
+
+  for ( var key in obj ) {
+    if ( hasOwn.call(obj, key) ) {
+      fn.call(context, obj[key], key, obj);
+    } 
+  }        
+
+  return obj;
+};
+
+/*
+ * Used for extending the Caman object, primarily to
+ * add new functionality to the base library.
+ */
+Caman.extend = function( obj ) {
+  var dest = obj, src = slice.call(arguments, 1);
+
+
+  Caman.forEach( src, function( copy ) {
+    for ( var prop in copy ) {
+      dest[prop] = copy[prop];
+    }
+  });
+  return dest;      
+};
+
+Caman.clampRGB = function (value) {
+  if (value > 255) return 255;
+  else if (value < 0) return 0;
+  return value;
+};
+
+/*
+ * Here we define the proxies that ship with CamanJS for easy
+ * usage.
+ */
+Caman.useProxy = function (lang) {
+  // define cases where file extensions don't match the language name
+  var langToExt = {
+    ruby: 'rb',
+    python: 'py',
+    perl: 'pl'
+  };
+  
+  lang = langToExt[lang.toLowerCase()] || lang.toLowerCase();
+  
+  return "proxies/caman_proxy." + lang;
+};
+
+/*
+ * Unique ID generator. Guaranteed to always generate a new ID.
+ */
+Caman.uniqid = (function () {
+  var id = 0;
+  
+  return {
+    get: function () {
+      return id++;
+    },
+    
+    reset: function () {
+      id = 0;
+    }
+  };
+}());
 
 Caman.extend(Caman, {
   /*
@@ -38,24 +125,6 @@ Caman.extend(Caman, {
       }
     }
     return true;
-  },
-  
-  isRemote: function (url) {
-    var domain_regex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/,
-    test_domain;
-    
-    if (!url || !url.length) {
-      return;
-    }
-    
-    var matches = url.match(domain_regex);
-    if (matches) {
-      test_domain = matches[1];
-
-      return test_domain != document.domain;
-    } else {
-      return false;
-    }
   },
   
   /*
@@ -497,6 +566,10 @@ Caman.extend(Caman, {
     }
     
     return bezier;
+  },
+  
+  distance: function (x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
 });
 
