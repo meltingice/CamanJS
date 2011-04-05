@@ -27,6 +27,8 @@ git submodule init
 git submodule update
 </pre>
 
+The library is split up into several source files and has a separate submodule for plugins. The reason behind this organization is to make it as simple as possible to support the NodeJS port of Caman. This also helps to avoid library bloat.
+
 <b>Makefile</b>
 
 The NodeJS powered Makefile for the project will automatically check to make sure you've initialized the submodules, and if you haven't, will do so for you. Simply run:
@@ -40,6 +42,10 @@ CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is 
 
 <h2>NodeJS Compatibility</h2>
 There is now a version of CamanJS that is made to work with NodeJS.  It has all of the functionality of the normal browser version, including plugins.  Take a look at the <a href="https://github.com/meltingice/CamanJS/tree/node">node branch</a> for more information.
+
+**tl;dr**
+
+	npm install caman
 
 <h1>Testing</h1>
 CamanJS has both QUnit unit testing and a custom benchmarking page to monitor render times on a per-filter basis.  Simply open test/index.html for the QUnit tests, and test/benchmark.html for the benchmarking tests.
