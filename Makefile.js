@@ -4,6 +4,7 @@ var fs = require('fs'),
 exec = require('child_process').exec,
 jsmin = require('./build/jsmin').jsmin,
 jshint = require('./build/jshint').JSHINT,
+packer,
 
 BUILD_DIR   = 'build',
 DIST_DIR    = 'dist',
@@ -23,6 +24,11 @@ CORE_LIB = [
 ],
 
 jshint_opts = {devel: true, forin: true, undef: true, browser: true};
+
+try {
+	// packer optional
+	packer = require('packer');
+} catch (e) {}
 
 // First lets jsmin the caman.js source file to get
 // things rolling.
@@ -95,13 +101,20 @@ function finish() {
     fs.mkdirSync(DIST_DIR, 0775);
   }
   
-  // Without plugins
+  // With and without plugins
+  console.log("Saving unminified code");
   fs.writeFileSync(DIST_DIR + '/caman.js', caman);
-  fs.writeFileSync(DIST_DIR + '/caman.min.js', jsmin(caman));
-  
-  // With plugins
   fs.writeFileSync(DIST_DIR + '/caman.full.js', caman + plugins);
+  
+  console.log("Saving minified code");
+  fs.writeFileSync(DIST_DIR + '/caman.min.js', jsmin(caman));
   fs.writeFileSync(DIST_DIR + '/caman.full.min.js', jsmin(caman + plugins));
+  
+  if (packer) {
+  	console.log("Saving packed code");
+  	fs.writeFileSync(DIST_DIR + '/caman.pack.js', packer.pack(caman, true));
+	  fs.writeFileSync(DIST_DIR + '/caman.full.pack.js', packer.pack(caman + plugins, true));
+  }
   
   console.log("\nFinished!");
 }
