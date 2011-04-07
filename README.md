@@ -38,7 +38,7 @@ make
 </pre>
 
 <h2>CDN JS Hosting</h2>
-CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from <a href="http://ajax.cdnjs.com/ajax/libs/camanjs/2.1.3/caman.full.min.js">this URL</a> for usage on your site.
+CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from <a href="http://ajax.cdnjs.com/ajax/libs/camanjs/2.2/caman.full.min.js">this URL</a> for usage on your site.
 
 <h2>NodeJS Compatibility</h2>
 There is now a version of CamanJS that is made to work with NodeJS.  It has all of the functionality of the normal browser version, including plugins.  Take a look at the <a href="https://github.com/meltingice/CamanJS/tree/node">node branch</a> for more information.
