@@ -136,7 +136,6 @@ Caman.extend( Caman, {
  */
 Caman.manip.executeFilter = function (adjust, processFn, type) {
   var n = this.pixel_data.length,
-  res = null,
   
   // (n/4) == # of pixels in image
   // Give remaining pixels to last block in case it doesn't
@@ -182,31 +181,32 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
   render_block = function (bnum, start, end) {
     console.log("BLOCK #" + bnum + " - Filter: " + processFn.name + ", Start: " + start + ", End: " + end);
     
-    setTimeout(function () {
+    var renderFunc = function () {
       var data = {r: 0, g: 0, b: 0, a: 0};
-      var pixelInfo = new self.pixelInfo(self);
+      var pixelInfo = new this.pixelInfo(self);
+      var res;
       
       for (var i = start; i < end; i += 4) {
         pixelInfo.loc = i;
-        data.r = self.pixel_data[i];
-        data.g = self.pixel_data[i+1];
-        data.b = self.pixel_data[i+2];
-        data.a = self.pixel_data[i+3];
+        data.r = this.pixel_data[i];
+        data.g = this.pixel_data[i+1];
+        data.b = this.pixel_data[i+2];
         
         res = processFn.call(pixelInfo, adjust, data);
         
-        self.pixel_data[i]   = res.r;
-        self.pixel_data[i+1] = res.g;
-        self.pixel_data[i+2] = res.b;
-        self.pixel_data[i+3] = res.a;
+        this.pixel_data[i]   = res.r;
+        this.pixel_data[i+1] = res.g;
+        this.pixel_data[i+2] = res.b;
       }
       
       block_finished(bnum);
-    }, 0);
+    }.bind(this);
+    
+    setTimeout(renderFunc, 0);
   },
   
   render_kernel = function () {
-    setTimeout(function () {
+    var renderFunc = function () {
       var kernel = [],
       pixelInfo, pixel,
       start, end, 
@@ -216,7 +216,7 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
       divisor = adjust.divisor,
       adjustSize,
       builder, builder_index,
-      i, j, k;
+      i, j, k, res;
       
       adjust = adjust.adjust;
       adjustSize = Math.sqrt(adjust.length);
@@ -265,7 +265,9 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
       
       block_finished(-1);
       
-    }, 0);
+    }.bind(this);
+    
+    setTimeout(renderFunc, 0);
   };
   
   Caman.trigger("processStart", {id: this.canvas_id, start: processFn.name});
@@ -275,10 +277,10 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
     for (var j = 0; j < Caman.renderBlocks; j++) {
      var start = j * blockN,
      end = start + ((j == Caman.renderBlocks - 1) ? lastBlockN : blockN);
-     render_block(j, start, end);
+     render_block.call(this, j, start, end);
     }
   } else {
-    render_kernel();
+    render_kernel.call(this);
   }
 };
 

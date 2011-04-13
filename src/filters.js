@@ -20,7 +20,6 @@
       rgba.r = color.r;
       rgba.g = color.g;
       rgba.b = color.b;
-      rgba.a = 255;
       
       return rgba;
     });
@@ -184,7 +183,7 @@
       
       rgb = Caman.hsv_to_rgb(hsv.h, hsv.s, hsv.v);
       
-      return {r: rgb.r, g: rgb.g, b: rgb.b, a: rgba.a};
+      return {r: rgb.r, g: rgb.g, b: rgb.b};
     });
   };
   
