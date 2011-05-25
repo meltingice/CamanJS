@@ -1,4 +1,4 @@
-<?
+<?php
 // Set this to true if you want to be able to load images from a url that doesn't
 // end in an image file extension. E.g. through another proxy of kinds.
 define('ALLOW_NO_EXT', false);
