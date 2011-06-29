@@ -2,7 +2,8 @@
  * Below are all of the built-in filters that are a part
  * of the CamanJS core library.
  */
- 
+
+/*global Caman: true */ 
 (function(Caman) {
   Caman.manip.fillColor = function () {
     var color;

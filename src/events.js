@@ -3,7 +3,8 @@
  * Events can be subscribed to using Caman.listen() and events
  * can be triggered using Caman.trigger().
  */
- 
+
+/*global Caman: true */ 
 (function (Caman) {
 
 Caman.events  = {

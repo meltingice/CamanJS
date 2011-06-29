@@ -3,7 +3,8 @@
  * pixel-wise filters, and plugins. All of the actual pixel/image
  * manipulation is executed here when render() is called.
  */
- 
+
+/*global Caman: true */
 (function (Caman) {
 
 Caman.renderBlocks = 4;

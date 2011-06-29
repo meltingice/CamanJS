@@ -27,7 +27,8 @@
  * Responsible for loading CamanJS and setting everything up.
  * The Caman() function is defined here.
  */
- 
+
+/*global Caman: true */ 
 (function () {
 
 if (!('console' in window)) {
@@ -353,7 +354,8 @@ window.Caman = Caman;
 /*
  * Utility functions that help out in various areas of CamanJS.
  */
- 
+
+/*global Caman: true */
 (function (Caman) {
 
 var forEach = Array.prototype.forEach,
@@ -415,12 +417,14 @@ Caman.forEach = function( obj, fn, context ) {
 Caman.extend = function( obj ) {
   var dest = obj, src = slice.call(arguments, 1);
 
-
   Caman.forEach( src, function( copy ) {
     for ( var prop in copy ) {
-      dest[prop] = copy[prop];
+      if (copy.hasOwnProperty(prop)) {
+        dest[prop] = copy[prop];
+      }
     }
   });
+  
   return dest;      
 };
 
@@ -474,7 +478,9 @@ Caman.extend(Caman, {
         prop;
     
     for ( prop in obj  ) {
-      size++;
+      if (obj.hasOwnProperty(prop)) {
+        size++;
+      }
     }
             
     return size;
@@ -951,7 +957,8 @@ Caman.extend(Caman, {
  * Input/output functions for CamanJS. Mostly deal with
  * saving images, converting them to base64, and so on.
  */
- 
+
+/*global Caman: true */ 
 (function (Caman) {
 
 Caman.remoteProxy = "";
@@ -1009,7 +1016,8 @@ Caman.extend(Caman.manip, {
  * Events can be subscribed to using Caman.listen() and events
  * can be triggered using Caman.trigger().
  */
- 
+
+/*global Caman: true */ 
 (function (Caman) {
 
 Caman.events  = {
@@ -1076,7 +1084,8 @@ Caman.forEach( ["trigger", "listen"], function ( key ) {
  * to any arbitrary pixel in the image, as well as information about
  * the current pixel in the loop.
  */
- 
+
+/*global Caman: true */ 
 (function (Caman) {
 
 /*
@@ -1162,7 +1171,8 @@ Caman.manip.pixelInfo.prototype.putPixel = function (x, y, rgba) {
  * pixel-wise filters, and plugins. All of the actual pixel/image
  * manipulation is executed here when render() is called.
  */
- 
+
+/*global Caman: true */
 (function (Caman) {
 
 Caman.renderBlocks = 4;
@@ -1466,7 +1476,8 @@ Caman.extend(Caman.manip, {
  * of blending functions, similar to what you would find in Photoshop
  * or GIMP.
  */
- 
+
+/*global Caman: true */
 (function (Caman) {
 
 Caman.manip.loadOverlay = function (layer, src) {
@@ -1747,7 +1758,8 @@ Caman.manip.applyCurrentLayer = function () {
  * Below are all of the built-in filters that are a part
  * of the CamanJS core library.
  */
- 
+
+/*global Caman: true */ 
 (function(Caman) {
   Caman.manip.fillColor = function () {
     var color;
