@@ -4,7 +4,8 @@
  * to any arbitrary pixel in the image, as well as information about
  * the current pixel in the loop.
  */
- 
+
+/*global Caman: true */ 
 (function (Caman) {
 
 /*

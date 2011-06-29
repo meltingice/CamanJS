@@ -1,0 +1,8 @@
+{
+  "JSHINT_OPTS": { "devel": true, "forin": true, "undef": true, "browser": true },
+  "JAVASCRIPT": {
+    "DIST_DIR": "./dist",
+    "caman": [ "./src/header.js", "./src/loader.js", "./src/util.js", "./src/io.js", "./src/events.js", "./src/pixelInfo.js", "./src/render.js", "./src/layers.js", "./src/filters.js" ],
+    "caman.full": [ "./src/header.js", "./src/loader.js", "./src/util.js", "./src/io.js", "./src/events.js", "./src/pixelInfo.js", "./src/render.js", "./src/layers.js", "./src/filters.js", "./src/plugins/plugins.js" ]
+  }
+}

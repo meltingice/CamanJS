@@ -2,7 +2,8 @@
  * Responsible for loading CamanJS and setting everything up.
  * The Caman() function is defined here.
  */
- 
+
+/*global Caman: true */ 
 (function () {
 
 if (!('console' in window)) {

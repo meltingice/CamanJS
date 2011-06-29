@@ -4,7 +4,8 @@
  * of blending functions, similar to what you would find in Photoshop
  * or GIMP.
  */
- 
+
+/*global Caman: true */
 (function (Caman) {
 
 Caman.manip.loadOverlay = function (layer, src) {

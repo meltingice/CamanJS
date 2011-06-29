@@ -2,7 +2,8 @@
  * Input/output functions for CamanJS. Mostly deal with
  * saving images, converting them to base64, and so on.
  */
- 
+
+/*global Caman: true */ 
 (function (Caman) {
 
 Caman.remoteProxy = "";

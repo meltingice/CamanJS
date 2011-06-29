@@ -1,7 +1,8 @@
 /*
  * Utility functions that help out in various areas of CamanJS.
  */
- 
+
+/*global Caman: true */
 (function (Caman) {
 
 var forEach = Array.prototype.forEach,
@@ -63,12 +64,14 @@ Caman.forEach = function( obj, fn, context ) {
 Caman.extend = function( obj ) {
   var dest = obj, src = slice.call(arguments, 1);
 
-
   Caman.forEach( src, function( copy ) {
     for ( var prop in copy ) {
-      dest[prop] = copy[prop];
+      if (copy.hasOwnProperty(prop)) {
+        dest[prop] = copy[prop];
+      }
     }
   });
+  
   return dest;      
 };
 
@@ -122,7 +125,9 @@ Caman.extend(Caman, {
         prop;
     
     for ( prop in obj  ) {
-      size++;
+      if (obj.hasOwnProperty(prop)) {
+        size++;
+      }
     }
             
     return size;
