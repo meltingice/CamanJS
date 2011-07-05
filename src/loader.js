@@ -63,6 +63,11 @@ var Caman = function () {
   }
 };
 
+Caman.version = {
+	release: "2.3",
+	date: "7-5-2011"
+};
+
 var finishInit = function (image, canvas, callback) {
   var self = this;
   

@@ -2,7 +2,7 @@
  * CamanJS - Pure HTML5 Javascript (Ca)nvas (Man)ipulation
  * http://camanjs.com/
  *
- * Version 2.2
+ * Version 2.3
  *
  * Copyright 2011, Ryan LeFevre
  * Licensed under the new BSD License.
@@ -11,7 +11,7 @@
  * Project Contributors:
  *   Ryan LeFevre - Lead Developer and Project Maintainer
  *    Twitter: @meltingice
- *    GitHUb: http://github.com/meltingice
+ *    GitHub: http://github.com/meltingice
  *
  *   Rick Waldron - Plugin Architect and Developer
  *    Twitter: @rwaldron
@@ -86,6 +86,11 @@ var Caman = function () {
       
     }
   }
+};
+
+Caman.version = {
+	release: "2.3",
+	date: "7-5-2011"
 };
 
 var finishInit = function (image, canvas, callback) {
@@ -384,6 +389,10 @@ if ( !Function.prototype.bind ) {
     return bound;
   };
 }
+
+Caman.toString = Caman.manip.toString = function () {
+	return "Version " + Caman.version.release + ", Released " + Caman.version.date;
+};
 
 /*
  * Utility forEach function for iterating over
