@@ -33,11 +33,15 @@ The library is split up into several source files and has a separate submodule f
 
 **Makefile**
 
-The NodeJS powered Makefile for the project will automatically check to make sure you've initialized the submodules, and if you haven't, will do so for you. Simply run:
+The NodeJS powered Makefile for the project will automatically check to make sure you've initialized the submodules, and if you haven't, will do so for you. Running the Makefile requires smoosh (available in npm).
+
+To build, simply run:
 
 ```
 make
 ```
+
+The resulting files will be placed in the dist/ folder.
 
 ## CDN JS Hosting
 CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from <a href="http://ajax.cdnjs.com/ajax/libs/camanjs/2.2/caman.full.min.js">this URL</a> for usage on your site.

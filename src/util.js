@@ -32,6 +32,10 @@ if ( !Function.prototype.bind ) {
   };
 }
 
+Caman.toString = Caman.manip.toString = function () {
+	return "Version " + Caman.version.release + ", Released " + Caman.version.date;
+};
+
 /*
  * Utility forEach function for iterating over
  * objects/arrays.
