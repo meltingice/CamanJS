@@ -75,6 +75,12 @@ Caman.extend = function( obj ) {
   return dest;      
 };
 
+/*
+ * Clamps an RGB value between 0 and 255. This is necessary
+ * to run on all updated pixel values in order to conform to
+ * the spec (which says that values < 0 or > 255 will be modulo'd
+ * instead of clamped.
+ */
 Caman.clampRGB = function (value) {
   if (value > 255) return 255;
   else if (value < 0) return 0;

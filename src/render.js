@@ -195,9 +195,9 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
         
         res = processFn.call(pixelInfo, adjust, data);
         
-        this.pixel_data[i]   = res.r;
-        this.pixel_data[i+1] = res.g;
-        this.pixel_data[i+2] = res.b;
+        this.pixel_data[i]   = Caman.clampRGB(res.r);
+        this.pixel_data[i+1] = Caman.clampRGB(res.g);
+        this.pixel_data[i+2] = Caman.clampRGB(res.b);
       }
       
       block_finished(bnum);
@@ -252,9 +252,9 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
 
         // Update the new pixel array since we can't modify the original
         // until the convolutions are finished on the entire image.
-        mod_pixel_data[i]   = res.r;
-        mod_pixel_data[i+1] = res.g;
-        mod_pixel_data[i+2] = res.b;
+        mod_pixel_data[i]   = Caman.clampRGB(res.r);
+        mod_pixel_data[i+1] = Caman.clampRGB(res.g);
+        mod_pixel_data[i+2] = Caman.clampRGB(res.b);
         mod_pixel_data[i+3] = 255;
       }
 
