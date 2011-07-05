@@ -428,6 +428,12 @@ Caman.extend = function( obj ) {
   return dest;      
 };
 
+/*
+ * Clamps an RGB value between 0 and 255. This is necessary
+ * to run on all updated pixel values in order to conform to
+ * the spec (which says that values < 0 or > 255 will be modulo'd
+ * instead of clamped.
+ */
 Caman.clampRGB = function (value) {
   if (value > 255) return 255;
   else if (value < 0) return 0;
@@ -1363,9 +1369,9 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
         
         res = processFn.call(pixelInfo, adjust, data);
         
-        this.pixel_data[i]   = res.r;
-        this.pixel_data[i+1] = res.g;
-        this.pixel_data[i+2] = res.b;
+        this.pixel_data[i]   = Caman.clampRGB(res.r);
+        this.pixel_data[i+1] = Caman.clampRGB(res.g);
+        this.pixel_data[i+2] = Caman.clampRGB(res.b);
       }
       
       block_finished(bnum);
@@ -1420,9 +1426,9 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
 
         // Update the new pixel array since we can't modify the original
         // until the convolutions are finished on the entire image.
-        mod_pixel_data[i]   = res.r;
-        mod_pixel_data[i+1] = res.g;
-        mod_pixel_data[i+2] = res.b;
+        mod_pixel_data[i]   = Caman.clampRGB(res.r);
+        mod_pixel_data[i+1] = Caman.clampRGB(res.g);
+        mod_pixel_data[i+2] = Caman.clampRGB(res.b);
         mod_pixel_data[i+3] = 255;
       }
 
