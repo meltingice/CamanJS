@@ -63,7 +63,13 @@ var Caman = function () {
       if (typeof arguments[1] === 'function') {
         
         // Not initialized; load Caman into image then invoke callback and return manip
-        return new Caman.manip.loadImage(arguments[0], arguments[1]);
+        var tag = Caman.$(arguments[0]).nodeName.toLowerCase();
+        if (tag == "img") {
+          return new Caman.manip.loadImage(arguments[0], arguments[1]);
+        } else if (tag == "canvas") {
+          // Initialize on a canvas without an image
+          return new Caman.manip.loadCanvas(null, arguments[0], arguments[1]);
+        }
         
       } else if (typeof arguments[1] === 'string') {
         
@@ -89,8 +95,8 @@ var Caman = function () {
 };
 
 Caman.version = {
-	release: "2.3",
-	date: "7-5-2011"
+  release: "2.3",
+  date: "7-5-2011"
 };
 
 var finishInit = function (image, canvas, callback) {
@@ -99,42 +105,43 @@ var finishInit = function (image, canvas, callback) {
   // Used for saving pixel layers
   this.pixelStack = [];
   this.layerStack = [];
-  
-  var old_height = image.height, old_width = image.width;
-  var new_width = image.getAttribute('data-camanwidth') || canvas.getAttribute('data-camanwidth');
-  var new_height = image.getAttribute('data-camanheight') || canvas.getAttribute('data-camanheight');
-  if (new_width || new_height) {
-    if (new_width) {
-      image.width = parseInt(new_width, 10);
-      
-      if (new_height) {
-        image.height = parseInt(new_height, 10);
-      } else {
-        image.height = image.width * old_height / old_width;
-      }
-    } else if (new_height) {
-      image.height = parseInt(new_height, 10);
-      image.width = image.height * old_width / old_height;
-    }
-  }
-  
-  canvas.width = image.width;
-  canvas.height = image.height;
+  this.renderQueue = [];
   
   this.canvas = canvas;  
   this.context = this.canvas.getContext("2d");
   
-  this.context.drawImage(image, 0, 0, image.width, image.height);
+  if (image !== null) {
+    var old_height = image.height, old_width = image.width;
+    var new_width = image.getAttribute('data-camanwidth') || canvas.getAttribute('data-camanwidth');
+    var new_height = image.getAttribute('data-camanheight') || canvas.getAttribute('data-camanheight');
+    if (new_width || new_height) {
+      if (new_width) {
+        image.width = parseInt(new_width, 10);
+        
+        if (new_height) {
+          image.height = parseInt(new_height, 10);
+        } else {
+          image.height = image.width * old_height / old_width;
+        }
+      } else if (new_height) {
+        image.height = parseInt(new_height, 10);
+        image.width = image.height * old_width / old_height;
+      }
+    }
+   
+    canvas.width = image.width;
+    canvas.height = image.height;
+    
+    this.context.drawImage(image, 0, 0, image.width, image.height); 
+  }
   
-  this.image_data = this.context.getImageData(0, 0, image.width, image.height);
+  this.image_data = this.context.getImageData(0, 0, canvas.width, canvas.height);
   this.pixel_data = this.image_data.data;
-  
+
   this.dimensions = {
-    width: image.width, 
-    height: image.height
+    width: canvas.width,
+    height: canvas.height
   };
-  
-  this.renderQueue = [];
   
   Caman.store[this.canvas_id] = this;
   
@@ -251,14 +258,18 @@ Caman.manip = Caman.prototype = {
         throw "Given element ID isn't a canvas: " + canvas_id;
       }
       
-      image.onload = function () {
-        finishInit.call(self, image, canvas, callback);
-      };
-      
-      if (proxyURL) {
-        image.src = proxyURL;
+      if (url === null) {
+        finishInit.call(self, null, canvas, callback);
       } else {
-        image.src = url;
+          image.onload = function () {
+          finishInit.call(self, image, canvas, callback);
+        };
+        
+        if (proxyURL) {
+          image.src = proxyURL;
+        } else {
+          image.src = url;
+        }
       }
       
       this.canvas_id = canvas_id;
