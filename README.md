@@ -12,8 +12,8 @@ For more information, I highly recommend taking a look at the <a href="http://ca
 
 ```js
 Caman("#image-id", function () {
-  this.brightness(10)
-  this.contrast(20)
+  this.brightness(10);
+  this.contrast(20);
   this.render(function () {
     alert("Done!");
   });
