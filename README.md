@@ -8,6 +8,18 @@ CamanJS is very easy to extend with new filters and plugins, and it comes with a
 
 For more information, I highly recommend taking a look at the <a href="http://camanjs.com">official website</a> where there is more comprehensive documentation and interactive demos. You can also <a href="https://github.com/meltingice/CamanJS/wiki">read the wiki</a> for some basic information about the project and how to use it.
 
+## Example Usage
+
+```js
+Caman("#image-id", function () {
+  this.brightness(10)
+  this.contrast(20)
+  this.render(function () {
+    alert("Done!");
+  });
+});
+```
+
 ## Cloning the Project
 
 CamanJS uses git submodules in order to organize things a bit better. Because of this, you have a few options in making sure you get all the required files.
