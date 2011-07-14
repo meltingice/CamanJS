@@ -22,15 +22,31 @@
  *    GitHub: http://github.com/cezarsa
  */
  
+ // Nothing to see here, move along now...
+ 
 /*global Caman: true */
-/*
- * Responsible for loading CamanJS and setting everything up.
- * The Caman() function is defined here.
- */
+// This is actually where the Caman object is defined, and is where the Caman initialization code resides. 
+// There are many different initialization for Caman, which are described on the 
+// [Basic Usage](http://camanjs.com/docs) page.
+//
+// Initialization is tricky because we need to make sure everything we need is actually fully loaded in the 
+// DOM before proceeding. When initialized on an image, we need to make sure that the image is done loading 
+// before converting it to a canvas element and writing the pixel data. If we do this prematurely, the browser
+// will throw a DOM Error, and chaos will ensue. In the event that we initialize Caman on a canvas element 
+// while specifying an image URL, we need to create a new image element, load the image, then continue with 
+// initialization.
+//
+// The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. This is also
+// why this piece of code is a bit lengthy. Once everything is loaded, and Caman is initialized, the callback 
+// function is fired.
+//
+//�There are also a few utility functions in this file that are used throughout the Caman source. Caman.$ is a 
+// simple helper for retrieving DOM nodes by ID. There are also a few functions for handling and detecting remote images.
 
 /*global Caman: true */ 
 (function () {
 
+// Ensure compatibility for browsers without JS debugging consoles
 if (!('console' in window)) {
   window.console = {
     log: function () {},
@@ -39,6 +55,7 @@ if (!('console' in window)) {
   };
 }
 
+// Here it begins. Caman is defined.
 var Caman = function () {
   if (arguments.length == 1) {
     // 1 argument = init image or retrieve manip object
@@ -94,23 +111,32 @@ var Caman = function () {
   }
 };
 
+// Simple version information
 Caman.version = {
   release: "2.3",
   date: "7-5-2011"
 };
 
+// Private function for finishing Caman initialization
 var finishInit = function (image, canvas, callback) {
   var self = this;
   
   // Used for saving pixel layers
   this.pixelStack = [];
+  
+  // Stores all of the layers waiting to be rendered
   this.layerStack = [];
+  
+  // Stores all of the render operatives for the renderer
   this.renderQueue = [];
   
+  // Store a reference to the canvas element
   this.canvas = canvas;  
   this.context = this.canvas.getContext("2d");
   
   if (image !== null) {
+    // If we are initializing with an image, we inspect the HTML5 data elements camanwidth and camanheight
+    // to see if we need to scale the canvas at all.
     var old_height = image.height, old_width = image.width;
     var new_width = image.getAttribute('data-camanwidth') || canvas.getAttribute('data-camanwidth');
     var new_height = image.getAttribute('data-camanheight') || canvas.getAttribute('data-camanheight');
@@ -128,29 +154,37 @@ var finishInit = function (image, canvas, callback) {
         image.width = image.height * old_width / old_height;
       }
     }
-   
+    
+    // Update the canvas sizes to match the image sizes
     canvas.width = image.width;
     canvas.height = image.height;
     
+    // Draw the image onto the canvas
     this.context.drawImage(image, 0, 0, image.width, image.height); 
   }
   
+  // Get and store references to the image data and pixel array
   this.image_data = this.context.getImageData(0, 0, canvas.width, canvas.height);
   this.pixel_data = this.image_data.data;
 
+  // Store a simple reference to the canvas dimensions, which really comes in handy with some filters
   this.dimensions = {
     width: canvas.width,
     height: canvas.height
   };
   
+  // Store a long-living reference to the Caman object that can be found in a global scope.
   Caman.store[this.canvas_id] = this;
   
+  // Execute the user's callback function to begin defining transformations
   callback.call(this, this);
   
   return this;
 };
 
 Caman.manip = Caman.prototype = {
+
+  // Used for loading Caman onto an image element
   loadImage: function (image_id, callback) {
     var domLoaded,
     self = this,
@@ -196,17 +230,20 @@ Caman.manip = Caman.prototype = {
       // DOM node
       var element = image_id;
       
+      // If the image has an ID, use it
       if (image_id.id) {
         image_id = element.id;
       } else {
+        // Otherwise, generate a unique ID for the image
         image_id = "caman-" + Caman.uniqid.get();
         element.id = image_id;
       }
     }
 
-    // Need to see if DOM is loaded
+    // Need to see if DOM is loaded already
     domLoaded = (Caman.$(image_id) !== null);
     if (domLoaded) {
+      // DOM loaded, proceed immediately
       image = Caman.$(image_id);
       proxyURL = Caman.remoteCheck(image.src);
       
@@ -227,6 +264,7 @@ Caman.manip = Caman.prototype = {
         }
       }
     } else {
+      // If it's not, wait for the DOM to load before continuing to prevent errors
       document.addEventListener("DOMContentLoaded", function () {
         image = Caman.$(image_id);
         proxyURL = Caman.remoteCheck(image.src);
@@ -245,6 +283,7 @@ Caman.manip = Caman.prototype = {
     return this;
   },
   
+  // Used for initializing Caman onto a canvas element already in the DOM
   loadCanvas: function (url, canvas_id, callback) {
     var domLoaded,
     self = this,
@@ -259,9 +298,11 @@ Caman.manip = Caman.prototype = {
       }
       
       if (url === null) {
+        // No image to load into the canvas, so we simply continue
         finishInit.call(self, null, canvas, callback);
       } else {
-          image.onload = function () {
+        // Load the image, and complete initialization when it loads
+        image.onload = function () {
           finishInit.call(self, image, canvas, callback);
         };
         
@@ -311,6 +352,8 @@ Caman.manip = Caman.prototype = {
   }
 };
 
+// In order to avoid having 3 different types of object contexts here, we simply set the prototypes
+// of loadImage and loadCanvas to Caman.manip.
 Caman.manip.loadImage.prototype = Caman.manip;
 Caman.manip.loadCanvas.prototype = Caman.manip;
 
@@ -328,7 +371,9 @@ Caman.$ = function (id) {
 
 Caman.store = {};
 
+// Checks a URL to determine if it is remote or not.
 Caman.isRemote = function (url) {
+  // Regex for extracting the domain of an image
   var domain_regex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/,
   test_domain;
   
@@ -346,6 +391,9 @@ Caman.isRemote = function (url) {
   }
 };
 
+// Checks to see if an image is remote. If it is, and a proxy is defined, it returns the proxy URL.
+// If it's remote and no proxy URL is defined, it will log an error and attempt to continue.
+// Anything else and it returns null.
 Caman.remoteCheck = function (src) {
   // Check to see if image is remote or not
   if (Caman.isRemote(src)) {
@@ -367,13 +415,12 @@ Caman.remoteCheck = function (src) {
 window.Caman = Caman;
 
 }());
-/*
- * Utility functions that help out in various areas of CamanJS.
- */
+// Utility functions that help out in various areas of CamanJS.
 
 /*global Caman: true */
 (function (Caman) {
 
+// Shortcuts
 var forEach = Array.prototype.forEach,
 hasOwn = Object.prototype.hasOwnProperty,
 slice = Array.prototype.slice;
@@ -401,14 +448,14 @@ if ( !Function.prototype.bind ) {
   };
 }
 
+// When Caman is output as a string, we can output some pretty version and release info data
+// instead of throwing an error or something boring.
 Caman.toString = Caman.manip.toString = function () {
 	return "Version " + Caman.version.release + ", Released " + Caman.version.date;
 };
 
-/*
- * Utility forEach function for iterating over
- * objects/arrays.
- */
+// Utility forEach function for iterating over objects/arrays. If the browser has native forEach,
+// then it will use that instead.
 Caman.forEach = function( obj, fn, context ) {
   
   if ( !obj || !fn ) {
@@ -416,6 +463,7 @@ Caman.forEach = function( obj, fn, context ) {
   }
   
   context = context || this;
+  
   // Use native whenever possible
   if ( forEach && obj.forEach === forEach ) {
     return obj.forEach(fn, context);
@@ -430,10 +478,7 @@ Caman.forEach = function( obj, fn, context ) {
   return obj;
 };
 
-/*
- * Used for extending the Caman object, primarily to
- * add new functionality to the base library.
- */
+// Used for extending the object, primarily the Caman object add new functionality to the base library.
 Caman.extend = function( obj ) {
   var dest = obj, src = slice.call(arguments, 1);
 
@@ -448,24 +493,19 @@ Caman.extend = function( obj ) {
   return dest;      
 };
 
-/*
- * Clamps an RGB value between 0 and 255. This is necessary
- * to run on all updated pixel values in order to conform to
- * the spec (which says that values < 0 or > 255 will be modulo'd
- * instead of clamped.
- */
+// Clamps an RGB value between 0 and 255. This is necessary
+// to run on all updated pixel values in order to conform to
+// the spec (which says that values < 0 or > 255 will be modulo'd
+// instead of clamped.
 Caman.clampRGB = function (value) {
   if (value > 255) return 255;
   else if (value < 0) return 0;
   return value;
 };
 
-/*
- * Here we define the proxies that ship with CamanJS for easy
- * usage.
- */
+// Here we define the proxies that ship with CamanJS for easy usage.
 Caman.useProxy = function (lang) {
-  // define cases where file extensions don't match the language name
+  // Define cases where file extensions don't match the language name
   var langToExt = {
     ruby: 'rb',
     python: 'py',
@@ -477,10 +517,11 @@ Caman.useProxy = function (lang) {
   return "proxies/caman_proxy." + lang;
 };
 
-/*
- * Unique ID generator. Guaranteed to always generate a new ID.
- */
+// Unique ID generator. Guaranteed to always generate a new ID.
 Caman.uniqid = (function () {
+
+  // This ID value is incremented every time get() is called, and can still be accessed
+  // by get() at all times because it is included in get()'s closure.
   var id = 0;
   
   return {
@@ -495,10 +536,7 @@ Caman.uniqid = (function () {
 }());
 
 Caman.extend(Caman, {
-  /*
-   * Returns the size of an object (the number of properties
-   * the object has)
-   */
+  // Returns the size of an object (the number of properties the object has)
   sizeOf: function ( obj ) {
     var size = 0,
         prop;
@@ -512,10 +550,7 @@ Caman.extend(Caman, {
     return size;
   },
   
-  /*
-   * Determines whether two given objects are the same based
-   * on their properties and values.
-   */
+  // Determines whether two given objects are the same based on their properties and values.
   sameAs: function ( base, test ) {
     
     // only tests arrays
@@ -532,10 +567,7 @@ Caman.extend(Caman, {
     return true;
   },
   
-  /*
-   * Removes items with the given value from an array if they
-   * are present.
-   */
+  // Removes items with the given value from an array if they are present.
   remove: function ( arr, item ) {
     var ret = [];
     
@@ -549,22 +581,24 @@ Caman.extend(Caman, {
     
     return ret;      
   },
-    
+  
+  // Generates a pseudorandom number that lies within the max - mix range. The number can be either
+  // an integer or a float depending on what the user specifies.
   randomRange: function (min, max, float) {
     var rand = min + (Math.random() * (max - min));
     return typeof float == 'undefined' ? Math.round(rand) : rand.toFixed(float);
   },
   
-  /**
-   * Converts an RGB color to HSL.
-   * Assumes r, g, and b are in the set [0, 255] and
-   * returns h, s, and l in the set [0, 1].
-   *
-   * @param   Number  r   Red channel
-   * @param   Number  g   Green channel
-   * @param   Number  b   Blue channel
-   * @return              The HSL representation
-   */
+  // Converts an RGB color to HSL.
+  // Assumes r, g, and b are in the set [0, 255] and
+  // returns h, s, and l in the set [0, 1].
+  //
+  // <pre>
+  // @param   Number  r   Red channel
+  // @param   Number  g   Green channel
+  // @param   Number  b   Blue channel
+  // @return              The HSL representation
+  // </pre>
   rgb_to_hsl: function(r, g, b) {
   
     r /= 255;
@@ -590,6 +624,7 @@ Caman.extend(Caman, {
     return {h: h, s: s, l: l};
   },
   
+  // Converts from the hue color space back to RGB.
   hue_to_rgb: function (p, q, t) {
     if(t < 0) t += 1;
     if(t > 1) t -= 1;
@@ -599,17 +634,17 @@ Caman.extend(Caman, {
     return p;
   },
   
-  /**
-   * Converts an HSL color value to RGB. Conversion formula
-   * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
-   * Assumes h, s, and l are contained in the set [0, 1] and
-   * returns r, g, and b in the set [0, 255].
-   *
-   * @param   Number  h       The hue
-   * @param   Number  s       The saturation
-   * @param   Number  l       The lightness
-   * @return  Array           The RGB representation
-   */
+  // Converts an HSL color value to RGB. Conversion formula
+  // adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+  // Assumes h, s, and l are contained in the set [0, 1] and
+  // returns r, g, and b in the set [0, 255].
+  //
+  // <pre>
+  // @param   Number  h       The hue
+  // @param   Number  s       The saturation
+  // @param   Number  l       The lightness
+  // @return  Array           The RGB representation
+  // </pre>
   hsl_to_rgb: function(h, s, l){
       var r, g, b;
   
@@ -626,17 +661,17 @@ Caman.extend(Caman, {
       return {r: r * 255, g: g * 255, b: b * 255};
   },
   
-  /**
-   * Converts an RGB color value to HSV. Conversion formula
-   * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
-   * Assumes r, g, and b are contained in the set [0, 255] and
-   * returns h, s, and v in the set [0, 1].
-   *
-   * @param   Number  r       The red color value
-   * @param   Number  g       The green color value
-   * @param   Number  b       The blue color value
-   * @return  Array           The HSV representation
-   */
+  // Converts an RGB color value to HSV. Conversion formula
+  // adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+  // Assumes r, g, and b are contained in the set [0, 255] and
+  // returns h, s, and v in the set [0, 1].
+  //
+  // <pre>
+  // @param   Number  r       The red color value
+  // @param   Number  g       The green color value
+  // @param   Number  b       The blue color value
+  // @return  Array           The HSV representation
+  // </pre>
   rgb_to_hsv: function(r, g, b){
       
       r = r/255;
@@ -663,17 +698,17 @@ Caman.extend(Caman, {
       return {h: h, s: s, v: v};
   },
   
-  /**
-   * Converts an HSV color value to RGB. Conversion formula
-   * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
-   * Assumes h, s, and v are contained in the set [0, 1] and
-   * returns r, g, and b in the set [0, 255].
-   *
-   * @param   Number  h       The hue
-   * @param   Number  s       The saturation
-   * @param   Number  v       The value
-   * @return  Array           The RGB representation
-   */
+  // Converts an HSV color value to RGB. Conversion formula
+  // adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+  // Assumes h, s, and v are contained in the set [0, 1] and
+  // returns r, g, and b in the set [0, 255].
+  //
+  // <pre>
+  // @param   Number  h       The hue
+  // @param   Number  s       The saturation
+  // @param   Number  v       The value
+  // @return  Array           The RGB representation
+  // </pre>
   hsv_to_rgb: function(h, s, v){
     
       var r, g, b,
@@ -719,18 +754,19 @@ Caman.extend(Caman, {
       return {r: r * 255, g: g * 255, b: b * 255};
   },
   
-  /**
-   * Converts a RGB color value to the XYZ color space. Formulas
-   * are based on http://en.wikipedia.org/wiki/SRGB assuming that
-   * RGB values are sRGB.
-   * Assumes r, g, and b are contained in the set [0, 255] and
-   * returns x, y, and z.
-   *
-   * @param   Number  r       The red color value
-   * @param   Number  g       The green color value
-   * @param   Number  b       The blue color value
-   * @return  Array           The XYZ representation
-   */
+  // Converts a RGB color value to the XYZ color space. Formulas
+  // are based on http://en.wikipedia.org/wiki/SRGB assuming that
+  // RGB values are sRGB.
+  //
+  // Assumes r, g, and b are contained in the set [0, 255] and
+  // returns x, y, and z.
+  //
+  // <pre>
+  // @param   Number  r       The red color value
+  // @param   Number  g       The green color value
+  // @param   Number  b       The blue color value
+  // @return  Array           The XYZ representation
+  // </pre>
   rgb_to_xyz: function (r, g, b) {
   
     r = r / 255; g = g / 255; b = b / 255;
@@ -760,18 +796,18 @@ Caman.extend(Caman, {
     return {x: x * 100, y: y * 100, z: z * 100};
   },
   
-  /**
-   * Converts a XYZ color value to the sRGB color space. Formulas
-   * are based on http://en.wikipedia.org/wiki/SRGB and the resulting
-   * RGB value will be in the sRGB color space.
-   * Assumes x, y and z values are whatever they are and returns
-   * r, g and b in the set [0, 255].
-   *
-   * @param   Number  x       The X value
-   * @param   Number  y       The Y value
-   * @param   Number  z       The Z value
-   * @return  Array           The RGB representation
-   */
+  // Converts a XYZ color value to the sRGB color space. Formulas
+  // are based on http://en.wikipedia.org/wiki/SRGB and the resulting
+  // RGB value will be in the sRGB color space.
+  // Assumes x, y and z values are whatever they are and returns
+  // r, g and b in the set [0, 255].
+  //
+  // <pre>
+  // @param   Number  x       The X value
+  // @param   Number  y       The Y value
+  // @param   Number  z       The Z value
+  // @return  Array           The RGB representation
+  // </pre>
   xyz_to_rgb: function (x, y, z) {
 
     x = x / 100; y = y / 100; z = z / 100;
@@ -802,18 +838,18 @@ Caman.extend(Caman, {
     return {r: r * 255, g: g * 255, b: b * 255};
   },
   
-  /**
-   * Converts a XYZ color value to the CIELAB color space. Formulas
-   * are based on http://en.wikipedia.org/wiki/Lab_color_space
-   * The reference white point used in the conversion is D65.
-   * Assumes x, y and z values are whatever they are and returns
-   * L*, a* and b* values
-   *
-   * @param   Number  x       The X value
-   * @param   Number  y       The Y value
-   * @param   Number  z       The Z value
-   * @return  Array           The Lab representation
-   */
+  // Converts a XYZ color value to the CIELAB color space. Formulas
+  // are based on http://en.wikipedia.org/wiki/Lab_color_space
+  // The reference white point used in the conversion is D65.
+  // Assumes x, y and z values are whatever they are and returns
+  // L*, a* and b* values
+  //
+  // <pre>
+  // @param   Number  x       The X value
+  // @param   Number  y       The Y value
+  // @param   Number  z       The Z value
+  // @return  Array           The Lab representation
+  // </pre>
   xyz_to_lab: function(x, y, z) {
   
     // D65 reference white point
@@ -846,19 +882,20 @@ Caman.extend(Caman, {
     return {l: l, a: a, b: b};
   },
   
-  /**
-   * Converts a L*, a*, b* color values from the CIELAB color space
-   * to the XYZ color space. Formulas are based on
-   * http://en.wikipedia.org/wiki/Lab_color_space
-   * The reference white point used in the conversion is D65.
-   * Assumes L*, a* and b* values are whatever they are and returns
-   * x, y and z values.
-   *
-   * @param   Number  l       The L* value
-   * @param   Number  a       The a* value
-   * @param   Number  b       The b* value
-   * @return  Array           The XYZ representation
-   */
+  // Converts a L*, a*, b* color values from the CIELAB color space
+  // to the XYZ color space. Formulas are based on
+  // http://en.wikipedia.org/wiki/Lab_color_space
+  //
+  // The reference white point used in the conversion is D65.
+  // Assumes L*, a* and b* values are whatever they are and returns
+  // x, y and z values.
+  //
+  // <pre>
+  // @param   Number  l       The L* value
+  // @param   Number  a       The a* value
+  // @param   Number  b       The b* value
+  // @return  Array           The XYZ representation
+  // </pre>
   lab_to_xyz: function(l, a, b) {
   
     var y = (l + 16) / 116;
@@ -887,13 +924,13 @@ Caman.extend(Caman, {
     return {x: x * 95.047, y: y * 100.0, z: z * 108.883};
   },
   
-  /*
-   * Converts the hex representation of a color to RGB values.
-   * Hex value can optionally start with the hash (#).
-   *
-   * @param   String  hex   The colors hex value
-   * @return  Array         The RGB representation
-   */
+  // Converts the hex representation of a color to RGB values.
+  // Hex value can optionally start with the hash (#).
+  //
+  // <pre>
+  // @param   String  hex   The colors hex value
+  // @return  Array         The RGB representation
+  // </pre>
   hex_to_rgb: function(hex) {
     var r, g, b;
     
@@ -908,6 +945,12 @@ Caman.extend(Caman, {
     return {r: r, g: g, b: b};
   },
   
+  // Generates a bezier curve given a start and end point, with two control points in between.
+  // Can also optionally bound the y values between a low and high bound.
+  //
+  // This is different than most bezier curve functions because it attempts to construct it in such 
+  // a way that we can use it more like a simple input -> output system, or a one-to-one function. 
+  // In other words we can provide an input color value, and immediately receive an output modified color value.
   bezier: function (start, ctrl1, ctrl2, end, lowBound, highBound) {
     var Ax, Bx, Cx, Ay, By, Cy,
     x0 = start[0], y0 = start[1],
@@ -926,9 +969,13 @@ Caman.extend(Caman, {
     By = 3 * (y2 - y1) - Cy;
     Ay = y3 - y0 - Cy - By;
     
+    // 1000 is actually arbitrary. We need to make sure we do enough calculations between 0 and 255 that, in even
+    // the more extreme circumstances, we calculate as many values as possible. In the event that an X value is
+    // skipped, it will be found later on.
     for (var i = 0; i < 1000; i++) {
       t = i / 1000;
       
+      // Calculate our X and Y values for this iteration
       curveX = Math.round((Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0);
       curveY = Math.round((Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0);
       
@@ -938,6 +985,7 @@ Caman.extend(Caman, {
         curveY = highBound;
       }
       
+      // Store the calculation
       bezier[curveX] = curveY;
     }
     
@@ -960,6 +1008,7 @@ Caman.extend(Caman, {
             }
           }
           
+          // Store the value discovered with linear interpolation
           bezier[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
         }
       }
@@ -973,44 +1022,47 @@ Caman.extend(Caman, {
     return bezier;
   },
   
+  // Calculate the distance between two points on a cartesian plane.
   distance: function (x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
 });
 
 }(Caman));
-/*
- * Input/output functions for CamanJS. Mostly deal with
- * saving images, converting them to base64, and so on.
- */
+// As the name suggests, this piece of code is responsible for handling saving and exporting images from the 
+// Caman-initialized canvas element.
+//
+// The save() function prompts the user to download the image. The toImage() function simply converts the 
+// canvas element back into an image element. Once this happens, Caman needs to be re-initialized in order 
+// to edit the image further. toBase64() is simply a helper that converts the canvas data to a base64 representation.
 
 /*global Caman: true */ 
 (function (Caman) {
 
+// Path to the remote image proxy, if any.
 Caman.remoteProxy = "";
 
 Caman.extend(Caman.manip, {
-  /*
-   * Grabs the canvas data, encodes it to Base64, then
-   * sets the browser location to the encoded data so that
-   * the user will be prompted to download it.
-   */
+  // Grabs the canvas data, encodes it to Base64, then sets the browser location to the encoded data so that
+  // the user will be prompted to download it.
   save: function (type) {
     if (type) {
+      // Force filetype to lowercase for consistency
       type = type.toLowerCase();
     }
     
+    // If no valid type is given, default to PNG
     if (!type || (type !== 'png' && type !== 'jpg')) {
       type = 'png';
     }
     
+    // Redirect to a URL containing the base64 image data, which should (in most cases) cause the browser
+    // to prompt the user with a download.
     document.location.href = this.toBase64(type).replace("image/" + type, "image/octet-stream");
   },
   
-  /*
-   * Takes the current canvas data, converts it to Base64, then
-   * sets it as the source of a new Image object and returns it.
-   */
+  // Takes the current canvas data, converts it to Base64, then sets it as the source of a new Image object
+  // and returns it.
   toImage: function (type) {
     var img;
     
@@ -1020,9 +1072,7 @@ Caman.extend(Caman.manip, {
     return img;
   },
   
-  /*
-   * Grabs the current canvas data and Base64 encodes it.
-   */
+  // Grabs the current canvas data and Base64 encodes it.
   toBase64: function (type) {
     if (type) {
       type = type.toLowerCase();
@@ -1037,11 +1087,13 @@ Caman.extend(Caman.manip, {
 });
 
 }(Caman));
-/*
- * CamanJS event system
- * Events can be subscribed to using Caman.listen() and events
- * can be triggered using Caman.trigger().
- */
+// The event system in Caman is responsible for registering and firing events at 
+// certain points during the render process. It is fairly straightforward and consists
+// of a listen() and trigger() function.
+//
+// The listen() function takes a type (string describing what event to listen for) and a
+// callback that is fired when the event occurs. The trigger() function takes a type 
+// (name of the event) and some optional data to pass to the registered callbacks that will be fired.
 
 /*global Caman: true */ 
 (function (Caman) {
@@ -1050,13 +1102,14 @@ Caman.events  = {
   types: [ "processStart", "processComplete", "renderFinished" ],
   fn: {
     
-    /*
-     * Triggers an event with the given target name.
-     */
+    // Triggers an event with the given target name.
+    // The target argument can often be omitted if you want
+    // to listen to events from all Caman instances on the page.
     trigger: function ( target, type, data ) {
       
       var _target = target, _type = type, _data = data;
     
+      // Adjust the arguments if target is omitted.
       if ( Caman.events.types.indexOf(target) !== -1 ) {
         _target = this;
         _type = target;
@@ -1064,33 +1117,34 @@ Caman.events  = {
       }
     
       if ( Caman.events.fn[_type] && Caman.sizeOf(Caman.events.fn[_type]) ) {
-
+        // Iterate over all of the registered callbacks
         Caman.forEach(Caman.events.fn[_type], function ( obj, key ) {
-
+          // Call the event callback with the context set to the Caman
+          // object that fired the event.
           obj.call(_target, _data);
-        
         });
       }
     },
     
-    /*
-     * Registers a callback function to be fired when a certain
-     * event occurs.
-     */
+    // Registers a callback function to be fired when a certain
+    // event occurs.
     listen: function ( target, type, fn ) {
 
       var _target = target, _type = type, _fn = fn;
     
+      // Adjust the arguments if the target is omitted
       if ( Caman.events.types.indexOf(target) !== -1 ) {
         _target = this;
         _type = target;
         _fn = type;
       }        
 
+      // If an event of this type hasn't been defined before, define it now.
       if ( !Caman.events.fn[_type] ) {
         Caman.events.fn[_type] = [];
       }
 
+      // Add the event to the callback array
       Caman.events.fn[_type].push(_fn);
       
       return true;
@@ -1099,52 +1153,55 @@ Caman.events  = {
   cache: {} 
 };
   
+// Enable easier access to the events system via the main Caman object
 Caman.forEach( ["trigger", "listen"], function ( key ) {
   Caman[key] = Caman.events.fn[key];
 });
   
 })(Caman);
-/*
- * The pixelInfo object. This object is available inside of the
- * process() loop, and it lets filter developers have simple access
- * to any arbitrary pixel in the image, as well as information about
- * the current pixel in the loop.
- */
+// The pixelInfo object. This object is available inside of the
+// process() loop, and it lets filter developers have simple access
+// to any arbitrary pixel in the image, as well as information about
+// the current pixel in the loop.
 
 /*global Caman: true */ 
 (function (Caman) {
 
-/*
- * Allows the currently rendering filter to get data about
- * surrounding pixels relative to the pixel currently being
- * processed. The data returned is identical in format to the
- * rgba object provided in the process function.
- *
- * Example: to get data about the pixel to the top-right
- * of the currently processing pixel, you can call (within the process
- * function):
- *    this.getPixelRelative(1, -1);
- */
+// Allows the currently rendering filter to get data about
+// surrounding pixels relative to the pixel currently being
+// processed. The data returned is identical in format to the
+// rgba object provided in the process function.
+//
+// Example: to get data about the pixel to the top-right
+// of the currently processing pixel, you can call (within the process
+// function):
+// <pre>this.getPixelRelative(1, -1);</pre>
 Caman.manip.pixelInfo = function (self) {
   this.loc = 0;
   this.manip = self;
 };
 
+// Retrieves the X, Y location of the current pixel. The origin is at the bottom left
+// corner of the image, like a normal coordinate system.
 Caman.manip.pixelInfo.prototype.locationXY = function () {
   var x, y;
   
+  // This was a serious pain in the ass to get right. Since the pixel array is a simple
+  // 1-dimensional array (and for good reason) we have to do some math-y magic to calculate
+  // our current X, Y position.
   y = this.manip.dimensions.height - Math.floor(this.loc / (this.manip.dimensions.width * 4));
   x = ((this.loc % (this.manip.dimensions.width * 4)) / 4);
   
   return {x: x, y: y};
 };
-  
+
+// Returns an RGBA object for a pixel whose location is specified in relation to the current pixel.
 Caman.manip.pixelInfo.prototype.getPixelRelative = function (horiz_offset, vert_offset) {
   // We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
   // terms: -1 means down and +1 means up.
   var newLoc = this.loc + (this.manip.dimensions.width * 4 * (vert_offset * -1)) + (4 * horiz_offset);
   
-  // error handling
+  // Error handling
   if (newLoc > this.manip.pixel_data.length || newLoc < 0) {
     return {r: 0, g: 0, b: 0, a: 0};
   }
@@ -1156,11 +1213,13 @@ Caman.manip.pixelInfo.prototype.getPixelRelative = function (horiz_offset, vert_
     a: this.manip.pixel_data[newLoc+3]
   };
 };
-    
+
+// The counterpart to getPixelRelative, this updates the value of a pixel whose location is specified in
+// relation to the current pixel.
 Caman.manip.pixelInfo.prototype.putPixelRelative = function (horiz_offset, vert_offset, rgba) {
   var newLoc = this.loc + (this.manip.dimensions.width * 4 * (vert_offset * -1)) + (4 * horiz_offset);
   
-  // error handling
+  // Error handling
   if (newLoc > this.manip.pixel_data.length || newLoc < 0) {
     return false;
   }
@@ -1170,7 +1229,8 @@ Caman.manip.pixelInfo.prototype.putPixelRelative = function (horiz_offset, vert_
   this.manip.pixel_data[newLoc+2] = rgba.b;
   this.manip.pixel_data[newLoc+3] = rgba.a;
 };
-    
+
+// Gets an RGBA object for an arbitrary pixel in the canvas specified by absolute X, Y coordinates
 Caman.manip.pixelInfo.prototype.getPixel = function (x, y) {
   var newLoc = (y * this.manip.dimensions.width + x) * 4;
   
@@ -1181,7 +1241,8 @@ Caman.manip.pixelInfo.prototype.getPixel = function (x, y) {
     a: this.manip.pixel_data[newLoc+3]
   };
 };
-    
+
+// Updates the pixel at the given X, Y coordinates  
 Caman.manip.pixelInfo.prototype.putPixel = function (x, y, rgba) {
   var newLoc = (y * this.manip.dimensions.width + x) * 4;
   
@@ -1192,25 +1253,24 @@ Caman.manip.pixelInfo.prototype.putPixel = function (x, y, rgba) {
 };
 
 }(Caman));
-/*
- * CamanJS's rendering system. This covers convolution kernels,
- * pixel-wise filters, and plugins. All of the actual pixel/image
- * manipulation is executed here when render() is called.
- */
+// CamanJS's rendering system. This covers convolution kernels,
+// pixel-wise filters, and plugins. All of the actual pixel/image
+// manipulation is executed here when render() is called.
 
 /*global Caman: true */
 (function (Caman) {
 
+// Defines how many slices we want to split the canvas up into for rendering.
+// While Javascript is not multi-threaded, it does help to make each rendering
+// job shorter, and to allow the browser more control in managing the render jobs.
 Caman.renderBlocks = 4;
 
-/*
- * SINGLE = traverse the image 1 pixel at a time
- * KERNEL = traverse the image using convolution kernels
- * LAYER_DEQUEUE = shift a layer off the canvasQueue
- * LAYER_FINISHED = finished processing a layer
- * LOAD_OVERLAY = load a local/remote image into the layer canvas
- * PLUGIN = executes a plugin function that isn't pixelwise or kernel
- */
+// * SINGLE = traverse the image 1 pixel at a time
+// * KERNEL = traverse the image using convolution kernels
+// * LAYER_DEQUEUE = shift a layer off the canvasQueue
+// * LAYER_FINISHED = finished processing a layer
+// * LOAD_OVERLAY = load a local/remote image into the layer canvas
+// * PLUGIN = executes a plugin function that isn't pixelwise or kernel
 Caman.ProcessType = {
   SINGLE: 1,
   KERNEL: 2,
@@ -1230,15 +1290,19 @@ Caman.manip.process = function (adjust, processFn) {
   return this;
 };
 
+// Process info about kernel and store it for later rendering.
 Caman.manip.processKernel = function (name, adjust, divisor, bias) {  
   if (!divisor) {
+    // No divisor provided, so we need to calculate the default
     divisor = 0;
 
+    // The divisor is the sum of all the values in the convolution matrix
     for (var i = 0, len = adjust.length; i < len; i++) {
       divisor += adjust[i];
     }
   }
   
+  // Store all of the info for this kernel in an object for later retrieval
   var data = {
     name: name,
     adjust: adjust,
@@ -1246,36 +1310,46 @@ Caman.manip.processKernel = function (name, adjust, divisor, bias) {
     bias: bias || 0
   };
   
+  // Add the convolution to the render queue and move on
   this.renderQueue.push({adjust: data, processFn: Caman.processKernel, type: Caman.ProcessType.KERNEL});
   
   return this;
 };
 
+// Process an advanced plugin and add it to the render queue. Not much to do here since so much
+// of the control lies with the plugin itself.
 Caman.manip.processPlugin = function (plugin, args) {
   this.renderQueue.push({type: Caman.ProcessType.PLUGIN, plugin: plugin, args: args});
   return this;
 };
 
+// Executes an advanced plugin. Simply calls the plugin function while setting the context to
+// the manip object.
 Caman.manip.executePlugin = function (plugin, args) {
   console.log("Executing plugin: " + plugin);
   Caman.plugin[plugin].apply(this, args);
   console.log("Plugin " + plugin + " finished!");
+  
+  // Continue to the next rendering operation
   this.processNext();
 };
 
-/*
- * Begins the render process if it's not started, or moves to the next
- * filter in the queue and processes it. Calls the finishedFn callback
- * when the render queue is empty.
- */
+// Begins the render process if it's not started, or moves to the next
+// filter in the queue and processes it. Calls the finishedFn callback
+// when the render queue is empty.
 Caman.manip.processNext = function (finishedFn) {
   if (typeof finishedFn === "function") {
+    // Since this function is indirectly recursive, it would be a pain to pass the processFn
+    // around each time. Instead, we simply store it with the manip object for later usage.
     this.finishedFn = finishedFn;
   }
   
+  // Rendering is complete when the render queue is empty
   if (this.renderQueue.length === 0) {
+    // Trigger the render finished event
     Caman.trigger("renderFinished", {id: this.canvas_id});
     
+    // If we have a render finished callback, execute it now
     if (typeof this.finishedFn === "function") {
       this.finishedFn.call(this);
     }
@@ -1283,37 +1357,52 @@ Caman.manip.processNext = function (finishedFn) {
     return;
   }
   
+  // Retrive the next operation from the render queue
   var next = this.renderQueue.shift();
   
   if (next.type == Caman.ProcessType.LAYER_DEQUEUE) {
+    // New layer operative. Shift the next layer off the canvas queue and execute 
+    // it's transformations.
     var layer = this.canvasQueue.shift();
     this.executeLayer(layer);
+    
   } else if (next.type == Caman.ProcessType.LAYER_FINISHED) {
+    // Layer is finished rendering. Blend it with the parent layer, change context back to
+    // the parent layer, and move onto the next operation.
     this.applyCurrentLayer();
     this.popContext();
     this.processNext();
+    
   } else if (next.type == Caman.ProcessType.LOAD_OVERLAY) {
+    // Load an image to be used as a layer overlay.
     this.loadOverlay(next.layer, next.src);
+    
   } else if (next.type == Caman.ProcessType.PLUGIN) {
+    
+    // Execute an advanced plugin
     this.executePlugin(next.plugin, next.args);
+    
   } else {
+    // Execute a normal pixel-wise filter and apply it to the current layer/canvas
     this.executeFilter(next.adjust, next.processFn, next.type);
   }
 };
 
-/*
- * Convolution kernel processing
- */
 Caman.extend( Caman, {  
+  // Convolution kernel rendering. Given an array of pixels based on the current location in the
+  // rendering process, and a convolution matrix, calculate the new value of the kernel.
   processKernel: function (adjust, kernel, divisor, bias) {
     var val = {r: 0, g: 0, b: 0};
     
+    // Loop through each pixel in the kernel and apply it to the matching pixel in the matrix
+    // from the image.
     for (var i = 0, len = adjust.length; i < len; i++) {
       val.r += adjust[i] * kernel[i * 3];
       val.g += adjust[i] * kernel[i * 3 + 1];
       val.b += adjust[i] * kernel[i * 3 + 2];
     }
     
+    // Finally, apply the divisor and the bias to the calculated kernel
     val.r = (val.r / divisor) + bias;
     val.g = (val.g / divisor) + bias;
     val.b = (val.b / divisor) + bias;
@@ -1322,14 +1411,15 @@ Caman.extend( Caman, {
   }
 });
 
-/*
- * The core of the image rendering, this function executes
- * the provided filter and updates the canvas pixel data
- * accordingly. NOTE: this does not write the updated pixel
- * data to the canvas. That happens when all filters are finished
- * rendering in order to be as fast as possible.
- */
+// The core of the image rendering, this function executes
+// the provided filter and updates the canvas pixel data
+// accordingly.
+//
+// NOTE: this does not write the updated pixel
+// data to the canvas. That happens when all filters are finished
+// rendering in order to be as fast as possible.
 Caman.manip.executeFilter = function (adjust, processFn, type) {
+  // Shortcut to the length of the pixel array
   var n = this.pixel_data.length,
   
   // (n/4) == # of pixels in image
@@ -1343,8 +1433,10 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
   // add the remainder pixels to the last block.
   lastBlockN = blockN + ((n / 4) % Caman.renderBlocks) * 4,
 
+  // Stupid context proxying >.>
   self = this,
   
+  // Keep track of how many blocks are done so we know when rendering finishes
   blocks_done = 0,
   
   // Called whenever a block finishes. It's used to determine when all blocks
@@ -1356,51 +1448,66 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
     
     blocks_done++;
 
+    // All blocks finished rendering
     if (blocks_done == Caman.renderBlocks || bnum == -1) {
       if (bnum >= 0) {
         console.log("Filter " + processFn.name + " finished!");
       } else {
+        // Due to the nature of convolution, it does not divide the image into blocks
         console.log("Kernel filter finished!");
       }
       
       Caman.trigger("processComplete", {id: self.canvas_id, completed: processFn.name});
       
+      // Since this filter is finished, it's time to move on to the next render operation
       self.processNext();
     }
   },
   
-  /*
-   * Renders a block of the image bounded by the start and end
-   * parameters.
-   */
+  //Renders a block of the image bounded by the start and end parameters.
   render_block = function (bnum, start, end) {
     console.log("BLOCK #" + bnum + " - Filter: " + processFn.name + ", Start: " + start + ", End: " + end);
     
     var renderFunc = function () {
+      // Create an RGB object to pass to the filter functions
       var data = {r: 0, g: 0, b: 0, a: 0};
+      
+      // Prepare the PixelInfo object
       var pixelInfo = new this.pixelInfo(self);
       var res;
       
       for (var i = start; i < end; i += 4) {
+        // Set the location of the pixelInfo object to the current pixel
         pixelInfo.loc = i;
+        
+        // Update the values of the RGB object
         data.r = this.pixel_data[i];
         data.g = this.pixel_data[i+1];
         data.b = this.pixel_data[i+2];
         
+        // Execute the filter!
         res = processFn.call(pixelInfo, adjust, data);
         
+        // Apply the modified RGB object to the current pixel array. These values are automatically clamped in
+        // order to conform to the latest canvas spec.
         this.pixel_data[i]   = Caman.clampRGB(res.r);
         this.pixel_data[i+1] = Caman.clampRGB(res.g);
         this.pixel_data[i+2] = Caman.clampRGB(res.b);
       }
       
+      // Signal that this block is finished rendering
       block_finished(bnum);
     }.bind(this);
     
+    // Begin rendering asynchronously
     setTimeout(renderFunc, 0);
   },
   
+  // Renders a convolution matrix. This is admittedly confusing, especially since it was designed with
+  // flexibility in mind. Bear with me here.
   render_kernel = function () {
+  
+    // Function that executes the rendering process
     var renderFunc = function () {
       var kernel = [],
       pixelInfo, pixel,
@@ -1413,23 +1520,35 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
       builder, builder_index,
       i, j, k, res;
       
+      // Simple shortcut
       adjust = adjust.adjust;
+      
+      // The size of one side of the convolutinon matrix is simply the square root (matrix must be square)
       adjustSize = Math.sqrt(adjust.length);
       
+      // Will store the modified pixel data since we can't directly update the original pixel array while
+      // simultaneously modifing it.
       mod_pixel_data = [];
       
       console.log("Rendering kernel - Filter: " + name);
       
+      // Calculate the beginning and end of the pixel array loop
       start = self.dimensions.width * 4 * ((adjustSize - 1) / 2);
       end = n - (self.dimensions.width * 4 * ((adjustSize - 1) / 2));
       
+      // Calculate the index for the kernel we're going to generate for the current pixel. This is where it
+      // begins to get confusing.
       builder = (adjustSize - 1) / 2;
+      
+      // Set our pixelInfo object so we can easily grab pixels for the kernel.
       pixelInfo = new self.pixelInfo(self);
       
       for (i = start; i < end; i += 4) {
         pixelInfo.loc = i;
         
         builder_index = 0;
+
+        // This generates the kernel for the current pixel based on the size of the provided convolution matrix.
         for (j = -builder; j <= builder; j++) {
           for (k = builder; k >= -builder; k--) {
             pixel = pixelInfo.getPixelRelative(j, k);
@@ -1453,37 +1572,50 @@ Caman.manip.executeFilter = function (adjust, processFn, type) {
       }
 
       // Update the actual canvas pixel data. Unfortunately we have to set
-      // this one by one.
+      // this one by one or else it won't work properly.
       for (i = start; i < end; i++) {
         self.pixel_data[i] = mod_pixel_data[i];
       }
       
+      // Signal that the kernel is done rendering.
       block_finished(-1);
       
     }.bind(this);
     
+    // Begin rendering the kernel asychronously
     setTimeout(renderFunc, 0);
   };
   
   Caman.trigger("processStart", {id: this.canvas_id, start: processFn.name});
   
+  // Decide which type of filter we have to render.
   if (type === Caman.ProcessType.SINGLE) {
     // Split the image into its blocks.
     for (var j = 0; j < Caman.renderBlocks; j++) {
-     var start = j * blockN,
-     end = start + ((j == Caman.renderBlocks - 1) ? lastBlockN : blockN);
-     render_block.call(this, j, start, end);
+      // Calculate the start and end for this image block.
+      var start = j * blockN,
+      
+      // If this is the last block and there is some remainder, add it here.
+      end = start + ((j == Caman.renderBlocks - 1) ? lastBlockN : blockN);
+      
+      // Begin rendering
+      render_block.call(this, j, start, end);
     }
   } else {
+    // Render the kernel
     render_kernel.call(this);
   }
 };
 
 Caman.extend(Caman.manip, {
+  // Reverts an image back to its original state by re-initializing Caman
   revert: function (ready) {
     this.loadCanvas(this.options.image, this.options.canvas, ready);
   },
   
+  // The render function that the user uses in order to begin the rendering process.
+  // Once all the rendering is complete, it applies the updated pixel data to the canvas
+  // and calls the finished callback (if any).
   render: function (callback) {
     this.processNext(function () {
       this.context.putImageData(this.image_data, 0, 0);
@@ -1496,37 +1628,51 @@ Caman.extend(Caman.manip, {
 });
 
 }(Caman));
-/*
- * CamanJS layering system. Supports layer grouping and layer
- * ordering. Layers are blended into the parent layer using a variety
- * of blending functions, similar to what you would find in Photoshop
- * or GIMP.
- */
+// The entire layering system for Caman resides in this file. Layers get their own canvasLayer object 
+// which is created when newLayer() is called. For extensive information regarding the specifics of how 
+// the layering system works, there is an in-depth blog post on this very topic. Instead of copying the 
+// entirety of that post, I'll simply point you towards the blog link.
+//
+// However, the gist of the layering system is that, for each layer, it creates a new canvas element and 
+// then either copies the parent layer's data or applies a solid color to the new layer. After some (optional) 
+// effects are applied, the layer is blended back into the parent canvas layer using one of many different 
+// blending algorithms.
+//
+// You can also load an image (local or remote, with a proxy) into a canvas layer, which is useful if you want 
+// to add textures to an image.
 
 /*global Caman: true */
 (function (Caman) {
 
+// Loads another image into a canvas layer that can be either local or remote (with a proxy). This function is
+// executed at render time so that the end-user doesn't have to worry about the image loading asynchronously.
 Caman.manip.loadOverlay = function (layer, src) {
   var proxyUrl = Caman.remoteCheck(src),
   self = this;
   
+  // Apply the proxy if the image is remote and a proxy exists.
   if (proxyUrl) {
     src = proxyUrl;
   }
   
+  // Create an image element, apply the URL, and wait for load
   var img = document.createElement('img');
   img.onload = function () {
+    // Once the image loads, draw it on to the layer's canvas.
     layer.context.drawImage(img, 0, 0, self.dimensions.width, self.dimensions.height);
     layer.image_data = layer.context.getImageData(0, 0, self.dimensions.width, self.dimensions.height);
     layer.pixel_data = layer.image_data.data;
     
     self.pixel_data = layer.pixel_data;
     
+    // Done! Move to the next render operative
     self.processNext();
   };
+  
   img.src = src;
 };
 
+// Object that represents a canvas layer
 Caman.manip.canvasLayer = function (manip) {  
   // Default options
   this.options = {
@@ -1534,18 +1680,22 @@ Caman.manip.canvasLayer = function (manip) {
     opacity: 1.0
   };
   
-  // Create a blank and invisible canvas and append it to the document
+  // Create a blank and invisible canvas. We store the reference to the canvas as a part of the canvasLayer
+  // object instead of appending it to the DOM.
   this.layerID = Caman.uniqid.get();
   this.canvas = document.createElement('canvas');
+  
+  // Give the canvas the same dimensions as the parent canvas
   this.canvas.width = manip.dimensions.width;
   this.canvas.height = manip.dimensions.height;
-  this.canvas.style.display = 'none';
   
   this.context = this.canvas.getContext("2d");
   this.context.createImageData(this.canvas.width, this.canvas.height);
   this.image_data = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
   this.pixel_data = this.image_data.data;
 
+  // Define a getter for filter that returns the manip object so that we can use all of the normal
+  // filters on this layer.
   this.__defineGetter__("filter", function () {
     return manip;
   });
@@ -1553,23 +1703,32 @@ Caman.manip.canvasLayer = function (manip) {
   return this;
 };
 
+// Enables nesting of layers since this calls the newLayer function from the manip object, but
+// changes the context of `this` to this layer instead of the original parent canvas.
 Caman.manip.canvasLayer.prototype.newLayer = function (callback) {
   return this.filter.newLayer.call(this.filter, callback);
 };
 
+// Sets the blending mode to one of the defined blenders
 Caman.manip.canvasLayer.prototype.setBlendingMode = function (mode) {
   this.options.blendingMode = mode;
   return this;
 };
 
+// Sets the opacity of the layer, which dictates how much of the layer is applied during blending.
 Caman.manip.canvasLayer.prototype.opacity = function (opacity) {
   this.options.opacity = (opacity / 100);
   return this;
 };
 
+// Copies the contents of the parent layer to this layer.
 Caman.manip.canvasLayer.prototype.copyParent = function () {
+  // Grab the pixel data from the parent layer
   var parentData = this.filter.pixel_data;
   
+  // Unfortunately we can't set this all at once since (I believe) that would create a reference
+  // to the parent pixel array instead of copying the data. By directly setting the individual
+  // primitive values, they become copied.
   for (var i = 0; i < this.pixel_data.length; i += 4) {
     this.pixel_data[i]    = parentData[i];
     this.pixel_data[i+1]  = parentData[i+1];
@@ -1580,15 +1739,20 @@ Caman.manip.canvasLayer.prototype.copyParent = function () {
   return this;
 };
 
+// Shortcut for flooding this layer with a solid color
 Caman.manip.canvasLayer.prototype.fillColor = function () {
   this.filter.fillColor.apply(this.filter, arguments);
   return this;
 };
 
+// Load a remote image and overlay it on this layer. The image will be downloaded and applied at render-time,
+// so this function is not asynchronous.
 Caman.manip.canvasLayer.prototype.overlayImage = function (image) {
   if (image[0] == '#') {
-    image = Caman.Caman.$(image).src;
+    // If the given image is a DOM ID instead of a URL
+    image = Caman.$(image).src;
   } else if (typeof image === "object") {
+    // If the given image is a DOM image object
     image = image.src;
   }
   
@@ -1604,7 +1768,10 @@ Caman.manip.canvasLayer.prototype.overlayImage = function (image) {
 // LONGER REQUIRED at the end of the layer.
 Caman.manip.canvasLayer.prototype.render = function () {};
 
+// Apply the content of this layer to the parent layer. This occurs at render time and should never be directly
+// called by the user.
 Caman.manip.canvasLayer.prototype.applyToParent = function () {
+  // Grab the parent's pixel data off of the pixel stack
   var parentData = this.filter.pixelStack[this.filter.pixelStack.length - 1],
   layerData = this.filter.pixel_data,
   rgbaParent = {},
@@ -1612,6 +1779,7 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
   result = {};
 
   for (var i = 0; i < layerData.length; i += 4) {
+    // Create an RGBA object for the parent layer
     rgbaParent = {
       r: parentData[i],
       g: parentData[i+1],
@@ -1619,6 +1787,7 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
       a: parentData[i+3]
     };
     
+    // Create an RGBA object for this layer
     rgbaLayer = {
       r: layerData[i],
       g: layerData[i+1],
@@ -1626,8 +1795,10 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
       a: layerData[i+3]
     };
     
+    // Send the parent and layer RGBA data for this pixel to the specified blender
     result = this.blenders[this.options.blendingMode](rgbaLayer, rgbaParent);
     
+    // Clamp the RGB values to follow the latest canvas spec.
     result.r = Caman.clampRGB(result.r);
     result.g = Caman.clampRGB(result.g);
     result.b = Caman.clampRGB(result.b);
@@ -1639,8 +1810,10 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
   }
 };
 
-// Blending functions
+// Built-in layer blenders. Many of these mimic Photoshop blend modes.
 Caman.manip.canvasLayer.prototype.blenders = {
+
+  // Directly apply the child layer's pixels to the parent layer with no special changes
   normal: function (rgbaLayer, rgbaParent) {
     return {
       r: rgbaLayer.r,
@@ -1650,6 +1823,7 @@ Caman.manip.canvasLayer.prototype.blenders = {
     };
   },
   
+  // Apply the child to the parent by multiplying the color values. This generally creates contrast.
   multiply: function (rgbaLayer, rgbaParent) {
     return {
       r: (rgbaLayer.r * rgbaParent.r) / 255,
@@ -1738,58 +1912,92 @@ Caman.manip.canvasLayer.prototype.blenders = {
   }
 };
 
+// Add the blenders object to the Caman.manip namespace to make it easier to extend.
 Caman.manip.blenders = Caman.manip.canvasLayer.prototype.blenders;
 
+// Queue that holds all of the layers that are waiting to be rendered
 Caman.manip.canvasQueue = [];
 
+// Factory method that creates a new layer and adds the layer to the render queue once
+// all of the modifications are defined via the callback.
 Caman.manip.newLayer = function (callback) {
   var layer = new Caman.manip.canvasLayer(this);
+  
+  // Store the new layer in the canvas queue for rendering later
   this.canvasQueue.push(layer);
 
+  // Inform the renderer that we have a new layer coming up
   this.renderQueue.push({type: Caman.ProcessType.LAYER_DEQUEUE});  
+  
+  // Define the layer transformations
   callback.call(layer);
+  
+  // Let the renderer know the layer is finished
   this.renderQueue.push({type: Caman.ProcessType.LAYER_FINISHED});
 
   return this;
 };
 
+// Used during the rendering process. Directly correlates to the LAYER_DEQUEUE render event.
 Caman.manip.executeLayer = function (layer) {
   this.pushContext(layer);
   this.processNext();
 };
 
+// Changes the rendering context to the upcoming layer for rendering.
 Caman.manip.pushContext = function (layer) {
   console.log("PUSH LAYER!");
   
+  // Push the layer onto the layer stack for processing
   this.layerStack.push(this.currentLayer);
+  
+  // Also push the pixel array into its own stack
   this.pixelStack.push(this.pixel_data);
   
+  // Set the reference to the current layer
   this.currentLayer = layer;
+  
+  // Set the current pixel data array to the layer's pixel data
   this.pixel_data = layer.pixel_data;
 };
 
+// Once we are done rendering a layer, we can move back to the parent layer's context. This directly
+// correlates to the LAYER_FINISHED render event.
 Caman.manip.popContext = function () {
   console.log("POP LAYER!");
   
+  // Restore the parent's pixel data (which has been modified by a blending function)
   this.pixel_data = this.pixelStack.pop();
+  
+  // Restore the reference to the current layer
   this.currentLayer = this.layerStack.pop();
 };
 
+// Shortcut for applying the current layer to the parent layer
 Caman.manip.applyCurrentLayer = function () {
   this.currentLayer.applyToParent();
 };
 
 }(Caman));
-/*!
- * Below are all of the built-in filters that are a part
- * of the CamanJS core library.
- */
+// The filters define all of the built-in functionality that comes with Caman 
+// (as opposed to being provided by a plugin). All of these filters are rather 
+// basic, but are extremely powerful when many are combined. For information on 
+// creating plugins, check out the [Plugin Creation](http://camanjs.com/docs/plugin-creation)
+// page, and for information on using the plugins, check out the
+// [Built-In Functionality](http://camanjs.com/docs/built-in) page.
 
 /*global Caman: true */ 
 (function(Caman) {
+  
+  // ## Fill Color
+  // Fills the canvas with a single solid color.
+  // 
+  // ### Arguments
+  // Can take either separate R, G, and B values as arguments, or a single hex color value.
   Caman.manip.fillColor = function () {
     var color;
     if (arguments.length == 1) {
+      // If there's only 1 argument present, assume its a hex color and convert it to RGB.
       color = Caman.hex_to_rgb(arguments[0]);
     } else {
       color = {
@@ -1799,6 +2007,7 @@ Caman.manip.applyCurrentLayer = function () {
       };
     }
     
+    // Simply set every pixel in the canvas to the given RGB color.
     return this.process( color, function fillColor(color, rgba) {
       rgba.r = color.r;
       rgba.g = color.g;
@@ -1808,10 +2017,15 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
 
+  // ## Brightness
+  // Simple brightness adjustment
+  //
+  // ### Arguments
+  // Range is -100 to 100. Values < 0 will darken image while values > 0 will brighten.
   Caman.manip.brightness = function(adjust) {
-    
     adjust = Math.floor(255 * (adjust / 100));
     
+    // Simply increase all 3 color channels by the given amount
     return this.process( adjust,  function brightness(adjust, rgba) {
       rgba.r += adjust;
       rgba.g += adjust;
@@ -1821,6 +2035,13 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
 
+  // ## Saturation
+  // Adjusts the color saturation of the image.
+  //
+  // ### Arguments
+  // Range is -100 to 100. Values < 0 will desaturate the image while values > 0 will saturate it.
+  // **If you want to completely desaturate the image**, using the greyscale filter is highly 
+  // recommended because it will yield better results.
   Caman.manip.saturation = function(adjust) {
     var max, diff;
     adjust *= -0.01;
@@ -1828,8 +2049,10 @@ Caman.manip.applyCurrentLayer = function () {
     return this.process( adjust, function saturation(adjust, rgba) {
       var chan;
       
+      // Find the max value across all 3 channels
       max = Math.max(rgba.r, rgba.g, rgba.b);
       
+      // Go through each channel, and if it isn't the max, adjust it by the given amount.
       if (rgba.r !== max) {
         diff = max - rgba.r;
         rgba.r += diff * adjust;
@@ -1849,6 +2072,15 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
+  // ## Vibrance
+  // Similar to saturation, but adjusts the saturation levels in a slightly smarter, more subtle way. 
+  // Vibrance will attempt to boost colors that are less saturated more and boost already saturated
+  // colors less, while saturation boosts all colors by the same level.
+  //
+  // ### Arguments
+  // Range is -100 to 100. Values < 0 will desaturate the image while values > 0 will saturate it.
+  // **If you want to completely desaturate the image**, using the greyscale filter is highly recommended
+  // because it will yield better results.
   Caman.manip.vibrance = function (adjust) {
     var max, avg, amt, diff;
     adjust *= -1;
@@ -1856,12 +2088,14 @@ Caman.manip.applyCurrentLayer = function () {
     return this.process( adjust, function vibrance(adjust, rgba) {
       var chan;
       
+      // Find the max value across all 3 channels
       max = Math.max(rgba.r, rgba.g, rgba.b);
       
       // Calculate difference between max color and other colors
       avg = (rgba.r + rgba.g + rgba.b) / 3;
       amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
       
+      // Go through each channel, and if it isn't the max, adjust it by the weighted given amount.
       if (rgba.r !== max) {
         diff = max - rgba.r;
         rgba.r += diff * amt;
@@ -1881,17 +2115,19 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
-  /*
-   * An improved greyscale function that should make prettier results
-   * than simply using the saturation filter to remove color. There are
-   * no arguments, it simply makes the image greyscale with no in-between.
-   *
-   * Algorithm adopted from http://www.phpied.com/image-fun/
-   */
+  // ## Greyscale
+  // An improved greyscale function that should make prettier results
+  // than simply using the saturation filter to remove color. It does so by using factors
+  // that directly relate to how the human eye perceves color and values. There are
+  // no arguments, it simply makes the image greyscale with no in-between.
+  //
+  // Algorithm adopted from http://www.phpied.com/image-fun/
   Caman.manip.greyscale = function () {
     return this.process({}, function greyscale(adjust, rgba) {
+      // Calculate the average value of the 3 color channels using the special factors
       var avg = 0.3 * rgba.r + 0.59 * rgba.g + 0.11 * rgba.b;
       
+      // Set all color channels to the same average value
       rgba.r = avg;
       rgba.g = avg;
       rgba.b = avg;
@@ -1900,26 +2136,33 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
+  // ## Contrast
+  // Increases or decreases the color contrast of the image.
+  //
+  // ### Arguments
+  // Range is -100 to 100. Values < 0 will decrease contrast while values > 0 will increase contrast.
+  // The contrast adjustment values are a bit sensitive. While unrestricted, sane adjustment values are
+  // usually around 5-10.
   Caman.manip.contrast = function(adjust) {
     adjust = (adjust + 100) / 100;
     adjust = Math.pow(adjust, 2);
 
     return this.process( adjust, function contrast(adjust, rgba) {
-      /* Red channel */
+      // Red channel
       rgba.r /= 255;
       rgba.r -= 0.5;
       rgba.r *= adjust;
       rgba.r += 0.5;
       rgba.r *= 255;
       
-      /* Green channel */
+      // Green channel
       rgba.g /= 255;
       rgba.g -= 0.5;
       rgba.g *= adjust;
       rgba.g += 0.5;
       rgba.g *= 255;
       
-      /* Blue channel */
+      // Blue channel
       rgba.b /= 255;
       rgba.b -= 0.5;
       rgba.b *= adjust;
@@ -1951,32 +2194,61 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
+  // ## Hue
+  // Adjusts the hue of the image. It can be used to shift the colors in an image in a uniform fashion.
+  // If you are unfamiliar with Hue, I recommend reading this [Wikipedia article](http://en.wikipedia.org/wiki/Hue).
+  //
+  // ### Arguments
+  // Range is 0 to 100
+  // Sometimes, Hue is expressed in the range of 0 to 360. If that's the terminology you're used to, think of 0 to 100
+  // representing the percentage of Hue shift in the 0 to 360 range.
   Caman.manip.hue = function(adjust) {
     var hsv, h;
 
     return this.process( adjust, function hue(adjust, rgba) {
       var rgb;
       
+      // Convert current pixel to HSV color space
       hsv = Caman.rgb_to_hsv(rgba.r, rgba.g, rgba.b);
+      
+      // Convert the hue percentage to a non-fractional number out of 100
       h = hsv.h * 100;
+      
+      // Shift the hue value by the given amount
       h += Math.abs(adjust);
+      
+      // Wrap the shift around if it goes over 100.
       h = h % 100;
+      
+      // Convert the hue back into a percentage
       h /= 100;
+      
+      // Apply the updated hue value
       hsv.h = h;
       
+      // Convert back to RGB color space
       rgb = Caman.hsv_to_rgb(hsv.h, hsv.s, hsv.v);
       
       return {r: rgb.r, g: rgb.g, b: rgb.b};
     });
   };
   
+  // ## Colorize
+  // Uniformly shifts the colors in an image towards the given color. The adjustment range is from 0 to 100. 
+  // The higher the value, the closer the colors in the image shift towards the given adjustment color.
+  //
+  // ### Arguments
+  // This filter is polymorphic and can take two different sets of arguments. Either a hex color string and an adjustment
+  // value, or RGB colors and an adjustment value.
   Caman.manip.colorize = function() {
     var diff, rgb, level;
             
     if (arguments.length === 2) {
+      // If only 2 arguments, assume we were given a hex color string
       rgb = Caman.hex_to_rgb(arguments[0]);
       level = arguments[1];
     } else if (arguments.length === 4) {
+      // Otherwise assume we have RGB colors
       rgb = {
         r: arguments[0],
         g: arguments[1],
@@ -1996,6 +2268,8 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
+  // ## Invert
+  // Inverts all colors in the image by subtracting each color channel value from 255. No arguments.
   Caman.manip.invert = function () {
     return this.process({}, function invert (adjust, rgba) {
       rgba.r = 255 - rgba.r;
@@ -2006,17 +2280,22 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
-  /*
-   * Applies a sepia filter to the image. Assumes adjustment is between 0 and 100,
-   * which represents how much the sepia filter is applied.
-   */
+  // ## Sepia
+  // Applies an adjustable sepia filter to the image.
+  //
+  // ### Arguments
+  // Assumes adjustment is between 0 and 100, which represents how much the sepia filter is applied.
   Caman.manip.sepia = function (adjust) {
+    // If no adjustment value was given, assume 100% sepia
     if (adjust === undefined) {
       adjust = 100;
     }
     
+    // Convert to percentage
     adjust = (adjust / 100);
     
+    // All three color channels have special conversion factors that define what sepia is. Here we adjust each
+    // channel individually, with the twist that you can partially apply the sepia filter.
     return this.process(adjust, function sepia (adjust, rgba) {
       rgba.r = Math.min(255, (rgba.r * (1 - (0.607 * adjust))) + (rgba.g * (0.769 * adjust)) + (rgba.b * (0.189 * adjust)));
       rgba.g = Math.min(255, (rgba.r * (0.349 * adjust)) + (rgba.g * (1 - (0.314 * adjust))) + (rgba.b * (0.168 * adjust)));
@@ -2026,9 +2305,12 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
-  /*
-   * Adjusts the gamma of the image. I would stick with low values to be safe.
-   */
+  // ## Gamma
+  // Adjusts the gamma of the image.
+  //
+  // ### Arguments
+  // Range is from 0 to infinity, although sane values are from 0 to 4 or 5.
+  // Values between 0 and 1 will lessen the contrast while values greater than 1 will increase it.
   Caman.manip.gamma = function (adjust) {
     return this.process(adjust, function gamma(adjust, rgba) {
       rgba.r = Math.pow(rgba.r / 255, adjust) * 255;
@@ -2039,15 +2321,18 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
-  /*
-   * Adds noise to the image on a scale from 1 - 100
-   * However, the scale isn't constrained, so you can specify
-   * a value > 100 if you want a LOT of noise.
-   */
+  // ## Noise
+  // Adds noise to the image on a scale from 1 - 100. However, the scale isn't constrained, so you can specify
+  // a value > 100 if you want a LOT of noise.
   Caman.manip.noise = function (adjust) {
+    // Convert the percentage into a 0 - 255 range.
     adjust = Math.abs(adjust) * 2.55;
     return this.process(adjust, function noise(adjust, rgba) {
+      // Retrieve a random number between -adjust and adjust
       var rand = Caman.randomRange(adjust*-1, adjust);
+      
+      // Apply the random value to each color channel to adjust the brightness. This will be clamped automatically
+      // by Caman later on if it goes below 0 or over 255.
       rgba.r += rand;
       rgba.g += rand;
       rgba.b += rand;
@@ -2056,12 +2341,17 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
-  /*
-   * Clips a color to max values when it falls outside of the specified range.
-   * User supplied value should be between 0 and 100.
-   */
+  // ## Clip
+  // Clips a color to max values when it falls outside of the specified range.
+  //
+  // ### Arguments
+  // Supplied value should be between 0 and 100.
   Caman.manip.clip = function (adjust) {
+    // Convert the percentage into a 0 - 255 range.
     adjust = Math.abs(adjust) * 2.55;
+    
+    // Go through each color channel, and clip the color if it falls outside of the
+    // specified range.
     return this.process(adjust, function clip(adjust, rgba) {
       if (rgba.r > 255 - adjust) {
         rgba.r = 255;
@@ -2085,20 +2375,23 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
-  /*
-   * Lets you modify the intensity of any combination of red, green, or blue channels.
-   * Options format (must specify 1 - 3 colors):
-   * {
-   *  red: 20,
-   *  green: -5,
-   *  blue: -40
-   * }
-   */
+  // ## Channels
+  // Lets you modify the intensity of any combination of red, green, or blue channels individually.
+  //
+  // ### Arguments
+  // Must be given at least one color channel to adjust in order to work.
+  // Options format (must specify 1 - 3 colors):
+  // <pre>{
+  //   red: 20,
+  //   green: -5,
+  //   blue: -40
+  // }</pre>
   Caman.manip.channels = function (options) {
     if (typeof(options) !== 'object') {
       return;
     }
     
+    // Clean up the arguments object a bit
     for (var chan in options) {
       if (options.hasOwnProperty(chan)) {
         if (options[chan] === 0) {
@@ -2106,20 +2399,24 @@ Caman.manip.applyCurrentLayer = function () {
           continue;
         }
         
+        // Convert to a percentage
         options[chan] = options[chan] / 100;
       }
     }
     
+    // If there are no color channels, simply return
     if (options.length === 0) {
-      return;
+      return this;
     }
     
+    // Go through each color channel and adjust it towards the given color.
     return this.process(options, function channels(options, rgba) {
       if (options.red) {
         if (options.red > 0) {
           // fraction of the distance between current color and 255
           rgba.r = rgba.r + ((255 - rgba.r) * options.red);
         } else {
+          // adjust away from the given color
           rgba.r = rgba.r - (rgba.r * Math.abs(options.red));
         }
       }
@@ -2144,27 +2441,35 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
-  /*
-   * Curves implementation using Bezier curve equation.
-   *
-   * Params:
-   *    chan - [r, g, b, rgb]
-   *    start - [x, y] (start of curve; 0 - 255)
-   *    ctrl1 - [x, y] (control point 1; 0 - 255)
-   *    ctrl2 - [x, y] (control point 2; 0 - 255)
-   *    end   - [x, y] (end of curve; 0 - 255)
-   */
+  // ## Curves
+  // Curves implementation using Bezier curve equation. If you're familiar with the Curves functionality in Photoshop, 
+  // this works in a very similar fashion.
+  //
+  // ### Arguments.
+  // <pre>
+  //   chan - [r, g, b, rgb]
+  //   start - [x, y] (start of curve; 0 - 255)
+  //   ctrl1 - [x, y] (control point 1; 0 - 255)
+  //   ctrl2 - [x, y] (control point 2; 0 - 255)
+  //   end   - [x, y] (end of curve; 0 - 255)
+  // </pre>
+  //
+  // The first argument represents the channels you wish to modify with the filter. It can be an array of channels or a 
+  // string (for a single channel). The rest of the arguments are 2-element arrays that represent point coordinates.
+  // They are specified in the same order as shown in this image to the right. The coordinates are in the range of\
+  // 0 to 255 for both X and Y values.
+  //
+  // The x-axis represents the input value for a single channel, while the y-axis represents the output value.
   Caman.manip.curves = function (chan, start, ctrl1, ctrl2, end) {
     var bezier, i;
     
+    // If the channel(s) given are in the form of a string, split them into
+    // an array.
     if (typeof chan === 'string') {
-      if (chan == 'rgb') {
-        chan = ['r', 'g', 'b'];
-      } else {
-        chan = [chan];
-      }
+      chan = chan.split("")
     }
     
+    // Generate a bezier curve with the given arguments, clamped between 0 and 255
     bezier = Caman.bezier(start, ctrl1, ctrl2, end, 0, 255);
     
     // If our curve starts after x = 0, initialize it with a flat line until
@@ -2182,6 +2487,8 @@ Caman.manip.applyCurrentLayer = function () {
       }
     }
     
+    // Once we have the complete bezier curve, it's a simple matter of using the array index
+    // as the input value to get the output color value.
     return this.process({bezier: bezier, chans: chan}, function curves(opts, rgba) {
       for (var i = 0; i < opts.chans.length; i++) {
         rgba[opts.chans[i]] = opts.bezier[rgba[opts.chans[i]]];
@@ -2191,15 +2498,18 @@ Caman.manip.applyCurrentLayer = function () {
     });
   };
   
-  /*
-   * Adjusts the exposure of the image by using the curves function.
-   */
+  // ## Exposure
+  // Adjusts the exposure of the image by using the curves function.
+  //
+  // ### Arguments
+  // Range is -100 to 100. Values < 0 will decrease exposure while values > 0 will increase exposure.
   Caman.manip.exposure = function (adjust) {
     var p, ctrl1, ctrl2;
     
+    // Convert to percentage
     p = Math.abs(adjust) / 100;
-    
 
+    // Generate our control points
     ctrl1 = [0, (255 * p)];
     ctrl2 = [(255 - (255 * p)), 255];
     
@@ -2208,6 +2518,7 @@ Caman.manip.applyCurrentLayer = function () {
       ctrl2 = ctrl2.reverse();
     }
     
+    // Simply call the curves filter with our generated arguments
     return this.curves('rgb', [0, 0], ctrl1, ctrl2, [255, 255]);
   };
 
