@@ -1,11 +1,25 @@
-/*
- * Responsible for loading CamanJS and setting everything up.
- * The Caman() function is defined here.
- */
+// This is actually where the Caman object is defined, and is where the Caman initialization code resides. 
+// There are many different initialization for Caman, which are described on the 
+// [Basic Usage](http://camanjs.com/docs) page.
+//
+// Initialization is tricky because we need to make sure everything we need is actually fully loaded in the 
+// DOM before proceeding. When initialized on an image, we need to make sure that the image is done loading 
+// before converting it to a canvas element and writing the pixel data. If we do this prematurely, the browser
+// will throw a DOM Error, and chaos will ensue. In the event that we initialize Caman on a canvas element 
+// while specifying an image URL, we need to create a new image element, load the image, then continue with 
+// initialization.
+//
+// The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. This is also
+// why this piece of code is a bit lengthy. Once everything is loaded, and Caman is initialized, the callback 
+// function is fired.
+//
+//ÊThere are also a few utility functions in this file that are used throughout the Caman source. Caman.$ is a 
+// simple helper for retrieving DOM nodes by ID. There are also a few functions for handling and detecting remote images.
 
 /*global Caman: true */ 
 (function () {
 
+// Ensure compatibility for browsers without JS debugging consoles
 if (!('console' in window)) {
   window.console = {
     log: function () {},
@@ -14,6 +28,7 @@ if (!('console' in window)) {
   };
 }
 
+// Here it begins. Caman is defined.
 var Caman = function () {
   if (arguments.length == 1) {
     // 1 argument = init image or retrieve manip object
@@ -69,23 +84,32 @@ var Caman = function () {
   }
 };
 
+// Simple version information
 Caman.version = {
   release: "2.3",
   date: "7-5-2011"
 };
 
+// Private function for finishing Caman initialization
 var finishInit = function (image, canvas, callback) {
   var self = this;
   
   // Used for saving pixel layers
   this.pixelStack = [];
+  
+  // Stores all of the layers waiting to be rendered
   this.layerStack = [];
+  
+  // Stores all of the render operatives for the renderer
   this.renderQueue = [];
   
+  // Store a reference to the canvas element
   this.canvas = canvas;  
   this.context = this.canvas.getContext("2d");
   
   if (image !== null) {
+    // If we are initializing with an image, we inspect the HTML5 data elements camanwidth and camanheight
+    // to see if we need to scale the canvas at all.
     var old_height = image.height, old_width = image.width;
     var new_width = image.getAttribute('data-camanwidth') || canvas.getAttribute('data-camanwidth');
     var new_height = image.getAttribute('data-camanheight') || canvas.getAttribute('data-camanheight');
@@ -103,29 +127,37 @@ var finishInit = function (image, canvas, callback) {
         image.width = image.height * old_width / old_height;
       }
     }
-   
+    
+    // Update the canvas sizes to match the image sizes
     canvas.width = image.width;
     canvas.height = image.height;
     
+    // Draw the image onto the canvas
     this.context.drawImage(image, 0, 0, image.width, image.height); 
   }
   
+  // Get and store references to the image data and pixel array
   this.image_data = this.context.getImageData(0, 0, canvas.width, canvas.height);
   this.pixel_data = this.image_data.data;
 
+  // Store a simple reference to the canvas dimensions, which really comes in handy with some filters
   this.dimensions = {
     width: canvas.width,
     height: canvas.height
   };
   
+  // Store a long-living reference to the Caman object that can be found in a global scope.
   Caman.store[this.canvas_id] = this;
   
+  // Execute the user's callback function to begin defining transformations
   callback.call(this, this);
   
   return this;
 };
 
 Caman.manip = Caman.prototype = {
+
+  // Used for loading Caman onto an image element
   loadImage: function (image_id, callback) {
     var domLoaded,
     self = this,
@@ -171,17 +203,20 @@ Caman.manip = Caman.prototype = {
       // DOM node
       var element = image_id;
       
+      // If the image has an ID, use it
       if (image_id.id) {
         image_id = element.id;
       } else {
+        // Otherwise, generate a unique ID for the image
         image_id = "caman-" + Caman.uniqid.get();
         element.id = image_id;
       }
     }
 
-    // Need to see if DOM is loaded
+    // Need to see if DOM is loaded already
     domLoaded = (Caman.$(image_id) !== null);
     if (domLoaded) {
+      // DOM loaded, proceed immediately
       image = Caman.$(image_id);
       proxyURL = Caman.remoteCheck(image.src);
       
@@ -202,6 +237,7 @@ Caman.manip = Caman.prototype = {
         }
       }
     } else {
+      // If it's not, wait for the DOM to load before continuing to prevent errors
       document.addEventListener("DOMContentLoaded", function () {
         image = Caman.$(image_id);
         proxyURL = Caman.remoteCheck(image.src);
@@ -220,6 +256,7 @@ Caman.manip = Caman.prototype = {
     return this;
   },
   
+  // Used for initializing Caman onto a canvas element already in the DOM
   loadCanvas: function (url, canvas_id, callback) {
     var domLoaded,
     self = this,
@@ -234,9 +271,11 @@ Caman.manip = Caman.prototype = {
       }
       
       if (url === null) {
+        // No image to load into the canvas, so we simply continue
         finishInit.call(self, null, canvas, callback);
       } else {
-          image.onload = function () {
+        // Load the image, and complete initialization when it loads
+        image.onload = function () {
           finishInit.call(self, image, canvas, callback);
         };
         
@@ -286,6 +325,8 @@ Caman.manip = Caman.prototype = {
   }
 };
 
+// In order to avoid having 3 different types of object contexts here, we simply set the prototypes
+// of loadImage and loadCanvas to Caman.manip.
 Caman.manip.loadImage.prototype = Caman.manip;
 Caman.manip.loadCanvas.prototype = Caman.manip;
 
@@ -303,7 +344,9 @@ Caman.$ = function (id) {
 
 Caman.store = {};
 
+// Checks a URL to determine if it is remote or not.
 Caman.isRemote = function (url) {
+  // Regex for extracting the domain of an image
   var domain_regex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/,
   test_domain;
   
@@ -321,6 +364,9 @@ Caman.isRemote = function (url) {
   }
 };
 
+// Checks to see if an image is remote. If it is, and a proxy is defined, it returns the proxy URL.
+// If it's remote and no proxy URL is defined, it will log an error and attempt to continue.
+// Anything else and it returns null.
 Caman.remoteCheck = function (src) {
   // Check to see if image is remote or not
   if (Caman.isRemote(src)) {

@@ -22,4 +22,6 @@
  *    GitHub: http://github.com/cezarsa
  */
  
+ // Nothing to see here, move along now...
+ 
 /*global Caman: true */

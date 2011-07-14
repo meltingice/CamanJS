@@ -1,10 +1,9 @@
-/*
- * Utility functions that help out in various areas of CamanJS.
- */
+// Utility functions that help out in various areas of CamanJS.
 
 /*global Caman: true */
 (function (Caman) {
 
+// Shortcuts
 var forEach = Array.prototype.forEach,
 hasOwn = Object.prototype.hasOwnProperty,
 slice = Array.prototype.slice;
@@ -32,14 +31,14 @@ if ( !Function.prototype.bind ) {
   };
 }
 
+// When Caman is output as a string, we can output some pretty version and release info data
+// instead of throwing an error or something boring.
 Caman.toString = Caman.manip.toString = function () {
 	return "Version " + Caman.version.release + ", Released " + Caman.version.date;
 };
 
-/*
- * Utility forEach function for iterating over
- * objects/arrays.
- */
+// Utility forEach function for iterating over objects/arrays. If the browser has native forEach,
+// then it will use that instead.
 Caman.forEach = function( obj, fn, context ) {
   
   if ( !obj || !fn ) {
@@ -47,6 +46,7 @@ Caman.forEach = function( obj, fn, context ) {
   }
   
   context = context || this;
+  
   // Use native whenever possible
   if ( forEach && obj.forEach === forEach ) {
     return obj.forEach(fn, context);
@@ -61,10 +61,7 @@ Caman.forEach = function( obj, fn, context ) {
   return obj;
 };
 
-/*
- * Used for extending the Caman object, primarily to
- * add new functionality to the base library.
- */
+// Used for extending the object, primarily the Caman object add new functionality to the base library.
 Caman.extend = function( obj ) {
   var dest = obj, src = slice.call(arguments, 1);
 
@@ -79,24 +76,19 @@ Caman.extend = function( obj ) {
   return dest;      
 };
 
-/*
- * Clamps an RGB value between 0 and 255. This is necessary
- * to run on all updated pixel values in order to conform to
- * the spec (which says that values < 0 or > 255 will be modulo'd
- * instead of clamped.
- */
+// Clamps an RGB value between 0 and 255. This is necessary
+// to run on all updated pixel values in order to conform to
+// the spec (which says that values < 0 or > 255 will be modulo'd
+// instead of clamped.
 Caman.clampRGB = function (value) {
   if (value > 255) return 255;
   else if (value < 0) return 0;
   return value;
 };
 
-/*
- * Here we define the proxies that ship with CamanJS for easy
- * usage.
- */
+// Here we define the proxies that ship with CamanJS for easy usage.
 Caman.useProxy = function (lang) {
-  // define cases where file extensions don't match the language name
+  // Define cases where file extensions don't match the language name
   var langToExt = {
     ruby: 'rb',
     python: 'py',
@@ -108,10 +100,11 @@ Caman.useProxy = function (lang) {
   return "proxies/caman_proxy." + lang;
 };
 
-/*
- * Unique ID generator. Guaranteed to always generate a new ID.
- */
+// Unique ID generator. Guaranteed to always generate a new ID.
 Caman.uniqid = (function () {
+
+  // This ID value is incremented every time get() is called, and can still be accessed
+  // by get() at all times because it is included in get()'s closure.
   var id = 0;
   
   return {
@@ -126,10 +119,7 @@ Caman.uniqid = (function () {
 }());
 
 Caman.extend(Caman, {
-  /*
-   * Returns the size of an object (the number of properties
-   * the object has)
-   */
+  // Returns the size of an object (the number of properties the object has)
   sizeOf: function ( obj ) {
     var size = 0,
         prop;
@@ -143,10 +133,7 @@ Caman.extend(Caman, {
     return size;
   },
   
-  /*
-   * Determines whether two given objects are the same based
-   * on their properties and values.
-   */
+  // Determines whether two given objects are the same based on their properties and values.
   sameAs: function ( base, test ) {
     
     // only tests arrays
@@ -163,10 +150,7 @@ Caman.extend(Caman, {
     return true;
   },
   
-  /*
-   * Removes items with the given value from an array if they
-   * are present.
-   */
+  // Removes items with the given value from an array if they are present.
   remove: function ( arr, item ) {
     var ret = [];
     
@@ -180,22 +164,24 @@ Caman.extend(Caman, {
     
     return ret;      
   },
-    
+  
+  // Generates a pseudorandom number that lies within the max - mix range. The number can be either
+  // an integer or a float depending on what the user specifies.
   randomRange: function (min, max, float) {
     var rand = min + (Math.random() * (max - min));
     return typeof float == 'undefined' ? Math.round(rand) : rand.toFixed(float);
   },
   
-  /**
-   * Converts an RGB color to HSL.
-   * Assumes r, g, and b are in the set [0, 255] and
-   * returns h, s, and l in the set [0, 1].
-   *
-   * @param   Number  r   Red channel
-   * @param   Number  g   Green channel
-   * @param   Number  b   Blue channel
-   * @return              The HSL representation
-   */
+  // Converts an RGB color to HSL.
+  // Assumes r, g, and b are in the set [0, 255] and
+  // returns h, s, and l in the set [0, 1].
+  //
+  // <pre>
+  // @param   Number  r   Red channel
+  // @param   Number  g   Green channel
+  // @param   Number  b   Blue channel
+  // @return              The HSL representation
+  // </pre>
   rgb_to_hsl: function(r, g, b) {
   
     r /= 255;
@@ -221,6 +207,7 @@ Caman.extend(Caman, {
     return {h: h, s: s, l: l};
   },
   
+  // Converts from the hue color space back to RGB.
   hue_to_rgb: function (p, q, t) {
     if(t < 0) t += 1;
     if(t > 1) t -= 1;
@@ -230,17 +217,17 @@ Caman.extend(Caman, {
     return p;
   },
   
-  /**
-   * Converts an HSL color value to RGB. Conversion formula
-   * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
-   * Assumes h, s, and l are contained in the set [0, 1] and
-   * returns r, g, and b in the set [0, 255].
-   *
-   * @param   Number  h       The hue
-   * @param   Number  s       The saturation
-   * @param   Number  l       The lightness
-   * @return  Array           The RGB representation
-   */
+  // Converts an HSL color value to RGB. Conversion formula
+  // adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+  // Assumes h, s, and l are contained in the set [0, 1] and
+  // returns r, g, and b in the set [0, 255].
+  //
+  // <pre>
+  // @param   Number  h       The hue
+  // @param   Number  s       The saturation
+  // @param   Number  l       The lightness
+  // @return  Array           The RGB representation
+  // </pre>
   hsl_to_rgb: function(h, s, l){
       var r, g, b;
   
@@ -257,17 +244,17 @@ Caman.extend(Caman, {
       return {r: r * 255, g: g * 255, b: b * 255};
   },
   
-  /**
-   * Converts an RGB color value to HSV. Conversion formula
-   * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
-   * Assumes r, g, and b are contained in the set [0, 255] and
-   * returns h, s, and v in the set [0, 1].
-   *
-   * @param   Number  r       The red color value
-   * @param   Number  g       The green color value
-   * @param   Number  b       The blue color value
-   * @return  Array           The HSV representation
-   */
+  // Converts an RGB color value to HSV. Conversion formula
+  // adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+  // Assumes r, g, and b are contained in the set [0, 255] and
+  // returns h, s, and v in the set [0, 1].
+  //
+  // <pre>
+  // @param   Number  r       The red color value
+  // @param   Number  g       The green color value
+  // @param   Number  b       The blue color value
+  // @return  Array           The HSV representation
+  // </pre>
   rgb_to_hsv: function(r, g, b){
       
       r = r/255;
@@ -294,17 +281,17 @@ Caman.extend(Caman, {
       return {h: h, s: s, v: v};
   },
   
-  /**
-   * Converts an HSV color value to RGB. Conversion formula
-   * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
-   * Assumes h, s, and v are contained in the set [0, 1] and
-   * returns r, g, and b in the set [0, 255].
-   *
-   * @param   Number  h       The hue
-   * @param   Number  s       The saturation
-   * @param   Number  v       The value
-   * @return  Array           The RGB representation
-   */
+  // Converts an HSV color value to RGB. Conversion formula
+  // adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+  // Assumes h, s, and v are contained in the set [0, 1] and
+  // returns r, g, and b in the set [0, 255].
+  //
+  // <pre>
+  // @param   Number  h       The hue
+  // @param   Number  s       The saturation
+  // @param   Number  v       The value
+  // @return  Array           The RGB representation
+  // </pre>
   hsv_to_rgb: function(h, s, v){
     
       var r, g, b,
@@ -350,18 +337,19 @@ Caman.extend(Caman, {
       return {r: r * 255, g: g * 255, b: b * 255};
   },
   
-  /**
-   * Converts a RGB color value to the XYZ color space. Formulas
-   * are based on http://en.wikipedia.org/wiki/SRGB assuming that
-   * RGB values are sRGB.
-   * Assumes r, g, and b are contained in the set [0, 255] and
-   * returns x, y, and z.
-   *
-   * @param   Number  r       The red color value
-   * @param   Number  g       The green color value
-   * @param   Number  b       The blue color value
-   * @return  Array           The XYZ representation
-   */
+  // Converts a RGB color value to the XYZ color space. Formulas
+  // are based on http://en.wikipedia.org/wiki/SRGB assuming that
+  // RGB values are sRGB.
+  //
+  // Assumes r, g, and b are contained in the set [0, 255] and
+  // returns x, y, and z.
+  //
+  // <pre>
+  // @param   Number  r       The red color value
+  // @param   Number  g       The green color value
+  // @param   Number  b       The blue color value
+  // @return  Array           The XYZ representation
+  // </pre>
   rgb_to_xyz: function (r, g, b) {
   
     r = r / 255; g = g / 255; b = b / 255;
@@ -391,18 +379,18 @@ Caman.extend(Caman, {
     return {x: x * 100, y: y * 100, z: z * 100};
   },
   
-  /**
-   * Converts a XYZ color value to the sRGB color space. Formulas
-   * are based on http://en.wikipedia.org/wiki/SRGB and the resulting
-   * RGB value will be in the sRGB color space.
-   * Assumes x, y and z values are whatever they are and returns
-   * r, g and b in the set [0, 255].
-   *
-   * @param   Number  x       The X value
-   * @param   Number  y       The Y value
-   * @param   Number  z       The Z value
-   * @return  Array           The RGB representation
-   */
+  // Converts a XYZ color value to the sRGB color space. Formulas
+  // are based on http://en.wikipedia.org/wiki/SRGB and the resulting
+  // RGB value will be in the sRGB color space.
+  // Assumes x, y and z values are whatever they are and returns
+  // r, g and b in the set [0, 255].
+  //
+  // <pre>
+  // @param   Number  x       The X value
+  // @param   Number  y       The Y value
+  // @param   Number  z       The Z value
+  // @return  Array           The RGB representation
+  // </pre>
   xyz_to_rgb: function (x, y, z) {
 
     x = x / 100; y = y / 100; z = z / 100;
@@ -433,18 +421,18 @@ Caman.extend(Caman, {
     return {r: r * 255, g: g * 255, b: b * 255};
   },
   
-  /**
-   * Converts a XYZ color value to the CIELAB color space. Formulas
-   * are based on http://en.wikipedia.org/wiki/Lab_color_space
-   * The reference white point used in the conversion is D65.
-   * Assumes x, y and z values are whatever they are and returns
-   * L*, a* and b* values
-   *
-   * @param   Number  x       The X value
-   * @param   Number  y       The Y value
-   * @param   Number  z       The Z value
-   * @return  Array           The Lab representation
-   */
+  // Converts a XYZ color value to the CIELAB color space. Formulas
+  // are based on http://en.wikipedia.org/wiki/Lab_color_space
+  // The reference white point used in the conversion is D65.
+  // Assumes x, y and z values are whatever they are and returns
+  // L*, a* and b* values
+  //
+  // <pre>
+  // @param   Number  x       The X value
+  // @param   Number  y       The Y value
+  // @param   Number  z       The Z value
+  // @return  Array           The Lab representation
+  // </pre>
   xyz_to_lab: function(x, y, z) {
   
     // D65 reference white point
@@ -477,19 +465,20 @@ Caman.extend(Caman, {
     return {l: l, a: a, b: b};
   },
   
-  /**
-   * Converts a L*, a*, b* color values from the CIELAB color space
-   * to the XYZ color space. Formulas are based on
-   * http://en.wikipedia.org/wiki/Lab_color_space
-   * The reference white point used in the conversion is D65.
-   * Assumes L*, a* and b* values are whatever they are and returns
-   * x, y and z values.
-   *
-   * @param   Number  l       The L* value
-   * @param   Number  a       The a* value
-   * @param   Number  b       The b* value
-   * @return  Array           The XYZ representation
-   */
+  // Converts a L*, a*, b* color values from the CIELAB color space
+  // to the XYZ color space. Formulas are based on
+  // http://en.wikipedia.org/wiki/Lab_color_space
+  //
+  // The reference white point used in the conversion is D65.
+  // Assumes L*, a* and b* values are whatever they are and returns
+  // x, y and z values.
+  //
+  // <pre>
+  // @param   Number  l       The L* value
+  // @param   Number  a       The a* value
+  // @param   Number  b       The b* value
+  // @return  Array           The XYZ representation
+  // </pre>
   lab_to_xyz: function(l, a, b) {
   
     var y = (l + 16) / 116;
@@ -518,13 +507,13 @@ Caman.extend(Caman, {
     return {x: x * 95.047, y: y * 100.0, z: z * 108.883};
   },
   
-  /*
-   * Converts the hex representation of a color to RGB values.
-   * Hex value can optionally start with the hash (#).
-   *
-   * @param   String  hex   The colors hex value
-   * @return  Array         The RGB representation
-   */
+  // Converts the hex representation of a color to RGB values.
+  // Hex value can optionally start with the hash (#).
+  //
+  // <pre>
+  // @param   String  hex   The colors hex value
+  // @return  Array         The RGB representation
+  // </pre>
   hex_to_rgb: function(hex) {
     var r, g, b;
     
@@ -539,6 +528,12 @@ Caman.extend(Caman, {
     return {r: r, g: g, b: b};
   },
   
+  // Generates a bezier curve given a start and end point, with two control points in between.
+  // Can also optionally bound the y values between a low and high bound.
+  //
+  // This is different than most bezier curve functions because it attempts to construct it in such 
+  // a way that we can use it more like a simple input -> output system, or a one-to-one function. 
+  // In other words we can provide an input color value, and immediately receive an output modified color value.
   bezier: function (start, ctrl1, ctrl2, end, lowBound, highBound) {
     var Ax, Bx, Cx, Ay, By, Cy,
     x0 = start[0], y0 = start[1],
@@ -557,9 +552,13 @@ Caman.extend(Caman, {
     By = 3 * (y2 - y1) - Cy;
     Ay = y3 - y0 - Cy - By;
     
+    // 1000 is actually arbitrary. We need to make sure we do enough calculations between 0 and 255 that, in even
+    // the more extreme circumstances, we calculate as many values as possible. In the event that an X value is
+    // skipped, it will be found later on.
     for (var i = 0; i < 1000; i++) {
       t = i / 1000;
       
+      // Calculate our X and Y values for this iteration
       curveX = Math.round((Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0);
       curveY = Math.round((Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0);
       
@@ -569,6 +568,7 @@ Caman.extend(Caman, {
         curveY = highBound;
       }
       
+      // Store the calculation
       bezier[curveX] = curveY;
     }
     
@@ -591,6 +591,7 @@ Caman.extend(Caman, {
             }
           }
           
+          // Store the value discovered with linear interpolation
           bezier[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
         }
       }
@@ -604,6 +605,7 @@ Caman.extend(Caman, {
     return bezier;
   },
   
+  // Calculate the distance between two points on a cartesian plane.
   distance: function (x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
