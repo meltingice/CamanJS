@@ -485,7 +485,7 @@
     // If the channel(s) given are in the form of a string, split them into
     // an array.
     if (typeof chan === 'string') {
-      chan = chan.split("")
+      chan = chan.split("");
     }
     
     // Generate a bezier curve with the given arguments, clamped between 0 and 255

@@ -40,7 +40,7 @@
 // why this piece of code is a bit lengthy. Once everything is loaded, and Caman is initialized, the callback 
 // function is fired.
 //
-//�There are also a few utility functions in this file that are used throughout the Caman source. Caman.$ is a 
+// There are also a few utility functions in this file that are used throughout the Caman source. Caman.$ is a 
 // simple helper for retrieving DOM nodes by ID. There are also a few functions for handling and detecting remote images.
 
 /*global Caman: true */ 
@@ -2466,7 +2466,7 @@ Caman.manip.applyCurrentLayer = function () {
     // If the channel(s) given are in the form of a string, split them into
     // an array.
     if (typeof chan === 'string') {
-      chan = chan.split("")
+      chan = chan.split("");
     }
     
     // Generate a bezier curve with the given arguments, clamped between 0 and 255
@@ -3930,6 +3930,38 @@ Caman.plugin.stackBlur = function ( radius ) {
 
 Caman.manip.stackBlur = function (radius) {
   return this.processPlugin("stackBlur", [radius]);
+};
+
+}(Caman));
+/*global Caman: true, exports: true */
+
+/*
+ * NodeJS compatibility
+ */
+if (!Caman && typeof exports == "object") {
+  var Caman = {manip:{}};
+  exports.plugins = Caman.manip;
+}
+
+(function (Caman) {
+
+Caman.manip.threshold = function(adjust) {
+  return this.process( adjust, function threshold (adjust, rgba) {
+  
+    var luminance = (0.2126*rgba.r) + (0.7152*rgba.g) + (0.0722*rgba.b);
+    
+    if (luminance < adjust) {
+      rgba.r = 0;
+      rgba.g = 0;
+      rgba.b = 0;
+    } else {
+      rgba.r = 255;
+      rgba.g = 255;
+      rgba.b = 255;
+    }
+
+    return rgba;
+  });
 };
 
 }(Caman));
