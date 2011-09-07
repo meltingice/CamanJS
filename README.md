@@ -76,3 +76,7 @@ CamanJS has both QUnit unit testing and a custom benchmarking page to monitor re
 * <a href="http://twitter.com/rwaldron">Rick Waldron</a> - Plugin Architect and Developer
 * <a href="http://twitter.com/cezarsa">Cezar Sá Espinola</a> - Developer
 * <a href="http://twitter.com/jarques">Jarques Pretorius</a> - Logo Designer
+
+# Plugin Contributors
+
+* <a href="https://github.com/Hosselaer">Hosselaer</a>

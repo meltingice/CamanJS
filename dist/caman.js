@@ -40,7 +40,7 @@
 // why this piece of code is a bit lengthy. Once everything is loaded, and Caman is initialized, the callback 
 // function is fired.
 //
-//�There are also a few utility functions in this file that are used throughout the Caman source. Caman.$ is a 
+// There are also a few utility functions in this file that are used throughout the Caman source. Caman.$ is a 
 // simple helper for retrieving DOM nodes by ID. There are also a few functions for handling and detecting remote images.
 
 /*global Caman: true */ 
@@ -2466,7 +2466,7 @@ Caman.manip.applyCurrentLayer = function () {
     // If the channel(s) given are in the form of a string, split them into
     // an array.
     if (typeof chan === 'string') {
-      chan = chan.split("")
+      chan = chan.split("");
     }
     
     // Generate a bezier curve with the given arguments, clamped between 0 and 255

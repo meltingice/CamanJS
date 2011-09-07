@@ -13,7 +13,7 @@
 // why this piece of code is a bit lengthy. Once everything is loaded, and Caman is initialized, the callback 
 // function is fired.
 //
-//ÊThere are also a few utility functions in this file that are used throughout the Caman source. Caman.$ is a 
+// There are also a few utility functions in this file that are used throughout the Caman source. Caman.$ is a 
 // simple helper for retrieving DOM nodes by ID. There are also a few functions for handling and detecting remote images.
 
 /*global Caman: true */ 
