@@ -380,7 +380,7 @@ Caman.remoteCheck = function (src) {
       }
       
       // We have a remote proxy setup properly, so lets alter the image src
-      return Caman.remoteProxy + "?url=" + encodeURIComponent(src);
+      return Caman.remoteProxy + "?camanProxyUrl=" + encodeURIComponent(src);
     }
   }
 };
