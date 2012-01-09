@@ -102,7 +102,7 @@
 
     CamanInstance.prototype.imageLoaded = function(id, image, callback) {
       this.image = image;
-      this.canvas = document.creatElement('canvas');
+      this.canvas = document.createElement('canvas');
       this.canvas.id = image.id;
       image.parentNode.replaceChild(this.canvas, this.image);
       this.canvasID = id;
