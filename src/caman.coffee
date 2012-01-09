@@ -6,19 +6,19 @@ Root.Caman = ->
   switch arguments.length
     when 1
       return Store.get(arguments[0]) if Store.has arguments[0]
-      return new ManipImage(arguments)
+      return new CamanInstance arguments, CamanInstance.Type.Image
     when 2
       return Store.execute arguments[0], arguments[1] if Store.has arguments[0]
       
       if typeof arguments[1] is 'function'
         tag = $(arguments[0]).nodeName.toLowerCase()
-        return new ManipImage(arguments) if tag is "img"
-        return new ManipCanvas(arguments) if tag is "canvas"
+        return new CamanInstance(arguments, CamanInstance.Type.Image) if tag is "img"
+        return new CamanInstance(arguments, CamanInstance.Type.Canvas) if tag is "canvas"
       else
-        return new ManipCanvas(arguments)
+        return new CamanInstance(arguments, CamanInstance.Type.Canvas)
     when 3
       return Store.execute arguments[1], arguments[2] if Store.has arguments[0]
-      return new ManipCanvas(arguments)
+      return new CamanInstance(arguments, CamanInstance.Type.Canvas)
     
 Caman.version =
   release: "3.0"
