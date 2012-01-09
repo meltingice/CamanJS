@@ -36,7 +36,7 @@ class CamanInstance
 	imageLoaded: (id, image, callback) ->
 		@image = image
 		
-		@canvas = document.creatElement 'canvas'
+		@canvas = document.createElement 'canvas'
 		@canvas.id = image.id
 		
 		# TODO: resize options
