@@ -27,10 +27,8 @@ coffeeFiles		= [
 	"util"
 	
 	"caman"
+	"camaninstance"
 	"store"
-	"manip"
-	"canvas.manip"
-	"image.manip"
 ]
 
 ###

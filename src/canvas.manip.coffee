@@ -1,1 +1,0 @@
-class Canvas extends Manip
