@@ -207,6 +207,17 @@
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     };
 
+    Calculate.randomRange = function(min, max, float) {
+      var rand;
+      if (float == null) float = false;
+      rand = min + (Math.random() * (max - min));
+      if (float) {
+        return rand.toFixed(float);
+      } else {
+        return Math.round(rand);
+      }
+    };
+
     return Calculate;
 
   })();
@@ -583,6 +594,130 @@
     });
   });
 
+  Filter.register("vibrance", function(adjust) {
+    adjust *= -1;
+    return this.process("vibrance", function(rgba) {
+      var amt, avg, max;
+      max = Math.max(rgba.r, rgba.g, rgba.b);
+      avg = (rgba.r + rgba.g + rgba.b) / 3;
+      amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
+      if (rgba.r !== max) rgba.r += (max - rgba.r) * adjust;
+      if (rgba.g !== max) rgba.g += (max - rgba.g) * adjust;
+      if (rgba.b !== max) rgba.b += (max - rgba.b) * adjust;
+      return rgba;
+    });
+  });
+
+  Filter.register("greyscale", function(adjust) {
+    return this.process("greyscale", function(rgba) {
+      var avg;
+      avg = 0.3 * rgba.r + 0.59 * rgba.g + 0.11 * rgba.b;
+      rgba.r = avg;
+      rgba.g = avg;
+      rgba.b = avg;
+      return rgba;
+    });
+  });
+
+  Filter.register("contrast", function(adjust) {
+    adjust = Math.pow((adjust + 100) / 100, 2);
+    return this.process("contrast", function(rgba) {
+      rgba.r /= 255;
+      rgba.r -= 0.5;
+      rgba.r *= adjust;
+      rgba.r += 0.5;
+      rgba.r *= 255;
+      rgba.g /= 255;
+      rgba.g -= 0.5;
+      rgba.g *= adjust;
+      rgba.g += 0.5;
+      rgba.g *= 255;
+      rgba.b /= 255;
+      rgba.b -= 0.5;
+      rgba.b *= adjust;
+      rgba.b += 0.5;
+      rgba.b *= 255;
+      return rgba;
+    });
+  });
+
+  Filter.register("hue", function(adjust) {
+    return this.process("hue", function(rgba) {
+      var h, hsv, rgb;
+      hsv = Convert.rgbToHSV(rgba.r, rgba.g, rgba.b);
+      h = hsv.h * 100;
+      h += Math.abs(adjust);
+      h = h % 100;
+      h /= 100;
+      hsv.h = h;
+      rgb = Convert.hsvToRGB(hsv.h, hsv.s, hsv.v);
+      rgb.a = rgba.a;
+      return rgb;
+    });
+  });
+
+  Filter.register("colorize", function() {
+    var level, rgb;
+    if (arguments.length === 2) {
+      rgb = Convert.hexToRGB(arguments[0]);
+      level = arguments[1];
+    } else if (arguments.length === 4) {
+      rgb = {
+        r: arguments[0],
+        g: arguments[1],
+        b: arguments[2]
+      };
+      level = arguments[3];
+    }
+    return this.process("colorize", function(rgba) {
+      rgba.r -= (rgba.r - rgb.r) * (level / 100);
+      rgba.g -= (rgba.g - rgb.g) * (level / 100);
+      rgba.b -= (rgba.b - rgb.b) * (level / 100);
+      return rgba;
+    });
+  });
+
+  Filter.register("invert", function() {
+    return this.process("invert", function(rgba) {
+      rgba.r = 255 - rgba.r;
+      rgba.g = 255 - rgba.g;
+      rgba.b = 255 - rgba.b;
+      return rgba;
+    });
+  });
+
+  Filter.register("sepia", function(adjust) {
+    if (adjust == null) adjust = 100;
+    adjust /= 100;
+    return this.process("sepia", function(rgba) {
+      rgba.r = Math.min(255, (rgba.r * (1 - (0.607 * adjust))) + (rgba.g * (0.769 * adjust)) + (rgba.b * (0.189 * adjust)));
+      rgba.g = Math.min(255, (rgba.r * (0.349 * adjust)) + (rgba.g * (1 - (0.314 * adjust))) + (rgba.b * (0.168 * adjust)));
+      rgba.b = Math.min(255, (rgba.r * (0.272 * adjust)) + (rgba.g * (0.534 * adjust)) + (rgba.b * (1 - (0.869 * adjust))));
+      return rgba;
+    });
+  });
+
+  Filter.register("gamma", function(adjust) {
+    return this.process("gamma", function(rgba) {
+      rgba.r = Math.pow(rgba.r / 255, adjust) * 255;
+      rgba.g = Math.pow(rgba.g / 255, adjust) * 255;
+      rgba.b = Math.pow(rgba.b / 255, adjust) * 255;
+      return rgba;
+    });
+  });
+
+  Filter.register("noise", function(adjust) {
+    adjust = Math.abs(adjust) * 2.55;
+    return this.process("noise", function(rgba) {
+      var rand;
+      rand = Calculate.randomRange(adjust * -1, adjust);
+      rgba.r += rand;
+      rgba.g += rand;
+      rgba.b += rand;
+      return rgba;
+    });
+  });
+
   Logger = (function() {
 
     function Logger() {
@@ -694,7 +829,9 @@
     };
 
     RenderJob.prototype.blockFinished = function(bnum) {
-      if (bnum >= 0) Log.debug("Block #" + bnum + " finished! Filter: " + name);
+      if (bnum >= 0) {
+        Log.debug("Block #" + bnum + " finished! Filter: " + this.job.name);
+      }
       this.blocksDone++;
       if (this.blocksDone === RenderJob.Blocks || bnum === -1) {
         if (bnum >= 0) Log.debug("Filter " + this.job.name + " finished!");
