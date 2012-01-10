@@ -24,10 +24,16 @@ coffeeOpts		= "-r coffeescript-growl -j #{targetName}.js -o #{csTargetDir} -c #{
 
 # All source files listed in include order
 coffeeFiles		= [
+	# These are non-classed functions
 	"util"
 	
+	# Core library
 	"caman"
 	"camaninstance"
+
+	# Everything else
+	"calculate"
+	"convert"
 	"filter"
 	"filters"
 	"logger"
