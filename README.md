@@ -6,7 +6,9 @@ The main focus of CamanJS is manipulating images using the HTML5 canvas and Java
 
 CamanJS is very easy to extend with new filters and plugins, and it comes with a wide array of image editing functionality, which is only growing as the community makes more plugins.
 
-For more information, I highly recommend taking a look at the <a href="http://camanjs.com">official website</a> where there is more comprehensive documentation and interactive demos. You can also <a href="https://github.com/meltingice/CamanJS/wiki">read the wiki</a> for some basic information about the project and how to use it.
+For more information, I highly recommend taking a look at the [official website](http://camanjs.com) where there is more comprehensive documentation and interactive demos. You can also [read the wiki](https://github.com/meltingice/CamanJS/wiki) for some basic information about the project and how to use it.
+
+CamanJS is written in [Coffeescript](http://coffeescript.org) as of version 3.0.
 
 ## Example Usage
 
@@ -43,23 +45,21 @@ git submodule update
 
 The library is split up into several source files and has a separate submodule for plugins. The reason behind this organization is to make it as simple as possible to support the NodeJS port of Caman. This also helps to avoid library bloat.
 
-**Makefile**
-
-The NodeJS powered Makefile for the project will automatically check to make sure you've initialized the submodules, and if you haven't, will do so for you. Running the Makefile requires smoosh (available in npm).
+**Building CamanJS**
 
 To build, simply run:
 
 ```
-make
+cake build
 ```
 
 The resulting files will be placed in the dist/ folder.
 
 ## CDN JS Hosting
-CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from <a href="http://ajax.cdnjs.com/ajax/libs/camanjs/2.2/caman.full.min.js">this URL</a> for usage on your site.
+CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from [this URL](http://ajax.cdnjs.com/ajax/libs/camanjs/2.2/caman.full.min.js) for usage on your site.
 
 ## NodeJS Compatibility
-There is now a version of CamanJS that is made to work with NodeJS.  It has all of the functionality of the normal browser version, including plugins.  Take a look at the <a href="https://github.com/meltingice/CamanJS/tree/node">node branch</a> for more information.
+There is now a version of CamanJS that is made to work with NodeJS.  It has all of the functionality of the normal browser version, including plugins.  Take a look at the [node branch](https://github.com/meltingice/CamanJS/tree/node) for more information.
 
 **tl;dr**
 

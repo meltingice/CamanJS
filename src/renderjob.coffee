@@ -1,6 +1,6 @@
 class RenderJob
   @Blocks = 4
-  
+
   @execute: (instance, job, callback) ->
     rj = new RenderJob instance, job, callback
 
@@ -50,7 +50,7 @@ class RenderJob
     @blockFinished(bnum)
 
   blockFinished: (bnum) ->
-    Log.debug "Block ##{bnum} finished! Filter: #{name}" if bnum >= 0
+    Log.debug "Block ##{bnum} finished! Filter: #{@job.name}" if bnum >= 0
     @blocksDone++
 
     if @blocksDone is RenderJob.Blocks or bnum is -1
