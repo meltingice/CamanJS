@@ -1,5 +1,22 @@
 (function() {
-  var $, CamanInstance, Root, Store, uniqid;
+  var $, CamanInstance, Filter, Log, Logger, PixelInfo, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
+  var __hasProp = Object.prototype.hasOwnProperty;
+
+  slice = Array.prototype.slice;
+
+  extend = function(obj) {
+    var copy, dest, prop, src, _i, _len;
+    dest = obj;
+    src = slice.call(arguments, 1);
+    for (_i = 0, _len = src.length; _i < _len; _i++) {
+      copy = src[_i];
+      for (prop in copy) {
+        if (!__hasProp.call(copy, prop)) continue;
+        dest[prop] = copy[prop];
+      }
+    }
+    return dest;
+  };
 
   $ = function(sel, root) {
     if (root == null) root = document;
@@ -16,6 +33,12 @@
       }
     };
   })();
+
+  clampRGB = function(val) {
+    if (val < 0) return 0;
+    if (val > 255) return 255;
+    return val;
+  };
 
   Root = typeof exports !== "undefined" && exports !== null ? exports : window;
 
@@ -173,6 +196,194 @@
     };
 
     return CamanInstance;
+
+  })();
+
+  Filter = (function() {
+
+    function Filter() {}
+
+    Filter.Type = {
+      Single: 1,
+      Kernel: 2,
+      LayerDequeued: 3,
+      LayerFinished: 4,
+      LoadOverlay: 5,
+      Plugin: 6
+    };
+
+    Filter.register = function(name, filterFunc) {
+      return CamanInstance.prototype[name] = filterFunc;
+    };
+
+    Filter.prototype.render = function(callback) {
+      var _this = this;
+      if (callback == null) callback = function() {};
+      return this.processNext(function() {
+        _this.context.putImageData(_this.imageData, 0, 0);
+        return callback.call(_this);
+      });
+    };
+
+    Filter.prototype.process = function(name, processFn) {
+      return this.renderQueue.push({
+        type: Filter.Type.Single,
+        name: name,
+        processFn: processFn
+      });
+    };
+
+    Filter.prototype.processNext = function(finishedFn) {
+      var next;
+      var _this = this;
+      if (typeof finishedFn === "function") this.finishedFn = finishedFn;
+      if (this.renderQueue.length === 0) {
+        if (this.finishedFn != null) this.finishedFn.call(this);
+        return;
+      }
+      next = this.renderQueue.shift();
+      return RenderJob.execute(this, next, function() {
+        return _this.processNext();
+      });
+    };
+
+    return Filter;
+
+  })();
+
+  extend(CamanInstance.prototype, Filter.prototype);
+
+  Filter.register("brightness", function(adjust) {
+    adjust = Math.floor(255 * (adjust / 100));
+    return this.process("brightness", function(rgba) {
+      rgba.r += adjust;
+      rgba.g += adjust;
+      rgba.b += adjust;
+      return rgba;
+    });
+  });
+
+  Logger = (function() {
+
+    function Logger() {
+      var name, _i, _len, _ref;
+      _ref = ['log', 'info', 'warn', 'error'];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        name = _ref[_i];
+        this[name] = (function(name) {
+          return function() {
+            if (window.console != null) {
+              return window.console[name].apply(console, arguments);
+            }
+          };
+        })(name);
+      }
+      this.debug = this.log;
+    }
+
+    return Logger;
+
+  })();
+
+  Log = new Logger();
+
+  PixelInfo = (function() {
+
+    function PixelInfo(c) {
+      this.c = c;
+      this.loc = 0;
+    }
+
+    PixelInfo.prototype.locationXY = function() {
+      var x, y;
+      y = this.dimensions.height - Math.floor(this.loc / (this.dimensions.width * 4));
+      x = (this.loc % (this.dimensions.width * 4)) / 4;
+      return {
+        x: x,
+        y: y
+      };
+    };
+
+    return PixelInfo;
+
+  })();
+
+  RenderJob = (function() {
+
+    RenderJob.Blocks = 4;
+
+    RenderJob.execute = function(instance, job, callback) {
+      var rj;
+      rj = new RenderJob(instance, job, callback);
+      switch (job.type) {
+        case Filter.Type.Single:
+          return rj.executeFilter();
+      }
+    };
+
+    function RenderJob(c, job, renderDone) {
+      this.c = c;
+      this.job = job;
+      this.renderDone = renderDone;
+    }
+
+    RenderJob.prototype.executeFilter = function() {
+      var blockN, blockPixelLength, end, j, lastBlockN, n, start, _ref, _results;
+      var _this = this;
+      this.blocksDone = 0;
+      n = this.c.pixelData.length;
+      blockPixelLength = Math.floor((n / 4) / RenderJob.Blocks);
+      blockN = blockPixelLength * 4;
+      lastBlockN = blockN + ((n / 4) % RenderJob.Blocks) * 4;
+      if (this.job.type === Filter.Type.Single) {
+        _results = [];
+        for (j = 0, _ref = RenderJob.Blocks; 0 <= _ref ? j < _ref : j > _ref; 0 <= _ref ? j++ : j--) {
+          start = j * blockN;
+          end = start + (j === RenderJob.Blocks - 1 ? lastBlockN : blockN);
+          _results.push(setTimeout((function(j, start, end) {
+            return function() {
+              return _this.renderBlock(j, start, end);
+            };
+          })(j, start, end), 0));
+        }
+        return _results;
+      }
+    };
+
+    RenderJob.prototype.renderBlock = function(bnum, start, end) {
+      var data, i, pixelInfo, res;
+      Log.debug("BLOCK #" + bnum + " - Filter: " + this.job.name + ", Start: " + start + ", End: " + end);
+      data = {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0
+      };
+      pixelInfo = new PixelInfo(this.c);
+      for (i = start; i < end; i += 4) {
+        pixelInfo.loc = i;
+        data.r = this.c.pixelData[i];
+        data.g = this.c.pixelData[i + 1];
+        data.b = this.c.pixelData[i + 2];
+        res = this.job.processFn.call(pixelInfo, data);
+        this.c.pixelData[i] = clampRGB(res.r);
+        this.c.pixelData[i + 1] = clampRGB(res.g);
+        this.c.pixelData[i + 2] = clampRGB(res.b);
+      }
+      return this.blockFinished(bnum);
+    };
+
+    RenderJob.prototype.blockFinished = function(bnum) {
+      if (bnum >= 0) Log.debug("Block #" + bnum + " finished! Filter: " + name);
+      this.blocksDone++;
+      if (this.blocksDone === RenderJob.Blocks || bnum === -1) {
+        if (bnum >= 0) Log.debug("Filter " + this.job.name + " finished!");
+        if (bnum < 0) Log.debug("Kernel filter " + this.job.name + " finished!");
+        return this.renderDone();
+      }
+    };
+
+    return RenderJob;
 
   })();
 

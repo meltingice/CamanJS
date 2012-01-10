@@ -28,6 +28,11 @@ coffeeFiles		= [
 	
 	"caman"
 	"camaninstance"
+	"filter"
+	"filters"
+	"logger"
+	"pixelinfo"
+	"renderjob"
 	"store"
 ]
 
