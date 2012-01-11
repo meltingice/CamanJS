@@ -533,6 +533,28 @@
       });
     };
 
+    Filter.prototype.processKernel = function(name, adjust, divisor, bias) {
+      var data, i, _ref;
+      if (!divisor) {
+        divisor = 0;
+        for (i = 0, _ref = adjust.length; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
+          divisor += adjust[i];
+        }
+      }
+      data = {
+        adjust: adjust,
+        divisor: divisor,
+        bias: bias || 0
+      };
+      return this.renderQueue.push({
+        type: Filter.Type.Kernel,
+        name: name,
+        adjust: adjust,
+        divisor: divisor,
+        bias: bias || 0
+      });
+    };
+
     Filter.prototype.processNext = function(finishedFn) {
       var next;
       var _this = this;
@@ -552,6 +574,8 @@
   })();
 
   extend(CamanInstance.prototype, Filter.prototype);
+
+  Caman.Filter = Filter;
 
   Filter.register("fillColor", function() {
     var color;
@@ -759,6 +783,25 @@
       };
     };
 
+    PixelInfo.prototype.getPixelRelative = function(horiz, vert) {
+      var newLoc;
+      newLoc = this.loc + (this.c.dimensions.width * 4 * (vert * -1)) + (4 * horiz);
+      if (newLoc > this.c.pixelData.length || newLoc < 0) {
+        return {
+          r: 0,
+          g: 0,
+          b: 0,
+          a: 0
+        };
+      }
+      return {
+        r: this.c.pixelData[newLoc],
+        g: this.c.pixelData[newLoc + 1],
+        b: this.c.pixelData[newLoc + 2],
+        a: this.c.pixelData[newLoc + 3]
+      };
+    };
+
     return PixelInfo;
 
   })();
@@ -771,7 +814,9 @@
       var rj;
       rj = new RenderJob(instance, job, callback);
       switch (job.type) {
-        case Filter.Type.Single:
+        case Filter.Type.Plugin:
+          return rj.executePlugin();
+        default:
           return rj.executeFilter();
       }
     };
@@ -802,6 +847,8 @@
           })(j, start, end), 0));
         }
         return _results;
+      } else {
+        return this.renderKernel();
       }
     };
 
@@ -828,6 +875,45 @@
       return this.blockFinished(bnum);
     };
 
+    RenderJob.prototype.renderKernel = function() {
+      var adjust, adjustSize, bias, builder, builderIndex, divisor, end, i, j, k, kernel, modPixelData, n, name, pixel, pixelInfo, res, start;
+      name = this.job.name;
+      bias = this.job.bias;
+      divisor = this.job.divisor;
+      n = this.c.pixelData.length;
+      adjust = this.job.adjust;
+      adjustSize = Math.sqrt(adjust.length);
+      kernel = [];
+      modPixelData = [];
+      Log.debug("Rendering kernel - Filter: " + this.job.name);
+      start = this.c.dimensions.width * 4 * ((adjustSize - 1) / 2);
+      end = n - (this.c.dimensions.width * 4 * ((adjustSize - 1) / 2));
+      builder = (adjustSize - 1) / 2;
+      pixelInfo = new PixelInfo(this.c);
+      for (i = start; i < end; i += 4) {
+        pixelInfo.loc = i;
+        builderIndex = 0;
+        for (j = -builder; -builder <= builder ? j <= builder : j >= builder; -builder <= builder ? j++ : j--) {
+          for (k = builder; builder <= -builder ? k <= -builder : k >= -builder; builder <= -builder ? k++ : k--) {
+            pixel = pixelInfo.getPixelRelative(j, k);
+            kernel[builderIndex * 3] = pixel.r;
+            kernel[builderIndex * 3 + 1] = pixel.g;
+            kernel[builderIndex * 3 + 2] = pixel.b;
+            builderIndex++;
+          }
+        }
+        res = this.processKernel(adjust, kernel, divisor, bias);
+        modPixelData[i] = clampRGB(res.r);
+        modPixelData[i + 1] = clampRGB(res.g);
+        modPixelData[i + 2] = clampRGB(res.b);
+        modPixelData[i + 3] = 255;
+      }
+      for (i = start; start <= end ? i < end : i > end; start <= end ? i++ : i--) {
+        this.c.pixelData[i] = modPixelData[i];
+      }
+      return this.blockFinished(-1);
+    };
+
     RenderJob.prototype.blockFinished = function(bnum) {
       if (bnum >= 0) {
         Log.debug("Block #" + bnum + " finished! Filter: " + this.job.name);
@@ -838,6 +924,24 @@
         if (bnum < 0) Log.debug("Kernel filter " + this.job.name + " finished!");
         return this.renderDone();
       }
+    };
+
+    RenderJob.prototype.processKernel = function(adjust, kernel, divisor, bias) {
+      var i, val, _ref;
+      val = {
+        r: 0,
+        g: 0,
+        b: 0
+      };
+      for (i = 0, _ref = adjust.length; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
+        val.r += adjust[i] * kernel[i * 3];
+        val.g += adjust[i] * kernel[i * 3 + 1];
+        val.b += adjust[i] * kernel[i * 3 + 2];
+      }
+      val.r = (val.r / divisor) + bias;
+      val.g = (val.g / divisor) + bias;
+      val.b = (val.b / divisor) + bias;
+      return val;
     };
 
     return RenderJob;

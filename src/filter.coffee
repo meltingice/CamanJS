@@ -20,6 +20,23 @@ class Filter
       name: name
       processFn: processFn
 
+  processKernel: (name, adjust, divisor, bias) ->
+    if not divisor
+      divisor = 0
+      divisor += adjust[i] for i in [0...adjust.length]
+
+    data =
+      adjust: adjust
+      divisor: divisor
+      bias: bias or 0
+
+    @renderQueue.push
+      type: Filter.Type.Kernel
+      name: name
+      adjust: adjust
+      divisor: divisor
+      bias: bias or 0
+
   processNext: (finishedFn) ->
     @finishedFn = finishedFn if typeof finishedFn is "function"
 
@@ -32,3 +49,4 @@ class Filter
     RenderJob.execute @, next, => @processNext()
 
 extend CamanInstance::, Filter::
+Caman.Filter = Filter
