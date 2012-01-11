@@ -5,7 +5,8 @@ class RenderJob
     rj = new RenderJob instance, job, callback
 
     switch job.type
-      when Filter.Type.Single then rj.executeFilter()
+      when Filter.Type.Plugin then rj.executePlugin()
+      else rj.executeFilter()
 
   constructor: (@c, @job, @renderDone) ->
 
@@ -27,6 +28,8 @@ class RenderJob
         setTimeout do (j, start, end) => 
           => @renderBlock(j, start, end)
         , 0
+    else
+      @renderKernel()
 
   renderBlock: (bnum, start, end) ->
     Log.debug "BLOCK ##{bnum} - Filter: #{@job.name}, Start: #{start}, End: #{end}"
@@ -49,6 +52,51 @@ class RenderJob
 
     @blockFinished(bnum)
 
+  renderKernel: ->
+    name = @job.name
+    bias = @job.bias
+    divisor = @job.divisor
+    n = @c.pixelData.length
+
+    adjust = @job.adjust
+    adjustSize = Math.sqrt adjust.length
+
+    kernel = []
+    modPixelData = []
+
+    Log.debug "Rendering kernel - Filter: #{@job.name}"
+
+    start = @c.dimensions.width * 4 * ((adjustSize - 1) / 2)
+    end = n - (@c.dimensions.width * 4 * ((adjustSize - 1) / 2))
+
+    builder = (adjustSize - 1) / 2
+
+    pixelInfo = new PixelInfo @c
+
+    for i in [start...end] by 4
+      pixelInfo.loc = i
+      builderIndex = 0
+
+      for j in [-builder..builder]
+        for k in [builder..-builder]
+          pixel = pixelInfo.getPixelRelative j, k
+          kernel[builderIndex * 3]     = pixel.r
+          kernel[builderIndex * 3 + 1] = pixel.g
+          kernel[builderIndex * 3 + 2] = pixel.b
+
+          builderIndex++
+
+      res = @processKernel adjust, kernel, divisor, bias
+
+      modPixelData[i] = clampRGB(res.r)
+      modPixelData[i+1] = clampRGB(res.g)
+      modPixelData[i+2] = clampRGB(res.b)
+      modPixelData[i+3] = 255
+
+    @c.pixelData[i] = modPixelData[i] for i in [start...end]
+
+    @blockFinished -1
+
   blockFinished: (bnum) ->
     Log.debug "Block ##{bnum} finished! Filter: #{@job.name}" if bnum >= 0
     @blocksDone++
@@ -59,3 +107,16 @@ class RenderJob
 
       # TODO: trigger event
       @renderDone()
+
+  processKernel: (adjust, kernel, divisor, bias) ->
+    val = r: 0, g: 0, b: 0
+
+    for i in [0...adjust.length]
+      val.r += adjust[i] * kernel[i * 3]
+      val.g += adjust[i] * kernel[i * 3 + 1]
+      val.b += adjust[i] * kernel[i * 3 + 2]
+
+    val.r = (val.r / divisor) + bias
+    val.g = (val.g / divisor) + bias
+    val.b = (val.b / divisor) + bias
+    val
