@@ -5,6 +5,14 @@ class RenderJob
     rj = new RenderJob instance, job, callback
 
     switch job.type
+      when Filter.Type.LayerDequeue
+        layer = instance.canvasQueue.shift()
+        instance.executeLayer layer
+      when Filter.Type.LayerFinished
+        instance.applyCurrentLayer()
+        instance.popContext()
+        instance.processNext()
+      when Filter.Type.LoadOverlay then rj.loadOverlay job.layer, job.src
       when Filter.Type.Plugin then rj.executePlugin()
       else rj.executeFilter()
 
@@ -46,7 +54,7 @@ class RenderJob
 
       res = @job.processFn.call pixelInfo, data
 
-      @c.pixelData[i] = clampRGB res.r
+      @c.pixelData[i]   = clampRGB res.r
       @c.pixelData[i+1] = clampRGB res.g
       @c.pixelData[i+2] = clampRGB res.b
 
@@ -120,3 +128,17 @@ class RenderJob
     val.g = (val.g / divisor) + bias
     val.b = (val.b / divisor) + bias
     val
+
+  loadOverlay: (layer, src) ->
+    # TODO: image proxy
+    img = document.createElement 'img'
+    img.onload = =>
+      layer.context.drawImage img, 0, 0, @c.dimensions.width, @c.dimensions.height
+      layer.imageData = layer.context.getImageData 0, 0, @c.dimensions.width, @c.dimensions.height
+      layer.pixelData = layer.imageData.data
+
+      @pixelData = layer.pixelData
+
+      @c.processNext()
+
+    img.src = src

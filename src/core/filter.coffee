@@ -20,6 +20,8 @@ class Filter
       name: name
       processFn: processFn
 
+    return @
+
   processKernel: (name, adjust, divisor, bias) ->
     if not divisor
       divisor = 0
@@ -37,6 +39,8 @@ class Filter
       divisor: divisor
       bias: bias or 0
 
+    return @
+
   processNext: (finishedFn) ->
     @finishedFn = finishedFn if typeof finishedFn is "function"
 
@@ -47,6 +51,32 @@ class Filter
 
     next = @renderQueue.shift()
     RenderJob.execute @, next, => @processNext()
+
+  newLayer: (callback) ->
+    layer = new Layer @
+    @canvasQueue.push layer
+    @renderQueue.push type: Filter.Type.LayerDequeue
+
+    callback.call layer
+
+    @renderQueue.push type: Filter.Type.LayerFinished
+    return @
+
+  executeLayer: (layer) ->
+    @pushContext layer
+    @processNext()
+
+  pushContext: (layer) ->
+    @layerStack.push @currentLayer
+    @pixelStack.push @pixelData
+    @currentLayer = layer
+    @pixelData = layer.pixelData
+
+  popContext: ->
+    @pixelData = @pixelStack.pop()
+    @currentLayer = @layerStack.pop()
+
+  applyCurrentLayer: -> @currentLayer.applyToParent()
 
 extend CamanInstance::, Filter::
 Caman.Filter = Filter

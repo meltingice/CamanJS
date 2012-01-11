@@ -25,21 +25,26 @@ coffeeOpts		= "-r coffeescript-growl -j #{targetName}.js -o #{csTargetDir} -c #{
 # All source files listed in include order
 coffeeFiles		= [
 	# These are non-classed functions
-	"util"
+	"core/util"
 	
 	# Core library
-	"caman"
-	"camaninstance"
+	"core/caman"
+	"core/camaninstance"
 
 	# Everything else
-	"calculate"
-	"convert"
-	"filter"
-	"filters"
-	"logger"
-	"pixelinfo"
-	"renderjob"
-	"store"
+	"core/blender"
+	"core/calculate"
+	"core/convert"
+	"core/filter"
+	"core/layer"
+	"core/logger"
+	"core/pixelinfo"
+	"core/renderjob"
+	"core/store"
+
+	# Non-core files
+	"lib/blenders"
+	"lib/filters"
 ]
 
 ###
