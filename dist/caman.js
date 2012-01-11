@@ -1,5 +1,5 @@
 (function() {
-  var $, Calculate, CamanInstance, Convert, Filter, Log, Logger, PixelInfo, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
+  var $, Blender, Calculate, CamanInstance, Convert, Filter, Layer, Log, Logger, PixelInfo, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
   var __hasProp = Object.prototype.hasOwnProperty;
 
   slice = Array.prototype.slice;
@@ -89,6 +89,7 @@
       this.pixelStack = [];
       this.layerStack = [];
       this.renderQueue = [];
+      this.canvasQueue = [];
       switch (type) {
         case CamanInstance.Type.Image:
           this.loadImage.apply(this, args);
@@ -196,6 +197,24 @@
     };
 
     return CamanInstance;
+
+  })();
+
+  Blender = (function() {
+
+    function Blender() {}
+
+    Blender.blenders = {};
+
+    Blender.register = function(name, func) {
+      return this.blenders[name] = func;
+    };
+
+    Blender.execute = function(name, rgbaLayer, rgbaParent) {
+      return this.blenders[name](rgbaLayer, rgbaParent);
+    };
+
+    return Blender;
 
   })();
 
@@ -526,11 +545,12 @@
     };
 
     Filter.prototype.process = function(name, processFn) {
-      return this.renderQueue.push({
+      this.renderQueue.push({
         type: Filter.Type.Single,
         name: name,
         processFn: processFn
       });
+      return this;
     };
 
     Filter.prototype.processKernel = function(name, adjust, divisor, bias) {
@@ -546,13 +566,14 @@
         divisor: divisor,
         bias: bias || 0
       };
-      return this.renderQueue.push({
+      this.renderQueue.push({
         type: Filter.Type.Kernel,
         name: name,
         adjust: adjust,
         divisor: divisor,
         bias: bias || 0
       });
+      return this;
     };
 
     Filter.prototype.processNext = function(finishedFn) {
@@ -569,6 +590,41 @@
       });
     };
 
+    Filter.prototype.newLayer = function(callback) {
+      var layer;
+      layer = new Layer(this);
+      this.canvasQueue.push(layer);
+      this.renderQueue.push({
+        type: Filter.Type.LayerDequeue
+      });
+      callback.call(layer);
+      this.renderQueue.push({
+        type: Filter.Type.LayerFinished
+      });
+      return this;
+    };
+
+    Filter.prototype.executeLayer = function(layer) {
+      this.pushContext(layer);
+      return this.processNext();
+    };
+
+    Filter.prototype.pushContext = function(layer) {
+      this.layerStack.push(this.currentLayer);
+      this.pixelStack.push(this.pixelData);
+      this.currentLayer = layer;
+      return this.pixelData = layer.pixelData;
+    };
+
+    Filter.prototype.popContext = function() {
+      this.pixelData = this.pixelStack.pop();
+      return this.currentLayer = this.layerStack.pop();
+    };
+
+    Filter.prototype.applyCurrentLayer = function() {
+      return this.currentLayer.applyToParent();
+    };
+
     return Filter;
 
   })();
@@ -576,6 +632,433 @@
   extend(CamanInstance.prototype, Filter.prototype);
 
   Caman.Filter = Filter;
+
+  Layer = (function() {
+
+    function Layer(c) {
+      this.c = c;
+      this.filter = this.c;
+      this.options = {
+        blendingMode: 'normal',
+        opacity: 1.0
+      };
+      this.layerID = uniqid.get();
+      this.canvas = document.createElement('canvas');
+      this.canvas.width = this.c.dimensions.width;
+      this.canvas.height = this.c.dimensions.height;
+      this.context = this.canvas.getContext('2d');
+      this.context.createImageData(this.canvas.width, this.canvas.height);
+      this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+      this.pixelData = this.imageData.data;
+    }
+
+    Layer.prototype.newLayer = function(cb) {
+      return this.c.newLayer.call(this.c, cb);
+    };
+
+    Layer.prototype.setBlendingMode = function(mode) {
+      this.options.blendingMode = mode;
+      return this;
+    };
+
+    Layer.prototype.opacity = function(opacity) {
+      this.options.opacity = opacity / 100;
+      return this;
+    };
+
+    Layer.prototype.copyParent = function() {
+      var i, parentData, _ref;
+      parentData = this.c.pixelData;
+      for (i = 0, _ref = this.c.pixelData.length; i < _ref; i += 4) {
+        this.pixelData[i] = parentData[i];
+        this.pixelData[i + 1] = parentData[i + 1];
+        this.pixelData[i + 2] = parentData[i + 2];
+        this.pixelData[i + 3] = parentData[i + 3];
+      }
+      return this;
+    };
+
+    Layer.prototype.fillColor = function() {
+      return this.c.fillcolor.apply(this.c, arguments);
+    };
+
+    Layer.prototype.overlayImage = function(image) {
+      if (typeof image === "object") {
+        image = image.src;
+      } else if (typeof image === "string" && image[0] === "#") {
+        image = $(image).src;
+      }
+      if (!image) return this;
+      this.c.renderQueue.push({
+        type: Filter.Type.LoadOverlay,
+        src: image,
+        layer: this
+      });
+      return this;
+    };
+
+    Layer.prototype.applyToParent = function() {
+      var i, layerData, parentData, result, rgbaLayer, rgbaParent, _ref, _results;
+      parentData = this.c.pixelStack[this.c.pixelStack.length - 1];
+      layerData = this.c.pixelData;
+      _results = [];
+      for (i = 0, _ref = layerData.length; i < _ref; i += 4) {
+        rgbaParent = {
+          r: parentData[i],
+          g: parentData[i + 1],
+          b: parentData[i + 2],
+          a: parentData[i + 3]
+        };
+        rgbaLayer = {
+          r: layerData[i],
+          g: layerData[i + 1],
+          b: layerData[i + 2],
+          a: layerData[i + 3]
+        };
+        result = Blender.execute(this.options.blendingMode, rgbaLayer, rgbaParent);
+        result.r = clampRGB(result.r);
+        result.g = clampRGB(result.g);
+        result.b = clampRGB(result.b);
+        parentData[i] = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)));
+        parentData[i + 1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)));
+        parentData[i + 2] = rgbaParent.b - ((rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255)));
+        _results.push(parentData[i + 3] = 255);
+      }
+      return _results;
+    };
+
+    return Layer;
+
+  })();
+
+  Logger = (function() {
+
+    function Logger() {
+      var name, _i, _len, _ref;
+      _ref = ['log', 'info', 'warn', 'error'];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        name = _ref[_i];
+        this[name] = (function(name) {
+          return function() {
+            if (window.console != null) {
+              return window.console[name].apply(console, arguments);
+            }
+          };
+        })(name);
+      }
+      this.debug = this.log;
+    }
+
+    return Logger;
+
+  })();
+
+  Log = new Logger();
+
+  PixelInfo = (function() {
+
+    function PixelInfo(c) {
+      this.c = c;
+      this.loc = 0;
+    }
+
+    PixelInfo.prototype.locationXY = function() {
+      var x, y;
+      y = this.dimensions.height - Math.floor(this.loc / (this.dimensions.width * 4));
+      x = (this.loc % (this.dimensions.width * 4)) / 4;
+      return {
+        x: x,
+        y: y
+      };
+    };
+
+    PixelInfo.prototype.getPixelRelative = function(horiz, vert) {
+      var newLoc;
+      newLoc = this.loc + (this.c.dimensions.width * 4 * (vert * -1)) + (4 * horiz);
+      if (newLoc > this.c.pixelData.length || newLoc < 0) {
+        return {
+          r: 0,
+          g: 0,
+          b: 0,
+          a: 0
+        };
+      }
+      return {
+        r: this.c.pixelData[newLoc],
+        g: this.c.pixelData[newLoc + 1],
+        b: this.c.pixelData[newLoc + 2],
+        a: this.c.pixelData[newLoc + 3]
+      };
+    };
+
+    return PixelInfo;
+
+  })();
+
+  RenderJob = (function() {
+
+    RenderJob.Blocks = 4;
+
+    RenderJob.execute = function(instance, job, callback) {
+      var layer, rj;
+      rj = new RenderJob(instance, job, callback);
+      switch (job.type) {
+        case Filter.Type.LayerDequeue:
+          layer = instance.canvasQueue.shift();
+          return instance.executeLayer(layer);
+        case Filter.Type.LayerFinished:
+          instance.applyCurrentLayer();
+          instance.popContext();
+          return instance.processNext();
+        case Filter.Type.LoadOverlay:
+          return rj.loadOverlay(job.layer, job.src);
+        case Filter.Type.Plugin:
+          return rj.executePlugin();
+        default:
+          return rj.executeFilter();
+      }
+    };
+
+    function RenderJob(c, job, renderDone) {
+      this.c = c;
+      this.job = job;
+      this.renderDone = renderDone;
+    }
+
+    RenderJob.prototype.executeFilter = function() {
+      var blockN, blockPixelLength, end, j, lastBlockN, n, start, _ref, _results;
+      var _this = this;
+      this.blocksDone = 0;
+      n = this.c.pixelData.length;
+      blockPixelLength = Math.floor((n / 4) / RenderJob.Blocks);
+      blockN = blockPixelLength * 4;
+      lastBlockN = blockN + ((n / 4) % RenderJob.Blocks) * 4;
+      if (this.job.type === Filter.Type.Single) {
+        _results = [];
+        for (j = 0, _ref = RenderJob.Blocks; 0 <= _ref ? j < _ref : j > _ref; 0 <= _ref ? j++ : j--) {
+          start = j * blockN;
+          end = start + (j === RenderJob.Blocks - 1 ? lastBlockN : blockN);
+          _results.push(setTimeout((function(j, start, end) {
+            return function() {
+              return _this.renderBlock(j, start, end);
+            };
+          })(j, start, end), 0));
+        }
+        return _results;
+      } else {
+        return this.renderKernel();
+      }
+    };
+
+    RenderJob.prototype.renderBlock = function(bnum, start, end) {
+      var data, i, pixelInfo, res;
+      Log.debug("BLOCK #" + bnum + " - Filter: " + this.job.name + ", Start: " + start + ", End: " + end);
+      data = {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0
+      };
+      pixelInfo = new PixelInfo(this.c);
+      for (i = start; i < end; i += 4) {
+        pixelInfo.loc = i;
+        data.r = this.c.pixelData[i];
+        data.g = this.c.pixelData[i + 1];
+        data.b = this.c.pixelData[i + 2];
+        res = this.job.processFn.call(pixelInfo, data);
+        this.c.pixelData[i] = clampRGB(res.r);
+        this.c.pixelData[i + 1] = clampRGB(res.g);
+        this.c.pixelData[i + 2] = clampRGB(res.b);
+      }
+      return this.blockFinished(bnum);
+    };
+
+    RenderJob.prototype.renderKernel = function() {
+      var adjust, adjustSize, bias, builder, builderIndex, divisor, end, i, j, k, kernel, modPixelData, n, name, pixel, pixelInfo, res, start;
+      name = this.job.name;
+      bias = this.job.bias;
+      divisor = this.job.divisor;
+      n = this.c.pixelData.length;
+      adjust = this.job.adjust;
+      adjustSize = Math.sqrt(adjust.length);
+      kernel = [];
+      modPixelData = [];
+      Log.debug("Rendering kernel - Filter: " + this.job.name);
+      start = this.c.dimensions.width * 4 * ((adjustSize - 1) / 2);
+      end = n - (this.c.dimensions.width * 4 * ((adjustSize - 1) / 2));
+      builder = (adjustSize - 1) / 2;
+      pixelInfo = new PixelInfo(this.c);
+      for (i = start; i < end; i += 4) {
+        pixelInfo.loc = i;
+        builderIndex = 0;
+        for (j = -builder; -builder <= builder ? j <= builder : j >= builder; -builder <= builder ? j++ : j--) {
+          for (k = builder; builder <= -builder ? k <= -builder : k >= -builder; builder <= -builder ? k++ : k--) {
+            pixel = pixelInfo.getPixelRelative(j, k);
+            kernel[builderIndex * 3] = pixel.r;
+            kernel[builderIndex * 3 + 1] = pixel.g;
+            kernel[builderIndex * 3 + 2] = pixel.b;
+            builderIndex++;
+          }
+        }
+        res = this.processKernel(adjust, kernel, divisor, bias);
+        modPixelData[i] = clampRGB(res.r);
+        modPixelData[i + 1] = clampRGB(res.g);
+        modPixelData[i + 2] = clampRGB(res.b);
+        modPixelData[i + 3] = 255;
+      }
+      for (i = start; start <= end ? i < end : i > end; start <= end ? i++ : i--) {
+        this.c.pixelData[i] = modPixelData[i];
+      }
+      return this.blockFinished(-1);
+    };
+
+    RenderJob.prototype.blockFinished = function(bnum) {
+      if (bnum >= 0) {
+        Log.debug("Block #" + bnum + " finished! Filter: " + this.job.name);
+      }
+      this.blocksDone++;
+      if (this.blocksDone === RenderJob.Blocks || bnum === -1) {
+        if (bnum >= 0) Log.debug("Filter " + this.job.name + " finished!");
+        if (bnum < 0) Log.debug("Kernel filter " + this.job.name + " finished!");
+        return this.renderDone();
+      }
+    };
+
+    RenderJob.prototype.processKernel = function(adjust, kernel, divisor, bias) {
+      var i, val, _ref;
+      val = {
+        r: 0,
+        g: 0,
+        b: 0
+      };
+      for (i = 0, _ref = adjust.length; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
+        val.r += adjust[i] * kernel[i * 3];
+        val.g += adjust[i] * kernel[i * 3 + 1];
+        val.b += adjust[i] * kernel[i * 3 + 2];
+      }
+      val.r = (val.r / divisor) + bias;
+      val.g = (val.g / divisor) + bias;
+      val.b = (val.b / divisor) + bias;
+      return val;
+    };
+
+    RenderJob.prototype.loadOverlay = function(layer, src) {
+      var img;
+      var _this = this;
+      img = document.createElement('img');
+      img.onload = function() {
+        layer.context.drawImage(img, 0, 0, _this.c.dimensions.width, _this.c.dimensions.height);
+        layer.imageData = layer.context.getImageData(0, 0, _this.c.dimensions.width, _this.c.dimensions.height);
+        layer.pixelData = layer.imageData.data;
+        _this.pixelData = layer.pixelData;
+        return _this.c.processNext();
+      };
+      return img.src = src;
+    };
+
+    return RenderJob;
+
+  })();
+
+  Store = (function() {
+
+    function Store() {}
+
+    Store.items = {};
+
+    Store.has = function(search) {
+      return this.items[search] != null;
+    };
+
+    Store.get = function(search) {
+      return this.items[search];
+    };
+
+    Store.put = function(name, obj) {
+      return this.items[name] = obj;
+    };
+
+    Store.execute = function(search, callback) {
+      return callback.call(this.get(search), this.get(search));
+    };
+
+    return Store;
+
+  })();
+
+  Blender.register("normal", function(rgbaLayer, rgbaParent) {
+    return {
+      r: rgbaLayer.r,
+      g: rgbaLayer.g,
+      b: rgbaLayer.b,
+      a: 255
+    };
+  });
+
+  Blender.register("multiply", function(rgbaLayer, rgbaParent) {
+    return {
+      r: (rgbaLayer.r * rgbaParent.r) / 255,
+      g: (rgbaLayer.g * rgbaParent.g) / 255,
+      b: (rgbaLayer.b * rgbaParent.b) / 255,
+      a: 255
+    };
+  });
+
+  Blender.register("screen", function(rgbaLayer, rgbaParent) {
+    return {
+      r: 255 - (((255 - rgbaLayer.r) * (255 - rgbaParent.r)) / 255),
+      g: 255 - (((255 - rgbaLayer.g) * (255 - rgbaParent.g)) / 255),
+      b: 255 - (((255 - rgbaLayer.b) * (255 - rgbaParent.b)) / 255),
+      a: 255
+    };
+  });
+
+  Blender.register("overlay", function(rgbaLayer, rgbaParent) {
+    var result;
+    result = {};
+    result.r = rgbaParent.r > 128 ? 255 - 2 * (255 - rgbaLayer.r) * (255 - rgbaParent.r) / 255 : (rgbaParent.r * rgbaLayer.r * 2) / 255;
+    result.g = rgbaParent.g > 128 ? 255 - 2 * (255 - rgbaLayer.g) * (255 - rgbaParent.g) / 255 : (rgbaParent.g * rgbaLayer.g * 2) / 255;
+    result.b = rgbaParent.b > 128 ? 255 - 2 * (255 - rgbaLayer.b) * (255 - rgbaParent.b) / 255 : (rgbaParent.b * rgbaLayer.b * 2) / 255;
+    result.a = 255;
+    return result;
+  });
+
+  Blender.register("difference", function(rgbaLayer, rgbaParent) {
+    return {
+      r: rgbaLayer.r - rgbaParent.r,
+      g: rgbaLayer.g - rgbaParent.g,
+      b: rgbaLayer.b - rgbaParent.b,
+      a: 255
+    };
+  });
+
+  Blender.register("addition", function(rgbaLayer, rgbaParent) {
+    return {
+      r: rgbaParent.r + rgbaLayer.r,
+      g: rgbaParent.g + rgbaLayer.g,
+      b: rgbaParent.b + rgbaLayer.b,
+      a: 255
+    };
+  });
+
+  Blender.register("exclusion", function(rgbaLayer, rgbaParent) {
+    return {
+      r: 128 - 2 * (rgbaParent.r - 128) * (rgbaLayer.r - 128) / 255,
+      g: 128 - 2 * (rgbaParent.g - 128) * (rgbaLayer.g - 128) / 255,
+      b: 128 - 2 * (rgbaParent.b - 128) * (rgbaLayer.b - 128) / 255,
+      a: 255
+    };
+  });
+
+  Blender.register("softLight", function(rgbaLayer, rgbaParent) {
+    var result;
+    result = {};
+    result.r = rgbaParent.r > 128 ? 255 - ((255 - rgbaParent.r) * (255 - (rgbaLayer.r - 128))) / 255 : (rgbaParent.r * (rgbaLayer.r + 128)) / 255;
+    result.g = rgbaParent.g > 128 ? 255 - ((255 - rgbaParent.g) * (255 - (rgbaLayer.g - 128))) / 255 : (rgbaParent.g * (rgbaLayer.g + 128)) / 255;
+    result.b = rgbaParent.b > 128 ? 255 - ((255 - rgbaParent.b) * (255 - (rgbaLayer.b - 128))) / 255 : (rgbaParent.b * (rgbaLayer.b + 128)) / 255;
+    result.a = 255;
+    return result;
+  });
 
   Filter.register("fillColor", function() {
     var color;
@@ -741,237 +1224,5 @@
       return rgba;
     });
   });
-
-  Logger = (function() {
-
-    function Logger() {
-      var name, _i, _len, _ref;
-      _ref = ['log', 'info', 'warn', 'error'];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        name = _ref[_i];
-        this[name] = (function(name) {
-          return function() {
-            if (window.console != null) {
-              return window.console[name].apply(console, arguments);
-            }
-          };
-        })(name);
-      }
-      this.debug = this.log;
-    }
-
-    return Logger;
-
-  })();
-
-  Log = new Logger();
-
-  PixelInfo = (function() {
-
-    function PixelInfo(c) {
-      this.c = c;
-      this.loc = 0;
-    }
-
-    PixelInfo.prototype.locationXY = function() {
-      var x, y;
-      y = this.dimensions.height - Math.floor(this.loc / (this.dimensions.width * 4));
-      x = (this.loc % (this.dimensions.width * 4)) / 4;
-      return {
-        x: x,
-        y: y
-      };
-    };
-
-    PixelInfo.prototype.getPixelRelative = function(horiz, vert) {
-      var newLoc;
-      newLoc = this.loc + (this.c.dimensions.width * 4 * (vert * -1)) + (4 * horiz);
-      if (newLoc > this.c.pixelData.length || newLoc < 0) {
-        return {
-          r: 0,
-          g: 0,
-          b: 0,
-          a: 0
-        };
-      }
-      return {
-        r: this.c.pixelData[newLoc],
-        g: this.c.pixelData[newLoc + 1],
-        b: this.c.pixelData[newLoc + 2],
-        a: this.c.pixelData[newLoc + 3]
-      };
-    };
-
-    return PixelInfo;
-
-  })();
-
-  RenderJob = (function() {
-
-    RenderJob.Blocks = 4;
-
-    RenderJob.execute = function(instance, job, callback) {
-      var rj;
-      rj = new RenderJob(instance, job, callback);
-      switch (job.type) {
-        case Filter.Type.Plugin:
-          return rj.executePlugin();
-        default:
-          return rj.executeFilter();
-      }
-    };
-
-    function RenderJob(c, job, renderDone) {
-      this.c = c;
-      this.job = job;
-      this.renderDone = renderDone;
-    }
-
-    RenderJob.prototype.executeFilter = function() {
-      var blockN, blockPixelLength, end, j, lastBlockN, n, start, _ref, _results;
-      var _this = this;
-      this.blocksDone = 0;
-      n = this.c.pixelData.length;
-      blockPixelLength = Math.floor((n / 4) / RenderJob.Blocks);
-      blockN = blockPixelLength * 4;
-      lastBlockN = blockN + ((n / 4) % RenderJob.Blocks) * 4;
-      if (this.job.type === Filter.Type.Single) {
-        _results = [];
-        for (j = 0, _ref = RenderJob.Blocks; 0 <= _ref ? j < _ref : j > _ref; 0 <= _ref ? j++ : j--) {
-          start = j * blockN;
-          end = start + (j === RenderJob.Blocks - 1 ? lastBlockN : blockN);
-          _results.push(setTimeout((function(j, start, end) {
-            return function() {
-              return _this.renderBlock(j, start, end);
-            };
-          })(j, start, end), 0));
-        }
-        return _results;
-      } else {
-        return this.renderKernel();
-      }
-    };
-
-    RenderJob.prototype.renderBlock = function(bnum, start, end) {
-      var data, i, pixelInfo, res;
-      Log.debug("BLOCK #" + bnum + " - Filter: " + this.job.name + ", Start: " + start + ", End: " + end);
-      data = {
-        r: 0,
-        g: 0,
-        b: 0,
-        a: 0
-      };
-      pixelInfo = new PixelInfo(this.c);
-      for (i = start; i < end; i += 4) {
-        pixelInfo.loc = i;
-        data.r = this.c.pixelData[i];
-        data.g = this.c.pixelData[i + 1];
-        data.b = this.c.pixelData[i + 2];
-        res = this.job.processFn.call(pixelInfo, data);
-        this.c.pixelData[i] = clampRGB(res.r);
-        this.c.pixelData[i + 1] = clampRGB(res.g);
-        this.c.pixelData[i + 2] = clampRGB(res.b);
-      }
-      return this.blockFinished(bnum);
-    };
-
-    RenderJob.prototype.renderKernel = function() {
-      var adjust, adjustSize, bias, builder, builderIndex, divisor, end, i, j, k, kernel, modPixelData, n, name, pixel, pixelInfo, res, start;
-      name = this.job.name;
-      bias = this.job.bias;
-      divisor = this.job.divisor;
-      n = this.c.pixelData.length;
-      adjust = this.job.adjust;
-      adjustSize = Math.sqrt(adjust.length);
-      kernel = [];
-      modPixelData = [];
-      Log.debug("Rendering kernel - Filter: " + this.job.name);
-      start = this.c.dimensions.width * 4 * ((adjustSize - 1) / 2);
-      end = n - (this.c.dimensions.width * 4 * ((adjustSize - 1) / 2));
-      builder = (adjustSize - 1) / 2;
-      pixelInfo = new PixelInfo(this.c);
-      for (i = start; i < end; i += 4) {
-        pixelInfo.loc = i;
-        builderIndex = 0;
-        for (j = -builder; -builder <= builder ? j <= builder : j >= builder; -builder <= builder ? j++ : j--) {
-          for (k = builder; builder <= -builder ? k <= -builder : k >= -builder; builder <= -builder ? k++ : k--) {
-            pixel = pixelInfo.getPixelRelative(j, k);
-            kernel[builderIndex * 3] = pixel.r;
-            kernel[builderIndex * 3 + 1] = pixel.g;
-            kernel[builderIndex * 3 + 2] = pixel.b;
-            builderIndex++;
-          }
-        }
-        res = this.processKernel(adjust, kernel, divisor, bias);
-        modPixelData[i] = clampRGB(res.r);
-        modPixelData[i + 1] = clampRGB(res.g);
-        modPixelData[i + 2] = clampRGB(res.b);
-        modPixelData[i + 3] = 255;
-      }
-      for (i = start; start <= end ? i < end : i > end; start <= end ? i++ : i--) {
-        this.c.pixelData[i] = modPixelData[i];
-      }
-      return this.blockFinished(-1);
-    };
-
-    RenderJob.prototype.blockFinished = function(bnum) {
-      if (bnum >= 0) {
-        Log.debug("Block #" + bnum + " finished! Filter: " + this.job.name);
-      }
-      this.blocksDone++;
-      if (this.blocksDone === RenderJob.Blocks || bnum === -1) {
-        if (bnum >= 0) Log.debug("Filter " + this.job.name + " finished!");
-        if (bnum < 0) Log.debug("Kernel filter " + this.job.name + " finished!");
-        return this.renderDone();
-      }
-    };
-
-    RenderJob.prototype.processKernel = function(adjust, kernel, divisor, bias) {
-      var i, val, _ref;
-      val = {
-        r: 0,
-        g: 0,
-        b: 0
-      };
-      for (i = 0, _ref = adjust.length; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
-        val.r += adjust[i] * kernel[i * 3];
-        val.g += adjust[i] * kernel[i * 3 + 1];
-        val.b += adjust[i] * kernel[i * 3 + 2];
-      }
-      val.r = (val.r / divisor) + bias;
-      val.g = (val.g / divisor) + bias;
-      val.b = (val.b / divisor) + bias;
-      return val;
-    };
-
-    return RenderJob;
-
-  })();
-
-  Store = (function() {
-
-    function Store() {}
-
-    Store.items = {};
-
-    Store.has = function(search) {
-      return this.items[search] != null;
-    };
-
-    Store.get = function(search) {
-      return this.items[search];
-    };
-
-    Store.put = function(name, obj) {
-      return this.items[name] = obj;
-    };
-
-    Store.execute = function(search, callback) {
-      return callback.call(this.get(search), this.get(search));
-    };
-
-    return Store;
-
-  })();
 
 }).call(this);

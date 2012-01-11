@@ -7,6 +7,7 @@ class CamanInstance
     @pixelStack = []
     @layerStack = []
     @renderQueue = []
+    @canvasQueue = []
   
     switch type
       when CamanInstance.Type.Image then @loadImage.apply @, args
