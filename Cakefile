@@ -16,11 +16,15 @@ CoffeeScript Options
 csSrcDir 			= "src"
 csTargetDir		= "dist"
 
-targetCoffee	= "#{csSrcDir}/build.coffee"
-targetJS			= "#{csTargetDir}/#{targetName}.js"
-targetMinJS		= "#{csTargetDir}/#{targetName}.min.js"
+targetCoffee	= "#{csSrcDir}/build"
 
-coffeeOpts		= "-r coffeescript-growl -j #{targetName}.js -o #{csTargetDir} -c #{targetCoffee}"
+targetCoreJS			= "#{csTargetDir}/#{targetName}.js"
+targetCoreMinJS		= "#{csTargetDir}/#{targetName}.min.js"
+coffeeCoreOpts		= "-r coffeescript-growl -j #{targetName}.js -o #{csTargetDir} -c #{targetCoffee}.coffee"
+
+targetFullJS			= "#{csTargetDir}/#{targetName}.full.js"
+targetFullMinJS		= "#{csTargetDir}/#{targetName}.full.min.js"
+coffeeFullOpts		= "-r coffeescript-growl -j #{targetName}.full.js -o #{csTargetDir} -c #{targetCoffee}.full.coffee"
 
 # All source files listed in include order
 coffeeFiles		= [
@@ -50,6 +54,8 @@ coffeeFiles		= [
 	"lib/filters"
 ]
 
+pluginsFolder = "src/plugins"
+
 ###
 Event System
 ###
@@ -63,7 +69,20 @@ finishListener = (type, cb) ->
 notify = (msg) ->
   return if not growl?
   growl.notify msg, {title: "CamanJS Development", image: "Terminal"}
-	
+
+getPlugins = () ->
+	content = ""
+
+	util.log "Gathering plugin files in #{pluginsFolder}"
+	pluginFiles = fs.readdirSync pluginsFolder
+
+	util.log "Discovered #{pluginFiles.length} plugins"
+	for plugin in pluginFiles
+		continue if fs.statSync("#{pluginsFolder}/#{plugin}").isDirectory()
+		content += fs.readFileSync("#{pluginsFolder}/#{plugin}", "utf8") + "\n\n"
+
+	return content
+
 ###
 Tasks
 ###
@@ -88,11 +107,11 @@ task 'build', 'Compile and minify all CoffeeScript source files', ->
 	invoke 'compile'
 
 task 'compile', 'Compile all CoffeeScript source files', ->
-	util.log "Building #{targetJS}"
+	util.log "Building #{targetCoreJS} and #{targetFullJS}"
 	contents = []
 	remaining = coffeeFiles.length
-	
-	util.log "Appending #{coffeeFiles.length} files to #{targetCoffee}"
+
+	util.log "Appending #{coffeeFiles.length} files to #{targetCoffee}.coffee"
 	
 	for file, index in coffeeFiles then do (file, index) ->
 		fs.readFile "#{csSrcDir}/#{file}.coffee", "utf8", (err, fileContents) ->
@@ -103,17 +122,39 @@ task 'compile', 'Compile all CoffeeScript source files', ->
 			process() if --remaining is 0
 			
 	process = ->
-		fs.writeFile targetCoffee, contents.join("\n\n"), "utf8", (err) ->
+		core = contents.join("\n\n")
+		full = core + "\n\n" + getPlugins()
+
+		fs.writeFile "#{targetCoffee}.coffee", core, "utf8", (err) ->
 			util.log err if err
 			
-			exec "coffee #{coffeeOpts}", (err, stdout, stderr) ->
+			exec "coffee #{coffeeCoreOpts}", (err, stdout, stderr) ->
 				util.log err if err
-				util.log "Compiled #{targetJS}"
-				fs.unlink targetCoffee, (err) -> util.log err if err
-				finished('js')
+				util.log "Compiled #{targetCoreJS}"
+
+				if not err
+					fs.unlink "#{targetCoffee}.coffee", (err) -> util.log err if err
+
+				fs.writeFile "#{targetCoffee}.full.coffee", full, "utf8", (err) ->
+					util.log err if err
+
+					exec "coffee #{coffeeFullOpts}", (err, stdout, stderr) ->
+						util.log err if err
+						util.log "Compiled #{targetFullJS}"
+
+						if not err
+							fs.unlink "#{targetCoffee}.full.coffee", (err) -> util.log err if err
+							
+						finished('js')
+		
 				
 task 'minify', 'Minify the CoffeeScript files', ->
-	util.log "Minifying #{targetJS}"
-	fs.readFile targetJS, "utf8", (err, contents) ->
-		fs.writeFile targetMinJS, jsmin(contents), "utf8", (err) ->
+	util.log "Minifying #{targetCoreJS}"
+	fs.readFile targetCoreJS, "utf8", (err, contents) ->
+		fs.writeFile targetCoreMinJS, jsmin(contents), "utf8", (err) ->
+			util.log err if err
+
+	util.log "Minifying #{targetFullJS}"
+	fs.readFile targetFullJS, "utf8", (err, contents) ->
+		fs.writeFile targetFullMinJS, jsmin(contents), "utf8", (err) ->
 			util.log err if err
