@@ -115,7 +115,7 @@ class RenderJob
     if @blocksDone is RenderJob.Blocks or bnum is -1
       Log.debug "Filter #{@job.name} finished!" if bnum >=0
       Log.debug "Kernel filter #{@job.name} finished!" if bnum < 0
-      Caman.Event.trigger @c, "filterComplete", @job
+      Caman.Event.trigger @c, "processComplete", @job
 
       # TODO: trigger event
       @renderDone()
