@@ -1,5 +1,5 @@
 (function() {
-  var $, Blender, Calculate, CamanInstance, Convert, Filter, Layer, Log, Logger, PixelInfo, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
+  var $, Blender, Calculate, CamanInstance, Convert, Filter, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
   var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
   slice = Array.prototype.slice;
@@ -670,6 +670,14 @@
       return this;
     };
 
+    Filter.prototype.processPlugin = function(plugin, args) {
+      this.renderQueue.push({
+        type: Filter.Type.Plugin,
+        plugin: plugin
+      });
+      return this;
+    };
+
     Filter.prototype.processNext = function(finishedFn) {
       var next;
       var _this = this;
@@ -892,6 +900,24 @@
 
   })();
 
+  Plugin = (function() {
+
+    function Plugin() {}
+
+    Plugin.plugins = {};
+
+    Plugin.register = function(name, plugin) {
+      return this.plugins[name] = plugin;
+    };
+
+    Plugin.execute = function(context, name) {
+      return this.plugins[name].call(context);
+    };
+
+    return Plugin;
+
+  })();
+
   RenderJob = (function() {
 
     RenderJob.Blocks = 4;
@@ -907,7 +933,7 @@
         case Filter.Type.LayerFinished:
           instance.applyCurrentLayer();
           instance.popContext();
-          instance.processNext();
+          callback();
           break;
         case Filter.Type.LoadOverlay:
           rj.loadOverlay(job.layer, job.src);
@@ -951,6 +977,13 @@
       } else {
         return this.renderKernel();
       }
+    };
+
+    RenderJob.prototype.executePlugin = function() {
+      Log.debug("Executing plugin " + this.job.plugin);
+      Plugin.execute(this.c, this.job.plugin);
+      Log.debug("Plugin " + this.job.plugin + " finished!");
+      return this.renderDone();
     };
 
     RenderJob.prototype.renderBlock = function(bnum, start, end) {

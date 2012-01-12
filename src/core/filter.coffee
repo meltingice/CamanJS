@@ -41,6 +41,13 @@ class Filter
 
     return @
 
+  processPlugin: (plugin, args) ->
+    @renderQueue.push
+      type: Filter.Type.Plugin
+      plugin: plugin
+
+    return @
+
   processNext: (finishedFn) ->
     @finishedFn = finishedFn if typeof finishedFn is "function"
 
