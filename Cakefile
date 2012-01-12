@@ -40,6 +40,7 @@ coffeeFiles		= [
 	"core/layer"
 	"core/logger"
 	"core/pixelinfo"
+	"core/plugin"
 	"core/renderjob"
 	"core/store"
 

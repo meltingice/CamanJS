@@ -11,7 +11,7 @@ class RenderJob
       when Filter.Type.LayerFinished
         instance.applyCurrentLayer()
         instance.popContext()
-        instance.processNext()
+        callback()
       when Filter.Type.LoadOverlay then rj.loadOverlay job.layer, job.src
       when Filter.Type.Plugin then rj.executePlugin()
       else rj.executeFilter()
@@ -41,6 +41,13 @@ class RenderJob
         , 0
     else
       @renderKernel()
+
+  executePlugin: ->
+    Log.debug "Executing plugin #{@job.plugin}"
+    Plugin.execute @c, @job.plugin
+    Log.debug "Plugin #{@job.plugin} finished!"
+
+    @renderDone()
 
   renderBlock: (bnum, start, end) ->
     Log.debug "BLOCK ##{bnum} - Filter: #{@job.name}, Start: #{start}, End: #{end}"
@@ -117,7 +124,6 @@ class RenderJob
       Log.debug "Kernel filter #{@job.name} finished!" if bnum < 0
       Caman.Event.trigger @c, "processComplete", @job
 
-      # TODO: trigger event
       @renderDone()
 
   processKernel: (adjust, kernel, divisor, bias) ->
