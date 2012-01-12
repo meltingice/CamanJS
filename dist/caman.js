@@ -1,5 +1,5 @@
 (function() {
-  var $, Blender, Calculate, CamanInstance, Convert, Filter, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
+  var $, Blender, Calculate, CamanInstance, Convert, Filter, IO, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
   var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
   slice = Array.prototype.slice;
@@ -77,6 +77,12 @@
     date: "1/2/12"
   };
 
+  Caman.toString = CamanInstance.toString = function() {
+    return "Version " + Caman.version.release + ", Released " + Caman.version.date;
+  };
+
+  Caman.remoteProxy = "";
+
   CamanInstance = (function() {
 
     CamanInstance.Type = {
@@ -101,7 +107,7 @@
     }
 
     CamanInstance.prototype.loadImage = function(id, callback) {
-      var element, image, _ref;
+      var element, image, proxyURL, _ref;
       var _this = this;
       if (callback == null) callback = function() {};
       if (typeof id === "object" && ((_ref = id.nodeName) != null ? _ref.toLowerCase() : void 0) === "img") {
@@ -115,12 +121,20 @@
       }
       if ($(id) != null) {
         image = $(id);
-        if (image.complete) {
-          return this.imageLoaded(id, image, callback);
-        } else {
-          return image.onload = function() {
+        proxyURL = IO.remoteCheck(image.src);
+        if (proxyURL) {
+          image.onload = function() {
             return _this.imageLoaded(id, image, callback);
           };
+          return image.src = proxyURL;
+        } else {
+          if (image.complete) {
+            return this.imageLoaded(id, image, callback);
+          } else {
+            return image.onload = function() {
+              return _this.imageLoaded(id, image, callback);
+            };
+          }
         }
       }
     };
@@ -161,6 +175,7 @@
     };
 
     CamanInstance.prototype.canvasLoaded = function(url, id, callback) {
+      var proxyURL;
       var _this = this;
       this.canvas = $(id);
       if (url != null) {
@@ -168,12 +183,13 @@
         this.image.onload = function() {
           return _this.finishInit(callback);
         };
+        proxyURL = IO.remoteCheck(url);
         this.canvasID = id;
         this.options = {
           canvas: id,
           image: url
         };
-        return this.image.src = url;
+        return this.image.src = proxyURL ? proxyURL : url;
       } else {
         return this.finishInit(callback);
       }
@@ -738,6 +754,79 @@
 
   Caman.Filter = Filter;
 
+  IO = (function() {
+
+    function IO() {}
+
+    IO.domainRegex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/;
+
+    IO.isRemote = function(url) {
+      var matches;
+      if (!url) return;
+      matches = url.match(this.domainRegex);
+      if (matches) {
+        return matches[1] !== document.domain;
+      } else {
+        return false;
+      }
+    };
+
+    IO.remoteCheck = function(src) {
+      if (this.isRemote(src)) {
+        if (!Caman.remoteProxy.length) {
+          Log.info("Attempting to load a remote image without a configured proxy. URL: " + src);
+        } else {
+          if (Caman.isRemote(Caman.remoteProxy)) {
+            Log.info("Cannot use a remote proxy for loading images.");
+            return;
+          }
+          return "" + Caman.remoteProxy + "?camanProxyUrl=" + (encodeURIComponent(src));
+        }
+      }
+    };
+
+    IO.useProxy = function(lang) {
+      var langToExt;
+      langToExt = {
+        ruby: 'rb',
+        python: 'py',
+        perl: 'pl',
+        javascript: 'js'
+      };
+      lang = lang.toLowerCase();
+      if (langToExt[lang] != null) lang = langToExt[lang];
+      return "proxies/caman_proxy." + lang;
+    };
+
+    IO.prototype.save = function(type) {
+      var image;
+      if (type == null) type = "png";
+      type = type.toLowerCase();
+      image = this.toBase64(type).replace("image/" + type, "image/octet-stream");
+      return document.location.href = image;
+    };
+
+    IO.prototype.toImage = function(type) {
+      var img;
+      img = document.createElement('img');
+      img.src = this.toBase64(type);
+      return img;
+    };
+
+    IO.prototype.toBase64 = function(type) {
+      if (type == null) type = "png";
+      type = type.toLowerCase();
+      return this.canvas.toDataURL("image/" + type);
+    };
+
+    return IO;
+
+  })();
+
+  extend(CamanInstance.prototype, IO.prototype);
+
+  Caman.IO = IO;
+
   Layer = (function() {
 
     function Layer(c) {
@@ -1080,7 +1169,7 @@
     };
 
     RenderJob.prototype.loadOverlay = function(layer, src) {
-      var img;
+      var img, proxyUrl;
       var _this = this;
       img = document.createElement('img');
       img.onload = function() {
@@ -1090,7 +1179,8 @@
         _this.pixelData = layer.pixelData;
         return _this.c.processNext();
       };
-      return img.src = src;
+      proxyUrl = IO.remoteCheck(src);
+      return img.src = proxyURL ? proxyURL : src;
     };
 
     return RenderJob;

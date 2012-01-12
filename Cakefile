@@ -37,6 +37,7 @@ coffeeFiles		= [
 	"core/convert"
 	"core/event"
 	"core/filter"
+	"core/io"
 	"core/layer"
 	"core/logger"
 	"core/pixelinfo"
