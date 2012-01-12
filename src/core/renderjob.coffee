@@ -16,6 +16,8 @@ class RenderJob
       when Filter.Type.Plugin then rj.executePlugin()
       else rj.executeFilter()
 
+    return instance
+
   constructor: (@c, @job, @renderDone) ->
 
   executeFilter: ->
@@ -27,7 +29,8 @@ class RenderJob
     blockN = blockPixelLength * 4
     lastBlockN = blockN + ((n / 4) % RenderJob.Blocks) * 4
 
-    # TODO: trigger event
+    Caman.Event.trigger @c, "processStart", @job
+
     if @job.type is Filter.Type.Single
       for j in [0...RenderJob.Blocks]
         start = j * blockN
@@ -112,6 +115,7 @@ class RenderJob
     if @blocksDone is RenderJob.Blocks or bnum is -1
       Log.debug "Filter #{@job.name} finished!" if bnum >=0
       Log.debug "Kernel filter #{@job.name} finished!" if bnum < 0
+      Caman.Event.trigger @c, "filterComplete", @job
 
       # TODO: trigger event
       @renderDone()

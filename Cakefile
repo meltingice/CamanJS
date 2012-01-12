@@ -35,6 +35,7 @@ coffeeFiles		= [
 	"core/blender"
 	"core/calculate"
 	"core/convert"
+	"core/event"
 	"core/filter"
 	"core/layer"
 	"core/logger"

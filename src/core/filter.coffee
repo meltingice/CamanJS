@@ -45,9 +45,11 @@ class Filter
     @finishedFn = finishedFn if typeof finishedFn is "function"
 
     if @renderQueue.length is 0
-      # TODO: trigger event
-      @finishedFn.call(@) if @finishedFn?
-      return
+      if @finishedFn?
+        Caman.Event.trigger @, "renderFinished"
+        @finishedFn.call(@)
+
+      return @
 
     next = @renderQueue.shift()
     RenderJob.execute @, next, => @processNext()
