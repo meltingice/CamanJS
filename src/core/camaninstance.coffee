@@ -4,6 +4,7 @@ class CamanInstance
     Canvas: 2
     
   constructor: (args, type = CamanInstance.Type.Canvas) ->
+    @id = uniqid.get()
     @pixelStack = []
     @layerStack = []
     @renderQueue = []

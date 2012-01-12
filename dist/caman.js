@@ -1,6 +1,6 @@
 (function() {
   var $, Blender, Calculate, CamanInstance, Convert, Filter, Layer, Log, Logger, PixelInfo, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
-  var __hasProp = Object.prototype.hasOwnProperty;
+  var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
   slice = Array.prototype.slice;
 
@@ -86,6 +86,7 @@
 
     function CamanInstance(args, type) {
       if (type == null) type = CamanInstance.Type.Canvas;
+      this.id = uniqid.get();
       this.pixelStack = [];
       this.layerStack = [];
       this.renderQueue = [];
@@ -235,6 +236,52 @@
       } else {
         return Math.round(rand);
       }
+    };
+
+    Calculate.bezier = function(start, ctrl1, ctrl2, end, lowBound, highBound) {
+      var Ax, Ay, Bx, By, Cx, Cy, bezier, curveX, curveY, i, j, leftCoord, rightCoord, t, x0, x1, x2, x3, y0, y1, y2, y3, _ref, _ref2;
+      x0 = start[0];
+      y0 = start[1];
+      x1 = ctrl1[0];
+      y1 = ctrl1[1];
+      x2 = ctrl2[0];
+      y2 = ctrl2[1];
+      x3 = end[0];
+      y3 = end[1];
+      bezier = {};
+      Cx = 3 * (x1 - x0);
+      Bx = 3 * (x2 - x1) - Cx;
+      Ax = x3 - x0 - Cx - Bx;
+      Cy = 3 * (y1 - y0);
+      By = 3 * (y2 - y1) - Cy;
+      Ay = y3 - y0 - Cy - By;
+      for (i = 0; i < 1000; i++) {
+        t = i / 1000;
+        curveX = Math.round((Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0);
+        curveY = Math.round((Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0);
+        if (lowBound && curveY < lowBound) {
+          curveY = lowBound;
+        } else if (highBound && curveY > highBound) {
+          curveY = highBound;
+        }
+        bezier[curveX] = curveY;
+      }
+      if (bezier.length < end[0] + 1) {
+        for (i = 0, _ref = end[0]; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+          if (!(bezier[i] != null)) {
+            leftCoord = [i - 1, bezier[i - 1]];
+            for (j = i, _ref2 = end[0]; i <= _ref2 ? j <= _ref2 : j >= _ref2; i <= _ref2 ? j++ : j--) {
+              if (bezier[j] != null) {
+                rightCoord = [j, bezier[j]];
+                break;
+              }
+            }
+            bezier[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
+          }
+        }
+      }
+      if (!(bezier[end[0]] != null)) bezier[end[0]] = bezier[end[0] - 1];
+      return bezier;
     };
 
     return Calculate;
@@ -518,6 +565,53 @@
 
   })();
 
+  Caman.Event = (function() {
+
+    function Event() {}
+
+    Event.events = {};
+
+    Event.types = ["processStart", "processComplete", "renderFinished"];
+
+    Event.trigger = function(target, type, data) {
+      var event, _i, _len, _ref, _results;
+      if (this.events[type] && this.events[type].length) {
+        _ref = this.events[type];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          event = _ref[_i];
+          if (event.target === null || target.id === event.target.id) {
+            _results.push(event.fn.call(target, data));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      }
+    };
+
+    Event.listen = function(target, type, fn) {
+      var _fn, _type;
+      if (typeof target === "string") {
+        _type = target;
+        _fn = type;
+        target = null;
+        type = _type;
+        fn = _fn;
+      }
+      if (__indexOf.call(this.types, type) < 0) return false;
+      if (!this.events[type]) this.events[type] = [];
+      this.events[type].push({
+        target: target,
+        fn: fn
+      });
+      return true;
+    };
+
+    return Event;
+
+  })();
+
   Filter = (function() {
 
     function Filter() {}
@@ -581,8 +675,11 @@
       var _this = this;
       if (typeof finishedFn === "function") this.finishedFn = finishedFn;
       if (this.renderQueue.length === 0) {
-        if (this.finishedFn != null) this.finishedFn.call(this);
-        return;
+        if (this.finishedFn != null) {
+          Caman.Event.trigger(this, "renderFinished");
+          this.finishedFn.call(this);
+        }
+        return this;
       }
       next = this.renderQueue.shift();
       return RenderJob.execute(this, next, function() {
@@ -805,18 +902,23 @@
       switch (job.type) {
         case Filter.Type.LayerDequeue:
           layer = instance.canvasQueue.shift();
-          return instance.executeLayer(layer);
+          instance.executeLayer(layer);
+          break;
         case Filter.Type.LayerFinished:
           instance.applyCurrentLayer();
           instance.popContext();
-          return instance.processNext();
+          instance.processNext();
+          break;
         case Filter.Type.LoadOverlay:
-          return rj.loadOverlay(job.layer, job.src);
+          rj.loadOverlay(job.layer, job.src);
+          break;
         case Filter.Type.Plugin:
-          return rj.executePlugin();
+          rj.executePlugin();
+          break;
         default:
-          return rj.executeFilter();
+          rj.executeFilter();
       }
+      return instance;
     };
 
     function RenderJob(c, job, renderDone) {
@@ -833,6 +935,7 @@
       blockPixelLength = Math.floor((n / 4) / RenderJob.Blocks);
       blockN = blockPixelLength * 4;
       lastBlockN = blockN + ((n / 4) % RenderJob.Blocks) * 4;
+      Caman.Event.trigger(this.c, "processStart", this.job);
       if (this.job.type === Filter.Type.Single) {
         _results = [];
         for (j = 0, _ref = RenderJob.Blocks; 0 <= _ref ? j < _ref : j > _ref; 0 <= _ref ? j++ : j--) {
@@ -920,6 +1023,7 @@
       if (this.blocksDone === RenderJob.Blocks || bnum === -1) {
         if (bnum >= 0) Log.debug("Filter " + this.job.name + " finished!");
         if (bnum < 0) Log.debug("Kernel filter " + this.job.name + " finished!");
+        Caman.Event.trigger(this.c, "filterComplete", this.job);
         return this.renderDone();
       }
     };
@@ -1223,6 +1327,102 @@
       rgba.b += rand;
       return rgba;
     });
+  });
+
+  Filter.register("clip", function(adjust) {
+    adjust = Math.abs(adjust) * 2.55;
+    return this.process("clip", function(rgba) {
+      if (rgba.r > 255 - adjust) {
+        rgba.r = 255;
+      } else if (rgba.r < adjust) {
+        rgba.r = 0;
+      }
+      if (rgba.g > 255 - adjust) {
+        rgba.g = 255;
+      } else if (rgba.g < adjust) {
+        rgba.g = 0;
+      }
+      if (rgba.b > 255 - adjust) {
+        rgba.b = 255;
+      } else if (rgba.b < adjust) {
+        rgba.b = 0;
+      }
+      return rgba;
+    });
+  });
+
+  Filter.register("channels", function(options) {
+    var chan, value;
+    if (typeof options !== "object") return this;
+    for (chan in options) {
+      if (!__hasProp.call(options, chan)) continue;
+      value = options[chan];
+      if (value === 0) {
+        delete options[chan];
+        continue;
+      }
+      options[chan] /= 100;
+    }
+    if (options.length === 0) return this;
+    return this.process("channels", function(rgba) {
+      if (options.red != null) {
+        if (options.red > 0) {
+          rgba.r += (255 - rgba.r) * options.red;
+        } else {
+          rgba.r -= rgba.r * Math.abs(options.red);
+        }
+      }
+      if (options.green != null) {
+        if (options.green > 0) {
+          rgba.g += (255 - rgba.g) * options.green;
+        } else {
+          rgba.g -= rgba.g * Math.abs(options.green);
+        }
+      }
+      if (options.blue != null) {
+        if (options.blue > 0) {
+          rgba.b += (255 - rgba.b) * options.blue;
+        } else {
+          rgba.b -= rgba.b * Math.abs(options.blue);
+        }
+      }
+      return rgba;
+    });
+  });
+
+  Filter.register("curves", function(chans, start, ctrl1, ctrl2, end) {
+    var bezier, i, _ref, _ref2;
+    if (typeof chans === "string") chans = chans.split("");
+    bezier = Calculate.bezier(start, ctrl1, ctrl2, end, 0, 255);
+    if (start[0] > 0) {
+      for (i = 0, _ref = start[0]; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
+        bezier[i] = start[1];
+      }
+    }
+    if (end[0] < 255) {
+      for (i = _ref2 = end[0]; _ref2 <= 255 ? i <= 255 : i >= 255; _ref2 <= 255 ? i++ : i--) {
+        bezier[i] = end[1];
+      }
+    }
+    return this.process("curves", function(rgba) {
+      var i, _ref3;
+      for (i = 0, _ref3 = chans.length; 0 <= _ref3 ? i < _ref3 : i > _ref3; 0 <= _ref3 ? i++ : i--) {
+        rgba[chans[i]] = bezier[rgba[chans[i]]];
+      }
+      return rgba;
+    });
+  });
+
+  Filter.register("exposure", function(adjust) {
+    var ctrl1, ctrl2, p;
+    p = Math.abs(adjust) / 100;
+    ctrl1 = [0, 255 * p];
+    ctrl2 = [255 - (255 * p), 255];
+    if (adjust < 0) {
+      ctrl1 = ctrl1.reverse();
+      ctrl2 = ctrl2.reverse();
+    }
+    return this.curves('rgb', [0, 0], ctrl1, ctrl2, [255, 255]);
   });
 
 }).call(this);

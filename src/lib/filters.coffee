@@ -156,3 +156,89 @@ Filter.register "noise", (adjust) ->
     rgba.g += rand
     rgba.b += rand
     rgba
+
+Filter.register "clip", (adjust) ->
+  adjust = Math.abs(adjust) * 2.55
+
+  @process "clip", (rgba) ->
+    if rgba.r > 255 - adjust
+      rgba.r = 255
+    else if rgba.r < adjust
+      rgba.r = 0
+
+    if rgba.g > 255 - adjust
+      rgba.g = 255
+    else if rgba.g < adjust
+      rgba.g = 0
+      
+    if rgba.b > 255 - adjust
+      rgba.b = 255
+    else if rgba.b < adjust
+      rgba.b = 0
+
+    rgba
+
+Filter.register "channels", (options) ->
+  return @ if typeof options isnt "object"
+
+  for own chan, value of options
+    if value is 0
+      delete options[chan]
+      continue
+
+    options[chan] /= 100
+
+  return @ if options.length is 0
+
+  @process "channels", (rgba) ->
+    if options.red?
+      if options.red > 0
+        rgba.r += (255 - rgba.r) * options.red
+      else
+        rgba.r -= rgba.r * Math.abs(options.red)
+
+    if options.green?
+      if options.green > 0
+        rgba.g += (255 - rgba.g) * options.green
+      else
+        rgba.g -= rgba.g * Math.abs(options.green)
+
+    if options.blue?
+      if options.blue > 0
+        rgba.b += (255 - rgba.b) * options.blue
+      else
+        rgba.b -= rgba.b * Math.abs(options.blue)
+
+    rgba
+
+Filter.register "curves", (chans, start, ctrl1, ctrl2, end) ->
+  # If channels are in a string, split to an array
+  chans = chans.split("") if typeof chans is "string"
+
+  # Generate a bezier curve
+  bezier = Calculate.bezier start, ctrl1, ctrl2, end, 0, 255
+
+  # If the curve starts after x = 0, initialize it with a flat line
+  # until the curve begins.
+  bezier[i] = start[1] for i in [0...start[0]] if start[0] > 0
+
+  # ... and the same with the end point
+  bezier[i] = end[1] for i in [end[0]..255] if end[0] < 255
+
+  @process "curves", (rgba) ->
+    # Now that we have the bezier curve, we do a basic hashmap lookup
+    # to find and replace color values.
+    rgba[chans[i]] = bezier[rgba[chans[i]]] for i in [0...chans.length]
+    rgba
+
+Filter.register "exposure", (adjust) ->
+  p = Math.abs(adjust) / 100
+
+  ctrl1 = [0, 255 * p]
+  ctrl2 = [255 - (255 * p), 255]
+
+  if adjust < 0
+    ctrl1 = ctrl1.reverse()
+    ctrl2 = ctrl2.reverse()
+
+  @curves 'rgb', [0, 0], ctrl1, ctrl2, [255, 255]
