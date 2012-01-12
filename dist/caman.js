@@ -1023,7 +1023,7 @@
       if (this.blocksDone === RenderJob.Blocks || bnum === -1) {
         if (bnum >= 0) Log.debug("Filter " + this.job.name + " finished!");
         if (bnum < 0) Log.debug("Kernel filter " + this.job.name + " finished!");
-        Caman.Event.trigger(this.c, "filterComplete", this.job);
+        Caman.Event.trigger(this.c, "processComplete", this.job);
         return this.renderDone();
       }
     };
