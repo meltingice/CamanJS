@@ -28,12 +28,16 @@ class CamanInstance
         
     if $(id)?
       image = $(id)
-      # TODO: proxy
-      
-      if image.complete
-        @imageLoaded id, image, callback
-      else
+      proxyURL = IO.remoteCheck image.src
+
+      if proxyURL
         image.onload = => @imageLoaded id, image, callback
+        image.src = proxyURL
+      else
+        if image.complete
+          @imageLoaded id, image, callback
+        else
+          image.onload = => @imageLoaded id, image, callback
         
   imageLoaded: (id, image, callback) ->
     @image = image
@@ -79,13 +83,14 @@ class CamanInstance
       @image = document.createElement 'img'
       @image.onload = => @finishInit callback
       
-      # TODO: proxy
+      proxyURL = IO.remoteCheck(url)
+      
       @canvasID = id
       @options =
         canvas: id
         image: url
         
-      @image.src = url
+      @image.src = if proxyURL then proxyURL else url
     else
       @finishInit callback
   

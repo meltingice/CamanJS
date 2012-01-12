@@ -140,7 +140,6 @@ class RenderJob
     val
 
   loadOverlay: (layer, src) ->
-    # TODO: image proxy
     img = document.createElement 'img'
     img.onload = =>
       layer.context.drawImage img, 0, 0, @c.dimensions.width, @c.dimensions.height
@@ -151,4 +150,5 @@ class RenderJob
 
       @c.processNext()
 
-    img.src = src
+    proxyUrl = IO.remoteCheck src
+    img.src = if proxyURL then proxyURL else src

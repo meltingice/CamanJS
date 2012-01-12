@@ -23,3 +23,8 @@ Root.Caman = ->
 Caman.version =
   release: "3.0"
   date: "1/2/12"
+
+Caman.toString = CamanInstance.toString = ->
+  "Version " + Caman.version.release + ", Released " + Caman.version.date;
+
+Caman.remoteProxy = ""
