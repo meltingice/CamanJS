@@ -77,8 +77,8 @@ class Layer
       result.r = clampRGB result.r
       result.g = clampRGB result.g
       result.b = clampRGB result.b
+      result.a = rgbaLayer.a if not result.a?
 
       parentData[i]   = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)))
       parentData[i+1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)))
       parentData[i+2] = rgbaParent.b - ((rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255)))
-      parentData[i+3] = 255

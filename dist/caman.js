@@ -77,7 +77,9 @@
     date: "1/2/12"
   };
 
-  Caman.toString = CamanInstance.toString = function() {
+  Caman.DEBUG = false;
+
+  Caman.toString = function() {
     return "Version " + Caman.version.release + ", Released " + Caman.version.date;
   };
 
@@ -89,6 +91,8 @@
       Image: 1,
       Canvas: 2
     };
+
+    CamanInstance.toString = Caman.toString;
 
     function CamanInstance(args, type) {
       if (type == null) type = CamanInstance.Type.Canvas;
@@ -913,10 +917,10 @@
         result.r = clampRGB(result.r);
         result.g = clampRGB(result.g);
         result.b = clampRGB(result.b);
+        if (!(result.a != null)) result.a = rgbaLayer.a;
         parentData[i] = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)));
         parentData[i + 1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)));
-        parentData[i + 2] = rgbaParent.b - ((rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255)));
-        _results.push(parentData[i + 3] = 255);
+        _results.push(parentData[i + 2] = rgbaParent.b - ((rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255))));
       }
       return _results;
     };
@@ -934,7 +938,7 @@
         name = _ref[_i];
         this[name] = (function(name) {
           return function() {
-            if (window.console != null) {
+            if ((window.console != null) && Caman.DEBUG) {
               return window.console[name].apply(console, arguments);
             }
           };
@@ -958,8 +962,8 @@
 
     PixelInfo.prototype.locationXY = function() {
       var x, y;
-      y = this.dimensions.height - Math.floor(this.loc / (this.dimensions.width * 4));
-      x = (this.loc % (this.dimensions.width * 4)) / 4;
+      y = this.c.dimensions.height - Math.floor(this.loc / (this.c.dimensions.width * 4));
+      x = (this.loc % (this.c.dimensions.width * 4)) / 4;
       return {
         x: x,
         y: y
@@ -983,6 +987,37 @@
         b: this.c.pixelData[newLoc + 2],
         a: this.c.pixelData[newLoc + 3]
       };
+    };
+
+    PixelInfo.prototype.putPixelRelative = function(horiz, vert, rgba) {
+      var nowLoc;
+      nowLoc = this.loc + (this.c.dimensions.width * 4 * (vert * -1)) + (4 * horiz);
+      if (newLoc > this.c.pixelData.length || newLoc < 0) return;
+      this.c.pixelData[newLoc] = rgba.r;
+      this.c.pixelData[newLoc + 1] = rgba.g;
+      this.c.pixelData[newLoc + 2] = rgba.b;
+      this.c.pixelData[newLoc + 3] = rgba.a;
+      return true;
+    };
+
+    PixelInfo.prototype.getPixel = function(x, y) {
+      var loc;
+      loc = (y * this.c.dimensions.width + x) * 4;
+      return {
+        r: this.c.pixelData[loc],
+        g: this.c.pixelData[loc + 1],
+        b: this.c.pixelData[loc + 2],
+        a: this.c.pixelData[loc + 3]
+      };
+    };
+
+    PixelInfo.prototype.putPixel = function(x, y, rgba) {
+      var loc;
+      loc = (y * this.c.dimensions.width + x) * 4;
+      this.c.pixelData[loc] = rgba.r;
+      this.c.pixelData[loc + 1] = rgba.g;
+      this.c.pixelData[loc + 2] = rgba.b;
+      return this.c.pixelData[loc + 3] = rgba.a;
     };
 
     return PixelInfo;
@@ -1129,7 +1164,7 @@
         modPixelData[i] = clampRGB(res.r);
         modPixelData[i + 1] = clampRGB(res.g);
         modPixelData[i + 2] = clampRGB(res.b);
-        modPixelData[i + 3] = 255;
+        modPixelData[i + 3] = this.c.pixelData[i + 3];
       }
       for (i = start; start <= end ? i < end : i > end; start <= end ? i++ : i--) {
         this.c.pixelData[i] = modPixelData[i];
@@ -1176,11 +1211,11 @@
         layer.context.drawImage(img, 0, 0, _this.c.dimensions.width, _this.c.dimensions.height);
         layer.imageData = layer.context.getImageData(0, 0, _this.c.dimensions.width, _this.c.dimensions.height);
         layer.pixelData = layer.imageData.data;
-        _this.pixelData = layer.pixelData;
+        _this.c.pixelData = layer.pixelData;
         return _this.c.processNext();
       };
       proxyUrl = IO.remoteCheck(src);
-      return img.src = proxyURL ? proxyURL : src;
+      return img.src = proxyUrl != null ? proxyUrl : src;
     };
 
     return RenderJob;
@@ -1217,8 +1252,7 @@
     return {
       r: rgbaLayer.r,
       g: rgbaLayer.g,
-      b: rgbaLayer.b,
-      a: 255
+      b: rgbaLayer.b
     };
   });
 
@@ -1226,8 +1260,7 @@
     return {
       r: (rgbaLayer.r * rgbaParent.r) / 255,
       g: (rgbaLayer.g * rgbaParent.g) / 255,
-      b: (rgbaLayer.b * rgbaParent.b) / 255,
-      a: 255
+      b: (rgbaLayer.b * rgbaParent.b) / 255
     };
   });
 
@@ -1235,8 +1268,7 @@
     return {
       r: 255 - (((255 - rgbaLayer.r) * (255 - rgbaParent.r)) / 255),
       g: 255 - (((255 - rgbaLayer.g) * (255 - rgbaParent.g)) / 255),
-      b: 255 - (((255 - rgbaLayer.b) * (255 - rgbaParent.b)) / 255),
-      a: 255
+      b: 255 - (((255 - rgbaLayer.b) * (255 - rgbaParent.b)) / 255)
     };
   });
 
@@ -1246,7 +1278,6 @@
     result.r = rgbaParent.r > 128 ? 255 - 2 * (255 - rgbaLayer.r) * (255 - rgbaParent.r) / 255 : (rgbaParent.r * rgbaLayer.r * 2) / 255;
     result.g = rgbaParent.g > 128 ? 255 - 2 * (255 - rgbaLayer.g) * (255 - rgbaParent.g) / 255 : (rgbaParent.g * rgbaLayer.g * 2) / 255;
     result.b = rgbaParent.b > 128 ? 255 - 2 * (255 - rgbaLayer.b) * (255 - rgbaParent.b) / 255 : (rgbaParent.b * rgbaLayer.b * 2) / 255;
-    result.a = 255;
     return result;
   });
 
@@ -1254,8 +1285,7 @@
     return {
       r: rgbaLayer.r - rgbaParent.r,
       g: rgbaLayer.g - rgbaParent.g,
-      b: rgbaLayer.b - rgbaParent.b,
-      a: 255
+      b: rgbaLayer.b - rgbaParent.b
     };
   });
 
@@ -1263,8 +1293,7 @@
     return {
       r: rgbaParent.r + rgbaLayer.r,
       g: rgbaParent.g + rgbaLayer.g,
-      b: rgbaParent.b + rgbaLayer.b,
-      a: 255
+      b: rgbaParent.b + rgbaLayer.b
     };
   });
 
@@ -1272,8 +1301,7 @@
     return {
       r: 128 - 2 * (rgbaParent.r - 128) * (rgbaLayer.r - 128) / 255,
       g: 128 - 2 * (rgbaParent.g - 128) * (rgbaLayer.g - 128) / 255,
-      b: 128 - 2 * (rgbaParent.b - 128) * (rgbaLayer.b - 128) / 255,
-      a: 255
+      b: 128 - 2 * (rgbaParent.b - 128) * (rgbaLayer.b - 128) / 255
     };
   });
 
@@ -1283,7 +1311,6 @@
     result.r = rgbaParent.r > 128 ? 255 - ((255 - rgbaParent.r) * (255 - (rgbaLayer.r - 128))) / 255 : (rgbaParent.r * (rgbaLayer.r + 128)) / 255;
     result.g = rgbaParent.g > 128 ? 255 - ((255 - rgbaParent.g) * (255 - (rgbaLayer.g - 128))) / 255 : (rgbaParent.g * (rgbaLayer.g + 128)) / 255;
     result.b = rgbaParent.b > 128 ? 255 - ((255 - rgbaParent.b) * (255 - (rgbaLayer.b - 128))) / 255 : (rgbaParent.b * (rgbaLayer.b + 128)) / 255;
-    result.a = 255;
     return result;
   });
 

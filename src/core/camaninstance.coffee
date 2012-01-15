@@ -2,6 +2,8 @@ class CamanInstance
   @Type =
     Image: 1
     Canvas: 2
+
+  @toString = Caman.toString
     
   constructor: (args, type = CamanInstance.Type.Canvas) ->
     @id = uniqid.get()
