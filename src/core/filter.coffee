@@ -48,6 +48,7 @@ class Filter
     @renderQueue.push
       type: Filter.Type.Plugin
       plugin: plugin
+      args: args
 
     return @
 
@@ -99,5 +100,5 @@ class Filter
   # Applies the current layer to its parent layer
   applyCurrentLayer: -> @currentLayer.applyToParent()
 
-extend CamanInstance::, Filter::
+Util.extend CamanInstance::, Filter::
 Caman.Filter = Filter

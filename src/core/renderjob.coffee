@@ -53,7 +53,7 @@ class RenderJob
   # Executes a standalone plugin
   executePlugin: ->
     Log.debug "Executing plugin #{@job.plugin}"
-    Plugin.execute @c, @job.plugin
+    Plugin.execute @c, @job.plugin, @job.args
     Log.debug "Plugin #{@job.plugin} finished!"
 
     @renderDone()
@@ -74,9 +74,9 @@ class RenderJob
 
       res = @job.processFn.call pixelInfo, data
 
-      @c.pixelData[i]   = clampRGB res.r
-      @c.pixelData[i+1] = clampRGB res.g
-      @c.pixelData[i+2] = clampRGB res.b
+      @c.pixelData[i]   = Util.clampRGB res.r
+      @c.pixelData[i+1] = Util.clampRGB res.g
+      @c.pixelData[i+2] = Util.clampRGB res.b
 
     @blockFinished(bnum)
 
@@ -117,9 +117,9 @@ class RenderJob
 
       res = @processKernel adjust, kernel, divisor, bias
 
-      modPixelData[i] = clampRGB(res.r)
-      modPixelData[i+1] = clampRGB(res.g)
-      modPixelData[i+2] = clampRGB(res.b)
+      modPixelData[i] = Util.clampRGB(res.r)
+      modPixelData[i+1] = Util.clampRGB(res.g)
+      modPixelData[i+2] = Util.clampRGB(res.b)
       modPixelData[i+3] = @c.pixelData[i+3]
 
     @c.pixelData[i] = modPixelData[i] for i in [start...end]
