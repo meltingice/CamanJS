@@ -1,5 +1,6 @@
 var fs = require('fs'),
 smoosh = require('smoosh'),
+exec = require('child_process').exec
 
 SRC_DIR = 'src',
 PLUGIN_DIR = 'src/plugins/plugins';

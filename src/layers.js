@@ -176,7 +176,6 @@ Caman.manip.canvasLayer.prototype.applyToParent = function () {
     parentData[i]   = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)));
     parentData[i+1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)));
     parentData[i+2] = rgbaParent.b - ((rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255)));
-    parentData[i+3] = 255;
   }
 };
 
@@ -189,7 +188,7 @@ Caman.manip.canvasLayer.prototype.blenders = {
       r: rgbaLayer.r,
       g: rgbaLayer.g,
       b: rgbaLayer.b,
-      a: 255
+      a: rgbaLayer.a
     };
   },
   
@@ -199,7 +198,7 @@ Caman.manip.canvasLayer.prototype.blenders = {
       r: (rgbaLayer.r * rgbaParent.r) / 255,
       g: (rgbaLayer.g * rgbaParent.g) / 255,
       b: (rgbaLayer.b * rgbaParent.b) / 255,
-      a: 255
+      a: rgbaLayer.a
     };
   },
   
@@ -208,7 +207,7 @@ Caman.manip.canvasLayer.prototype.blenders = {
       r: 255 - (((255 - rgbaLayer.r) * (255 - rgbaParent.r)) / 255),
       g: 255 - (((255 - rgbaLayer.g) * (255 - rgbaParent.g)) / 255),
       b: 255 - (((255 - rgbaLayer.b) * (255 - rgbaParent.b)) / 255),
-      a: 255
+      a: rgbaLayer.a
     };
   },
   
@@ -229,7 +228,7 @@ Caman.manip.canvasLayer.prototype.blenders = {
         255 - 2 * (255 - rgbaLayer.b) * (255 - rgbaParent.b) / 255: 
         (rgbaParent.b * rgbaLayer.b * 2) / 255;
     
-    result.a = 255;
+    result.a = rgbaLayer.a;
     return result;
   },
   
@@ -238,7 +237,7 @@ Caman.manip.canvasLayer.prototype.blenders = {
       r: rgbaLayer.r - rgbaParent.r,
       g: rgbaLayer.g - rgbaParent.g,
       b: rgbaLayer.b - rgbaParent.b,
-      a: 255
+      a: rgbaLayer.a
     };
   },
   
@@ -247,7 +246,7 @@ Caman.manip.canvasLayer.prototype.blenders = {
       r: rgbaParent.r + rgbaLayer.r,
       g: rgbaParent.g + rgbaLayer.g,
       b: rgbaParent.b + rgbaLayer.b,
-      a: 255
+      a: rgbaLayer.a
     };
   },
   
@@ -256,7 +255,7 @@ Caman.manip.canvasLayer.prototype.blenders = {
       r: 128 - 2 * (rgbaParent.r - 128) * (rgbaLayer.r - 128) / 255,
       g: 128 - 2 * (rgbaParent.g - 128) * (rgbaLayer.g - 128) / 255,
       b: 128 - 2 * (rgbaParent.b - 128) * (rgbaLayer.b - 128) / 255,
-      a: 255
+      a: rgbaLayer.a
     };
   },
   
@@ -277,7 +276,7 @@ Caman.manip.canvasLayer.prototype.blenders = {
       255 - ((255 - rgbaParent.b) * (255 - (rgbaLayer.b - 128))) / 255 : 
       (rgbaParent.b * (rgbaLayer.b + 128)) / 255;
       
-    result.a = 255;
+    result.a = rgbaLayer.a;
     return result;
   }
 };
