@@ -1,6 +1,7 @@
 (function() {
-  var $, Blender, Calculate, CamanInstance, Convert, Event, Filter, IO, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
-  var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
+  var $, Blender, Calculate, CamanInstance, Convert, Event, Filter, IO, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, clampRGB, extend, slice, uniqid,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   slice = Array.prototype.slice;
 
@@ -111,8 +112,8 @@
     }
 
     CamanInstance.prototype.loadImage = function(id, callback) {
-      var element, image, proxyURL, _ref;
-      var _this = this;
+      var element, image, proxyURL, _ref,
+        _this = this;
       if (callback == null) callback = function() {};
       if (typeof id === "object" && ((_ref = id.nodeName) != null ? _ref.toLowerCase() : void 0) === "img") {
         element = id;
@@ -165,8 +166,8 @@
     };
 
     CamanInstance.prototype.loadCanvas = function(url, id, callback) {
-      var element, _ref;
-      var _this = this;
+      var element, _ref,
+        _this = this;
       if (callback == null) callback = function() {};
       if (typeof id === "object" && ((_ref = id.nodeName) != null ? _ref.toLowerCase() : void 0) === "canvas") {
         element = id;
@@ -187,8 +188,8 @@
     };
 
     CamanInstance.prototype.canvasLoaded = function(url, id, callback) {
-      var proxyURL;
-      var _this = this;
+      var proxyURL,
+        _this = this;
       this.canvas = $(id);
       if (url != null) {
         this.image = document.createElement('img');
@@ -724,8 +725,8 @@
     };
 
     Filter.prototype.processNext = function(finishedFn) {
-      var next;
-      var _this = this;
+      var next,
+        _this = this;
       if (typeof finishedFn === "function") this.finishedFn = finishedFn;
       if (this.renderQueue.length === 0) {
         if (this.finishedFn != null) {
@@ -1067,6 +1068,8 @@
 
   })();
 
+  Caman.Plugin = Plugin;
+
   RenderJob = (function() {
 
     RenderJob.Blocks = 4;
@@ -1103,8 +1106,8 @@
     }
 
     RenderJob.prototype.executeFilter = function() {
-      var blockN, blockPixelLength, end, j, lastBlockN, n, start, _ref, _results;
-      var _this = this;
+      var blockN, blockPixelLength, end, j, lastBlockN, n, start, _ref, _results,
+        _this = this;
       this.blocksDone = 0;
       n = this.c.pixelData.length;
       blockPixelLength = Math.floor((n / 4) / RenderJob.Blocks);
@@ -1229,8 +1232,8 @@
     };
 
     RenderJob.prototype.loadOverlay = function(layer, src) {
-      var img, proxyUrl;
-      var _this = this;
+      var img, proxyUrl,
+        _this = this;
       img = document.createElement('img');
       img.onload = function() {
         layer.context.drawImage(img, 0, 0, _this.c.dimensions.width, _this.c.dimensions.height);

@@ -1,8 +1,10 @@
+# Directly apply the child layer's pixels to the parent layer with no special changes
 Blender.register "normal", (rgbaLayer, rgbaParent) ->
   r: rgbaLayer.r
   g: rgbaLayer.g
   b: rgbaLayer.b
 
+# Apply the child to the parent by multiplying the color values. This generally creates contrast.
 Blender.register "multiply", (rgbaLayer, rgbaParent) ->
   r: (rgbaLayer.r * rgbaParent.r) / 255
   g: (rgbaLayer.g * rgbaParent.g) / 255

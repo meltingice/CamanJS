@@ -1,4 +1,8 @@
+# Handles all of the various rendering methods in Caman. Most of the image modification happens 
+# here. A new RenderJob object is created for every render operation.
 class RenderJob
+  # The number of blocks to split the image into during the render process to simulate 
+  # concurrency. This also helps the browser manage the (possibly) long running render jobs.
   @Blocks = 4
 
   @execute: (instance, job, callback) ->
@@ -20,6 +24,10 @@ class RenderJob
 
   constructor: (@c, @job, @renderDone) ->
 
+  # The core of the image rendering, this function executes the provided filter.
+  #
+  # NOTE: this does not write the updated pixel data to the canvas. That happens when all filters 
+  # are finished rendering in order to be as fast as possible.
   executeFilter: ->
     # Prepare all the required render data
     @blocksDone = 0
@@ -42,6 +50,7 @@ class RenderJob
     else
       @renderKernel()
 
+  # Executes a standalone plugin
   executePlugin: ->
     Log.debug "Executing plugin #{@job.plugin}"
     Plugin.execute @c, @job.plugin
@@ -49,6 +58,7 @@ class RenderJob
 
     @renderDone()
 
+  # Renders a single block of the canvas with the current filter function
   renderBlock: (bnum, start, end) ->
     Log.debug "BLOCK ##{bnum} - Filter: #{@job.name}, Start: #{start}, End: #{end}"
 
@@ -70,6 +80,7 @@ class RenderJob
 
     @blockFinished(bnum)
 
+  # Applies an image kernel to the canvas
   renderKernel: ->
     name = @job.name
     bias = @job.bias
@@ -115,6 +126,8 @@ class RenderJob
 
     @blockFinished -1
 
+  # Called when a single block is finished rendering. Once all blocks are done, we signal that this
+  # filter is finished rendering and continue to the next step.
   blockFinished: (bnum) ->
     Log.debug "Block ##{bnum} finished! Filter: #{@job.name}" if bnum >= 0
     @blocksDone++
@@ -126,6 +139,7 @@ class RenderJob
 
       @renderDone()
 
+  # The "filter function" for kernel adjustments.
   processKernel: (adjust, kernel, divisor, bias) ->
     val = r: 0, g: 0, b: 0
 
@@ -139,6 +153,7 @@ class RenderJob
     val.b = (val.b / divisor) + bias
     val
 
+  # Loads an image onto the current canvas
   loadOverlay: (layer, src) ->
     img = document.createElement 'img'
     img.onload = =>

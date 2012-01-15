@@ -1,3 +1,16 @@
+# The entire layering system for Caman resides in this file. Layers get their own canvasLayer 
+# objectwhich is created when newLayer() is called. For extensive information regarding the 
+# specifics of howthe layering system works, there is an in-depth blog post on this very topic. 
+# Instead of copying the entirety of that post, I'll simply point you towards the 
+# [blog link](http://blog.meltingice.net/programming/implementing-layers-camanjs).
+#
+# However, the gist of the layering system is that, for each layer, it creates a new canvas 
+# element and then either copies the parent layer's data or applies a solid color to the new 
+# layer. After some (optional) effects are applied, the layer is blended back into the parent 
+# canvas layer using one of many different blending algorithms.
+#
+# You can also load an image (local or remote, with a proxy) into a canvas layer, which is useful 
+# if you want to add textures to an image.
 class Layer
   constructor: (@c) ->
     # Compatibility
@@ -7,7 +20,10 @@ class Layer
       blendingMode: 'normal'
       opacity: 1.0
 
+    # Each layer gets its own unique ID
     @layerID = uniqid.get()
+
+    # Create the canvas for this layer
     @canvas = document.createElement 'canvas'
     
     @canvas.width = @c.dimensions.width
@@ -18,15 +34,21 @@ class Layer
     @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
     @pixelData = @imageData.data
 
+  # If you want to create nested layers
   newLayer: (cb) -> @c.newLayer.call @c, cb
+
+  # Sets the blending mode of this layer. The mode is the name of a blender function.
   setBlendingMode: (mode) ->
     @options.blendingMode = mode
     return @
 
+  # Sets the opacity of this layer. This affects how much of this layer is applied to the parent
+  # layer at render time.
   opacity: (opacity) ->
     @options.opacity = opacity / 100
     return @
 
+  # Copies the contents of the parent layer to this layer
   copyParent: ->
     parentData = @c.pixelData
 
@@ -38,8 +60,10 @@ class Layer
 
     return @
 
+  # Fills this layer with a single color
   fillColor: -> @c.fillcolor.apply @c, arguments
 
+  # Loads and overlays an image onto this layer
   overlayImage: (image) ->
     if typeof image is "object"
       image = image.src
@@ -54,7 +78,9 @@ class Layer
       layer: @
 
     return @
-
+  
+  # Takes the contents of this layer and applies them to the parent layer at render time. This
+  # should never be called explicitly by the user.
   applyToParent: ->
     parentData = @c.pixelStack[@c.pixelStack.length - 1]
     layerData = @c.pixelData
@@ -79,6 +105,12 @@ class Layer
       result.b = clampRGB result.b
       result.a = rgbaLayer.a if not result.a?
 
-      parentData[i]   = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)))
-      parentData[i+1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)))
-      parentData[i+2] = rgbaParent.b - ((rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255)))
+      parentData[i]   = rgbaParent.r - (
+        (rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255))
+      )
+      parentData[i+1] = rgbaParent.g - (
+        (rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255))
+      )
+      parentData[i+2] = rgbaParent.b - (
+        (rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255))
+      )
