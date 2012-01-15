@@ -53,7 +53,7 @@ Filter.register "rectangularVignette", (opts) ->
       g: 0
       b: 0
 
-  opts = extend defaults, opts
+  opts = Util.extend defaults, opts
 
   if not opts.size
     return @

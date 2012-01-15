@@ -12,7 +12,7 @@ class CamanInstance
   constructor: (args, type = CamanInstance.Type.Canvas) ->
     # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
     # same instance.
-    @id = uniqid.get()
+    @id = Util.uniqid.get()
 
     # Stores the pixel layers
     @pixelStack = []
@@ -40,7 +40,7 @@ class CamanInstance
       if id.id
         id = element.id
       else
-        id = "caman-#{uniqid.get()}"
+        id = "caman-#{Util.uniqid.get()}"
         element.id = id
         
     if $(id)?
@@ -84,7 +84,7 @@ class CamanInstance
       if id.id
         id = element.id
       else
-        id = "caman-#{uniqid.get()}"
+        id = "caman-#{Util.uniqid.get()}"
         element.id = id
         
     if $(id)?

@@ -56,5 +56,5 @@ class IO
     type = type.toLowerCase()
     return @canvas.toDataURL "image/#{type}"
 
-extend CamanInstance::, IO::
+Util.extend CamanInstance::, IO::
 Caman.IO = IO

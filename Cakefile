@@ -28,7 +28,6 @@ coffeeFullOpts		= "-r coffeescript-growl -j #{targetName}.full.js -o #{csTargetD
 
 # All source files listed in include order
 coffeeFiles		= [
-	# These are non-classed functions
 	"core/util"
 	
 	# Core library

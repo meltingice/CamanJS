@@ -1,23 +1,9 @@
 (function() {
-  var $, Blender, Calculate, CamanInstance, Convert, Event, Filter, IO, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, clampRGB, extend, slice, uniqid,
+  var $, Blender, Calculate, CamanInstance, Convert, Event, Filter, IO, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, Util, slice,
     __hasProp = Object.prototype.hasOwnProperty,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   slice = Array.prototype.slice;
-
-  extend = function(obj) {
-    var copy, dest, prop, src, _i, _len;
-    dest = obj;
-    src = slice.call(arguments, 1);
-    for (_i = 0, _len = src.length; _i < _len; _i++) {
-      copy = src[_i];
-      for (prop in copy) {
-        if (!__hasProp.call(copy, prop)) continue;
-        dest[prop] = copy[prop];
-      }
-    }
-    return dest;
-  };
 
   $ = function(sel, root) {
     if (root == null) root = document;
@@ -25,21 +11,43 @@
     return root.querySelector(sel);
   };
 
-  uniqid = (function() {
-    var id;
-    id = 0;
-    return {
-      get: function() {
-        return id++;
-      }
-    };
-  })();
+  Util = (function() {
 
-  clampRGB = function(val) {
-    if (val < 0) return 0;
-    if (val > 255) return 255;
-    return val;
-  };
+    function Util() {}
+
+    Util.uniqid = (function() {
+      var id;
+      id = 0;
+      return {
+        get: function() {
+          return id++;
+        }
+      };
+    })();
+
+    Util.extend = function(obj) {
+      var copy, dest, prop, src, _i, _len;
+      dest = obj;
+      src = slice.call(arguments, 1);
+      for (_i = 0, _len = src.length; _i < _len; _i++) {
+        copy = src[_i];
+        for (prop in copy) {
+          if (!__hasProp.call(copy, prop)) continue;
+          dest[prop] = copy[prop];
+        }
+      }
+      return dest;
+    };
+
+    Util.clampRGB = function(val) {
+      if (val < 0) return 0;
+      if (val > 255) return 255;
+      return val;
+    };
+
+    return Util;
+
+  })();
 
   Root = typeof exports !== "undefined" && exports !== null ? exports : window;
 
@@ -86,6 +94,8 @@
 
   Caman.remoteProxy = "";
 
+  Caman.Util = Util;
+
   CamanInstance = (function() {
 
     CamanInstance.Type = {
@@ -97,7 +107,7 @@
 
     function CamanInstance(args, type) {
       if (type == null) type = CamanInstance.Type.Canvas;
-      this.id = uniqid.get();
+      this.id = Util.uniqid.get();
       this.pixelStack = [];
       this.layerStack = [];
       this.renderQueue = [];
@@ -120,7 +130,7 @@
         if (id.id) {
           id = element.id;
         } else {
-          id = "caman-" + (uniqid.get());
+          id = "caman-" + (Util.uniqid.get());
           element.id = id;
         }
       }
@@ -174,7 +184,7 @@
         if (id.id) {
           id = element.id;
         } else {
-          id = "caman-" + (uniqid.get());
+          id = "caman-" + (Util.uniqid.get());
           element.id = id;
         }
       }
@@ -719,7 +729,8 @@
     Filter.prototype.processPlugin = function(plugin, args) {
       this.renderQueue.push({
         type: Filter.Type.Plugin,
-        plugin: plugin
+        plugin: plugin,
+        args: args
       });
       return this;
     };
@@ -780,7 +791,7 @@
 
   })();
 
-  extend(CamanInstance.prototype, Filter.prototype);
+  Util.extend(CamanInstance.prototype, Filter.prototype);
 
   Caman.Filter = Filter;
 
@@ -853,7 +864,7 @@
 
   })();
 
-  extend(CamanInstance.prototype, IO.prototype);
+  Util.extend(CamanInstance.prototype, IO.prototype);
 
   Caman.IO = IO;
 
@@ -866,7 +877,7 @@
         blendingMode: 'normal',
         opacity: 1.0
       };
-      this.layerID = uniqid.get();
+      this.layerID = Util.uniqid.get();
       this.canvas = document.createElement('canvas');
       this.canvas.width = this.c.dimensions.width;
       this.canvas.height = this.c.dimensions.height;
@@ -940,9 +951,9 @@
           a: layerData[i + 3]
         };
         result = Blender.execute(this.options.blendingMode, rgbaLayer, rgbaParent);
-        result.r = clampRGB(result.r);
-        result.g = clampRGB(result.g);
-        result.b = clampRGB(result.b);
+        result.r = Util.clampRGB(result.r);
+        result.g = Util.clampRGB(result.g);
+        result.b = Util.clampRGB(result.b);
         if (!(result.a != null)) result.a = rgbaLayer.a;
         parentData[i] = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)));
         parentData[i + 1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)));
@@ -1060,8 +1071,8 @@
       return this.plugins[name] = plugin;
     };
 
-    Plugin.execute = function(context, name) {
-      return this.plugins[name].call(context);
+    Plugin.execute = function(context, name, args) {
+      return this.plugins[name].apply(context, args);
     };
 
     return Plugin;
@@ -1133,7 +1144,7 @@
 
     RenderJob.prototype.executePlugin = function() {
       Log.debug("Executing plugin " + this.job.plugin);
-      Plugin.execute(this.c, this.job.plugin);
+      Plugin.execute(this.c, this.job.plugin, this.job.args);
       Log.debug("Plugin " + this.job.plugin + " finished!");
       return this.renderDone();
     };
@@ -1154,9 +1165,9 @@
         data.g = this.c.pixelData[i + 1];
         data.b = this.c.pixelData[i + 2];
         res = this.job.processFn.call(pixelInfo, data);
-        this.c.pixelData[i] = clampRGB(res.r);
-        this.c.pixelData[i + 1] = clampRGB(res.g);
-        this.c.pixelData[i + 2] = clampRGB(res.b);
+        this.c.pixelData[i] = Util.clampRGB(res.r);
+        this.c.pixelData[i + 1] = Util.clampRGB(res.g);
+        this.c.pixelData[i + 2] = Util.clampRGB(res.b);
       }
       return this.blockFinished(bnum);
     };
@@ -1189,9 +1200,9 @@
           }
         }
         res = this.processKernel(adjust, kernel, divisor, bias);
-        modPixelData[i] = clampRGB(res.r);
-        modPixelData[i + 1] = clampRGB(res.g);
-        modPixelData[i + 2] = clampRGB(res.b);
+        modPixelData[i] = Util.clampRGB(res.r);
+        modPixelData[i + 1] = Util.clampRGB(res.g);
+        modPixelData[i + 2] = Util.clampRGB(res.b);
         modPixelData[i + 3] = this.c.pixelData[i + 3];
       }
       for (i = start; start <= end ? i < end : i > end; start <= end ? i++ : i--) {

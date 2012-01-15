@@ -3,6 +3,6 @@ class Plugin
   @plugins = {}
 
   @register: (name, plugin) -> @plugins[name] = plugin
-  @execute: (context, name) -> @plugins[name].call context
+  @execute: (context, name, args) -> @plugins[name].apply context, args
 
 Caman.Plugin = Plugin

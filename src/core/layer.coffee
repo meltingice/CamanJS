@@ -21,7 +21,7 @@ class Layer
       opacity: 1.0
 
     # Each layer gets its own unique ID
-    @layerID = uniqid.get()
+    @layerID = Util.uniqid.get()
 
     # Create the canvas for this layer
     @canvas = document.createElement 'canvas'
@@ -100,9 +100,9 @@ class Layer
 
       result = Blender.execute @options.blendingMode, rgbaLayer, rgbaParent
 
-      result.r = clampRGB result.r
-      result.g = clampRGB result.g
-      result.b = clampRGB result.b
+      result.r = Util.clampRGB result.r
+      result.g = Util.clampRGB result.g
+      result.b = Util.clampRGB result.b
       result.a = rgbaLayer.a if not result.a?
 
       parentData[i]   = rgbaParent.r - (

@@ -43,3 +43,4 @@ Caman.toString = ->
   "Version " + Caman.version.release + ", Released " + Caman.version.date;
 
 Caman.remoteProxy = ""
+Caman.Util = Util
