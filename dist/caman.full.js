@@ -1,5 +1,5 @@
 (function() {
-  var $, Blender, Calculate, CamanInstance, Convert, Filter, IO, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
+  var $, Blender, Calculate, CamanInstance, Convert, Event, Filter, IO, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, clampRGB, extend, slice, uniqid;
   var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
 
   slice = Array.prototype.slice;
@@ -144,9 +144,17 @@
     };
 
     CamanInstance.prototype.imageLoaded = function(id, image, callback) {
+      var attr, _i, _len, _ref;
       this.image = image;
       this.canvas = document.createElement('canvas');
       this.canvas.id = image.id;
+      _ref = ['data-camanwidth', 'data-camanheight'];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        attr = _ref[_i];
+        if (this.image.getAttribute(attr)) {
+          this.canvas.setAttribute(attr, this.image.getAttribute(attr));
+        }
+      }
       image.parentNode.replaceChild(this.canvas, this.image);
       this.canvasID = id;
       this.options = {
@@ -200,8 +208,26 @@
     };
 
     CamanInstance.prototype.finishInit = function(callback) {
+      var newHeight, newWidth, oldHeight, oldWidth;
       this.context = this.canvas.getContext("2d");
       if (this.image != null) {
+        oldWidth = this.image.width;
+        oldHeight = this.image.height;
+        newWidth = this.canvas.getAttribute('data-camanwidth');
+        newHeight = this.canvas.getAttribute('data-camanheight');
+        if (newWidth || newHeight) {
+          if (newWidth) {
+            this.image.width = parseInt(newWidth, 10);
+            if (newHeight) {
+              this.image.height = parseInt(newHeight, 10);
+            } else {
+              this.image.height = this.image.width * oldHeight / oldWidth;
+            }
+          } else if (newHeight) {
+            this.image.height = parseInt(newHeight, 10);
+            this.image.width = this.image.height * oldWidth / oldHeight;
+          }
+        }
         this.canvas.width = this.image.width;
         this.canvas.height = this.image.height;
         this.context.drawImage(this.image, 0, 0, this.image.width, this.image.height);
@@ -238,6 +264,8 @@
     return Blender;
 
   })();
+
+  Caman.Blender = Blender;
 
   Calculate = (function() {
 
@@ -585,7 +613,7 @@
 
   })();
 
-  Caman.Event = (function() {
+  Event = (function() {
 
     function Event() {}
 
@@ -632,6 +660,8 @@
 
   })();
 
+  Caman.Event = Event;
+
   Filter = (function() {
 
     function Filter() {}
@@ -668,18 +698,13 @@
     };
 
     Filter.prototype.processKernel = function(name, adjust, divisor, bias) {
-      var data, i, _ref;
+      var i, _ref;
       if (!divisor) {
         divisor = 0;
         for (i = 0, _ref = adjust.length; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
           divisor += adjust[i];
         }
       }
-      data = {
-        adjust: adjust,
-        divisor: divisor,
-        bias: bias || 0
-      };
       this.renderQueue.push({
         type: Filter.Type.Kernel,
         name: name,
@@ -704,7 +729,7 @@
       if (typeof finishedFn === "function") this.finishedFn = finishedFn;
       if (this.renderQueue.length === 0) {
         if (this.finishedFn != null) {
-          Caman.Event.trigger(this, "renderFinished");
+          Event.trigger(this, "renderFinished");
           this.finishedFn.call(this);
         }
         return this;
@@ -1085,7 +1110,7 @@
       blockPixelLength = Math.floor((n / 4) / RenderJob.Blocks);
       blockN = blockPixelLength * 4;
       lastBlockN = blockN + ((n / 4) % RenderJob.Blocks) * 4;
-      Caman.Event.trigger(this.c, "processStart", this.job);
+      Event.trigger(this.c, "processStart", this.job);
       if (this.job.type === Filter.Type.Single) {
         _results = [];
         for (j = 0, _ref = RenderJob.Blocks; 0 <= _ref ? j < _ref : j > _ref; 0 <= _ref ? j++ : j--) {
@@ -1180,7 +1205,7 @@
       if (this.blocksDone === RenderJob.Blocks || bnum === -1) {
         if (bnum >= 0) Log.debug("Filter " + this.job.name + " finished!");
         if (bnum < 0) Log.debug("Kernel filter " + this.job.name + " finished!");
-        Caman.Event.trigger(this.c, "processComplete", this.job);
+        Event.trigger(this.c, "processComplete", this.job);
         return this.renderDone();
       }
     };

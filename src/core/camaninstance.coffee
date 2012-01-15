@@ -1,3 +1,6 @@
+# This is the main class that you interact with once Caman is actaully initialized.
+# It stores all of the important data relevant to a Caman-initialized canvas, and is also 
+# responsible for the actual initialization.
 class CamanInstance
   @Type =
     Image: 1
@@ -5,13 +8,25 @@ class CamanInstance
 
   @toString = Caman.toString
     
+  # All of the arguments given to the Caman() function are simply thrown here.
   constructor: (args, type = CamanInstance.Type.Canvas) ->
+    # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
+    # same instance.
     @id = uniqid.get()
+
+    # Stores the pixel layers
     @pixelStack = []
+
+    # Stores all of the layers waiting to be rendered
     @layerStack = []
+
+    # Stores all of the render operatives
     @renderQueue = []
+
+    # Stores all of the canvases to be processed
     @canvasQueue = []
   
+    # Begin initialization
     switch type
       when CamanInstance.Type.Image then @loadImage.apply @, args
       when CamanInstance.Type.Canvas then @loadCanvas.apply @, args
@@ -47,7 +62,8 @@ class CamanInstance
     @canvas = document.createElement 'canvas'
     @canvas.id = image.id
     
-    # TODO: resize options
+    for attr in ['data-camanwidth', 'data-camanheight']
+      @canvas.setAttribute attr, @image.getAttribute(attr) if @image.getAttribute attr
     
     image.parentNode.replaceChild @canvas, @image
     @canvasID = id
@@ -102,7 +118,24 @@ class CamanInstance
     @context = @canvas.getContext("2d")
     
     if @image?
-      # TODO: resize options
+      oldWidth = @image.width
+      oldHeight = @image.height
+      newWidth = @canvas.getAttribute 'data-camanwidth'
+      newHeight = @canvas.getAttribute 'data-camanheight'
+
+      # Image resizing
+      if newWidth or newHeight
+        if newWidth
+          @image.width = parseInt newWidth, 10
+
+          if newHeight
+            @image.height = parseInt newHeight, 10
+          else
+            @image.height = @image.width * oldHeight / oldWidth
+        else if newHeight
+          @image.height = parseInt newHeight, 10
+          @image.width = @image.height * oldWidth / oldHeight
+
       @canvas.width = @image.width
       @canvas.height = @image.height
       

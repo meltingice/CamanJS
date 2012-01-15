@@ -29,7 +29,7 @@ class RenderJob
     blockN = blockPixelLength * 4
     lastBlockN = blockN + ((n / 4) % RenderJob.Blocks) * 4
 
-    Caman.Event.trigger @c, "processStart", @job
+    Event.trigger @c, "processStart", @job
 
     if @job.type is Filter.Type.Single
       for j in [0...RenderJob.Blocks]
@@ -122,7 +122,7 @@ class RenderJob
     if @blocksDone is RenderJob.Blocks or bnum is -1
       Log.debug "Filter #{@job.name} finished!" if bnum >=0
       Log.debug "Kernel filter #{@job.name} finished!" if bnum < 0
-      Caman.Event.trigger @c, "processComplete", @job
+      Event.trigger @c, "processComplete", @job
 
       @renderDone()
 
