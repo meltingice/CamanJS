@@ -1,4 +1,12 @@
+# Tons of color conversion functions
 class Convert
+  # Converts the hex representation of a color to RGB values.
+  # Hex value can optionally start with the hash (#).
+  #
+  # <pre>
+  # @param   String  hex   The colors hex value
+  # @return  Array         The RGB representation
+  # </pre>
   @hexToRGB: (hex) ->
     hex = hex.substr(1) if hex.charAt(0) is "#"
     r = parseInt hex.substr(0, 2), 16
@@ -7,6 +15,16 @@ class Convert
 
     r: r, g: g, b: b
 
+  # Converts an RGB color to HSL.
+  # Assumes r, g, and b are in the set [0, 255] and
+  # returns h, s, and l in the set [0, 1].
+  #
+  # <pre>
+  # @param   Number  r   Red channel
+  # @param   Number  g   Green channel
+  # @param   Number  b   Blue channel
+  # @return              The HSL representation
+  # </pre>
   @rgbToHSL: (r, g, b) ->
     r /= 255
     g /= 255
@@ -30,6 +48,17 @@ class Convert
 
     h: h, s: s, l: l
 
+  # Converts an HSL color value to RGB. Conversion formula
+  # adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+  # Assumes h, s, and l are contained in the set [0, 1] and
+  # returns r, g, and b in the set [0, 255].
+  #
+  # <pre>
+  # @param   Number  h       The hue
+  # @param   Number  s       The saturation
+  # @param   Number  l       The lightness
+  # @return  Array           The RGB representation
+  # </pre>
   @hslToRGB: (h, s, l) ->
     if s is 0
       r = g = b = l
@@ -43,6 +72,7 @@ class Convert
 
     r: r * 255, g: g * 255, b: b * 255
 
+  # Converts from the hue color space back to RGB
   @hueToRGB: (p, q, t) ->
     if t < 0 then t += 1
     if t > 1 then t -= 1
@@ -51,6 +81,17 @@ class Convert
     if t < 2/3 then return p + (q - p) * (2/3 - t) * 6
     return p
 
+  # Converts an RGB color value to HSV. Conversion formula
+  # adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+  # Assumes r, g, and b are contained in the set [0, 255] and
+  # returns h, s, and v in the set [0, 1].
+  #
+  # <pre>
+  # @param   Number  r       The red color value
+  # @param   Number  g       The green color value
+  # @param   Number  b       The blue color value
+  # @return  Array           The HSV representation
+  # </pre>
   @rgbToHSV: (r, g, b) ->
     r /= 255
     g /= 255
@@ -75,6 +116,17 @@ class Convert
 
     h: h, s: s, v: v
 
+  # Converts an HSV color value to RGB. Conversion formula
+  # adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+  # Assumes h, s, and v are contained in the set [0, 1] and
+  # returns r, g, and b in the set [0, 255].
+  #
+  # <pre>
+  # @param   Number  h       The hue
+  # @param   Number  s       The saturation
+  # @param   Number  v       The value
+  # @return  Array           The RGB representation
+  # </pre>
   @hsvToRGB: (h, s, v) ->
     i = Math.floor h * 6
     f = h * 6 - i
@@ -110,6 +162,19 @@ class Convert
 
     r: r * 255, g: g * 255, b: b * 255
 
+  # Converts a RGB color value to the XYZ color space. Formulas
+  # are based on http://en.wikipedia.org/wiki/SRGB assuming that
+  # RGB values are sRGB.
+  #
+  # Assumes r, g, and b are contained in the set [0, 255] and
+  # returns x, y, and z.
+  #
+  # <pre>
+  # @param   Number  r       The red color value
+  # @param   Number  g       The green color value
+  # @param   Number  b       The blue color value
+  # @return  Array           The XYZ representation
+  # </pre>
   @rgbToXYZ: (r, g, b) ->
     r /= 255
     g /= 255
@@ -136,6 +201,18 @@ class Convert
   
     x: x * 100, y: y * 100, z: z * 100
 
+  # Converts a XYZ color value to the sRGB color space. Formulas
+  # are based on http://en.wikipedia.org/wiki/SRGB and the resulting
+  # RGB value will be in the sRGB color space.
+  # Assumes x, y and z values are whatever they are and returns
+  # r, g and b in the set [0, 255].
+  #
+  # <pre>
+  # @param   Number  x       The X value
+  # @param   Number  y       The Y value
+  # @param   Number  z       The Z value
+  # @return  Array           The RGB representation
+  # </pre>
   @xyzToRGB: (x, y, z) ->
     x /= 100
     y /= 100
@@ -162,6 +239,18 @@ class Convert
 
     r: r * 255, g: g * 255, b: b * 255
 
+  # Converts a XYZ color value to the CIELAB color space. Formulas
+  # are based on http://en.wikipedia.org/wiki/Lab_color_space
+  # The reference white point used in the conversion is D65.
+  # Assumes x, y and z values are whatever they are and returns
+  # L*, a* and b* values
+  #
+  # <pre>
+  # @param   Number  x       The X value
+  # @param   Number  y       The Y value
+  # @param   Number  z       The Z value
+  # @return  Array           The Lab representation
+  # </pre>
   @xyzToLab: (x, y, z) ->
     whiteX = 95.047
     whiteY = 100.0
@@ -192,6 +281,20 @@ class Convert
 
     l: l, a: a, b: b
 
+  # Converts a L*, a*, b* color values from the CIELAB color space
+  # to the XYZ color space. Formulas are based on
+  # http://en.wikipedia.org/wiki/Lab_color_space
+  #
+  # The reference white point used in the conversion is D65.
+  # Assumes L*, a* and b* values are whatever they are and returns
+  # x, y and z values.
+  #
+  # <pre>
+  # @param   Number  l       The L* value
+  # @param   Number  a       The a* value
+  # @param   Number  b       The b* value
+  # @return  Array           The XYZ representation
+  # </pre>
   @labToXYZ: (l, a, b) ->
     y = (l + 16) / 116
     x = y + (a / 500)

@@ -1,11 +1,22 @@
+# Various math-heavy helpers
 class Calculate
+  # Calculates the distance between two points
   @distance: (x1, y1, x2, y2) ->
     Math.sqrt Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
 
+  # Generates a pseudorandom number that lies within the max - mix range. The number can be either 
+  # an integer or a float depending on what the user specifies.
   @randomRange: (min, max, float = false) ->
     rand = min + (Math.random() * (max - min))
     return if float then rand.toFixed(float) else Math.round(rand)
 
+  # Generates a bezier curve given a start and end point, with two control points in between.
+  # Can also optionally bound the y values between a low and high bound.
+  #
+  # This is different than most bezier curve functions because it attempts to construct it in such 
+  # a way that we can use it more like a simple input -> output system, or a one-to-one function. 
+  # In other words we can provide an input color value, and immediately receive an output modified 
+  # color value.
   @bezier: (start, ctrl1, ctrl2, end, lowBound, highBound) ->
     x0 = start[0]
     y0 = start[1]
@@ -17,6 +28,7 @@ class Calculate
     y3 = end[1]
     bezier = {}
 
+    # Calculate our X/Y coefficients
     Cx = 3 * (x1 - x0)
     Bx = 3 * (x2 - x1) - Cx
     Ax = x3 - x0 - Cx - Bx
@@ -25,7 +37,7 @@ class Calculate
     By = 3 * (y2 - y1) - Cy
     Ay = y3 - y0 - Cy - By
 
-    # 1000 is actually aribitrary. We need to make sure we do enough
+    # 1000 is actually arbitrary. We need to make sure we do enough
     # calculations between 0 and 255 that, in even the more extreme
     # circumstances, we calculate as many values as possible. In the event
     # that an X value is skipped, it will be found later on using linear
