@@ -1,3 +1,5 @@
+# Used for storing instances of CamanInstance objects such that, when Caman() is called on an 
+# already initialized element, it returns that object instead of re-initializing.
 class Store
   @items = {}
   

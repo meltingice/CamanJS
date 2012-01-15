@@ -1,6 +1,7 @@
 # Look what you make me do Javascript
 slice = Array::slice
 
+# Helper function that extends one object with all the properies of other objects
 extend = (obj) ->
   dest = obj
   src = slice.call arguments, 1
@@ -21,6 +22,8 @@ uniqid = do ->
   id = 0
   get: -> id++
 
+# In order to stay true to the latest spec, RGB values must be clamped between
+# 0 and 255. If we don't do this, weird things happen.
 clampRGB = (val) ->
   return 0 if val < 0
   return 255 if val > 255
