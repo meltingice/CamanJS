@@ -109,7 +109,7 @@ class RenderJob
       modPixelData[i] = clampRGB(res.r)
       modPixelData[i+1] = clampRGB(res.g)
       modPixelData[i+2] = clampRGB(res.b)
-      modPixelData[i+3] = 255
+      modPixelData[i+3] = @c.pixelData[i+3]
 
     @c.pixelData[i] = modPixelData[i] for i in [start...end]
 
@@ -146,9 +146,9 @@ class RenderJob
       layer.imageData = layer.context.getImageData 0, 0, @c.dimensions.width, @c.dimensions.height
       layer.pixelData = layer.imageData.data
 
-      @pixelData = layer.pixelData
+      @c.pixelData = layer.pixelData
 
       @c.processNext()
 
     proxyUrl = IO.remoteCheck src
-    img.src = if proxyURL then proxyURL else src
+    img.src = if proxyUrl? then proxyUrl else src
