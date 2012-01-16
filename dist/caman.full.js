@@ -2118,4 +2118,33 @@
     return this.processKernel("Emboss", [-2, -1, 0, -1, 1, 1, 0, 1, 2]);
   });
 
+  Caman.Filter.register("posterize", function(adjust) {
+    var numOfAreas, numOfValues;
+    numOfAreas = 256 / adjust;
+    numOfValues = 255 / (adjust - 1);
+    return this.process("posterize", function(rgba) {
+      rgba.r = Math.floor(Math.floor(rgba.r / numOfAreas) * numOfValues);
+      rgba.g = Math.floor(Math.floor(rgba.g / numOfAreas) * numOfValues);
+      rgba.b = Math.floor(Math.floor(rgba.b / numOfAreas) * numOfValues);
+      return rgba;
+    });
+  });
+
+  Caman.Filter.register("threshold", function(adjust) {
+    return this.process("threshold", function(rgba) {
+      var luminance;
+      luminance = (0.2126 * rgba.r) + (0.7152 * rgba.g) + (0.0722 * rgba.b);
+      if (luminance < adjust) {
+        rgba.r = 0;
+        rgba.g = 0;
+        rgba.b = 0;
+      } else {
+        rgba.r = 255;
+        rgba.g = 255;
+        rgba.b = 255;
+      }
+      return rgba;
+    });
+  });
+
 }).call(this);
