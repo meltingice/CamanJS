@@ -22,28 +22,29 @@ Caman("#image-id", function () {
 });
 ```
 
-## Cloning the Project
+## Upgrading from 2.x to 3.x
 
-CamanJS uses git submodules in order to organize things a bit better. Because of this, you have a few options in making sure you get all the required files.
+For the end-user, there are no changes to CamanJS that will affect your code. Everything works exactly the same as before.
 
-**Recursive Clone**
+For developers, there are some major changes regarding how filters and plugins are added to CamanJS. Previously, you would explicitly extend the Caman.manip interface. This object no longer exists. Now, the way you add filters is:
 
-Recommended if you haven't cloned the project yet.
+``` coffeescript
+Caman.Filter.register "filterName", ->
+  # Variables that exist here will be available in the process function
+  # because of JS closure.
+  amt = 20
 
-```
-git clone --recursive https://github.com/meltingice/CamanJS.git
-```
-
-**Submodule Init**
-
-If you have cloned the project already, you can do (after pulling the latest changes):
-
-```
-git submodule init
-git submodule update
+  @process "filterName", (rgba) ->
+    # Alter rgba pixel object here
+    return rgba
 ```
 
-The library is split up into several source files and has a separate submodule for plugins. The reason behind this organization is to make it as simple as possible to support the NodeJS port of Caman. This also helps to avoid library bloat.
+Plugins are similarly added:
+
+``` coffeescript
+Caman.Plugin.register "pluginName", ->
+  return @
+```
 
 **Building CamanJS**
 
@@ -53,13 +54,15 @@ To build, simply run:
 cake build
 ```
 
-The resulting files will be placed in the dist/ folder.
+The resulting files will be placed in the dist/ folder. Plugins will be automatically discovered and added to caman.full.js after the core library.
 
 ## CDN JS Hosting
+
 CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from [this URL](http://ajax.cdnjs.com/ajax/libs/camanjs/2.2/caman.full.min.js) for usage on your site.
 
 ## NodeJS Compatibility
-There is now a version of CamanJS that is made to work with NodeJS.  It has all of the functionality of the normal browser version, including plugins.  Take a look at the [node branch](https://github.com/meltingice/CamanJS/tree/node) for more information.
+
+This is currently in flux. The node branch will still have a working node version for now, as will npm, but it has not been upgraded to the new codebase yet.
 
 **tl;dr**
 
@@ -68,15 +71,17 @@ npm install caman
 ```
 
 # Testing
+
 CamanJS has both QUnit unit testing and a custom benchmarking page to monitor render times on a per-filter basis.  Simply open test/index.html for the QUnit tests, and test/benchmark.html for the benchmarking tests.
 
 # Project Contributors
 
-* <a href="http://twitter.com/meltingice">Ryan LeFevre</a> - Project Creator, Maintainer, and Lead Developer
-* <a href="http://twitter.com/rwaldron">Rick Waldron</a> - Plugin Architect and Developer
-* <a href="http://twitter.com/cezarsa">Cezar Sá Espinola</a> - Developer
-* <a href="http://twitter.com/jarques">Jarques Pretorius</a> - Logo Designer
+* [Ryan LeFevre](http://twitter.com/meltingice) - Project Creator, Maintainer, and Lead Developer
+* [Rick Waldron](http://twitter.com/rwaldron) - Plugin Architect and Developer
+* [Cezar Sá Espinola](http://twitter.com/cezarsa) - Developer
+* [Jarques Pretorius](http://twitter.com/jarques) - Logo Designer
 
 # Plugin Contributors
 
-* <a href="https://github.com/Hosselaer">Hosselaer</a>
+* [Hosselaer](https://github.com/Hosselaer)
+* [Mario Klingemann](http://www.quasimondo.com)
