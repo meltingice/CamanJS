@@ -5,6 +5,7 @@ class CamanInstance
   @Type =
     Image: 1
     Canvas: 2
+    Unknown: 3
 
   @toString = Caman.toString
     
@@ -32,6 +33,22 @@ class CamanInstance
     switch type
       when CamanInstance.Type.Image then @loadImage.apply @, args
       when CamanInstance.Type.Canvas then @loadCanvas.apply @, args
+      when CamanInstance.Type.Unknown
+        if $(args[0])
+          @loadUnknown args
+        else
+          if document.readyState is "complete"
+            throw "Could not find element of id #{id}"
+          
+          document.addEventListener "DOMContentLoaded", =>
+            @loadUnknown args
+          , false
+
+  loadUnknown: (args) ->
+    e = $(args[0])
+    switch e.nodeName.toLowerCase()
+      when "img" then @loadImage.apply @, args
+      when "canvas" then @loadCanvas.apply @, args
       
   ########## Begin Image Loading ##########
   
@@ -57,9 +74,19 @@ class CamanInstance
           @imageLoaded id, image, callback
         else
           image.onload = => @imageLoaded id, image, callback
+    else
+      if document.readyState is "complete"
+        throw "Could not find element of id #{id}"
+      
+      document.addEventListener "DOMContentLoaded",  =>
+        @imageLoaded id, $(id), callback
+      , false
         
   imageLoaded: (id, image, callback) ->
     @image = image
+
+    if not image or image.nodeName.toLowerCase() isnt "img"
+      throw "Given element ID isn't an image: #{id}"
     
     @canvas = document.createElement 'canvas'
     @canvas.id = image.id
@@ -92,12 +119,18 @@ class CamanInstance
     if $(id)?
       @canvasLoaded url, id, callback
     else
+      if document.readyState is "complete"
+        throw "Could not find element of id #{id}"
+
       document.addEventListener "DOMContentLoaded", =>
         @canvasLoaded url, id, callback
       , false
       
   canvasLoaded: (url, id, callback) ->
     @canvas = $(id)
+
+    if not $(id) or $(id).nodeName.toLowerCase() isnt "canvas"
+      throw "Given element ID isn't a canvas: #{id}"
     
     if url?
       @image = document.createElement 'img'

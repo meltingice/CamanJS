@@ -23,9 +23,7 @@ Root.Caman = ->
       return Store.execute arguments[0], arguments[1] if Store.has arguments[0]
       
       if typeof arguments[1] is 'function'
-        tag = $(arguments[0]).nodeName.toLowerCase()
-        return new CamanInstance(arguments, CamanInstance.Type.Image) if tag is "img"
-        return new CamanInstance(arguments, CamanInstance.Type.Canvas) if tag is "canvas"
+        return new CamanInstance(arguments, CamanInstance.Type.Unknown)
       else
         return new CamanInstance(arguments, CamanInstance.Type.Canvas)
     when 3

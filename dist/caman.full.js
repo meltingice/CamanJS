@@ -52,7 +52,6 @@
   Root = typeof exports !== "undefined" && exports !== null ? exports : window;
 
   Root.Caman = function() {
-    var tag;
     switch (arguments.length) {
       case 1:
         if (Store.has(arguments[0])) return Store.get(arguments[0]);
@@ -62,13 +61,7 @@
           return Store.execute(arguments[0], arguments[1]);
         }
         if (typeof arguments[1] === 'function') {
-          tag = $(arguments[0]).nodeName.toLowerCase();
-          if (tag === "img") {
-            return new CamanInstance(arguments, CamanInstance.Type.Image);
-          }
-          if (tag === "canvas") {
-            return new CamanInstance(arguments, CamanInstance.Type.Canvas);
-          }
+          return new CamanInstance(arguments, CamanInstance.Type.Unknown);
         } else {
           return new CamanInstance(arguments, CamanInstance.Type.Canvas);
         }
@@ -100,12 +93,14 @@
 
     CamanInstance.Type = {
       Image: 1,
-      Canvas: 2
+      Canvas: 2,
+      Unknown: 3
     };
 
     CamanInstance.toString = Caman.toString;
 
     function CamanInstance(args, type) {
+      var _this = this;
       if (type == null) type = CamanInstance.Type.Canvas;
       this.id = Util.uniqid.get();
       this.pixelStack = [];
@@ -119,8 +114,31 @@
           break;
         case CamanInstance.Type.Canvas:
           this.loadCanvas.apply(this, args);
+          break;
+        case CamanInstance.Type.Unknown:
+          if ($(args[0])) {
+            this.loadUnknown(args);
+          } else {
+            if (document.readyState === "complete") {
+              throw "Could not find element of id " + id;
+            }
+            document.addEventListener("DOMContentLoaded", function() {
+              return _this.loadUnknown(args);
+            }, false);
+          }
       }
     }
+
+    CamanInstance.prototype.loadUnknown = function(args) {
+      var e;
+      e = $(args[0]);
+      switch (e.nodeName.toLowerCase()) {
+        case "img":
+          return this.loadImage.apply(this, args);
+        case "canvas":
+          return this.loadCanvas.apply(this, args);
+      }
+    };
 
     CamanInstance.prototype.loadImage = function(id, callback) {
       var element, image, proxyURL, _ref,
@@ -152,12 +170,22 @@
             };
           }
         }
+      } else {
+        if (document.readyState === "complete") {
+          throw "Could not find element of id " + id;
+        }
+        return document.addEventListener("DOMContentLoaded", function() {
+          return _this.imageLoaded(id, $(id), callback);
+        }, false);
       }
     };
 
     CamanInstance.prototype.imageLoaded = function(id, image, callback) {
       var attr, _i, _len, _ref;
       this.image = image;
+      if (!image || image.nodeName.toLowerCase() !== "img") {
+        throw "Given element ID isn't an image: " + id;
+      }
       this.canvas = document.createElement('canvas');
       this.canvas.id = image.id;
       _ref = ['data-camanwidth', 'data-camanheight'];
@@ -192,6 +220,9 @@
       if ($(id) != null) {
         return this.canvasLoaded(url, id, callback);
       } else {
+        if (document.readyState === "complete") {
+          throw "Could not find element of id " + id;
+        }
         return document.addEventListener("DOMContentLoaded", function() {
           return _this.canvasLoaded(url, id, callback);
         }, false);
@@ -202,6 +233,9 @@
       var proxyURL,
         _this = this;
       this.canvas = $(id);
+      if (!$(id) || $(id).nodeName.toLowerCase() !== "canvas") {
+        throw "Given element ID isn't a canvas: " + id;
+      }
       if (url != null) {
         this.image = document.createElement('img');
         this.image.onload = function() {
