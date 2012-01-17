@@ -44,7 +44,7 @@ test("Invoking Caman() with one argument", function () {
   var existing_image = Caman("#test-image");
   
   ok(typeof existing_image == "object", "Invoking on valid ID returns object");
-  ok(typeof existing_image.render == "function", "Returned object is Caman.manip");
+  ok(typeof existing_image.render == "function", "Returned object is CamanInstance");
   
   raises(function () {
     Caman("#test-invalid");
