@@ -7,3 +7,7 @@ class Store
   @get: (search) -> @items[search]
   @put: (name, obj) -> @items[name] = obj
   @execute: (search, callback) -> callback.call @get(search), @get(search)
+  @flush: (name = false) ->
+    if name then delete @items[name] else @items = {}
+
+Caman.Store = Store
