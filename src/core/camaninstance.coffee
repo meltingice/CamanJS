@@ -25,6 +25,8 @@ class CamanInstance
 
     # Stores all of the canvases to be processed
     @canvasQueue = []
+
+    @currentLayer = null
   
     # Begin initialization
     switch type
