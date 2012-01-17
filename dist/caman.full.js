@@ -1325,9 +1325,20 @@
       return callback.call(this.get(search), this.get(search));
     };
 
+    Store.flush = function(name) {
+      if (name == null) name = false;
+      if (name) {
+        return delete this.items[name];
+      } else {
+        return this.items = {};
+      }
+    };
+
     return Store;
 
   })();
+
+  Caman.Store = Store;
 
   Blender.register("normal", function(rgbaLayer, rgbaParent) {
     return {
