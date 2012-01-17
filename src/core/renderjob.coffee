@@ -71,12 +71,15 @@ class RenderJob
       data.r = @c.pixelData[i]
       data.g = @c.pixelData[i+1]
       data.b = @c.pixelData[i+2]
+      data.a = @c.pixelData[i+3]
 
       res = @job.processFn.call pixelInfo, data
+      res.a = data.a if not res.a?
 
       @c.pixelData[i]   = Util.clampRGB res.r
       @c.pixelData[i+1] = Util.clampRGB res.g
       @c.pixelData[i+2] = Util.clampRGB res.b
+      @c.pixelData[i+3] = Util.clampRGB res.a
 
     @blockFinished(bnum)
 

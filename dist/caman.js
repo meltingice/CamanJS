@@ -112,6 +112,7 @@
       this.layerStack = [];
       this.renderQueue = [];
       this.canvasQueue = [];
+      this.currentLayer = null;
       switch (type) {
         case CamanInstance.Type.Image:
           this.loadImage.apply(this, args);
@@ -680,7 +681,7 @@
     Filter.Type = {
       Single: 1,
       Kernel: 2,
-      LayerDequeued: 3,
+      LayerDequeue: 3,
       LayerFinished: 4,
       LoadOverlay: 5,
       Plugin: 6
@@ -914,7 +915,7 @@
     };
 
     Layer.prototype.fillColor = function() {
-      return this.c.fillcolor.apply(this.c, arguments);
+      return this.c.fillColor.apply(this.c, arguments);
     };
 
     Layer.prototype.overlayImage = function(image) {
@@ -1164,10 +1165,13 @@
         data.r = this.c.pixelData[i];
         data.g = this.c.pixelData[i + 1];
         data.b = this.c.pixelData[i + 2];
+        data.a = this.c.pixelData[i + 3];
         res = this.job.processFn.call(pixelInfo, data);
+        if (!(res.a != null)) res.a = data.a;
         this.c.pixelData[i] = Util.clampRGB(res.r);
         this.c.pixelData[i + 1] = Util.clampRGB(res.g);
         this.c.pixelData[i + 2] = Util.clampRGB(res.b);
+        this.c.pixelData[i + 3] = Util.clampRGB(res.a);
       }
       return this.blockFinished(bnum);
     };
@@ -1368,6 +1372,7 @@
       rgba.r = color.r;
       rgba.g = color.g;
       rgba.b = color.b;
+      rgba.a = 255;
       return rgba;
     });
   });

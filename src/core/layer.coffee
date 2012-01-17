@@ -61,7 +61,7 @@ class Layer
     return @
 
   # Fills this layer with a single color
-  fillColor: -> @c.fillcolor.apply @c, arguments
+  fillColor: -> @c.fillColor.apply @c, arguments
 
   # Loads and overlays an image onto this layer
   overlayImage: (image) ->
@@ -106,11 +106,11 @@ class Layer
       result.a = rgbaLayer.a if not result.a?
 
       parentData[i]   = rgbaParent.r - (
-        (rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255))
+        (rgbaParent.r - result.r) * (@options.opacity * (result.a / 255))
       )
       parentData[i+1] = rgbaParent.g - (
-        (rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255))
+        (rgbaParent.g - result.g) * (@options.opacity * (result.a / 255))
       )
       parentData[i+2] = rgbaParent.b - (
-        (rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255))
+        (rgbaParent.b - result.b) * (@options.opacity * (result.a / 255))
       )
