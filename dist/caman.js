@@ -1401,9 +1401,9 @@
       max = Math.max(rgba.r, rgba.g, rgba.b);
       avg = (rgba.r + rgba.g + rgba.b) / 3;
       amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
-      if (rgba.r !== max) rgba.r += (max - rgba.r) * adjust;
-      if (rgba.g !== max) rgba.g += (max - rgba.g) * adjust;
-      if (rgba.b !== max) rgba.b += (max - rgba.b) * adjust;
+      if (rgba.r !== max) rgba.r += (max - rgba.r) * amt;
+      if (rgba.g !== max) rgba.g += (max - rgba.g) * amt;
+      if (rgba.b !== max) rgba.b += (max - rgba.b) * amt;
       return rgba;
     });
   });
