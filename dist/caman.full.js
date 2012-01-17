@@ -700,6 +700,10 @@
       });
     };
 
+    Filter.prototype.revert = function(ready) {
+      return this.loadCanvas(this.options.image, this.options.canvas, ready);
+    };
+
     Filter.prototype.process = function(name, processFn) {
       this.renderQueue.push({
         type: Filter.Type.Single,
