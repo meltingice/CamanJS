@@ -12,6 +12,8 @@ CamanJS is written in [Coffeescript](http://coffeescript.org) as of version 3.0.
 
 ## Example Usage
 
+Include one of the versions in the `dist/` folder, then you can run:
+
 ```js
 Caman("#image-id", function () {
   this.brightness(10);
