@@ -68,6 +68,19 @@ cake build
 
 The resulting files will be placed in the dist/ folder. Plugins will be automatically discovered and added to caman.full.js after the core library.
 
+If you add any files to the core library, you will need to add them to the `coffeeFiles` array in the Cakefile. The point of this is so that order is preserved when generating the file JS file. Plugins do not need to be added to the Cakefile.
+
+You will probably want to generate documentation if you make any changes or add a plugin. In addition to the normal requirements, you will also need:
+
+* docco
+* Pygments (Python library)
+
+To generate the documentation, run:
+
+```
+cake docs
+```
+
 ## CDN JS Hosting
 
 CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from [this URL](http://ajax.cdnjs.com/ajax/libs/camanjs/2.2/caman.full.min.js) for usage on your site.
