@@ -6,5 +6,9 @@ already initialized element, it returns that object instead of re-initializing.<
   <span class="vi">@get: </span><span class="nf">(search) -&gt;</span> <span class="nx">@items</span><span class="p">[</span><span class="nx">search</span><span class="p">]</span>
   <span class="vi">@put: </span><span class="nf">(name, obj) -&gt;</span> <span class="nx">@items</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">obj</span>
   <span class="vi">@execute: </span><span class="nf">(search, callback) -&gt;</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@get</span><span class="p">(</span><span class="nx">search</span><span class="p">),</span> <span class="nx">@get</span><span class="p">(</span><span class="nx">search</span><span class="p">)</span>
+  <span class="vi">@flush: </span><span class="nf">(name = false) -&gt;</span>
+    <span class="k">if</span> <span class="nx">name</span> <span class="k">then</span> <span class="k">delete</span> <span class="nx">@items</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="k">else</span> <span class="vi">@items = </span><span class="p">{}</span>
+
+<span class="nv">Caman.Store = </span><span class="nx">Store</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

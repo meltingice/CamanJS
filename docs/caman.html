@@ -3,7 +3,8 @@ There are many different initialization for Caman, which are described on the
 <a href="http://camanjs.com/docs">Basic Usage</a> page.</p>
 
 <p>Initialization is tricky because we need to make sure everything we need is actually fully 
-loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the # image is done loading before converting it to a canvas element and writing the pixel data. If we 
+loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
+image is done loading before converting it to a canvas element and writing the pixel data. If we 
 do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
 we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
 image element, load the image, then continue with initialization.</p>
@@ -19,9 +20,7 @@ initialized, the callback function is fired.</p>             </td>             <
       <span class="k">return</span> <span class="nx">Store</span><span class="p">.</span><span class="nx">execute</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nx">Store</span><span class="p">.</span><span class="nx">has</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
       
       <span class="k">if</span> <span class="k">typeof</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">is</span> <span class="s1">&#39;function&#39;</span>
-        <span class="nv">tag = </span><span class="nx">$</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">CamanInstance</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Image</span><span class="p">)</span> <span class="k">if</span> <span class="nx">tag</span> <span class="o">is</span> <span class="s2">&quot;img&quot;</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">CamanInstance</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Canvas</span><span class="p">)</span> <span class="k">if</span> <span class="nx">tag</span> <span class="o">is</span> <span class="s2">&quot;canvas&quot;</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">CamanInstance</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Unknown</span><span class="p">)</span>
       <span class="k">else</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">CamanInstance</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Canvas</span><span class="p">)</span>
     <span class="k">when</span> <span class="mi">3</span>
