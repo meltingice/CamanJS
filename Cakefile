@@ -3,6 +3,11 @@ fs			= require 'fs'
 util		= require 'util'
 {jsmin}	= require 'jsmin'
 
+try
+	packer = require 'packer'
+catch err
+	packer = null
+
 targetName		= "caman"
 
 ###
@@ -15,10 +20,12 @@ targetCoffee	= "#{csSrcDir}/build"
 
 targetCoreJS			= "#{csTargetDir}/#{targetName}.js"
 targetCoreMinJS		= "#{csTargetDir}/#{targetName}.min.js"
+targetCorePackJS		= "#{csTargetDir}/#{targetName}.pack.js"
 coffeeCoreOpts		= "-r coffeescript-growl -j #{targetName}.js -o #{csTargetDir} -c #{targetCoffee}.coffee"
 
 targetFullJS			= "#{csTargetDir}/#{targetName}.full.js"
 targetFullMinJS		= "#{csTargetDir}/#{targetName}.full.min.js"
+targetFullPackJS		= "#{csTargetDir}/#{targetName}.full.pack.js"
 coffeeFullOpts		= "-r coffeescript-growl -j #{targetName}.full.js -o #{csTargetDir} -c #{targetCoffee}.full.coffee"
 
 # All source files listed in include order
@@ -89,7 +96,7 @@ task 'docs', 'Generates documentation for the coffee files', ->
 
 	exec "docco #{files.join(' ')}", (err, stdout, stderr) ->
 		util.log err if err
-		util.log "Finished generating documentation!"
+		util.log "Documentation built into docs/ folder."
 				
 task 'watch', 'Automatically recompile the CoffeeScript files when updated', ->
 	util.log "Watching for changes in #{csSrcDir}"
@@ -152,7 +159,17 @@ task 'minify', 'Minify the CoffeeScript files', ->
 		fs.writeFile targetCoreMinJS, jsmin(contents), "utf8", (err) ->
 			util.log err if err
 
+		if packer
+			util.log "Packing #{targetCoreJS}"
+			fs.writeFile targetCorePackJS, packer.pack(contents, true), "utf8", (err) ->
+				util.log err if err
+
 	util.log "Minifying #{targetFullJS}"
 	fs.readFile targetFullJS, "utf8", (err, contents) ->
 		fs.writeFile targetFullMinJS, jsmin(contents), "utf8", (err) ->
 			util.log err if err
+
+		if packer
+			util.log "Packing #{targetFullJS}"
+			fs.writeFile targetFullPackJS, packer.pack(contents, true), "utf8", (err) ->
+				util.log err if err
