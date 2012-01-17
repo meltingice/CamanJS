@@ -48,6 +48,18 @@ Caman.Plugin.register "pluginName", ->
 
 **Building CamanJS**
 
+If you are a developer who is contributing directly to the project, there are some tools to help you out.
+
+The requirements for building CamanJS are:
+
+* node
+* coffeescript
+* jsmin (for node)
+
+If you're running OSX and have Growl installed, it's also recommended you have:
+
+* coffeescript-growl
+
 To build, simply run:
 
 ```

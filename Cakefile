@@ -3,11 +3,6 @@ fs			= require 'fs'
 util		= require 'util'
 {jsmin}	= require 'jsmin'
 
-try
-  growl   = require 'growl'
-catch error
-  growl = null
-
 targetName		= "caman"
 
 ###
@@ -64,12 +59,8 @@ finished = (type) ->
 
 finishListener = (type, cb) ->
 	finishedCallback[type] = cb
-	
-notify = (msg) ->
-  return if not growl?
-  growl.notify msg, {title: "CamanJS Development", image: "Terminal"}
 
-getPlugins = () ->
+getPlugins = ->
 	content = ""
 
 	util.log "Gathering plugin files in #{pluginsFolder}"
@@ -87,10 +78,18 @@ Tasks
 ###
 task 'docs', 'Generates documentation for the coffee files', ->
 	util.log 'Invoking docco on the CoffeeScript source files'
-	exec "docco #{csSrcDir}/*.coffee", (err, stdout, stderr) ->
+	
+	files = coffeeFiles
+	files[i] = "src/#{files[i]}.coffee" for i in [0...files.length]
+
+	pluginFiles = fs.readdirSync pluginsFolder
+	for plugin in pluginFiles
+		continue if fs.statSync("#{pluginsFolder}/#{plugin}").isDirectory()
+		files.push "#{pluginsFolder}/#{plugin}"
+
+	exec "docco #{files.join(' ')}", (err, stdout, stderr) ->
 		util.log err if err
 		util.log "Finished generating documentation!"
-		notify "Documentation generation finished."
 				
 task 'watch', 'Automatically recompile the CoffeeScript files when updated', ->
 	util.log "Watching for changes in #{csSrcDir}"
