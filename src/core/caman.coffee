@@ -6,7 +6,8 @@ Root = if exports? then exports else window
 # [Basic Usage](http://camanjs.com/docs) page.
 #
 # Initialization is tricky because we need to make sure everything we need is actually fully 
-# loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the # image is done loading before converting it to a canvas element and writing the pixel data. If we 
+# loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
+# image is done loading before converting it to a canvas element and writing the pixel data. If we 
 # do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
 # we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
 # image element, load the image, then continue with initialization.
