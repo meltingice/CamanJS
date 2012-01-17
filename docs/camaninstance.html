@@ -4,6 +4,7 @@ responsible for the actual initialization.</p>             </td>             <td
   <span class="vi">@Type =</span>
     <span class="nv">Image: </span><span class="mi">1</span>
     <span class="nv">Canvas: </span><span class="mi">2</span>
+    <span class="nv">Unknown: </span><span class="mi">3</span>
 
   <span class="vi">@toString = </span><span class="nx">Caman</span><span class="p">.</span><span class="nx">toString</span>
     </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>All of the arguments given to the Caman() function are simply thrown here.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">constructor: </span><span class="nf">(args, type = CamanInstance.Type.Canvas) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
@@ -13,6 +14,22 @@ same instance.</p>             </td>             <td class="code">              
   </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Begin initialization</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">switch</span> <span class="nx">type</span>
       <span class="k">when</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Image</span> <span class="k">then</span> <span class="nx">@loadImage</span><span class="p">.</span><span class="nx">apply</span> <span class="err">@</span><span class="p">,</span> <span class="nx">args</span>
       <span class="k">when</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Canvas</span> <span class="k">then</span> <span class="nx">@loadCanvas</span><span class="p">.</span><span class="nx">apply</span> <span class="err">@</span><span class="p">,</span> <span class="nx">args</span>
+      <span class="k">when</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Unknown</span>
+        <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+          <span class="nx">@loadUnknown</span> <span class="nx">args</span>
+        <span class="k">else</span>
+          <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s2">&quot;complete&quot;</span>
+            <span class="k">throw</span> <span class="s2">&quot;Could not find element of id #{id}&quot;</span>
+          
+          <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="o">=&gt;</span>
+            <span class="nx">@loadUnknown</span> <span class="nx">args</span>
+          <span class="p">,</span> <span class="kc">false</span>
+
+  <span class="nv">loadUnknown: </span><span class="nf">(args) -&gt;</span>
+    <span class="nv">e = </span><span class="nx">$</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">switch</span> <span class="nx">e</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+      <span class="k">when</span> <span class="s2">&quot;img&quot;</span> <span class="k">then</span> <span class="nx">@loadImage</span><span class="p">.</span><span class="nx">apply</span> <span class="err">@</span><span class="p">,</span> <span class="nx">args</span>
+      <span class="k">when</span> <span class="s2">&quot;canvas&quot;</span> <span class="k">then</span> <span class="nx">@loadCanvas</span><span class="p">.</span><span class="nx">apply</span> <span class="err">@</span><span class="p">,</span> <span class="nx">args</span>
       </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h6>### Begin Image Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  
   <span class="nv">loadImage: </span><span class="nf">(id, callback = -&gt;) -&gt;</span>   
     <span class="k">if</span> <span class="k">typeof</span> <span class="nx">id</span> <span class="o">is</span> <span class="s2">&quot;object&quot;</span> <span class="o">and</span> <span class="nx">id</span><span class="p">.</span><span class="nx">nodeName</span><span class="o">?</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">is</span> <span class="s2">&quot;img&quot;</span>
@@ -36,9 +53,19 @@ same instance.</p>             </td>             <td class="code">              
           <span class="nx">@imageLoaded</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">image</span><span class="p">,</span> <span class="nx">callback</span>
         <span class="k">else</span>
           <span class="nv">image.onload = </span><span class="o">=&gt;</span> <span class="nx">@imageLoaded</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">image</span><span class="p">,</span> <span class="nx">callback</span>
+    <span class="k">else</span>
+      <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s2">&quot;complete&quot;</span>
+        <span class="k">throw</span> <span class="s2">&quot;Could not find element of id #{id}&quot;</span>
+      
+      <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span>  <span class="o">=&gt;</span>
+        <span class="nx">@imageLoaded</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">),</span> <span class="nx">callback</span>
+      <span class="p">,</span> <span class="kc">false</span>
         
   <span class="nv">imageLoaded: </span><span class="nf">(id, image, callback) -&gt;</span>
     <span class="vi">@image = </span><span class="nx">image</span>
+
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">image</span> <span class="o">or</span> <span class="nx">image</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">isnt</span> <span class="s2">&quot;img&quot;</span>
+      <span class="k">throw</span> <span class="s2">&quot;Given element ID isn&#39;t an image: #{id}&quot;</span>
     
     <span class="vi">@canvas = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s1">&#39;canvas&#39;</span>
     <span class="vi">@canvas.id = </span><span class="nx">image</span><span class="p">.</span><span class="nx">id</span>
@@ -66,12 +93,18 @@ same instance.</p>             </td>             <td class="code">              
     <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span><span class="o">?</span>
       <span class="nx">@canvasLoaded</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">callback</span>
     <span class="k">else</span>
+      <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s2">&quot;complete&quot;</span>
+        <span class="k">throw</span> <span class="s2">&quot;Could not find element of id #{id}&quot;</span>
+
       <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="o">=&gt;</span>
         <span class="nx">@canvasLoaded</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">callback</span>
       <span class="p">,</span> <span class="kc">false</span>
       
   <span class="nv">canvasLoaded: </span><span class="nf">(url, id, callback) -&gt;</span>
     <span class="vi">@canvas = </span><span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="o">or</span> <span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">isnt</span> <span class="s2">&quot;canvas&quot;</span>
+      <span class="k">throw</span> <span class="s2">&quot;Given element ID isn&#39;t a canvas: #{id}&quot;</span>
     
     <span class="k">if</span> <span class="nx">url</span><span class="o">?</span>
       <span class="vi">@image = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s1">&#39;img&#39;</span>
