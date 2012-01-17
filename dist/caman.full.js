@@ -1401,9 +1401,9 @@
       max = Math.max(rgba.r, rgba.g, rgba.b);
       avg = (rgba.r + rgba.g + rgba.b) / 3;
       amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
-      if (rgba.r !== max) rgba.r += (max - rgba.r) * adjust;
-      if (rgba.g !== max) rgba.g += (max - rgba.g) * adjust;
-      if (rgba.b !== max) rgba.b += (max - rgba.b) * adjust;
+      if (rgba.r !== max) rgba.r += (max - rgba.r) * amt;
+      if (rgba.g !== max) rgba.g += (max - rgba.g) * amt;
+      if (rgba.b !== max) rgba.b += (max - rgba.b) * amt;
       return rgba;
     });
   });
@@ -2128,6 +2128,68 @@
       rgba.b = Math.floor(Math.floor(rgba.b / numOfAreas) * numOfValues);
       return rgba;
     });
+  });
+
+  Caman.Filter.register("vintage", function(vignette) {
+    if (vignette == null) vignette = true;
+    this.greyscale();
+    this.contrast(5);
+    this.noise(3);
+    this.sepia(100);
+    this.channels({
+      red: 8,
+      blue: 2,
+      green: 4
+    });
+    this.gamma(0.87);
+    if (vignette) return this.vignette("40%", 30);
+  });
+
+  Caman.Filter.register("lomo", function(vignette) {
+    if (vignette == null) vignette = true;
+    this.brightness(15);
+    this.exposure(15);
+    this.curves('rgb', [0, 0], [200, 0], [155, 255], [255, 255]);
+    this.saturation(-20);
+    this.gamma(1.8);
+    if (vignette) this.vignette("50%", 60);
+    return this.brightness(5);
+  });
+
+  Caman.Filter.register("clarity", function(grey) {
+    if (grey == null) grey = false;
+    this.vibrance(20);
+    this.curves('rgb', [5, 0], [130, 150], [190, 220], [250, 255]);
+    this.sharpen(15);
+    this.vignette("45%", 20);
+    if (grey) {
+      this.greyscale();
+      return this.contrast(4);
+    }
+  });
+
+  Caman.Filter.register("sinCity", function() {
+    this.contrast(100);
+    this.brightness(15);
+    this.exposure(10);
+    this.posterize(80);
+    this.clip(30);
+    return this.greyscale();
+  });
+
+  Caman.Filter.register("sunrise", function() {
+    this.exposure(3.5);
+    this.saturation(-5);
+    this.vibrance(50);
+    this.sepia(60);
+    this.colorize("#e87b22", 10);
+    this.channels({
+      red: 8,
+      blue: 8
+    });
+    this.contrast(5);
+    this.gamma(1.2);
+    return this.vignette("55%", 25);
   });
 
   Caman.Filter.register("threshold", function(adjust) {

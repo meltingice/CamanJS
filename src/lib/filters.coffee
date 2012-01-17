@@ -73,9 +73,9 @@ Filter.register "vibrance", (adjust) ->
     avg = (rgba.r + rgba.g + rgba.b) / 3
     amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100
 
-    rgba.r += (max - rgba.r) * adjust if rgba.r isnt max
-    rgba.g += (max - rgba.g) * adjust if rgba.g isnt max
-    rgba.b += (max - rgba.b) * adjust if rgba.b isnt max
+    rgba.r += (max - rgba.r) * amt if rgba.r isnt max
+    rgba.g += (max - rgba.g) * amt if rgba.g isnt max
+    rgba.b += (max - rgba.b) * amt if rgba.b isnt max
     rgba
     
 # ## Greyscale
