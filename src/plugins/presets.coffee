@@ -124,3 +124,131 @@ Caman.Filter.register "glowingSun", (vignette = true) ->
   @exposure 20
   @gamma 0.8
   @vignette "45%", 20 if vignette
+
+Caman.Filter.register "hazyDays", ->
+  @gamma 1.2
+
+  @newLayer ->
+    @setBlendingMode "overlay"
+    @opacity 60
+    @copyParent()
+
+    @filter.channels red: 5
+    @filter.stackBlur 15
+
+  @newLayer ->
+    @setBlendingMode "addition"
+    @opacity 40
+    @fillColor "#6899ba"
+
+  @newLayer ->
+    @setBlendingMode "multiply"
+    @opacity 35
+    @copyParent()
+
+    @filter.brightness 40
+    @filter.vibrance 40
+    @filter.exposure 30
+    @filter.contrast 15
+
+    @filter.curves 'r', [0, 40], [128, 128], [128, 128], [255, 215]
+    @filter.curves 'g', [0, 40], [128, 128], [128, 128], [255, 215]
+    @filter.curves 'b', [0, 40], [128, 128], [128, 128], [255, 215]
+
+    @filter.stackBlur 5
+
+  @curves 'r', [20, 0], [128, 158], [128, 128], [235, 255]
+  @curves 'g', [20, 0], [128, 128], [128, 128], [235, 255]
+  @curves 'b', [20, 0], [128, 108], [128, 128], [235, 255]
+
+  @vignette "45%", 20
+
+Caman.Filter.register "herMajesty", ->
+  @brightness 40
+  @colorize "#ea1c5d", 10
+  @curves 'b', [0, 10], [128, 180], [190, 190], [255, 255]
+
+  @newLayer ->
+    @setBlendingMode 'overlay'
+    @opacity 50
+    @copyParent()
+
+    @filter.gamma 0.7
+    @newLayer ->
+      @setBlendingMode 'normal'
+      @opacity 60
+      @fillColor '#ea1c5d'
+
+  @newLayer ->
+    @setBlendingMode 'multiply'
+    @opacity 60
+    @copyParent()
+
+    @filter.saturation 50
+    @filter.hue 90
+    @filter.contrast 10
+
+  @gamma 1.4
+  @vibrance -30
+
+  @newLayer ->
+    @opacity 10
+    @fillColor '#e5f0ff'
+
+  @
+
+Caman.Filter.register "nostalgia", ->
+  @saturation 20
+  @gamma 1.4
+  @greyscale()
+  @contrast 5
+  @sepia 100
+  @channels red: 8, blue: 2, green: 4
+  @gamma 0.8
+  @contrast 5
+  @exposure 10
+
+  @newLayer ->
+    @setBlendingMode 'overlay'
+    @copyParent()
+    @opacity 55
+
+    @filter.stackBlur 10
+
+  @vignette "50%", 30
+
+Caman.Filter.register "hemingway", ->
+  @greyscale()
+  @contrast 10
+  @gamma 0.9
+
+  @newLayer ->
+    @setBlendingMode "multiply"
+    @opacity 40
+    @copyParent()
+
+    @filter.exposure 15
+    @filter.contrast 15
+    @filter.channels green: 10, red: 5
+
+  @sepia 30
+  @curves 'rgb', [0, 10], [120, 90], [180, 200], [235, 255]
+  @channels red: 5, green: -2
+  @exposure 15
+
+Caman.Filter.register "concentrate", ->
+  @sharpen 40
+  @saturation -50
+  @channels red: 3
+
+  @newLayer ->
+    @setBlendingMode "multiply"
+    @opacity 80
+    @copyParent()
+
+    @filter.sharpen 5
+    @filter.contrast 50
+    @filter.exposure 10
+    @filter.channels blue: 5
+
+  @brightness 10
