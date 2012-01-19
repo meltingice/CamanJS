@@ -1,0 +1,160 @@
+<!DOCTYPE html>  <html> <head>   <title>camaninstance.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="blender.html">                 blender.coffee               </a>                                           <a class="source" href="calculate.html">                 calculate.coffee               </a>                                           <a class="source" href="caman.html">                 caman.coffee               </a>                                           <a class="source" href="camaninstance.html">                 camaninstance.coffee               </a>                                           <a class="source" href="convert.html">                 convert.coffee               </a>                                           <a class="source" href="event.html">                 event.coffee               </a>                                           <a class="source" href="filter.html">                 filter.coffee               </a>                                           <a class="source" href="io.html">                 io.coffee               </a>                                           <a class="source" href="layer.html">                 layer.coffee               </a>                                           <a class="source" href="logger.html">                 logger.coffee               </a>                                           <a class="source" href="pixelinfo.html">                 pixelinfo.coffee               </a>                                           <a class="source" href="plugin.html">                 plugin.coffee               </a>                                           <a class="source" href="renderjob.html">                 renderjob.coffee               </a>                                           <a class="source" href="store.html">                 store.coffee               </a>                                           <a class="source" href="util.html">                 util.coffee               </a>                                           <a class="source" href="blenders.html">                 blenders.coffee               </a>                                           <a class="source" href="filters.html">                 filters.coffee               </a>                                           <a class="source" href="blur.html">                 blur.coffee               </a>                                           <a class="source" href="camera.html">                 camera.coffee               </a>                                           <a class="source" href="compoundBlur.html">                 compoundBlur.coffee               </a>                                           <a class="source" href="edges.html">                 edges.coffee               </a>                                           <a class="source" href="posterize.html">                 posterize.coffee               </a>                                           <a class="source" href="presets.html">                 presets.coffee               </a>                                           <a class="source" href="stackBlur.html">                 stackBlur.coffee               </a>                                           <a class="source" href="threshold.html">                 threshold.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               camaninstance.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>This is the main class that you interact with once Caman is actaully initialized.
+It stores all of the important data relevant to a Caman-initialized canvas, and is also 
+responsible for the actual initialization.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">CamanInstance</span>
+  <span class="vi">@Type =</span>
+    <span class="nv">Image: </span><span class="mi">1</span>
+    <span class="nv">Canvas: </span><span class="mi">2</span>
+    <span class="nv">Unknown: </span><span class="mi">3</span>
+
+  <span class="vi">@toString = </span><span class="nx">Caman</span><span class="p">.</span><span class="nx">toString</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>All of the arguments given to the Caman() function are simply thrown here.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">constructor: </span><span class="nf">(args, type = CamanInstance.Type.Canvas) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
+same instance.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@id = </span><span class="nx">Util</span><span class="p">.</span><span class="nx">uniqid</span><span class="p">.</span><span class="nx">get</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Stores the pixel layers</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@pixelStack = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Stores all of the layers waiting to be rendered</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@layerStack = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Stores all of the render operatives</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@renderQueue = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Stores all of the canvases to be processed</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@canvasQueue = </span><span class="p">[]</span>
+
+    <span class="vi">@currentLayer = </span><span class="kc">null</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Begin initialization</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">switch</span> <span class="nx">type</span>
+      <span class="k">when</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Image</span> <span class="k">then</span> <span class="nx">@loadImage</span><span class="p">.</span><span class="nx">apply</span> <span class="err">@</span><span class="p">,</span> <span class="nx">args</span>
+      <span class="k">when</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Canvas</span> <span class="k">then</span> <span class="nx">@loadCanvas</span><span class="p">.</span><span class="nx">apply</span> <span class="err">@</span><span class="p">,</span> <span class="nx">args</span>
+      <span class="k">when</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Unknown</span>
+        <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+          <span class="nx">@loadUnknown</span> <span class="nx">args</span>
+        <span class="k">else</span>
+          <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s2">&quot;complete&quot;</span>
+            <span class="k">throw</span> <span class="s2">&quot;Could not find element of id #{id}&quot;</span>
+          
+          <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="o">=&gt;</span>
+            <span class="nx">@loadUnknown</span> <span class="nx">args</span>
+          <span class="p">,</span> <span class="kc">false</span>
+
+  <span class="nv">loadUnknown: </span><span class="nf">(args) -&gt;</span>
+    <span class="nv">e = </span><span class="nx">$</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">switch</span> <span class="nx">e</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+      <span class="k">when</span> <span class="s2">&quot;img&quot;</span> <span class="k">then</span> <span class="nx">@loadImage</span><span class="p">.</span><span class="nx">apply</span> <span class="err">@</span><span class="p">,</span> <span class="nx">args</span>
+      <span class="k">when</span> <span class="s2">&quot;canvas&quot;</span> <span class="k">then</span> <span class="nx">@loadCanvas</span><span class="p">.</span><span class="nx">apply</span> <span class="err">@</span><span class="p">,</span> <span class="nx">args</span>
+      </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h6>### Begin Image Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="nv">loadImage: </span><span class="nf">(id, callback = -&gt;) -&gt;</span>   
+    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">id</span> <span class="o">is</span> <span class="s2">&quot;object&quot;</span> <span class="o">and</span> <span class="nx">id</span><span class="p">.</span><span class="nx">nodeName</span><span class="o">?</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">is</span> <span class="s2">&quot;img&quot;</span>
+      <span class="nv">element = </span><span class="nx">id</span>
+      
+      <span class="k">if</span> <span class="nx">id</span><span class="p">.</span><span class="nx">id</span>
+        <span class="nv">id = </span><span class="nx">element</span><span class="p">.</span><span class="nx">id</span>
+      <span class="k">else</span>
+        <span class="nv">id = </span><span class="s2">&quot;caman-#{Util.uniqid.get()}&quot;</span>
+        <span class="nv">element.id = </span><span class="nx">id</span>
+        
+    <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span><span class="o">?</span>
+      <span class="nv">image = </span><span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+      <span class="nv">proxyURL = </span><span class="nx">IO</span><span class="p">.</span><span class="nx">remoteCheck</span> <span class="nx">image</span><span class="p">.</span><span class="nx">src</span>
+
+      <span class="k">if</span> <span class="nx">proxyURL</span>
+        <span class="nv">image.onload = </span><span class="o">=&gt;</span> <span class="nx">@imageLoaded</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">image</span><span class="p">,</span> <span class="nx">callback</span>
+        <span class="nv">image.src = </span><span class="nx">proxyURL</span>
+      <span class="k">else</span>
+        <span class="k">if</span> <span class="nx">image</span><span class="p">.</span><span class="nx">complete</span>
+          <span class="nx">@imageLoaded</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">image</span><span class="p">,</span> <span class="nx">callback</span>
+        <span class="k">else</span>
+          <span class="nv">image.onload = </span><span class="o">=&gt;</span> <span class="nx">@imageLoaded</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">image</span><span class="p">,</span> <span class="nx">callback</span>
+    <span class="k">else</span>
+      <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s2">&quot;complete&quot;</span>
+        <span class="k">throw</span> <span class="s2">&quot;Could not find element of id #{id}&quot;</span>
+      
+      <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span>  <span class="o">=&gt;</span>
+        <span class="nx">@imageLoaded</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">),</span> <span class="nx">callback</span>
+      <span class="p">,</span> <span class="kc">false</span>
+        
+  <span class="nv">imageLoaded: </span><span class="nf">(id, image, callback) -&gt;</span>
+    <span class="vi">@image = </span><span class="nx">image</span>
+
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">image</span> <span class="o">or</span> <span class="nx">image</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">isnt</span> <span class="s2">&quot;img&quot;</span>
+      <span class="k">throw</span> <span class="s2">&quot;Given element ID isn&#39;t an image: #{id}&quot;</span>
+    
+    <span class="vi">@canvas = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s1">&#39;canvas&#39;</span>
+    <span class="vi">@canvas.id = </span><span class="nx">image</span><span class="p">.</span><span class="nx">id</span>
+    
+    <span class="k">for</span> <span class="nx">attr</span> <span class="k">in</span> <span class="p">[</span><span class="s1">&#39;data-camanwidth&#39;</span><span class="p">,</span> <span class="s1">&#39;data-camanheight&#39;</span><span class="p">]</span>
+      <span class="nx">@canvas</span><span class="p">.</span><span class="nx">setAttribute</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="nx">attr</span><span class="p">)</span> <span class="k">if</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">getAttribute</span> <span class="nx">attr</span>
+    
+    <span class="nx">image</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span> <span class="nx">@canvas</span><span class="p">,</span> <span class="nx">@image</span>
+    <span class="vi">@canvasID = </span><span class="nx">id</span>
+    <span class="vi">@options =</span>
+      <span class="nv">canvas: </span><span class="nx">id</span>
+      <span class="nv">image: </span><span class="nx">@image</span><span class="p">.</span><span class="nx">src</span>
+      
+    <span class="nx">@finishInit</span> <span class="nx">callback</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h6>### End Image Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  </pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <h6>### Begin Canvas Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="nv">loadCanvas: </span><span class="nf">(url, id, callback = -&gt;) -&gt;</span>
+    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">id</span> <span class="o">is</span> <span class="s2">&quot;object&quot;</span> <span class="o">and</span> <span class="nx">id</span><span class="p">.</span><span class="nx">nodeName</span><span class="o">?</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">is</span> <span class="s2">&quot;canvas&quot;</span>
+      <span class="nv">element = </span><span class="nx">id</span>
+      
+      <span class="k">if</span> <span class="nx">id</span><span class="p">.</span><span class="nx">id</span>
+        <span class="nv">id = </span><span class="nx">element</span><span class="p">.</span><span class="nx">id</span>
+      <span class="k">else</span>
+        <span class="nv">id = </span><span class="s2">&quot;caman-#{Util.uniqid.get()}&quot;</span>
+        <span class="nv">element.id = </span><span class="nx">id</span>
+        
+    <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span><span class="o">?</span>
+      <span class="nx">@canvasLoaded</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">callback</span>
+    <span class="k">else</span>
+      <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s2">&quot;complete&quot;</span>
+        <span class="k">throw</span> <span class="s2">&quot;Could not find element of id #{id}&quot;</span>
+
+      <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="o">=&gt;</span>
+        <span class="nx">@canvasLoaded</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">callback</span>
+      <span class="p">,</span> <span class="kc">false</span>
+      
+  <span class="nv">canvasLoaded: </span><span class="nf">(url, id, callback) -&gt;</span>
+    <span class="vi">@canvas = </span><span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="o">or</span> <span class="nx">$</span><span class="p">(</span><span class="nx">id</span><span class="p">).</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">isnt</span> <span class="s2">&quot;canvas&quot;</span>
+      <span class="k">throw</span> <span class="s2">&quot;Given element ID isn&#39;t a canvas: #{id}&quot;</span>
+    
+    <span class="k">if</span> <span class="nx">url</span><span class="o">?</span>
+      <span class="vi">@image = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s1">&#39;img&#39;</span>
+      <span class="vi">@image.onload = </span><span class="o">=&gt;</span> <span class="nx">@finishInit</span> <span class="nx">callback</span>
+      
+      <span class="nv">proxyURL = </span><span class="nx">IO</span><span class="p">.</span><span class="nx">remoteCheck</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+      
+      <span class="vi">@canvasID = </span><span class="nx">id</span>
+      <span class="vi">@options =</span>
+        <span class="nv">canvas: </span><span class="nx">id</span>
+        <span class="nv">image: </span><span class="nx">url</span>
+        
+      <span class="vi">@image.src = </span><span class="k">if</span> <span class="nx">proxyURL</span> <span class="k">then</span> <span class="nx">proxyURL</span> <span class="k">else</span> <span class="nx">url</span>
+    <span class="k">else</span>
+      <span class="nx">@finishInit</span> <span class="nx">callback</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h6>### End Canvas Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>    
+  <span class="nv">finishInit: </span><span class="nf">(callback) -&gt;</span>
+    <span class="vi">@context = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s2">&quot;2d&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nx">@image</span><span class="o">?</span>
+      <span class="nv">oldWidth = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">width</span>
+      <span class="nv">oldHeight = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">height</span>
+      <span class="nv">newWidth = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">getAttribute</span> <span class="s1">&#39;data-camanwidth&#39;</span>
+      <span class="nv">newHeight = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">getAttribute</span> <span class="s1">&#39;data-camanheight&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Image resizing</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="nx">newWidth</span> <span class="o">or</span> <span class="nx">newHeight</span>
+        <span class="k">if</span> <span class="nx">newWidth</span>
+          <span class="vi">@image.width = </span><span class="nb">parseInt</span> <span class="nx">newWidth</span><span class="p">,</span> <span class="mi">10</span>
+
+          <span class="k">if</span> <span class="nx">newHeight</span>
+            <span class="vi">@image.height = </span><span class="nb">parseInt</span> <span class="nx">newHeight</span><span class="p">,</span> <span class="mi">10</span>
+          <span class="k">else</span>
+            <span class="vi">@image.height = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="nx">oldHeight</span> <span class="err">/ oldWidth</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="nx">newHeight</span>
+          <span class="vi">@image.height = </span><span class="nb">parseInt</span> <span class="nx">newHeight</span><span class="p">,</span> <span class="mi">10</span>
+          <span class="vi">@image.width = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">height</span> <span class="o">*</span> <span class="nx">oldWidth</span> <span class="err">/ oldHeight</span>
+
+      <span class="vi">@canvas.width = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">width</span>
+      <span class="vi">@canvas.height = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">height</span>
+      
+      <span class="nx">@context</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">@image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span>
+      
+    <span class="vi">@imageData = </span><span class="nx">@context</span><span class="p">.</span><span class="nx">getImageData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span>
+    <span class="vi">@pixelData = </span><span class="nx">@imageData</span><span class="p">.</span><span class="nx">data</span>
+    
+    <span class="vi">@dimensions =</span>
+      <span class="nv">width: </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
+      <span class="nv">height: </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
+      
+    <span class="nx">Store</span><span class="p">.</span><span class="nx">put</span> <span class="nx">@canvasID</span><span class="p">,</span> <span class="err">@</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>haha, owl face.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span> <span class="err">@</span><span class="p">,</span><span class="err">@</span>
+    <span class="k">return</span> <span class="err">@</span>
+    
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

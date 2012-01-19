@@ -1,1 +1,4 @@
 examples/
+*.sublime-project
+*.sublime-workspace
+sftp-config.json
