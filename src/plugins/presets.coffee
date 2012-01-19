@@ -27,6 +27,8 @@ Caman.Filter.register "clarity", (grey = false) ->
     @greyscale()
     @contrast 4
 
+  @
+
 Caman.Filter.register "sinCity", ->
   @contrast 100
   @brightness 15

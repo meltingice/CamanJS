@@ -2218,8 +2218,9 @@
     this.vignette("45%", 20);
     if (grey) {
       this.greyscale();
-      return this.contrast(4);
+      this.contrast(4);
     }
+    return this;
   });
 
   Caman.Filter.register("sinCity", function() {
