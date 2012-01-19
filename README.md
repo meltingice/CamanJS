@@ -6,9 +6,13 @@ The main focus of CamanJS is manipulating images using the HTML5 canvas and Java
 
 CamanJS is very easy to extend with new filters and plugins, and it comes with a wide array of image editing functionality, which is only growing as the community makes more plugins.
 
-For more information, I highly recommend taking a look at the <a href="http://camanjs.com">official website</a> where there is more comprehensive documentation and interactive demos. You can also <a href="https://github.com/meltingice/CamanJS/wiki">read the wiki</a> for some basic information about the project and how to use it.
+For more information, I highly recommend taking a look at the [official website](http://camanjs.com) where there is more comprehensive documentation and interactive demos. You can also [read the wiki](https://github.com/meltingice/CamanJS/wiki) for some basic information about the project and how to use it.
+
+CamanJS is written in [Coffeescript](http://coffeescript.org) as of version 3.0.
 
 ## Example Usage
+
+Include one of the versions in the `dist/` folder, then you can run:
 
 ```js
 Caman("#image-id", function () {
@@ -20,46 +24,72 @@ Caman("#image-id", function () {
 });
 ```
 
-## Cloning the Project
+## Upgrading from 2.x to 3.x
 
-CamanJS uses git submodules in order to organize things a bit better. Because of this, you have a few options in making sure you get all the required files.
+For the end-user, there are no changes to CamanJS that will affect your code. Everything works exactly the same as before.
 
-**Recursive Clone**
+For developers, there are some major changes regarding how filters and plugins are added to CamanJS. Previously, you would explicitly extend the Caman.manip interface. This object no longer exists. Now, the way you add filters is:
 
-Recommended if you haven't cloned the project yet.
+``` coffeescript
+Caman.Filter.register "filterName", ->
+  # Variables that exist here will be available in the process function
+  # because of JS closure.
+  amt = 20
 
-```
-git clone --recursive https://github.com/meltingice/CamanJS.git
-```
-
-**Submodule Init**
-
-If you have cloned the project already, you can do (after pulling the latest changes):
-
-```
-git submodule init
-git submodule update
+  @process "filterName", (rgba) ->
+    # Alter rgba pixel object here
+    return rgba
 ```
 
-The library is split up into several source files and has a separate submodule for plugins. The reason behind this organization is to make it as simple as possible to support the NodeJS port of Caman. This also helps to avoid library bloat.
+Plugins are similarly added:
 
-**Makefile**
+``` coffeescript
+Caman.Plugin.register "pluginName", ->
+  return @
+```
 
-The NodeJS powered Makefile for the project will automatically check to make sure you've initialized the submodules, and if you haven't, will do so for you. Running the Makefile requires smoosh (available in npm).
+**Building CamanJS**
+
+If you are a developer who is contributing directly to the project, there are some tools to help you out.
+
+The requirements for building CamanJS are:
+
+* node
+* coffeescript
+* jsmin (for node)
+
+If you're running OSX and have Growl installed, it's also recommended you have:
+
+* coffeescript-growl
 
 To build, simply run:
 
 ```
-make
+cake build
 ```
 
-The resulting files will be placed in the dist/ folder.
+The resulting files will be placed in the dist/ folder. Plugins will be automatically discovered and added to caman.full.js after the core library.
+
+If you add any files to the core library, you will need to add them to the `coffeeFiles` array in the Cakefile. The point of this is so that order is preserved when generating the file JS file. Plugins do not need to be added to the Cakefile.
+
+You will probably want to generate documentation if you make any changes or add a plugin. In addition to the normal requirements, you will also need:
+
+* docco
+* Pygments (Python library)
+
+To generate the documentation, run:
+
+```
+cake docs
+```
 
 ## CDN JS Hosting
-CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from <a href="http://ajax.cdnjs.com/ajax/libs/camanjs/2.2/caman.full.min.js">this URL</a> for usage on your site.
+
+CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from [this URL](http://ajax.cdnjs.com/ajax/libs/camanjs/2.2/caman.full.min.js) for usage on your site.
 
 ## NodeJS Compatibility
-There is now a version of CamanJS that is made to work with NodeJS.  It has all of the functionality of the normal browser version, including plugins.  Take a look at the <a href="https://github.com/meltingice/CamanJS/tree/node">node branch</a> for more information.
+
+This is currently in flux. The node branch will still have a working node version for now, as will npm, but it has not been upgraded to the new codebase yet.
 
 **tl;dr**
 
@@ -68,15 +98,17 @@ npm install caman
 ```
 
 # Testing
+
 CamanJS has both QUnit unit testing and a custom benchmarking page to monitor render times on a per-filter basis.  Simply open test/index.html for the QUnit tests, and test/benchmark.html for the benchmarking tests.
 
 # Project Contributors
 
-* <a href="http://twitter.com/meltingice">Ryan LeFevre</a> - Project Creator, Maintainer, and Lead Developer
-* <a href="http://twitter.com/rwaldron">Rick Waldron</a> - Plugin Architect and Developer
-* <a href="http://twitter.com/cezarsa">Cezar Sá Espinola</a> - Developer
-* <a href="http://twitter.com/jarques">Jarques Pretorius</a> - Logo Designer
+* [Ryan LeFevre](http://twitter.com/meltingice) - Project Creator, Maintainer, and Lead Developer
+* [Rick Waldron](http://twitter.com/rwaldron) - Plugin Architect and Developer
+* [Cezar Sá Espinola](http://twitter.com/cezarsa) - Developer
+* [Jarques Pretorius](http://twitter.com/jarques) - Logo Designer
 
 # Plugin Contributors
 
-* <a href="https://github.com/Hosselaer">Hosselaer</a>
+* [Hosselaer](https://github.com/Hosselaer)
+* [Mario Klingemann](http://www.quasimondo.com)

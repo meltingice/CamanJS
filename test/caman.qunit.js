@@ -11,8 +11,8 @@ resetImage = function (id) {
   
   canvas.parentNode.replaceChild(image, canvas);
   
-  if (Caman.store['#' + id]) {
-    delete Caman.store['#' + id];
+  if (Caman.Store.has('#' + id)) {
+    Caman.Store.flush('#' + id);
   }
 },
 resetCanvas = function (id) {
@@ -26,8 +26,8 @@ resetCanvas = function (id) {
   
   canvas.parentNode.replaceChild(new_canvas, canvas);
   
-  if (Caman.store['#' + id]) {
-    delete Caman.store['#' + id];
+  if (Caman.Store.has('#' + id)) {
+    Caman.Store.flush('#' + id);
   }
 };
 
@@ -44,28 +44,24 @@ test("Invoking Caman() with one argument", function () {
   var existing_image = Caman("#test-image");
   
   ok(typeof existing_image == "object", "Invoking on valid ID returns object");
-  ok(typeof existing_image.render == "function", "Returned object is Caman.manip");
-  
-  raises(function () {
-    Caman("#test-invalid");
-  }, "Raises exception when invoked on an invalid element");
+  ok(typeof existing_image.render == "function", "Returned object is CamanInstance");
   
   resetImage("#test-image");
   
   var withdom = Caman(document.getElementById('test-image'));
-  ok(typeof withdom.render == "function", "Invoking by passing a DOM node returns Caman.manip");
+  ok(typeof withdom.render == "function", "Invoking by passing a DOM node returns CamanInstance");
   
   resetImage("#test-image");
   
   var withclassdom = Caman(document.getElementsByClassName('test-image')[0]);
-  ok(typeof withclassdom.render == "function", "Invoking by passing a DOM node with no ID returns Caman.manip");
+  ok(typeof withclassdom.render == "function", "Invoking by passing a DOM node with no ID returns CamanInstance");
 });
 
 asyncTest("Invoking Caman() with two arguments", function () {
   
   var existing_image = Caman("#test-image", function () {
-    ok(typeof this.render === "function", "Callback is fired with Caman.manip as context");
-    ok(typeof Caman("#test-image").render === "function", "Invoking on an already initialized element returns Caman.manip");
+    ok(typeof this.render === "function", "Callback is fired with CamanInstance as context");
+    ok(typeof Caman("#test-image").render === "function", "Invoking on an already initialized element returns CamanInstance");
     
     resetImage("#test-image");
     
@@ -74,8 +70,8 @@ asyncTest("Invoking Caman() with two arguments", function () {
   
   var withcanvas = Caman("testimg.jpg", "#test-canvas");
   
-  ok(typeof existing_image.render === "function", "Invoking with Image and callback returns Caman.manip");
-  ok(typeof withcanvas.render === "function", "Invoking with URL and Canvas returns Caman.manip");
+  ok(typeof existing_image.render === "function", "Invoking with Image and callback returns CamanInstance");
+  ok(typeof withcanvas.render === "function", "Invoking with URL and Canvas returns CamanInstance");
   
   raises(function () {
     Caman("#test-invalid", function () {});
@@ -89,15 +85,15 @@ asyncTest("Invoking Caman() with two arguments", function () {
 asyncTest("Invoking Caman() with three arguments", function () {
 
   var caman = Caman("testimg.jpg", "#test-canvas", function () {
-    ok(typeof this.render === "function", "Callback is fired with Caman.manip as context");
-    ok(typeof Caman("#test-canvas").render === "function", "Invoking on an already initialized element returns Caman.manip");
+    ok(typeof this.render === "function", "Callback is fired with CamanInstance as context");
+    ok(typeof Caman("#test-canvas").render === "function", "Invoking on an already initialized element returns CamanInstance");
     
     resetCanvas("#test-canvas");
     
     start();
   });
   
-  ok(typeof caman.render === "function", "Invoking with URL, Canvas, and callback returns Caman.manip");
+  ok(typeof caman.render === "function", "Invoking with URL, Canvas, and callback returns CamanInstance");
   
   raises(function () {
     Caman("testimg.jpg", "#test-invalid", function () {});
@@ -111,8 +107,8 @@ asyncTest("Invoking Caman with a remote image and the PHP proxy", function () {
   Caman.remoteProxy = '../proxies/caman_proxy.php';
   
   var caman = Caman(remoteImg, "#test-canvas", function () {
-    ok(typeof this.render === "function", "Callback is fired with Caman.manip as context");
-    ok(typeof Caman("#test-canvas").render === "function", "Invoking on an already initialized element returns Caman.manip");
+    ok(typeof this.render === "function", "Callback is fired with CamanInstance as context");
+    ok(typeof Caman("#test-canvas").render === "function", "Invoking on an already initialized element returns CamanInstance");
     
     this.brightness(1).render(function () {
       ok(typeof this === "object", "No security exceptions thrown when canvas is modified");
@@ -123,7 +119,7 @@ asyncTest("Invoking Caman with a remote image and the PHP proxy", function () {
     });
   });
   
-  ok(typeof caman.render === "function", "Returned object is Caman.manip");
+  ok(typeof caman.render === "function", "Returned object is CamanInstance");
 });
 
 module("Caman Utils");
