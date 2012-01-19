@@ -76,7 +76,7 @@
 
   Caman.version = {
     release: "3.0",
-    date: "1/2/12"
+    date: "1/18/12"
   };
 
   Caman.DEBUG = false;
