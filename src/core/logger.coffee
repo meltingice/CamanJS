@@ -4,7 +4,8 @@ class Logger
     for name in ['log', 'info', 'warn', 'error']
       @[name] = do (name) ->
         ->
-           window.console[name].apply console, arguments if window.console? and Caman.DEBUG
+          return if not Caman.DEBUG
+          console[name].apply console, arguments
 
     @debug = @log
 

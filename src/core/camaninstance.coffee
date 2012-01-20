@@ -6,6 +6,7 @@ class CamanInstance
     Image: 1
     Canvas: 2
     Unknown: 3
+    Node: 4
 
   @toString = Caman.toString
     
@@ -33,6 +34,7 @@ class CamanInstance
     switch type
       when CamanInstance.Type.Image then @loadImage.apply @, args
       when CamanInstance.Type.Canvas then @loadCanvas.apply @, args
+      when CamanInstance.Type.Node then @loadNode.apply @, args
       when CamanInstance.Type.Unknown
         if $(args[0])
           @loadUnknown args
@@ -148,6 +150,24 @@ class CamanInstance
       @finishInit callback
   
   ########## End Canvas Loading ##########
+
+  loadNode: (file, callback) ->
+    img = new Image()
+    file = fs.realpathSync file
+
+    img.onload = =>
+      @canvasID = Util.uniqid.get()
+      @canvas = new Canvas img.width, img.height
+      
+      context = @canvas.getContext '2d'
+      context.drawImage img, 0, 0
+
+      @finishInit callback
+
+    img.onerror = (err) ->
+      throw err
+
+    img.src = file
     
   finishInit: (callback) ->
     @context = @canvas.getContext("2d")

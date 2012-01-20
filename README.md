@@ -8,7 +8,7 @@ CamanJS is very easy to extend with new filters and plugins, and it comes with a
 
 For more information, I highly recommend taking a look at the [official website](http://camanjs.com) where there is more comprehensive documentation and interactive demos. You can also [read the wiki](https://github.com/meltingice/CamanJS/wiki) for some basic information about the project and how to use it.
 
-CamanJS is written in [Coffeescript](http://coffeescript.org) as of version 3.0.
+CamanJS is written in [Coffeescript](http://coffeescript.org) as of version 3.0. **It works both in-browser and in NodeJS.**
 
 ## Example Usage
 
@@ -89,12 +89,28 @@ CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is 
 
 ## NodeJS Compatibility
 
-This is currently in flux. The node branch will still have a working node version for now, as will npm, but it has not been upgraded to the new codebase yet.
-
-**tl;dr**
+CamanJS is fully compatible with NodeJS. The easiest way to install and use it is:
 
 ```
-npm install caman
+npm install caman -g
+```
+
+If you wish to do things a bit manually, the required libraries are:
+
+* cairo >= 1.10.0
+* libjpeg
+* libpng
+* [node-canvas](https://github.com/LearnBoost/node-canvas)
+  * Can also use: npm install canvas -g
+
+**Saving from NodeJS**
+
+To save your modified image in NodeJS, simply call the save() function **after** rendering is finished. Trying to save before rendering is finished will cause issues.
+
+``` coffeescript
+Caman "./path/to/file.jpg", ->
+  @brightness 40
+  @render -> @save "./output.jpg"
 ```
 
 # Testing

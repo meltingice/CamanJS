@@ -37,12 +37,28 @@ class IO
   
   # Grabs the canvas data, encodes it to Base64, then sets the browser location to 
   # the encoded data so that the user will be prompted to download it.
-  save: (type = "png") ->
+  save: ->
+    if exports?
+      @nodeSave.apply @, arguments
+    else
+      @browserSave.apply @, arguments
+
+  browserSave: (type = "png") ->
     type = type.toLowerCase()
 
     # Force download (its a bit hackish)
     image = @toBase64(type).replace "image/#{type}", "image/octet-stream"
     document.location.href = image
+
+  nodeSave: (file, overwrite = true) ->
+    try
+      stats = fs.statSync file
+      return false if stats.isFile() and not overwrite
+    catch e
+      Log.debug "Creating output file #{file}"
+
+    fs.writeFile file, @canvas.toBuffer(), ->
+      Log.debug "Finished writing to #{file}"
 
   # Takes the current canvas data, converts it to Base64, then sets it as the source 
   # of a new Image object and returns it.
