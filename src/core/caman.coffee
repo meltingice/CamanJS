@@ -1,5 +1,12 @@
 # NodeJS compatibility
-Root = if exports? then exports else window
+if exports?
+  Root = exports
+  Canvas = require 'canvas'
+  Image = Canvas.Image
+
+  fs = require 'fs'
+else
+  Root = window
 
 # Here it begins. Caman is defined.
 # There are many different initialization for Caman, which are described on the 
@@ -15,7 +22,10 @@ Root = if exports? then exports else window
 # The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
 # This is also why this piece of code is a bit gross. Once everything is loaded, and Caman is 
 # initialized, the callback function is fired.
-Root.Caman = ->  
+Root.Caman = Caman = ->
+  # NodeJS version
+  return new CamanInstance arguments, CamanInstance.Type.Node if exports?
+
   switch arguments.length
     when 1
       return Store.get(arguments[0]) if Store.has arguments[0]

@@ -24,7 +24,7 @@ class Layer
     @layerID = Util.uniqid.get()
 
     # Create the canvas for this layer
-    @canvas = document.createElement 'canvas'
+    @canvas = if exports? then new Canvas() else document.createElement('canvas')
     
     @canvas.width = @c.dimensions.width
     @canvas.height = @c.dimensions.height

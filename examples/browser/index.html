@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CamanJS Testing Playground</title>
+  
+  <script type="text/javascript" src="../../dist/caman.full.js"></script>
+</head>
+<body>
+  <h1>CamanJS Testing Playground</h1>
+  <p>Note: this cannot be accessed locally via the file:// protocol thanks to same-domain origin policy. It must be placed behind a webserver.</p>
+  
+  <table>
+    <tr>
+      <td>
+        <img src="../images/test1_600.jpg" />
+        <p style="text-align: center">Before</p>
+      </td>
+      <td>
+       	<img id="test" src="../images/test1_600.jpg" />
+        <!--<canvas id="test" style="width: 600px; height: 400px;"></canvas>-->
+        <p style="text-align: center">After</p>
+      </td>
+    </tr>
+  </table>
+  
+  <script type="text/javascript">
+  Caman.DEBUG = true;
+
+  Caman.Filter.register("sharpen", function (amt) {
+    if (!amt) {
+      amt = 1;
+    } else {
+      amt /= 100;
+    }
+
+    return this.processKernel('Sharpen', [
+      0, -amt, 0,
+      -amt, 4 * amt + 1, -amt,
+      0, -amt, 0
+    ]);
+  });
+
+  var test = Caman('#test', function () { 
+    this.sharpen(50);
+    this.saturation(-50);
+    this.colorize("#fd4803", 20);
+
+    this.newLayer(function () {
+      this.setBlendingMode('multiply');
+      this.opacity(80);
+      this.copyParent();
+
+      this.filter.contrast(50);
+      this.filter.sharpen(5);
+    });
+
+    this.brightness(10);
+    this.vignette("40%", 30);
+
+    this.render(function () {
+      console.log("Done!");
+    });
+  });
+  </script>
+</body>
+</html>

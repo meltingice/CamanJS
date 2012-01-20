@@ -1,5 +1,5 @@
 (function() {
-  var $, Blender, Calculate, CamanInstance, Convert, Event, Filter, IO, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, Util, slice, vignetteFilters,
+  var $, Blender, Calculate, Caman, CamanInstance, Canvas, Convert, Event, Filter, IO, Image, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, Util, fs, slice, vignetteFilters,
     __hasProp = Object.prototype.hasOwnProperty,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -49,9 +49,19 @@
 
   })();
 
-  Root = typeof exports !== "undefined" && exports !== null ? exports : window;
+  if (typeof exports !== "undefined" && exports !== null) {
+    Root = exports;
+    Canvas = require('canvas');
+    Image = Canvas.Image;
+    fs = require('fs');
+  } else {
+    Root = window;
+  }
 
-  Root.Caman = function() {
+  Root.Caman = Caman = function() {
+    if (typeof exports !== "undefined" && exports !== null) {
+      return new CamanInstance(arguments, CamanInstance.Type.Node);
+    }
     switch (arguments.length) {
       case 1:
         if (Store.has(arguments[0])) return Store.get(arguments[0]);
@@ -94,7 +104,8 @@
     CamanInstance.Type = {
       Image: 1,
       Canvas: 2,
-      Unknown: 3
+      Unknown: 3,
+      Node: 4
     };
 
     CamanInstance.toString = Caman.toString;
@@ -114,6 +125,9 @@
           break;
         case CamanInstance.Type.Canvas:
           this.loadCanvas.apply(this, args);
+          break;
+        case CamanInstance.Type.Node:
+          this.loadNode.apply(this, args);
           break;
         case CamanInstance.Type.Unknown:
           if ($(args[0])) {
@@ -251,6 +265,25 @@
       } else {
         return this.finishInit(callback);
       }
+    };
+
+    CamanInstance.prototype.loadNode = function(file, callback) {
+      var img,
+        _this = this;
+      img = new Image();
+      file = fs.realpathSync(file);
+      img.onload = function() {
+        var context;
+        _this.canvasID = Util.uniqid.get();
+        _this.canvas = new Canvas(img.width, img.height);
+        context = _this.canvas.getContext('2d');
+        context.drawImage(img, 0, 0);
+        return _this.finishInit(callback);
+      };
+      img.onerror = function(err) {
+        throw err;
+      };
+      return img.src = file;
     };
 
     CamanInstance.prototype.finishInit = function(callback) {
@@ -878,12 +911,34 @@
       return "proxies/caman_proxy." + lang;
     };
 
-    IO.prototype.save = function(type) {
+    IO.prototype.save = function() {
+      if (typeof exports !== "undefined" && exports !== null) {
+        return this.nodeSave.apply(this, arguments);
+      } else {
+        return this.browserSave.apply(this, arguments);
+      }
+    };
+
+    IO.prototype.browserSave = function(type) {
       var image;
       if (type == null) type = "png";
       type = type.toLowerCase();
       image = this.toBase64(type).replace("image/" + type, "image/octet-stream");
       return document.location.href = image;
+    };
+
+    IO.prototype.nodeSave = function(file, overwrite) {
+      var stats;
+      if (overwrite == null) overwrite = true;
+      try {
+        stats = fs.statSync(file);
+        if (stats.isFile() && !overwrite) return false;
+      } catch (e) {
+        Log.debug("Creating output file " + file);
+      }
+      return fs.writeFile(file, this.canvas.toBuffer(), function() {
+        return Log.debug("Finished writing to " + file);
+      });
     };
 
     IO.prototype.toImage = function(type) {
@@ -917,7 +972,7 @@
         opacity: 1.0
       };
       this.layerID = Util.uniqid.get();
-      this.canvas = document.createElement('canvas');
+      this.canvas = typeof exports !== "undefined" && exports !== null ? new Canvas() : document.createElement('canvas');
       this.canvas.width = this.c.dimensions.width;
       this.canvas.height = this.c.dimensions.height;
       this.context = this.canvas.getContext('2d');
@@ -1014,9 +1069,8 @@
         name = _ref[_i];
         this[name] = (function(name) {
           return function() {
-            if ((window.console != null) && Caman.DEBUG) {
-              return window.console[name].apply(console, arguments);
-            }
+            if (!Caman.DEBUG) return;
+            return console[name].apply(console, arguments);
           };
         })(name);
       }
@@ -1904,7 +1958,7 @@
     shg_table = [9, 11, 12, 13, 13, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24];
     getLinearGradientMap = function(width, height, centerX, centerY, angle, length, mirrored) {
       var cnv, context, gradient, x1, x2, y1, y2;
-      cnv = document.createElement('canvas');
+      cnv = typeof exports !== "undefined" && exports !== null ? new Canvas() : document.createElement('canvas');
       cnv.width = width;
       cnv.height = height;
       x1 = centerX + Math.cos(angle) * length * 0.5;
@@ -1927,7 +1981,7 @@
     };
     getRadialGradientMap = function(width, height, centerX, centerY, radius1, radius2) {
       var cnv, context, gradient;
-      cnv = document.createElement('canvas');
+      cnv = typeof exports !== "undefined" && exports !== null ? new Canvas() : document.createElement('canvas');
       cnv.width = width;
       cnv.height = height;
       context = cnv.getContext("2d");
