@@ -354,12 +354,12 @@
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     };
 
-    Calculate.randomRange = function(min, max, float) {
+    Calculate.randomRange = function(min, max, getFloat) {
       var rand;
-      if (float == null) float = false;
+      if (getFloat == null) getFloat = false;
       rand = min + (Math.random() * (max - min));
-      if (float) {
-        return rand.toFixed(float);
+      if (getFloat) {
+        return rand.toFixed(getFloat);
       } else {
         return Math.round(rand);
       }
