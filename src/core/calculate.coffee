@@ -6,9 +6,9 @@ class Calculate
 
   # Generates a pseudorandom number that lies within the max - mix range. The number can be either 
   # an integer or a float depending on what the user specifies.
-  @randomRange: (min, max, float = false) ->
+  @randomRange: (min, max, getFloat = false) ->
     rand = min + (Math.random() * (max - min))
-    return if float then rand.toFixed(float) else Math.round(rand)
+    return if getFloat then rand.toFixed(getFloat) else Math.round(rand)
 
   # Generates a bezier curve given a start and end point, with two control points in between.
   # Can also optionally bound the y values between a low and high bound.
