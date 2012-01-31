@@ -1460,6 +1460,22 @@
     return result;
   });
 
+  Blender.register("lighten", function(rgbaLayer, rgbaParent) {
+    return {
+      r: rgbaParent.r > rgbaLayer.r ? rgbaParent.r : rgbaLayer.r,
+      g: rgbaParent.g > rgbaLayer.g ? rgbaParent.g : rgbaLayer.g,
+      b: rgbaParent.b > rgbaLayer.b ? rgbaParent.b : rgbaLayer.b
+    };
+  });
+
+  Blender.register("darken", function(rgbaLayer, rgbaParent) {
+    return {
+      r: rgbaParent.r > rgbaLayer.r ? rgbaLayer.r : rgbaParent.r,
+      g: rgbaParent.g > rgbaLayer.g ? rgbaLayer.g : rgbaParent.g,
+      b: rgbaParent.b > rgbaLayer.b ? rgbaLayer.b : rgbaParent.b
+    };
+  });
+
   Filter.register("fillColor", function() {
     var color;
     if (arguments.length === 1) {

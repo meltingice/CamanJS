@@ -26,20 +26,6 @@
   <script type="text/javascript">
   Caman.DEBUG = true;
 
-  Caman.Filter.register("sharpen", function (amt) {
-    if (!amt) {
-      amt = 1;
-    } else {
-      amt /= 100;
-    }
-
-    return this.processKernel('Sharpen', [
-      0, -amt, 0,
-      -amt, 4 * amt + 1, -amt,
-      0, -amt, 0
-    ]);
-  });
-
   var test = Caman('#test', function () { 
     this.sharpen(50);
     this.saturation(-50);
