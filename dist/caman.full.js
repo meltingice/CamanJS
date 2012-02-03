@@ -150,7 +150,7 @@
         case "img":
           return this.loadImage.apply(this, args);
         case "canvas":
-          return this.loadCanvas.apply(this, args);
+          return this.loadCanvas(null, args[0], args[1]);
       }
     };
 

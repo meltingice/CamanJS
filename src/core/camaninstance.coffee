@@ -50,7 +50,7 @@ class CamanInstance
     e = $(args[0])
     switch e.nodeName.toLowerCase()
       when "img" then @loadImage.apply @, args
-      when "canvas" then @loadCanvas.apply @, args
+      when "canvas" then @loadCanvas(null, args[0], args[1])
       
   ########## Begin Image Loading ##########
   
