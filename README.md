@@ -85,7 +85,7 @@ cake docs
 
 ## CDN JS Hosting
 
-CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from [this URL](http://ajax.cdnjs.com/ajax/libs/camanjs/2.2/caman.full.min.js) for usage on your site.
+CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from [this URL](http://cdnjs.cloudflare.com/ajax/libs/camanjs/3.1.1/caman.full.min.js) for usage on your site.
 
 ## NodeJS Compatibility
 
