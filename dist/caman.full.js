@@ -166,6 +166,7 @@
           id = "caman-" + (Util.uniqid.get());
           element.id = id;
         }
+        if (element.complete) return this.imageLoaded(id, element, callback);
       }
       if ($(id) != null) {
         image = $(id);
@@ -209,7 +210,9 @@
           this.canvas.setAttribute(attr, this.image.getAttribute(attr));
         }
       }
-      image.parentNode.replaceChild(this.canvas, this.image);
+      if (image.parentNode != null) {
+        image.parentNode.replaceChild(this.canvas, this.image);
+      }
       this.canvasID = id;
       this.options = {
         canvas: id,
