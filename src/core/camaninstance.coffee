@@ -63,6 +63,8 @@ class CamanInstance
       else
         id = "caman-#{Util.uniqid.get()}"
         element.id = id
+
+      return @imageLoaded(id, element, callback) if element.complete
         
     if $(id)?
       image = $(id)
@@ -96,7 +98,9 @@ class CamanInstance
     for attr in ['data-camanwidth', 'data-camanheight']
       @canvas.setAttribute attr, @image.getAttribute(attr) if @image.getAttribute attr
     
-    image.parentNode.replaceChild @canvas, @image
+
+    image.parentNode.replaceChild @canvas, @image if image.parentNode?
+    
     @canvasID = id
     @options =
       canvas: id
