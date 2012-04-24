@@ -125,6 +125,8 @@ class CamanInstance
         element.id = id
 
       return @canvasLoaded url, element, callback
+    else
+      id = "##{id}" unless id.charAt(0) is "#"
         
     if $(id)?
       @canvasLoaded url, $(id), callback
