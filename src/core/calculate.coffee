@@ -10,6 +10,9 @@ class Calculate
     rand = min + (Math.random() * (max - min))
     return if getFloat then rand.toFixed(getFloat) else Math.round(rand)
 
+  # Calculates the luminance of a single pixel using a special weighted sum
+  @luminance: (rgba) -> (0.27 * rgba.r) + (0.67 * rgba.g) + (0.06 * rgba.b)
+
   # Generates a bezier curve given a start and end point, with two control points in between.
   # Can also optionally bound the y values between a low and high bound.
   #

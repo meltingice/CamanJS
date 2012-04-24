@@ -29,6 +29,8 @@ class CamanInstance
     @canvasQueue = []
 
     @currentLayer = null
+
+    @analyze = new Analyze @
   
     # Begin initialization
     switch type
@@ -212,4 +214,18 @@ class CamanInstance
     # haha, owl face.
     callback.call @,@
     return @
+
+  replaceCanvas: (newCanvas) ->
+    oldCanvas = @canvas
+    @canvas = newCanvas
+
+    if oldCanvas.parentNode?
+      oldCanvas.parentNode.replaceChild @canvas, oldCanvas
+
+    @context = @canvas.getContext '2d'
+    @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
+    @pixelData = @imageData.data
+    @dimensions =
+      width: @canvas.width
+      height: @canvas.height
     
