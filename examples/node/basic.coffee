@@ -1,4 +1,4 @@
-Caman = require('../../dist/caman.full.js').Caman
+{Caman} = require __dirname + '/../../dist/caman.full'
 Caman.DEBUG = true
 
 Caman "../images/test1_1280.jpg", ->
