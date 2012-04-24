@@ -17,5 +17,39 @@ Caman.Plugin.register "crop", (width, height, x = 0, y = 0) ->
   # Update all of the references
   @replaceCanvas canvas
 
+# Resize the canvas and the image to a new size
+Caman.Plugin.register "resize", (newDims = null) ->
+  # Calculate new size
+  if newDims is null or (!newDims.width? and !newDims.height?)
+    Log.error "Invalid or missing dimensions given for resize"
+    return
+
+  if not newDims.width?
+    # Calculate width
+    newDims.width = @canvas.width * newDims.height / @canvas.height
+  else if not newDims.height?
+    # Calculate height
+    newDims.height = @canvas.height * newDims.width / @canvas.width
+
+  if exports?
+    canvas = new Canvas newDims.width, newDims.height
+  else
+    canvas = document.createElement 'canvas'
+    canvas.width = newDims.width
+    canvas.height = newDims.height
+
+  ctx = canvas.getContext '2d'
+
+  ctx.drawImage @canvas, 
+    0, 0, 
+    @canvas.width, @canvas.height, 
+    0, 0, 
+    newDims.width, newDims.height
+
+  @replaceCanvas canvas
+
 Caman.Filter.register "crop", (width, height, x = 0, y = 0) ->
   @processPlugin "crop", Array.prototype.slice.call(arguments, 0)
+
+Caman.Filter.register "resize", (width, height) ->
+  @processPlugin "resize", Array.prototype.slice.call(arguments, 0)

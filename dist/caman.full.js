@@ -2806,6 +2806,32 @@
     return this.replaceCanvas(canvas);
   });
 
+  Caman.Plugin.register("resize", function(newDims) {
+    var canvas, ctx;
+    if (newDims == null) {
+      newDims = null;
+    }
+    if (newDims === null || (!(newDims.width != null) && !(newDims.height != null))) {
+      Log.error("Invalid or missing dimensions given for resize");
+      return;
+    }
+    if (!(newDims.width != null)) {
+      newDims.width = this.canvas.width * newDims.height / this.canvas.height;
+    } else if (!(newDims.height != null)) {
+      newDims.height = this.canvas.height * newDims.width / this.canvas.width;
+    }
+    if (typeof exports !== "undefined" && exports !== null) {
+      canvas = new Canvas(newDims.width, newDims.height);
+    } else {
+      canvas = document.createElement('canvas');
+      canvas.width = newDims.width;
+      canvas.height = newDims.height;
+    }
+    ctx = canvas.getContext('2d');
+    ctx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, newDims.width, newDims.height);
+    return this.replaceCanvas(canvas);
+  });
+
   Caman.Filter.register("crop", function(width, height, x, y) {
     if (x == null) {
       x = 0;
@@ -2814,6 +2840,10 @@
       y = 0;
     }
     return this.processPlugin("crop", Array.prototype.slice.call(arguments, 0));
+  });
+
+  Caman.Filter.register("resize", function(width, height) {
+    return this.processPlugin("resize", Array.prototype.slice.call(arguments, 0));
   });
 
   /*
