@@ -258,6 +258,10 @@
           element.id = id;
         }
         return this.canvasLoaded(url, element, callback);
+      } else {
+        if (id.charAt(0) !== "#") {
+          id = "#" + id;
+        }
       }
       if ($(id) != null) {
         return this.canvasLoaded(url, $(id), callback);
