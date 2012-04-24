@@ -257,24 +257,25 @@
           id = "caman-" + (Util.uniqid.get());
           element.id = id;
         }
+        return this.canvasLoaded(url, element, callback);
       }
       if ($(id) != null) {
-        return this.canvasLoaded(url, id, callback);
+        return this.canvasLoaded(url, $(id), callback);
       } else {
         if (document.readyState === "complete") {
           throw "Could not find element of id " + id;
         }
         return document.addEventListener("DOMContentLoaded", function() {
-          return _this.canvasLoaded(url, id, callback);
+          return _this.canvasLoaded(url, $(id), callback);
         }, false);
       }
     };
 
-    CamanInstance.prototype.canvasLoaded = function(url, id, callback) {
+    CamanInstance.prototype.canvasLoaded = function(url, canvas, callback) {
       var proxyURL,
         _this = this;
-      this.canvas = $(id);
-      if (!$(id) || $(id).nodeName.toLowerCase() !== "canvas") {
+      this.canvas = canvas;
+      if (!canvas || canvas.nodeName.toLowerCase() !== "canvas") {
         throw "Given element ID isn't a canvas: " + id;
       }
       if (url != null) {
@@ -283,7 +284,7 @@
           return _this.finishInit(callback);
         };
         proxyURL = IO.remoteCheck(url);
-        this.canvasID = id;
+        this.canvasID = this.canvas.id;
         this.options = {
           canvas: id,
           image: url

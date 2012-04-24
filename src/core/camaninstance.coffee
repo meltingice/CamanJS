@@ -123,21 +123,23 @@ class CamanInstance
       else
         id = "caman-#{Util.uniqid.get()}"
         element.id = id
+
+      return @canvasLoaded url, element, callback
         
     if $(id)?
-      @canvasLoaded url, id, callback
+      @canvasLoaded url, $(id), callback
     else
       if document.readyState is "complete"
         throw "Could not find element of id #{id}"
 
       document.addEventListener "DOMContentLoaded", =>
-        @canvasLoaded url, id, callback
+        @canvasLoaded url, $(id), callback
       , false
       
-  canvasLoaded: (url, id, callback) ->
-    @canvas = $(id)
+  canvasLoaded: (url, canvas, callback) ->
+    @canvas = canvas
 
-    if not $(id) or $(id).nodeName.toLowerCase() isnt "canvas"
+    if not canvas or canvas.nodeName.toLowerCase() isnt "canvas"
       throw "Given element ID isn't a canvas: #{id}"
     
     if url?
@@ -146,7 +148,7 @@ class CamanInstance
       
       proxyURL = IO.remoteCheck(url)
       
-      @canvasID = id
+      @canvasID = @canvas.id
       @options =
         canvas: id
         image: url
