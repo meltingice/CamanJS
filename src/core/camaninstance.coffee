@@ -150,7 +150,7 @@ class CamanInstance
       
       @canvasID = @canvas.id
       @options =
-        canvas: id
+        canvas: canvas.id
         image: url
         
       @image.src = if proxyURL then proxyURL else url

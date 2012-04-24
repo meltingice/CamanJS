@@ -286,7 +286,7 @@
         proxyURL = IO.remoteCheck(url);
         this.canvasID = this.canvas.id;
         this.options = {
-          canvas: id,
+          canvas: canvas.id,
           image: url
         };
         return this.image.src = proxyURL ? proxyURL : url;
