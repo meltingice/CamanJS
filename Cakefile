@@ -37,6 +37,7 @@ coffeeFiles		= [
 	"core/camaninstance"
 
 	# Everything else
+	"core/analyze"
 	"core/blender"
 	"core/calculate"
 	"core/convert"

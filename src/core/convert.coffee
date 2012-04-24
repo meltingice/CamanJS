@@ -26,6 +26,11 @@ class Convert
   # @return              The HSL representation
   # </pre>
   @rgbToHSL: (r, g, b) ->
+    if typeof r is "object"
+      g = r.g
+      b = r.b
+      r = r.r
+
     r /= 255
     g /= 255
     b /= 255
@@ -60,6 +65,11 @@ class Convert
   # @return  Array           The RGB representation
   # </pre>
   @hslToRGB: (h, s, l) ->
+    if typeof h is "object"
+      s = h.s
+      l = h.l
+      h = h.h
+
     if s is 0
       r = g = b = l
     else
@@ -252,6 +262,11 @@ class Convert
   # @return  Array           The Lab representation
   # </pre>
   @xyzToLab: (x, y, z) ->
+    if typeof x is "object"
+      y = x.y
+      z = x.z
+      x = x.x
+
     whiteX = 95.047
     whiteY = 100.0
     whiteZ = 108.883
@@ -296,6 +311,11 @@ class Convert
   # @return  Array           The XYZ representation
   # </pre>
   @labToXYZ: (l, a, b) ->
+    if typeof l is "object"
+      a = l.a
+      b = l.b
+      l = l.l
+
     y = (l + 16) / 116
     x = y + (a / 500)
     z = y - (b / 200)
@@ -317,3 +337,15 @@ class Convert
 
     # D65 reference white point
     x: x * 95.047, y: y * 100.0, z: z * 108.883
+
+  @rgbToLab: (r, g, b) ->
+    if typeof r is "object"
+      g = r.g
+      b = r.b
+      r = r.r
+    
+    xyz = @rgbToXYZ(r, g, b)
+    @xyzToLab xyz
+
+  @labToRGB: (l, a, b) ->
+    
