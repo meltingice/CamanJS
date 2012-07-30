@@ -105,7 +105,7 @@ If you wish to do things a bit manually, the required libraries are:
 
 **Saving from NodeJS**
 
-To save your modified image in NodeJS, simply call the save() function **after** rendering is finished. Trying to save before rendering is finished will cause issues.
+To save your modified image in NodeJS, simply call the save() function **after** rendering is finished by passing a callback function to `render()`. Trying to save before rendering is finished will cause issues.
 
 ``` coffeescript
 Caman "./path/to/file.jpg", ->
