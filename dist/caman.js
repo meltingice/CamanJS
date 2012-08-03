@@ -303,7 +303,9 @@
       var img,
         _this = this;
       img = new Image();
-      file = fs.realpathSync(file);
+      if (typeof file === "string") {
+        file = fs.realpathSync(file);
+      }
       img.onload = function() {
         var context;
         _this.canvasID = Util.uniqid.get();
