@@ -163,7 +163,7 @@ class CamanInstance
 
   loadNode: (file, callback) ->
     img = new Image()
-    file = fs.realpathSync file
+    file = fs.realpathSync file if typeof file is "string"
 
     img.onload = =>
       @canvasID = Util.uniqid.get()
