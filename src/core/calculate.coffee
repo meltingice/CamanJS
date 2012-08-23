@@ -32,7 +32,7 @@ class Calculate
     bezier = {}
 
     # Calculate our X/Y coefficients
-    Cx = 3 * (x1 - x0)
+    Cx = parseInt(3 * (x1 - x0), 10)
     Bx = 3 * (x2 - x1) - Cx
     Ax = x3 - x0 - Cx - Bx
 
