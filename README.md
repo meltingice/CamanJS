@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/meltingice/CamanJS.png)](http://travis-ci.org/meltingice/CamanJS)
 <img src="http://camanjs.com/imgs/logo.png" />
 
 # About the Project
