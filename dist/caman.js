@@ -339,6 +339,12 @@
         }
         this.canvas.width = this.image.width;
         this.canvas.height = this.image.height;
+        if (window.devicePixelRatio) {
+          this.canvas.setAttribute("style", "width:" + this.image.width + "px;height:" + this.image.height + "px");
+          this.canvas.width = this.image.width * window.devicePixelRatio;
+          this.canvas.height = this.image.height * window.devicePixelRatio;
+          this.context.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
         this.context.drawImage(this.image, 0, 0, this.image.width, this.image.height);
       }
       this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
