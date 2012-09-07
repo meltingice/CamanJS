@@ -21,12 +21,12 @@ targetCoffee	= "#{csSrcDir}/build"
 targetCoreJS			= "#{csTargetDir}/#{targetName}.js"
 targetCoreMinJS		= "#{csTargetDir}/#{targetName}.min.js"
 targetCorePackJS		= "#{csTargetDir}/#{targetName}.pack.js"
-coffeeCoreOpts		= "-r coffeescript-growl -j #{targetName}.js -o #{csTargetDir} -c #{targetCoffee}.coffee"
+coffeeCoreOpts		= "-j #{targetName}.js -o #{csTargetDir} -c #{targetCoffee}.coffee"
 
 targetFullJS			= "#{csTargetDir}/#{targetName}.full.js"
 targetFullMinJS		= "#{csTargetDir}/#{targetName}.full.min.js"
 targetFullPackJS		= "#{csTargetDir}/#{targetName}.full.pack.js"
-coffeeFullOpts		= "-r coffeescript-growl -j #{targetName}.full.js -o #{csTargetDir} -c #{targetCoffee}.full.coffee"
+coffeeFullOpts		= "-j #{targetName}.full.js -o #{csTargetDir} -c #{targetCoffee}.full.coffee"
 
 # All source files listed in include order
 coffeeFiles		= [
@@ -38,6 +38,7 @@ coffeeFiles		= [
 
 	# Everything else
 	"core/analyze"
+	"core/autoload"
 	"core/blender"
 	"core/calculate"
 	"core/convert"

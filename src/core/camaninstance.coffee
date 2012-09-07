@@ -9,44 +9,38 @@ class CamanInstance
     Node: 4
 
   @toString = Caman.toString
+
+  pixelStack: []  # Stores the pixel layers
+  layerStack: []  # Stores all of the layers waiting to be rendered
+  renderQueue: [] # Stores all of the render operatives
+  canvasQueue: [] # Stores all of the canvases to be processed
+  currentLayer: null
+  analyze: null
     
   # All of the arguments given to the Caman() function are simply thrown here.
   constructor: (args, type = CamanInstance.Type.Canvas) ->
     # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
     # same instance.
     @id = Util.uniqid.get()
-
-    # Stores the pixel layers
-    @pixelStack = []
-
-    # Stores all of the layers waiting to be rendered
-    @layerStack = []
-
-    # Stores all of the render operatives
-    @renderQueue = []
-
-    # Stores all of the canvases to be processed
-    @canvasQueue = []
-
-    @currentLayer = null
-
     @analyze = new Analyze @
-  
+
+    # DOM initialization check (if applicable)
+    if type is CamanInstance.Type.Node
+      @loadNode.apply @, args
+    else
+      if document.readyState is "complete"
+        @domLoaded()
+      else
+        document.onreadystatechange = =>
+          if document.readyState is "complete"
+            @domLoaded(args, type)
+    
+  domLoaded: (args, type) ->
     # Begin initialization
     switch type
       when CamanInstance.Type.Image then @loadImage.apply @, args
       when CamanInstance.Type.Canvas then @loadCanvas.apply @, args
-      when CamanInstance.Type.Node then @loadNode.apply @, args
-      when CamanInstance.Type.Unknown
-        if $(args[0])
-          @loadUnknown args
-        else
-          if document.readyState is "complete"
-            throw "Could not find element of id #{id}"
-          
-          document.addEventListener "DOMContentLoaded", =>
-            @loadUnknown args
-          , false
+      when CamanInstance.Type.Unknown then @loadUnknown args
 
   loadUnknown: (args) ->
     e = $(args[0])
@@ -58,35 +52,24 @@ class CamanInstance
   
   loadImage: (id, callback = ->) ->   
     if typeof id is "object" and id.nodeName?.toLowerCase() is "img"
-      element = id
-      
-      if id.id
-        id = element.id
-      else
-        id = "caman-#{Util.uniqid.get()}"
-        element.id = id
-
-      return @imageLoaded(id, element, callback) if element.complete
-        
-    if $(id)?
-      image = $(id)
-      proxyURL = IO.remoteCheck image.src
-
-      if proxyURL
-        image.onload = => @imageLoaded id, image, callback
-        image.src = proxyURL
-      else
-        if image.complete
-          @imageLoaded id, image, callback
-        else
-          image.onload = => @imageLoaded id, image, callback
+      image = id
+      image.id = "caman-#{Util.uniqid.get()}" unless image.id
+#      return @imageLoaded(id, element, callback) if element.complete
     else
-      if document.readyState is "complete"
-        throw "Could not find element of id #{id}"
-      
-      document.addEventListener "DOMContentLoaded",  =>
-        @imageLoaded id, $(id), callback
-      , false
+      if $(id)?
+        image = $(id)
+      else
+        throw "Could not find element #{id}"
+
+    proxyURL = IO.remoteCheck image.src
+    if proxyURL
+      image.onload = => @imageLoaded id, image, callback
+      image.src = proxyURL
+    else
+      if image.complete
+        @imageLoaded id, image, callback
+      else
+        image.onload = => @imageLoaded id, image, callback
         
   imageLoaded: (id, image, callback) ->
     @image = image

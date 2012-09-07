@@ -48,6 +48,9 @@ Caman.version =
 # Debug mode enables console logging
 Caman.DEBUG = false
 
+# Should we check the DOM for images with Caman instructions?
+Caman.autoload = not exports?
+
 Caman.toString = ->
   "Version " + Caman.version.release + ", Released " + Caman.version.date;
 
