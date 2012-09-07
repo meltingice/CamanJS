@@ -22,11 +22,13 @@ class CamanParser
 
   instructions: []
 
-  constructor: (@ele, ready) ->
-    @dataStr = @ele.getAttribute('data-caman')
-    @caman = Caman @ele, ready.bind(@)
+  constructor: (ele, ready) ->
+    @dataStr = ele.getAttribute('data-caman')
+    @caman = Caman ele, ready.bind(@)
 
   parse: ->
+    @ele = @caman.canvas
+
     # First we find each instruction as a whole using a global
     # regex search.
     r = new RegExp(INST_REGEX, 'g')
@@ -37,6 +39,11 @@ class CamanParser
     # and parse out the filter name + it's parameters.
     r = new RegExp(INST_REGEX)
     for inst in unparsedInstructions
-      console.log inst.match(r)
+      [m, filter, args] = inst.match(r)
+      console.log filter, args
+      @caman[filter](args)
 
   execute: ->
+    ele = @ele
+    @caman.render ->
+      ele.parentNode.replaceChild @toImage(), ele

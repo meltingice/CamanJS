@@ -65,6 +65,13 @@ class IO
   toImage: (type) ->
     img = document.createElement 'img'
     img.src = @toBase64 type
+    img.width = @dimensions.width
+    img.height = @dimensions.height
+
+    if window.devicePixelRatio
+      img.width /= window.devicePixelRatio
+      img.height /= window.devicePixelRatio
+
     return img
 
   # Base64 encodes the current canvas
