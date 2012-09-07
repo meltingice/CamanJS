@@ -241,35 +241,23 @@
     };
 
     CamanInstance.prototype.loadCanvas = function(url, id, callback) {
-      var element, _ref,
-        _this = this;
+      var element, _ref;
       if (callback == null) {
         callback = function() {};
       }
       if (typeof id === "object" && ((_ref = id.nodeName) != null ? _ref.toLowerCase() : void 0) === "canvas") {
         element = id;
-        if (id.id) {
-          id = element.id;
+        if (!element.id) {
+          element.id = "caman-" + (Util.uniqid.get());
+        }
+      } else {
+        if ($(id) != null) {
+          element = $(id);
         } else {
-          id = "caman-" + (Util.uniqid.get());
-          element.id = id;
-        }
-        return this.canvasLoaded(url, element, callback);
-      } else {
-        if (id.charAt(0) !== "#") {
-          id = "#" + id;
+          throw "Could not find element " + id;
         }
       }
-      if ($(id) != null) {
-        return this.canvasLoaded(url, $(id), callback);
-      } else {
-        if (document.readyState === "complete") {
-          throw "Could not find element of id " + id;
-        }
-        return document.addEventListener("DOMContentLoaded", function() {
-          return _this.canvasLoaded(url, $(id), callback);
-        }, false);
-      }
+      return this.canvasLoaded(url, element, callback);
     };
 
     CamanInstance.prototype.canvasLoaded = function(url, canvas, callback) {
@@ -450,13 +438,13 @@
     CamanParser.prototype.instructions = [];
 
     function CamanParser(ele, ready) {
-      this.ele = ele;
-      this.dataStr = this.ele.getAttribute('data-caman');
-      this.caman = Caman(this.ele, ready.bind(this));
+      this.dataStr = ele.getAttribute('data-caman');
+      this.caman = Caman(ele, ready.bind(this));
     }
 
     CamanParser.prototype.parse = function() {
-      var inst, r, unparsedInstructions, _i, _len, _results;
+      var args, filter, inst, m, r, unparsedInstructions, _i, _len, _ref, _results;
+      this.ele = this.caman.canvas;
       r = new RegExp(INST_REGEX, 'g');
       unparsedInstructions = this.dataStr.match(r);
       if (!(unparsedInstructions.length > 0)) {
@@ -466,12 +454,20 @@
       _results = [];
       for (_i = 0, _len = unparsedInstructions.length; _i < _len; _i++) {
         inst = unparsedInstructions[_i];
-        _results.push(console.log(inst.match(r)));
+        _ref = inst.match(r), m = _ref[0], filter = _ref[1], args = _ref[2];
+        console.log(filter, args);
+        _results.push(this.caman[filter](args));
       }
       return _results;
     };
 
-    CamanParser.prototype.execute = function() {};
+    CamanParser.prototype.execute = function() {
+      var ele;
+      ele = this.ele;
+      return this.caman.render(function() {
+        return ele.parentNode.replaceChild(this.toImage(), ele);
+      });
+    };
 
     return CamanParser;
 
@@ -1167,6 +1163,12 @@
       var img;
       img = document.createElement('img');
       img.src = this.toBase64(type);
+      img.width = this.dimensions.width;
+      img.height = this.dimensions.height;
+      if (window.devicePixelRatio) {
+        img.width /= window.devicePixelRatio;
+        img.height /= window.devicePixelRatio;
+      }
       return img;
     };
 

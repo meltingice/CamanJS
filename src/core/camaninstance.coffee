@@ -54,7 +54,6 @@ class CamanInstance
     if typeof id is "object" and id.nodeName?.toLowerCase() is "img"
       image = id
       image.id = "caman-#{Util.uniqid.get()}" unless image.id
-#      return @imageLoaded(id, element, callback) if element.complete
     else
       if $(id)?
         image = $(id)
@@ -100,26 +99,14 @@ class CamanInstance
   loadCanvas: (url, id, callback = ->) ->
     if typeof id is "object" and id.nodeName?.toLowerCase() is "canvas"
       element = id
-      
-      if id.id
-        id = element.id
+      element.id = "caman-#{Util.uniqid.get()}" unless element.id
+    else
+      if $(id)?
+        element = $(id)
       else
-        id = "caman-#{Util.uniqid.get()}"
-        element.id = id
+        throw "Could not find element #{id}"
 
-      return @canvasLoaded url, element, callback
-    else
-      id = "##{id}" unless id.charAt(0) is "#"
-        
-    if $(id)?
-      @canvasLoaded url, $(id), callback
-    else
-      if document.readyState is "complete"
-        throw "Could not find element of id #{id}"
-
-      document.addEventListener "DOMContentLoaded", =>
-        @canvasLoaded url, $(id), callback
-      , false
+    @canvasLoaded url, element, callback
       
   canvasLoaded: (url, canvas, callback) ->
     @canvas = canvas
