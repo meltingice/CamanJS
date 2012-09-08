@@ -24,6 +24,12 @@ Caman("#image-id", function () {
 });
 ```
 
+Caman also supports modifying images via the `data-caman` HTML attribute. Simply separate each instruction with a space. Images with the `data-caman` attribute will automatically be modified at page load.
+
+```html
+<img data-caman="saturation(-10) brightness(20) vignette('10%')" src="path/to/image.jpg">
+```
+
 ## Upgrading from 2.x to 3.x
 
 For the end-user, there are no changes to CamanJS that will affect your code. Everything works exactly the same as before.
