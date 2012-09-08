@@ -443,7 +443,7 @@
     }
 
     CamanParser.prototype.parse = function() {
-      var args, filter, inst, m, r, unparsedInstructions, _i, _len, _ref, _results;
+      var args, filter, func, inst, instFunc, m, r, unparsedInstructions, _i, _len, _ref, _results;
       this.ele = this.caman.canvas;
       r = new RegExp(INST_REGEX, 'g');
       unparsedInstructions = this.dataStr.match(r);
@@ -455,8 +455,13 @@
       for (_i = 0, _len = unparsedInstructions.length; _i < _len; _i++) {
         inst = unparsedInstructions[_i];
         _ref = inst.match(r), m = _ref[0], filter = _ref[1], args = _ref[2];
-        console.log(filter, args);
-        _results.push(this.caman[filter](args));
+        instFunc = new Function("return function() {        this." + filter + "(" + args + ");      };");
+        try {
+          func = instFunc();
+          _results.push(func.call(this.caman));
+        } catch (e) {
+          _results.push(Log.debug(e));
+        }
       }
       return _results;
     };
