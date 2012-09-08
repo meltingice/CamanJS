@@ -144,8 +144,7 @@ class CamanInstance
 
       @finishInit callback
 
-    img.onerror = (err) ->
-      throw err
+    img.onerror = (err) -> throw err
 
     img.src = file
     

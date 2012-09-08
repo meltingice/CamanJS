@@ -40,8 +40,19 @@ class CamanParser
     r = new RegExp(INST_REGEX)
     for inst in unparsedInstructions
       [m, filter, args] = inst.match(r)
-      console.log filter, args
-      @caman[filter](args)
+
+      # Create a factory function so we can catch any errors that
+      # are produced when running the filters. This also makes it very
+      # simple to support multiple/complex filter arguments.
+      instFunc = new Function("return function() {
+        this.#{filter}(#{args});
+      };")
+
+      try
+        func = instFunc()
+        func.call @caman
+      catch e
+        Log.debug e
 
   execute: ->
     ele = @ele

@@ -3,9 +3,11 @@
 <head>
   <title>CamanJS Autoloading</title>
   <script type="text/javascript" src="../../dist/caman.full.js"></script>
+  <script type="text/javascript">
+  Caman.DEBUG = true
+  </script>
 </head>
 <body>
-  <img data-caman="exposure(3.5) saturation(-5) vibrance(50) sepia(60)" src="../images/test1_600.jpg">
-  <div id="other-element"></div>
+  <img data-caman="saturation(-10) sepia(60) vibrance(50) exposure(1.2)" src="../images/test1_600.jpg">
 </body>
 </html>
