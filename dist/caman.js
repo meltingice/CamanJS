@@ -403,29 +403,29 @@
 
   })();
 
+  Caman.DOMUpdated = function() {
+    var img, imgs, parser, _i, _len, _results;
+    imgs = document.querySelectorAll("img[data-caman]");
+    if (!(imgs.length > 0)) {
+      return;
+    }
+    _results = [];
+    for (_i = 0, _len = imgs.length; _i < _len; _i++) {
+      img = imgs[_i];
+      _results.push(parser = new CamanParser(img, function() {
+        this.parse();
+        return this.execute();
+      }));
+    }
+    return _results;
+  };
+
   if (Caman.autoload) {
     (function() {
-      var run;
-      run = function() {
-        var img, imgs, parser, _i, _len, _results;
-        imgs = document.querySelectorAll("img[data-caman]");
-        if (!(imgs.length > 0)) {
-          return;
-        }
-        _results = [];
-        for (_i = 0, _len = imgs.length; _i < _len; _i++) {
-          img = imgs[_i];
-          _results.push(parser = new CamanParser(img, function() {
-            this.parse();
-            return this.execute();
-          }));
-        }
-        return _results;
-      };
       if (document.readyState === "complete") {
-        return run();
+        return Caman.DOMUpdated();
       } else {
-        return document.addEventListener("DOMContentLoaded", run, false);
+        return document.addEventListener("DOMContentLoaded", Caman.DOMUpdated, false);
       }
     })();
   }
@@ -434,8 +434,6 @@
     var INST_REGEX;
 
     INST_REGEX = "(\\w+)\\((.*?)\\)";
-
-    CamanParser.prototype.instructions = [];
 
     function CamanParser(ele, ready) {
       this.dataStr = ele.getAttribute('data-caman');

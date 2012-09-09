@@ -1,26 +1,24 @@
+Caman.DOMUpdated = ->
+  imgs = document.querySelectorAll("img[data-caman]")
+  return unless imgs.length > 0
+
+  for img in imgs
+    parser = new CamanParser img, ->
+      @parse()
+      @execute()
+
 # If enabled, we check the page to see if there are any
 # images with Caman instructions provided using HTML5
 # data attributes.
 if Caman.autoload then do ->
-  run = ->
-    imgs = document.querySelectorAll("img[data-caman]")
-    return unless imgs.length > 0
-
-    for img in imgs
-      parser = new CamanParser img, ->
-        @parse()
-        @execute()
-
   if document.readyState is "complete"
-    run()
+    Caman.DOMUpdated()
   else
-    document.addEventListener "DOMContentLoaded", run, false
-  
+    document.addEventListener "DOMContentLoaded", Caman.DOMUpdated, false
 
+# Parses Caman instructions embedded in the HTML data-caman attribute
 class CamanParser
   INST_REGEX = "(\\w+)\\((.*?)\\)"
-
-  instructions: []
 
   constructor: (ele, ready) ->
     @dataStr = ele.getAttribute('data-caman')
