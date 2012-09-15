@@ -20,7 +20,7 @@ class Filter
 
   # Reverts an image back to it's original state by re-initializing Caman
   revert: (ready) ->
-    @loadCanvas @options.image, @options.canvas, ready
+    @loadCanvas @options.image, @canvas, ready
 
   # Pushes the filter callback that modifies the RGBA object into the
   # render queue
