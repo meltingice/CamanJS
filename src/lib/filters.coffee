@@ -324,9 +324,18 @@ Filter.register "channels", (options) ->
 #
 # The x-axis represents the input value for a single channel, while the y-axis represents the 
 # output value.
-Filter.register "curves", (chans, start, ctrl1, ctrl2, end) ->
+Filter.register "curves", (chans, cps...) ->
   # If channels are in a string, split to an array
   chans = chans.split("") if typeof chans is "string"
+
+  if cps.length < 3 or cps.length > 4
+    # might want to give a warning now
+    return
+
+  start = cps[0]
+  ctrl1 = cps[1]
+  ctrl2 = if cps.length == 4 then cps[2] else cps[1]
+  end = cps[cps.length - 1]
 
   # Generate a bezier curve
   bezier = Calculate.bezier start, ctrl1, ctrl2, end, 0, 255
