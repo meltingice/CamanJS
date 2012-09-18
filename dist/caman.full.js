@@ -2,7 +2,8 @@
 (function() {
   var $, Analyze, Blender, Calculate, Caman, CamanInstance, CamanParser, Canvas, Convert, Event, Filter, IO, Image, Layer, Log, Logger, PixelInfo, Plugin, RenderJob, Root, Store, Util, fs, slice, vignetteFilters,
     __hasProp = {}.hasOwnProperty,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __slice = [].slice;
 
   slice = Array.prototype.slice;
 
@@ -1966,11 +1967,19 @@
     });
   });
 
-  Filter.register("curves", function(chans, start, ctrl1, ctrl2, end) {
-    var bezier, i, _i, _j, _ref, _ref1;
+  Filter.register("curves", function() {
+    var bezier, chans, cps, ctrl1, ctrl2, end, i, start, _i, _j, _ref, _ref1;
+    chans = arguments[0], cps = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     if (typeof chans === "string") {
       chans = chans.split("");
     }
+    if (cps.length < 3 || cps.length > 4) {
+      return;
+    }
+    start = cps[0];
+    ctrl1 = cps[1];
+    ctrl2 = cps.length === 4 ? cps[2] : cps[1];
+    end = cps[cps.length - 1];
     bezier = Calculate.bezier(start, ctrl1, ctrl2, end, 0, 255);
     if (start[0] > 0) {
       for (i = _i = 0, _ref = start[0]; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
