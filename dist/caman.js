@@ -1974,7 +1974,7 @@
       chans = chans.split("");
     }
     if (cps.length < 3 || cps.length > 4) {
-      return;
+      throw "Invalid number of arguments to curves filter";
     }
     start = cps[0];
     ctrl1 = cps[1];
