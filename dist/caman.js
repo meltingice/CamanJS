@@ -1991,6 +1991,9 @@
         bezier[i] = end[1];
       }
     }
+    if (chans[0] === "v") {
+      chans = ['r', 'g', 'b'];
+    }
     return this.process("curves", function(rgba) {
       var _k, _ref2;
       for (i = _k = 0, _ref2 = chans.length; 0 <= _ref2 ? _k < _ref2 : _k > _ref2; i = 0 <= _ref2 ? ++_k : --_k) {

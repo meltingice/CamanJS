@@ -6,14 +6,7 @@
   <script type="text/javascript" src="../../dist/caman.full.js"></script>
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="../../test/benchmark/flot/jquery.flot.min.js"></script>
 
-  <style type="text/css">
-  .level-graph {
-    width: 800px;
-    height: 400px;
-  }
-  </style>
 </head>
 <body>
   <h1>CamanJS Testing Playground</h1>
@@ -21,18 +14,28 @@
   
   <table>
     <tr>
-      <td>
-       <img id="test" alt="test image" src="../images/test1_600.jpg" />
-      </td>
-    </tr>
+     <td>
+       <img id="curve_test" alt="curve test image" src="../images/test1_600.jpg" />
+     </td>
+     <td>
+       <img id="value_test" alt="value test image" src="../images/test1_600.jpg" />
+     </td>
+   </tr>
   </table>
 
   <script type="text/javascript">
   Caman.DEBUG = true;
-  var test = Caman("#test", function () {
+
+  var curve_test = Caman('#curve_test', function () {
       this.curves('rgb', [0, 0], [100, 30], [180, 240], [255, 255]);
 
-      this.curves('r', [0, 0], [40, 200], [255, 255])
+      this.curves('r', [0, 0], [40, 200], [255, 255]);
+
+      this.render();
+  });
+
+  var value_test = Caman('#value_test', function() {
+      this.curves('v', [0, 50], [128, 160], [255, 255]);
 
       this.render();
   });

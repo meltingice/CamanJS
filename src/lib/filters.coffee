@@ -347,6 +347,9 @@ Filter.register "curves", (chans, cps...) ->
   # ... and the same with the end point
   bezier[i] = end[1] for i in [end[0]..255] if end[0] < 255
 
+  if chans[0] == "v"
+    chans = ['r', 'g', 'b']
+
   @process "curves", (rgba) ->
     # Now that we have the bezier curve, we do a basic hashmap lookup
     # to find and replace color values.
