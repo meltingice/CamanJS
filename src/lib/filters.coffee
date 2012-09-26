@@ -327,6 +327,7 @@ Filter.register "channels", (options) ->
 Filter.register "curves", (chans, cps...) ->
   # If channels are in a string, split to an array
   chans = chans.split("") if typeof chans is "string"
+  chans = ['r', 'g', 'b'] if chans[0] == "v"
 
   if cps.length < 3 or cps.length > 4
     # might want to give a warning now

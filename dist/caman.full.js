@@ -1973,6 +1973,9 @@
     if (typeof chans === "string") {
       chans = chans.split("");
     }
+    if (chans[0] === "v") {
+      chans = ['r', 'g', 'b'];
+    }
     if (cps.length < 3 || cps.length > 4) {
       throw "Invalid number of arguments to curves filter";
     }
