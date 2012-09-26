@@ -330,7 +330,7 @@ Filter.register "curves", (chans, cps...) ->
 
   if cps.length < 3 or cps.length > 4
     # might want to give a warning now
-    return
+    throw "Invalid number of arguments to curves filter"
 
   start = cps[0]
   ctrl1 = cps[1]
