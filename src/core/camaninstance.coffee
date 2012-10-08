@@ -31,10 +31,10 @@ class CamanInstance
       if document.readyState is "complete"
         @domLoaded(args, type)
       else
-        # FIXME This overwrite behavior is bad, root cause of issue #41
-        document.onreadystatechange = =>
+        listener = =>
           if document.readyState is "complete"
             @domLoaded(args, type)
+        document.addEventListener "readystatechange", listener, false
     
   domLoaded: (args, type) ->
     # Begin initialization
