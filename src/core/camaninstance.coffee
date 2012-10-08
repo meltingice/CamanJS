@@ -29,8 +29,9 @@ class CamanInstance
       @loadNode.apply @, args
     else
       if document.readyState is "complete"
-        @domLoaded()
+        @domLoaded(args, type)
       else
+        # FIXME This overwrite behavior is bad, root cause of issue #41
         document.onreadystatechange = =>
           if document.readyState is "complete"
             @domLoaded(args, type)
