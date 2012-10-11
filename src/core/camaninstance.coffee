@@ -10,19 +10,17 @@ class CamanInstance
 
   @toString = Caman.toString
 
-  pixelStack: []  # Stores the pixel layers
-  layerStack: []  # Stores all of the layers waiting to be rendered
-  renderQueue: [] # Stores all of the render operatives
-  canvasQueue: [] # Stores all of the canvases to be processed
-  currentLayer: null
-  analyze: null
-    
   # All of the arguments given to the Caman() function are simply thrown here.
   constructor: (args, type = CamanInstance.Type.Canvas) ->
     # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
     # same instance.
     @id = Util.uniqid.get()
     @analyze = new Analyze @
+    @pixelStack = []  # Stores the pixel layers
+    @layerStack = []  # Stores all of the layers waiting to be rendered
+    @renderQueue = [] # Stores all of the render operatives
+    @canvasQueue = [] # Stores all of the canvases to be processed
+    @currentLayer = null
 
     # DOM initialization check (if applicable)
     if type is CamanInstance.Type.Node
