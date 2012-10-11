@@ -137,7 +137,8 @@
     CamanInstance.prototype.analyze = null;
 
     function CamanInstance(args, type) {
-      var _this = this;
+      var listener,
+        _this = this;
       if (type == null) {
         type = CamanInstance.Type.Canvas;
       }
@@ -147,13 +148,14 @@
         this.loadNode.apply(this, args);
       } else {
         if (document.readyState === "complete") {
-          this.domLoaded();
+          this.domLoaded(args, type);
         } else {
-          document.onreadystatechange = function() {
+          listener = function() {
             if (document.readyState === "complete") {
               return _this.domLoaded(args, type);
             }
           };
+          document.addEventListener("readystatechange", listener, false);
         }
       }
     }
