@@ -124,18 +124,6 @@
 
     CamanInstance.toString = Caman.toString;
 
-    CamanInstance.prototype.pixelStack = [];
-
-    CamanInstance.prototype.layerStack = [];
-
-    CamanInstance.prototype.renderQueue = [];
-
-    CamanInstance.prototype.canvasQueue = [];
-
-    CamanInstance.prototype.currentLayer = null;
-
-    CamanInstance.prototype.analyze = null;
-
     function CamanInstance(args, type) {
       var _this = this;
       if (type == null) {
@@ -143,6 +131,11 @@
       }
       this.id = Util.uniqid.get();
       this.analyze = new Analyze(this);
+      this.pixelStack = [];
+      this.layerStack = [];
+      this.renderQueue = [];
+      this.canvasQueue = [];
+      this.currentLayer = null;
       if (type === CamanInstance.Type.Node) {
         this.loadNode.apply(this, args);
       } else {
