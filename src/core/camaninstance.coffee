@@ -27,11 +27,12 @@ class CamanInstance
       @loadNode.apply @, args
     else
       if document.readyState is "complete"
-        @domLoaded()
+        @domLoaded(args, type)
       else
-        document.onreadystatechange = =>
+        listener = =>
           if document.readyState is "complete"
             @domLoaded(args, type)
+        document.addEventListener "readystatechange", listener, false
     
   domLoaded: (args, type) ->
     # Begin initialization
