@@ -1,6 +1,6 @@
 {
   "name": "caman",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Pure Javascript (Ca)nvas (Man)ipulation. Easy, but powerful, image manipulation library.",
   "keywords": ["canvas", "image", "manipulate", "filter", "image manipulation"],
   "homepage": "http://camanjs.com",
