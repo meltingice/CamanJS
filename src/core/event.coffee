@@ -8,6 +8,8 @@ class Event
     "processStart"
     "processComplete"
     "renderFinished"
+    "blockStarted"
+    "blockFinished"
   ]
 
   # Trigger an event

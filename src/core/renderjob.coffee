@@ -61,6 +61,11 @@ class RenderJob
   # Renders a single block of the canvas with the current filter function
   renderBlock: (bnum, start, end) ->
     Log.debug "BLOCK ##{bnum} - Filter: #{@job.name}, Start: #{start}, End: #{end}"
+    Event.trigger @c, "blockStarted",
+      blockNum: bnum
+      totalBlocks: RenderJob.Blocks
+      startPixel: start
+      endPixel: end
 
     data = r: 0, g: 0, b: 0, a: 0
     pixelInfo = new PixelInfo @c
@@ -134,6 +139,11 @@ class RenderJob
   blockFinished: (bnum) ->
     Log.debug "Block ##{bnum} finished! Filter: #{@job.name}" if bnum >= 0
     @blocksDone++
+
+    Event.trigger @c, "blockFinished",
+      blockNum: bnum
+      blocksFinished: @blocksDone
+      totalBlocks: RenderJob.Blocks
 
     if @blocksDone is RenderJob.Blocks or bnum is -1
       Log.debug "Filter #{@job.name} finished!" if bnum >=0
