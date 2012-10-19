@@ -897,7 +897,7 @@
 
     Event.events = {};
 
-    Event.types = ["processStart", "processComplete", "renderFinished"];
+    Event.types = ["processStart", "processComplete", "renderFinished", "blockStarted", "blockFinished"];
 
     Event.trigger = function(target, type, data) {
       var event, _i, _len, _ref, _results;
@@ -1478,6 +1478,12 @@
     RenderJob.prototype.renderBlock = function(bnum, start, end) {
       var data, i, pixelInfo, res, _i;
       Log.debug("BLOCK #" + bnum + " - Filter: " + this.job.name + ", Start: " + start + ", End: " + end);
+      Event.trigger(this.c, "blockStarted", {
+        blockNum: bnum,
+        totalBlocks: RenderJob.Blocks,
+        startPixel: start,
+        endPixel: end
+      });
       data = {
         r: 0,
         g: 0,
@@ -1547,6 +1553,11 @@
         Log.debug("Block #" + bnum + " finished! Filter: " + this.job.name);
       }
       this.blocksDone++;
+      Event.trigger(this.c, "blockFinished", {
+        blockNum: bnum,
+        blocksFinished: this.blocksDone,
+        totalBlocks: RenderJob.Blocks
+      });
       if (this.blocksDone === RenderJob.Blocks || bnum === -1) {
         if (bnum >= 0) {
           Log.debug("Filter " + this.job.name + " finished!");
