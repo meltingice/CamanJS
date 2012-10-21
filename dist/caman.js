@@ -325,7 +325,8 @@
         this.canvas.width = this.image.width;
         this.canvas.height = this.image.height;
         if (window.devicePixelRatio) {
-          this.canvas.setAttribute("style", "width:" + this.image.width + "px;height:" + this.image.height + "px");
+          this.canvas.style.width = "" + this.image.width + "px";
+          this.canvas.style.height = "" + this.image.height + "px";
           this.canvas.width = this.image.width * window.devicePixelRatio;
           this.canvas.height = this.image.height * window.devicePixelRatio;
           this.context.scale(window.devicePixelRatio, window.devicePixelRatio);

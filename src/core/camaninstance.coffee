@@ -173,7 +173,8 @@ class CamanInstance
       @canvas.height = @image.height
 
       if window.devicePixelRatio
-        @canvas.setAttribute("style","width:#{@image.width}px;height:#{@image.height}px")
+        @canvas.style.width = "#{@image.width}px"
+        @canvas.style.height = "#{@image.height}px"
         @canvas.width = @image.width * window.devicePixelRatio
         @canvas.height = @image.height * window.devicePixelRatio
         @context.scale(window.devicePixelRatio, window.devicePixelRatio)
