@@ -56,6 +56,7 @@ class RenderJob
     Plugin.execute @c, @job.plugin, @job.args
     Log.debug "Plugin #{@job.plugin} finished!"
 
+    @c.promise.resolve(@c)
     @renderDone()
 
   # Renders a single block of the canvas with the current filter function

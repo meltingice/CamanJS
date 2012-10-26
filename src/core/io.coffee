@@ -1,5 +1,5 @@
 # Various I/O based operations
-class IO
+Caman.IO = class IO
   @domainRegex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/
 
   # Is the given URL remote?
@@ -80,4 +80,3 @@ class IO
     return @canvas.toDataURL "image/#{type}"
 
 Util.extend CamanInstance::, IO::
-Caman.IO = IO

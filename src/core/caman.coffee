@@ -9,7 +9,7 @@ else
   Root = window
 
 # Here it begins. Caman is defined.
-# There are many different initialization for Caman, which are described on the 
+# There are many different initializations for Caman, which are described on the 
 # [Basic Usage](http://camanjs.com/docs) page.
 #
 # Initialization is tricky because we need to make sure everything we need is actually fully 
@@ -24,22 +24,28 @@ else
 # initialized, the callback function is fired.
 Root.Caman = Caman = ->
   # NodeJS version
-  return new CamanInstance arguments, CamanInstance.Type.Node if exports?
+  promise = new RSVP.Promise()
+
+  if exports?
+    new CamanInstance(promise, arguments, CamanInstance.Type.Node)
+    return promise
 
   switch arguments.length
     when 1
       return Store.get(arguments[0]) if Store.has arguments[0]
-      return new CamanInstance arguments, CamanInstance.Type.Image
+      new CamanInstance(promise, arguments, CamanInstance.Type.Image)
     when 2
-      return Store.execute arguments[0], arguments[1] if Store.has arguments[0]
+      return Store.execute(arguments[0], arguments[1]) if Store.has arguments[0]
       
       if typeof arguments[1] is 'function'
-        return new CamanInstance(arguments, CamanInstance.Type.Unknown)
+        new CamanInstance(promise, arguments, CamanInstance.Type.Unknown)
       else
-        return new CamanInstance(arguments, CamanInstance.Type.Canvas)
+        new CamanInstance(promise, arguments, CamanInstance.Type.Canvas)
     when 3
       return Store.execute arguments[1], arguments[2] if Store.has arguments[0]
-      return new CamanInstance(arguments, CamanInstance.Type.Canvas)
+      new CamanInstance(promise, arguments, CamanInstance.Type.Canvas)
+
+  return promise
     
 Caman.version =
   release: "3.2.2"

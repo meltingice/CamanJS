@@ -30,7 +30,7 @@ class Filter
       name: name
       processFn: processFn
 
-    return @
+    return @promise
 
   # Pushes the kernel into the render queue
   processKernel: (name, adjust, divisor, bias) ->

@@ -58,6 +58,7 @@ coffeeFiles		= [
 ]
 
 pluginsFolder = "src/plugins"
+extFolder = "src/ext"
 
 ###
 Event System
@@ -69,16 +70,24 @@ finished = (type) ->
 finishListener = (type, cb) ->
 	finishedCallback[type] = cb
 
-getPlugins = ->
+getPlugins = -> 
+	util.log "Loading plugins..."
+	includeFolder(pluginsFolder)
+
+getExternalLibraries = ->
+	util.log "Loading external libraries..."
+	includeFolder(extFolder)
+
+includeFolder = (folder) ->
 	content = ""
 
-	util.log "Gathering plugin files in #{pluginsFolder}"
-	pluginFiles = fs.readdirSync pluginsFolder
+	util.log "Gathering files in #{folder}"
+	files = fs.readdirSync folder
 
-	util.log "Discovered #{pluginFiles.length} plugins"
-	for plugin in pluginFiles
-		continue if fs.statSync("#{pluginsFolder}/#{plugin}").isDirectory()
-		content += fs.readFileSync("#{pluginsFolder}/#{plugin}", "utf8") + "\n\n"
+	util.log "Discovered #{files.length} files"
+	for file in files
+		continue if fs.statSync("#{folder}/#{file}").isDirectory()
+		content += fs.readFileSync("#{folder}/#{file}", "utf8") + "\n\n"
 
 	return content
 
@@ -129,8 +138,11 @@ task 'compile', 'Compile all CoffeeScript source files', ->
 			process() if --remaining is 0
 			
 	process = ->
-		core = contents.join("\n\n")
-		full = core + "\n\n" + getPlugins()
+		core = getExternalLibraries()
+		core += contents.join("\n\n")
+
+		full = core + "\n\n"
+		full += getPlugins()
 
 		fs.writeFile "#{targetCoffee}.coffee", core, "utf8", (err) ->
 			util.log err if err

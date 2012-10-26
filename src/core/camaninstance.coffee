@@ -11,7 +11,7 @@ class CamanInstance
   @toString = Caman.toString
 
   # All of the arguments given to the Caman() function are simply thrown here.
-  constructor: (args, type = CamanInstance.Type.Canvas) ->
+  constructor: (@promise, args, type = CamanInstance.Type.Canvas) ->
     # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
     # same instance.
     @id = Util.uniqid.get()
@@ -130,7 +130,7 @@ class CamanInstance
   
   ########## End Canvas Loading ##########
 
-  loadNode: (file, callback) ->
+  loadNode: (file, callback = ->) ->
     img = new Image()
     file = fs.realpathSync file if typeof file is "string"
 
@@ -192,7 +192,7 @@ class CamanInstance
     
     # haha, owl face.
     callback.call @,@
-    return @
+    @promise.resolve(@)
 
   replaceCanvas: (newCanvas) ->
     oldCanvas = @canvas

@@ -1,5 +1,5 @@
 # The filters define all of the built-in functionality that comes with Caman (as opposed to being 
-# provided by a plugin). All of these filters are ratherbasic, but are extremely powerful when
+# provided by a plugin). All of these filters are rather basic, but are extremely powerful when
 # many are combined. For information on creating plugins, check out the 
 # [Plugin Creation](http://camanjs.com/docs/plugin-creation) page, and for information on using 
 # the plugins, check out the [Built-In Functionality](http://camanjs.com/docs/built-in) page.

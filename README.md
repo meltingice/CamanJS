@@ -1,5 +1,16 @@
 <img src="http://camanjs.com/imgs/logo.png" />
 
+**Experimental Promises/A Support**
+
+The code in this branch is currently exploring how well an implementation using rsvp.js would work. The result would let you do something like:
+
+``` coffee
+caman = Caman("#test").then (c) -> 
+  c.brightness(10)
+  c.contrast(20)
+  c.render().then (c) -> c.save()
+```
+
 # About the Project
 
 The main focus of CamanJS is manipulating images using the HTML5 canvas and Javascript. It's a combination of a simple-to-use interface with advanced and efficient image/canvas editing techniques. It is also completely library independent and can be safely used next to jQuery, YUI, Scriptaculous, MooTools, etc.
