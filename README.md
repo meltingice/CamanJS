@@ -123,7 +123,7 @@ Caman "./path/to/file.jpg", ->
 
 # Testing
 
-The test suite for CamanJS is currently being rewritten since the old one was next to useless. It uses BusterJS and PhantomJS for simultaneous NodeJS and headless browser testing. These dependencies are automatically installed if you ran `npm install` as described above.
+The test suite for CamanJS is currently being rewritten since the old one was next to useless. It uses BusterJS and PhantomJS for simultaneous NodeJS and headless browser testing. You can run `npm install -d` to automatically install the dependencies for you.
 
 You will need to first start the test server:
 
