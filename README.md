@@ -98,7 +98,7 @@ CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is 
 CamanJS is fully compatible with NodeJS. The easiest way to install and use it is:
 
 ```
-npm install caman -g
+npm install caman
 ```
 
 If you wish to do things a bit manually, the required libraries are:
@@ -107,7 +107,7 @@ If you wish to do things a bit manually, the required libraries are:
 * libjpeg
 * libpng
 * [node-canvas](https://github.com/LearnBoost/node-canvas)
-  * Can also use: npm install canvas -g
+  * Can also use: npm install canvas
 
 **Saving from NodeJS**
 
@@ -121,7 +121,19 @@ Caman "./path/to/file.jpg", ->
 
 # Testing
 
-CamanJS has both QUnit unit testing and a custom benchmarking page to monitor render times on a per-filter basis.  Simply open test/index.html for the QUnit tests, and test/benchmark.html for the benchmarking tests.
+The test suite for CamanJS is currently being rewritten since the old one was next to useless. It uses BusterJS and PhantomJS for simultaneous NodeJS and headless browser testing. These dependencies are automatically installed if you ran `npm install` as described above.
+
+You will need to first start the test server:
+
+```
+npm run-script test-server
+```
+
+Once that is done, you can run the test suite with `npm test`. When you are done testing, to kill the testing server:
+
+```
+npm run-script kill-server
+```
 
 # Project Contributors
 
