@@ -11,9 +11,12 @@ config["Browser tests"] = {
   tests: ["test/browser/*.coffee"]
 };
 
-config["Node tests"] = {
-  rootPath: "../",
-  environment: "node",
-  extensions: [require("buster-coffee")],
-  tests: ["test/node/*.coffee"]
-};
+// For some reason, Buster doesn't quit when you define two
+// different testing groups. Fairly certain this is a bug with
+// the testing framework.
+// config["Node tests"] = {
+//   rootPath: "../",
+//   environment: "node",
+//   extensions: [require("buster-coffee")],
+//   tests: ["test/node/*.coffee"]
+// };
