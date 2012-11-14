@@ -17,7 +17,7 @@ class IO
         Log.info "Attempting to load a remote image without a configured proxy. URL: #{src}"
         return
       else
-        if Caman.isRemote Caman.remoteProxy
+        if @isRemote Caman.remoteProxy
           Log.info "Cannot use a remote proxy for loading images."
           return
 
