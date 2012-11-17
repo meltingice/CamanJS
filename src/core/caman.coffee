@@ -42,8 +42,8 @@ Root.Caman = Caman = ->
       return new CamanInstance(arguments, CamanInstance.Type.Canvas)
     
 Caman.version =
-  release: "3.2.2"
-  date: "10/11/12"
+  release: "3.2.3"
+  date: "11/17/12"
 
 # Debug mode enables console logging
 Caman.DEBUG = false
