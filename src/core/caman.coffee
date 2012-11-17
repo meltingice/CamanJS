@@ -29,7 +29,7 @@ Root.Caman = Caman = ->
   switch arguments.length
     when 1
       return Store.get(arguments[0]) if Store.has arguments[0]
-      return new CamanInstance arguments, CamanInstance.Type.Image
+      return new CamanInstance arguments, CamanInstance.Type.Unknown
     when 2
       return Store.execute arguments[0], arguments[1] if Store.has arguments[0]
       

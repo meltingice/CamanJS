@@ -77,7 +77,7 @@
         if (Store.has(arguments[0])) {
           return Store.get(arguments[0]);
         }
-        return new CamanInstance(arguments, CamanInstance.Type.Image);
+        return new CamanInstance(arguments, CamanInstance.Type.Unknown);
       case 2:
         if (Store.has(arguments[0])) {
           return Store.execute(arguments[0], arguments[1]);
