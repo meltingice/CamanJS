@@ -1,7 +1,3 @@
 language: node_js
 node_js:
   - 0.8
-before_script:
-  - "npm run-script test-server"
-after_script:
-  - "npm run-script kill-server"
