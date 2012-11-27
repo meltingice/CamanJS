@@ -23,6 +23,8 @@ else
 # This is also why this piece of code is a bit gross. Once everything is loaded, and Caman is 
 # initialized, the callback function is fired.
 Root.Caman = Caman = ->
+  throw "Invalid arguments given" if arguments.length is 0
+
   # NodeJS version
   return new CamanInstance arguments, CamanInstance.Type.Node if exports?
 

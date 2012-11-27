@@ -49,7 +49,7 @@ class CamanInstance
       
   ########## Begin Image Loading ##########
   
-  loadImage: (id, callback = ->) ->   
+  loadImage: (id, callback) ->   
     if typeof id is "object" and id.nodeName?.toLowerCase() is "img"
       image = id
       image.id = "caman-#{Util.uniqid.get()}" unless image.id
@@ -95,7 +95,7 @@ class CamanInstance
   
   ########## Begin Canvas Loading ##########
   
-  loadCanvas: (url, id, callback = ->) ->
+  loadCanvas: (url, id, callback) ->
     if typeof id is "object" and id.nodeName?.toLowerCase() is "canvas"
       element = id
       element.id = "caman-#{Util.uniqid.get()}" unless element.id
@@ -144,10 +144,9 @@ class CamanInstance
       @finishInit callback
 
     img.onerror = (err) -> throw err
-
     img.src = file
     
-  finishInit: (callback) ->
+  finishInit: (callback = ->) ->
     @context = @canvas.getContext("2d")
     
     if @image?

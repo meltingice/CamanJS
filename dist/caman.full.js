@@ -69,6 +69,9 @@
   }
 
   Root.Caman = Caman = function() {
+    if (arguments.length === 0) {
+      throw "Invalid arguments given";
+    }
     if (typeof exports !== "undefined" && exports !== null) {
       return new CamanInstance(arguments, CamanInstance.Type.Node);
     }
@@ -178,9 +181,6 @@
     CamanInstance.prototype.loadImage = function(id, callback) {
       var image, proxyURL, _ref,
         _this = this;
-      if (callback == null) {
-        callback = function() {};
-      }
       if (typeof id === "object" && ((_ref = id.nodeName) != null ? _ref.toLowerCase() : void 0) === "img") {
         image = id;
         if (!image.id) {
@@ -238,9 +238,6 @@
 
     CamanInstance.prototype.loadCanvas = function(url, id, callback) {
       var element, _ref;
-      if (callback == null) {
-        callback = function() {};
-      }
       if (typeof id === "object" && ((_ref = id.nodeName) != null ? _ref.toLowerCase() : void 0) === "canvas") {
         element = id;
         if (!element.id) {
@@ -303,6 +300,9 @@
 
     CamanInstance.prototype.finishInit = function(callback) {
       var newHeight, newWidth, oldHeight, oldWidth;
+      if (callback == null) {
+        callback = function() {};
+      }
       this.context = this.canvas.getContext("2d");
       if (this.image != null) {
         oldWidth = this.image.width;
