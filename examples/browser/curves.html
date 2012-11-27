@@ -4,16 +4,6 @@
   <title>CamanJS Testing Playground</title>
   
   <script type="text/javascript" src="../../dist/caman.full.js"></script>
-
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="../../test/benchmark/flot/jquery.flot.min.js"></script>
-
-  <style type="text/css">
-  .level-graph {
-    width: 800px;
-    height: 400px;
-  }
-  </style>
 </head>
 <body>
   <h1>CamanJS Testing Playground</h1>
@@ -22,20 +12,34 @@
   <table>
     <tr>
       <td>
-       <img id="test" alt="test image" src="../images/test1_600.jpg" />
+       <img id="testimg" alt="test image" src="../images/test1_600.jpg" />
+       <canvas id="test"></canvas>
       </td>
     </tr>
   </table>
 
   <script type="text/javascript">
+  var canvas = document.getElementById('test');
+  var context = canvas.getContext('2d');
+  var img = document.getElementById('testimg');
+  img.onload = function () {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    context.drawImage(img, 0, 0, img.width, img.height);  
+  };
+  
   Caman.DEBUG = true;
+  var caman = Caman(canvas);
+  setTimeout(function () {
+    caman.contrast(20).render();
+  }, 3000);
+  /*
   var test = Caman("#test", function () {
       this.curves('v', [0, 0], [100, 30], [180, 240], [255, 255]);
-
       this.curves('r', [0, 0], [40, 200], [255, 255])
 
       this.render();
-  });
+  });*/
   </script>
 </body>
 </html>

@@ -1,15 +1,12 @@
-buster.spec.expose()
-assert = buster.assert
+Browser = require 'zombie'
+assert = require 'assert'
 
 describe "Initialization", ->
-  before ->
-    $("<img />")
-      .attr('id', 'test')
-      .attr('src', greyPixel)
-      .appendTo('body')
-
-  after ->
-    $("body").html("")
+  before (done) ->
+    @browser = new Browser()
+    @browser
+      .visit('http://localhost:8000/index.html')
+      .then(done, done)
 
   describe "with a single argument", ->
     it "will throw an exception with an unknown image ID", ->
@@ -17,6 +14,7 @@ describe "Initialization", ->
 
     it "can be given a string ID selector", (done) ->
       Caman "#test", ->
+        console.log @pixelData
         assert.defined @pixelData
         assert.tagName $("#test").get(0), "canvas"
         assert.equals @pixelData.length, 4
