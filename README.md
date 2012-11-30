@@ -1,5 +1,3 @@
-<img src="http://camanjs.com/imgs/logo.png" />
-
 # About the Project
 
 [![Build Status](https://secure.travis-ci.org/meltingice/CamanJS.png)](http://travis-ci.org/meltingice/CamanJS)
@@ -123,18 +121,10 @@ Caman "./path/to/file.jpg", ->
 
 # Testing
 
-The test suite for CamanJS is currently being rewritten since the old one was next to useless. It uses BusterJS and PhantomJS for simultaneous NodeJS and headless browser testing. You can run `npm install -d` to automatically install the dependencies for you.
-
-You will need to first start the test server:
+The test suite for CamanJS is currently being rewritten since the old one was next to useless. It uses Mocha, and can be run by executing:
 
 ```
-npm run-script test-server
-```
-
-Once that is done, you can run the test suite with `npm test`. When you are done testing, to kill the testing server:
-
-```
-npm run-script kill-server
+npm test
 ```
 
 # Project Contributors
