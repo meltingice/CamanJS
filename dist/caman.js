@@ -231,12 +231,13 @@
       this.canvasID = id;
       this.options = {
         canvas: id,
-        image: this.image.src
+        image: this.image.src,
+        crossOrigin: this.image.crossOrigin
       };
       return this.finishInit(callback);
     };
 
-    CamanInstance.prototype.loadCanvas = function(url, id, callback) {
+    CamanInstance.prototype.loadCanvas = function(url, xorigin, id, callback) {
       var element, _ref;
       if (typeof id === "object" && ((_ref = id.nodeName) != null ? _ref.toLowerCase() : void 0) === "canvas") {
         element = id;
@@ -250,10 +251,10 @@
           throw "Could not find element " + id;
         }
       }
-      return this.canvasLoaded(url, element, callback);
+      return this.canvasLoaded(url, xorigin, element, callback);
     };
 
-    CamanInstance.prototype.canvasLoaded = function(url, canvas, callback) {
+    CamanInstance.prototype.canvasLoaded = function(url, xorigin, canvas, callback) {
       var proxyURL,
         _this = this;
       this.canvas = canvas;
@@ -269,8 +270,12 @@
         this.canvasID = this.canvas.id;
         this.options = {
           canvas: canvas.id,
-          image: url
+          image: url,
+          crossOrigin: xorigin
         };
+        if (xorigin !== "") {
+          this.image.crossOrigin = "" + xorigin;
+        }
         return this.image.src = proxyURL ? proxyURL : url;
       } else {
         return this.finishInit(callback);
@@ -974,7 +979,7 @@
     };
 
     Filter.prototype.revert = function(ready) {
-      return this.loadCanvas(this.options.image, this.canvas, ready);
+      return this.loadCanvas(this.options.image, this.options.crossOrigin, this.canvas, ready);
     };
 
     Filter.prototype.process = function(name, processFn) {
