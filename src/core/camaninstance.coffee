@@ -1,5 +1,5 @@
 # This is the main class that you interact with once Caman is actaully initialized.
-# It stores all of the important data relevant to a Caman-initialized canvas, and is also 
+# It stores all of the important data relevant to a Caman-initialized canvas, and is also
 # responsible for the actual initialization.
 class CamanInstance
   @Type =
@@ -12,7 +12,7 @@ class CamanInstance
 
   # All of the arguments given to the Caman() function are simply thrown here.
   constructor: (args, type = CamanInstance.Type.Canvas) ->
-    # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
+    # Every instance gets a unique ID. Makes it much simpler to check if two variables are the
     # same instance.
     @id = Util.uniqid.get()
     @analyze = new Analyze @
@@ -33,7 +33,7 @@ class CamanInstance
           if document.readyState is "complete"
             @domLoaded(args, type)
         document.addEventListener "readystatechange", listener, false
-    
+
   domLoaded: (args, type) ->
     # Begin initialization
     switch type
@@ -46,10 +46,10 @@ class CamanInstance
     switch e.nodeName.toLowerCase()
       when "img" then @loadImage.apply @, args
       when "canvas" then @loadCanvas(null, args[0], args[1])
-      
+
   ########## Begin Image Loading ##########
-  
-  loadImage: (id, callback) ->   
+
+  loadImage: (id, callback) ->
     if typeof id is "object" and id.nodeName?.toLowerCase() is "img"
       image = id
       image.id = "caman-#{Util.uniqid.get()}" unless image.id
@@ -68,34 +68,35 @@ class CamanInstance
         @imageLoaded id, image, callback
       else
         image.onload = => @imageLoaded id, image, callback
-        
+
   imageLoaded: (id, image, callback) ->
     @image = image
 
     if not image or image.nodeName.toLowerCase() isnt "img"
       throw "Given element ID isn't an image: #{id}"
-    
+
     @canvas = document.createElement 'canvas'
     @canvas.id = image.id
-    
+
     for attr in ['data-camanwidth', 'data-camanheight']
       @canvas.setAttribute attr, @image.getAttribute(attr) if @image.getAttribute attr
-    
+
 
     image.parentNode.replaceChild @canvas, @image if image.parentNode?
-    
+
     @canvasID = id
     @options =
       canvas: id
       image: @image.src
-      
+      crossOrigin: @image.crossOrigin
+
     @finishInit callback
 
   ########## End Image Loading ##########
-  
+
   ########## Begin Canvas Loading ##########
-  
-  loadCanvas: (url, id, callback) ->
+
+  loadCanvas: (url, xorigin, id, callback) ->
     if typeof id is "object" and id.nodeName?.toLowerCase() is "canvas"
       element = id
       element.id = "caman-#{Util.uniqid.get()}" unless element.id
@@ -105,29 +106,31 @@ class CamanInstance
       else
         throw "Could not find element #{id}"
 
-    @canvasLoaded url, element, callback
-      
-  canvasLoaded: (url, canvas, callback) ->
+    @canvasLoaded url, xorigin, element, callback
+
+  canvasLoaded: (url, xorigin, canvas, callback) ->
     @canvas = canvas
 
     if not canvas or canvas.nodeName.toLowerCase() isnt "canvas"
       throw "Given element ID isn't a canvas: #{id}"
-    
+
     if url?
       @image = document.createElement 'img'
       @image.onload = => @finishInit callback
-      
+
       proxyURL = IO.remoteCheck(url)
-      
+
       @canvasID = @canvas.id
       @options =
         canvas: canvas.id
         image: url
-        
+        crossOrigin: xorigin
+
+      @image.crossOrigin = "#{xorigin}" unless xorigin == ""
       @image.src = if proxyURL then proxyURL else url
     else
       @finishInit callback
-  
+
   ########## End Canvas Loading ##########
 
   loadNode: (file, callback) ->
@@ -137,7 +140,7 @@ class CamanInstance
     img.onload = =>
       @canvasID = Util.uniqid.get()
       @canvas = new Canvas img.width, img.height
-      
+
       context = @canvas.getContext '2d'
       context.drawImage img, 0, 0
 
@@ -145,10 +148,10 @@ class CamanInstance
 
     img.onerror = (err) -> throw err
     img.src = file
-    
+
   finishInit: (callback = ->) ->
     @context = @canvas.getContext("2d")
-    
+
     if @image?
       oldWidth = @image.width
       oldHeight = @image.height
@@ -186,9 +189,9 @@ class CamanInstance
     @dimensions =
       width: @canvas.width
       height: @canvas.height
-      
+
     Store.put @canvasID, @
-    
+
     # haha, owl face.
     callback.call @,@
     return @
@@ -206,4 +209,4 @@ class CamanInstance
     @dimensions =
       width: @canvas.width
       height: @canvas.height
-    
+
