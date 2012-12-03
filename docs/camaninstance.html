@@ -36,7 +36,7 @@ same instance.</p>             </td>             <td class="code">              
       <span class="k">when</span> <span class="s">&quot;img&quot;</span> <span class="k">then</span> <span class="nx">@loadImage</span><span class="p">.</span><span class="nx">apply</span> <span class="nx">@</span><span class="p">,</span> <span class="nx">args</span>
       <span class="k">when</span> <span class="s">&quot;canvas&quot;</span> <span class="k">then</span> <span class="nx">@loadCanvas</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
       </pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h6>### Begin Image Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  
-  <span class="nv">loadImage: </span><span class="nf">(id, callback = -&gt;) -&gt;</span>   
+  <span class="nv">loadImage: </span><span class="nf">(id, callback) -&gt;</span>   
     <span class="k">if</span> <span class="k">typeof</span> <span class="nx">id</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span> <span class="o">and</span> <span class="nx">id</span><span class="p">.</span><span class="nx">nodeName</span><span class="o">?</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">is</span> <span class="s">&quot;img&quot;</span>
       <span class="nv">image = </span><span class="nx">id</span>
       <span class="nv">image.id = </span><span class="s">&quot;caman-</span><span class="si">#{</span><span class="nx">Util</span><span class="p">.</span><span class="nx">uniqid</span><span class="p">.</span><span class="nx">get</span><span class="p">()</span><span class="si">}</span><span class="s">&quot;</span> <span class="nx">unless</span> <span class="nx">image</span><span class="p">.</span><span class="nx">id</span>
@@ -77,7 +77,7 @@ same instance.</p>             </td>             <td class="code">              
       <span class="nv">image: </span><span class="nx">@image</span><span class="p">.</span><span class="nx">src</span>
       
     <span class="nx">@finishInit</span> <span class="nx">callback</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h6>### End Image Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h6>### Begin Canvas Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  
-  <span class="nv">loadCanvas: </span><span class="nf">(url, id, callback = -&gt;) -&gt;</span>
+  <span class="nv">loadCanvas: </span><span class="nf">(url, id, callback) -&gt;</span>
     <span class="k">if</span> <span class="k">typeof</span> <span class="nx">id</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span> <span class="o">and</span> <span class="nx">id</span><span class="p">.</span><span class="nx">nodeName</span><span class="o">?</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">is</span> <span class="s">&quot;canvas&quot;</span>
       <span class="nv">element = </span><span class="nx">id</span>
       <span class="nv">element.id = </span><span class="s">&quot;caman-</span><span class="si">#{</span><span class="nx">Util</span><span class="p">.</span><span class="nx">uniqid</span><span class="p">.</span><span class="nx">get</span><span class="p">()</span><span class="si">}</span><span class="s">&quot;</span> <span class="nx">unless</span> <span class="nx">element</span><span class="p">.</span><span class="nx">id</span>
@@ -96,6 +96,9 @@ same instance.</p>             </td>             <td class="code">              
       <span class="k">throw</span> <span class="s">&quot;Given element ID isn&#39;t a canvas: </span><span class="si">#{</span><span class="nx">id</span><span class="si">}</span><span class="s">&quot;</span>
     
     <span class="k">if</span> <span class="nx">url</span><span class="o">?</span>
+      <span class="k">if</span> <span class="nx">IO</span><span class="p">.</span><span class="nx">isRemote</span><span class="p">(</span><span class="nx">@image</span><span class="p">.</span><span class="nx">src</span><span class="p">)</span>
+        <span class="nv">crossOrigin = </span><span class="k">if</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">crossOrigin</span> <span class="k">then</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">crossOrigin</span> <span class="k">else</span> <span class="s">&quot;anonymous&quot;</span>
+
       <span class="vi">@image = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s">&#39;img&#39;</span>
       <span class="vi">@image.onload = </span><span class="o">=&gt;</span> <span class="nx">@finishInit</span> <span class="nx">callback</span>
       
@@ -105,7 +108,8 @@ same instance.</p>             </td>             <td class="code">              
       <span class="vi">@options =</span>
         <span class="nv">canvas: </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">id</span>
         <span class="nv">image: </span><span class="nx">url</span>
-        
+       
+      <span class="vi">@image.crossOrigin = </span><span class="nx">crossOrigin</span> <span class="k">if</span> <span class="nx">crossOrigin</span> 
       <span class="vi">@image.src = </span><span class="k">if</span> <span class="nx">proxyURL</span> <span class="k">then</span> <span class="nx">proxyURL</span> <span class="k">else</span> <span class="nx">url</span>
     <span class="k">else</span>
       <span class="nx">@finishInit</span> <span class="nx">callback</span>
@@ -123,10 +127,9 @@ same instance.</p>             </td>             <td class="code">              
       <span class="nx">@finishInit</span> <span class="nx">callback</span>
 
     <span class="nv">img.onerror = </span><span class="nf">(err) -&gt;</span> <span class="k">throw</span> <span class="nx">err</span>
-
     <span class="nv">img.src = </span><span class="nx">file</span>
     
-  <span class="nv">finishInit: </span><span class="nf">(callback) -&gt;</span>
+  <span class="nv">finishInit: </span><span class="nf">(callback = -&gt;) -&gt;</span>
     <span class="vi">@context = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s">&quot;2d&quot;</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="nx">@image</span><span class="o">?</span>
