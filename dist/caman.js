@@ -254,13 +254,16 @@
     };
 
     CamanInstance.prototype.canvasLoaded = function(url, canvas, callback) {
-      var proxyURL,
+      var crossOrigin, proxyURL,
         _this = this;
       this.canvas = canvas;
       if (!canvas || canvas.nodeName.toLowerCase() !== "canvas") {
         throw "Given element ID isn't a canvas: " + id;
       }
       if (url != null) {
+        if (IO.isRemote(this.image.src)) {
+          crossOrigin = this.image.crossOrigin ? this.image.crossOrigin : "anonymous";
+        }
         this.image = document.createElement('img');
         this.image.onload = function() {
           return _this.finishInit(callback);
@@ -271,6 +274,9 @@
           canvas: canvas.id,
           image: url
         };
+        if (crossOrigin) {
+          this.image.crossOrigin = crossOrigin;
+        }
         return this.image.src = proxyURL ? proxyURL : url;
       } else {
         return this.finishInit(callback);
