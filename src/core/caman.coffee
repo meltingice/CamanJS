@@ -53,6 +53,9 @@ Caman.DEBUG = false
 # Should we check the DOM for images with Caman instructions?
 Caman.autoload = not exports?
 
+# Default cross-origin policy
+Caman.crossOrigin = "anonymous"
+
 Caman.toString = ->
   "Version " + Caman.version.release + ", Released " + Caman.version.date;
 

@@ -108,6 +108,8 @@
 
   Caman.autoload = !(typeof exports !== "undefined" && exports !== null);
 
+  Caman.crossOrigin = "anonymous";
+
   Caman.toString = function() {
     return "Version " + Caman.version.release + ", Released " + Caman.version.date;
   };
@@ -254,30 +256,30 @@
     };
 
     CamanInstance.prototype.canvasLoaded = function(url, canvas, callback) {
-      var crossOrigin, proxyURL,
+      var proxyURL,
         _this = this;
       this.canvas = canvas;
       if (!canvas || canvas.nodeName.toLowerCase() !== "canvas") {
         throw "Given element ID isn't a canvas: " + id;
       }
       if (url != null) {
-        if (IO.isRemote(this.image.src)) {
-          crossOrigin = this.image.crossOrigin ? this.image.crossOrigin : "anonymous";
-        }
         this.image = document.createElement('img');
         this.image.onload = function() {
           return _this.finishInit(callback);
         };
         proxyURL = IO.remoteCheck(url);
+        if (proxyURL) {
+          url = proxyURL;
+        }
         this.canvasID = this.canvas.id;
         this.options = {
           canvas: canvas.id,
           image: url
         };
-        if (crossOrigin) {
-          this.image.crossOrigin = crossOrigin;
+        if (IO.isRemote(url)) {
+          this.image.crossOrigin = Caman.crossOrigin;
         }
-        return this.image.src = proxyURL ? proxyURL : url;
+        return this.image.src = url;
       } else {
         return this.finishInit(callback);
       }

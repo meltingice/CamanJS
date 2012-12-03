@@ -96,21 +96,19 @@ same instance.</p>             </td>             <td class="code">              
       <span class="k">throw</span> <span class="s">&quot;Given element ID isn&#39;t a canvas: </span><span class="si">#{</span><span class="nx">id</span><span class="si">}</span><span class="s">&quot;</span>
     
     <span class="k">if</span> <span class="nx">url</span><span class="o">?</span>
-      <span class="k">if</span> <span class="nx">IO</span><span class="p">.</span><span class="nx">isRemote</span><span class="p">(</span><span class="nx">@image</span><span class="p">.</span><span class="nx">src</span><span class="p">)</span>
-        <span class="nv">crossOrigin = </span><span class="k">if</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">crossOrigin</span> <span class="k">then</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">crossOrigin</span> <span class="k">else</span> <span class="s">&quot;anonymous&quot;</span>
-
       <span class="vi">@image = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s">&#39;img&#39;</span>
       <span class="vi">@image.onload = </span><span class="o">=&gt;</span> <span class="nx">@finishInit</span> <span class="nx">callback</span>
-      
+
       <span class="nv">proxyURL = </span><span class="nx">IO</span><span class="p">.</span><span class="nx">remoteCheck</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+      <span class="nv">url = </span><span class="nx">proxyURL</span> <span class="k">if</span> <span class="nx">proxyURL</span>
       
       <span class="vi">@canvasID = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">id</span>
       <span class="vi">@options =</span>
         <span class="nv">canvas: </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">id</span>
         <span class="nv">image: </span><span class="nx">url</span>
-       
-      <span class="vi">@image.crossOrigin = </span><span class="nx">crossOrigin</span> <span class="k">if</span> <span class="nx">crossOrigin</span> 
-      <span class="vi">@image.src = </span><span class="k">if</span> <span class="nx">proxyURL</span> <span class="k">then</span> <span class="nx">proxyURL</span> <span class="k">else</span> <span class="nx">url</span>
+      
+      <span class="vi">@image.crossOrigin = </span><span class="nx">Caman</span><span class="p">.</span><span class="nx">crossOrigin</span> <span class="k">if</span> <span class="nx">IO</span><span class="p">.</span><span class="nx">isRemote</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+      <span class="vi">@image.src = </span><span class="nx">url</span>
     <span class="k">else</span>
       <span class="nx">@finishInit</span> <span class="nx">callback</span>
   </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h6>### End Canvas Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">loadNode: </span><span class="nf">(file, callback) -&gt;</span>
