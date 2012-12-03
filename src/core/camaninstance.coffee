@@ -114,6 +114,7 @@ class CamanInstance
       throw "Given element ID isn't a canvas: #{id}"
     
     if url?
+      crossOrigin = if IO.isRemote(@image.src) then @image.crossOrigin if @image.crossOrigin else "anonymous"
       @image = document.createElement 'img'
       @image.onload = => @finishInit callback
       
@@ -123,7 +124,8 @@ class CamanInstance
       @options =
         canvas: canvas.id
         image: url
-        
+       
+      @image.crossOrigin = crossOrigin if crossOrigin 
       @image.src = if proxyURL then proxyURL else url
     else
       @finishInit callback
