@@ -16,6 +16,7 @@ class CamanInstance
     # same instance.
     @id = Util.uniqid.get()
     @analyze = new Analyze @
+    @originalPixelData = []
     @pixelStack = []  # Stores the pixel layers
     @layerStack = []  # Stores all of the layers waiting to be rendered
     @renderQueue = [] # Stores all of the render operatives
@@ -88,6 +89,8 @@ class CamanInstance
     @options =
       canvas: id
       image: @image.src
+
+    @options.crossOrigin = @image.crossOrigin if @image.crossOrigin
       
     @finishInit callback
 
@@ -183,7 +186,9 @@ class CamanInstance
       @context.drawImage(@image, 0, 0, @image.width, @image.height)
 
     @imageData = @context.getImageData(0, 0, @canvas.width, @canvas.height)
+    
     @pixelData = @imageData.data
+    @originalPixelData.push pixel for pixel in @pixelData
 
     @dimensions =
       width: @canvas.width

@@ -137,6 +137,7 @@
       }
       this.id = Util.uniqid.get();
       this.analyze = new Analyze(this);
+      this.originalPixelData = [];
       this.pixelStack = [];
       this.layerStack = [];
       this.renderQueue = [];
@@ -235,6 +236,9 @@
         canvas: id,
         image: this.image.src
       };
+      if (this.image.crossOrigin) {
+        this.options.crossOrigin = this.image.crossOrigin;
+      }
       return this.finishInit(callback);
     };
 
@@ -307,7 +311,7 @@
     };
 
     CamanInstance.prototype.finishInit = function(callback) {
-      var newHeight, newWidth, oldHeight, oldWidth;
+      var newHeight, newWidth, oldHeight, oldWidth, pixel, _i, _len, _ref;
       if (callback == null) {
         callback = function() {};
       }
@@ -343,6 +347,11 @@
       }
       this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
       this.pixelData = this.imageData.data;
+      _ref = this.pixelData;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        pixel = _ref[_i];
+        this.originalPixelData.push(pixel);
+      }
       this.dimensions = {
         width: this.canvas.width,
         height: this.canvas.height
@@ -982,7 +991,17 @@
     };
 
     Filter.prototype.revert = function(ready) {
-      return this.loadCanvas(this.options.image, this.canvas, ready);
+      var i, pixel, _i, _len, _ref;
+      if (ready == null) {
+        ready = function() {};
+      }
+      _ref = this.originalPixelData;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        pixel = _ref[i];
+        this.pixelData[i] = pixel;
+      }
+      this.context.putImageData(this.imageData, 0, 0);
+      return ready.call(this);
     };
 
     Filter.prototype.process = function(name, processFn) {

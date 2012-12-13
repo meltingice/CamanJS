@@ -19,8 +19,10 @@ class Filter
       callback.call @
 
   # Reverts an image back to it's original state by re-initializing Caman
-  revert: (ready) ->
-    @loadCanvas @options.image, @canvas, ready
+  revert: (ready = ->) ->
+    @pixelData[i] = pixel for pixel, i in @originalPixelData
+    @context.putImageData @imageData, 0, 0
+    ready.call @
 
   # Pushes the filter callback that modifies the RGBA object into the
   # render queue
