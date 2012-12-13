@@ -10,6 +10,7 @@ responsible for the actual initialization.</p>             </td>             <td
   <span class="vi">@toString = </span><span class="nx">Caman</span><span class="p">.</span><span class="nx">toString</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>All of the arguments given to the Caman() function are simply thrown here.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">constructor: </span><span class="nf">(args, type = CamanInstance.Type.Canvas) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
 same instance.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@id = </span><span class="nx">Util</span><span class="p">.</span><span class="nx">uniqid</span><span class="p">.</span><span class="nx">get</span><span class="p">()</span>
     <span class="vi">@analyze = </span><span class="k">new</span> <span class="nx">Analyze</span> <span class="nx">@</span>
+    <span class="vi">@originalPixelData = </span><span class="p">[]</span>
     <span class="vi">@pixelStack = </span><span class="p">[]</span>  <span class="c1"># Stores the pixel layers</span>
     <span class="vi">@layerStack = </span><span class="p">[]</span>  <span class="c1"># Stores all of the layers waiting to be rendered</span>
     <span class="vi">@renderQueue = </span><span class="p">[]</span> <span class="c1"># Stores all of the render operatives</span>
@@ -75,6 +76,8 @@ same instance.</p>             </td>             <td class="code">              
     <span class="vi">@options =</span>
       <span class="nv">canvas: </span><span class="nx">id</span>
       <span class="nv">image: </span><span class="nx">@image</span><span class="p">.</span><span class="nx">src</span>
+
+    <span class="vi">@options.crossOrigin = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">crossOrigin</span> <span class="k">if</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">crossOrigin</span>
       
     <span class="nx">@finishInit</span> <span class="nx">callback</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h6>### End Image Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h6>### Begin Canvas Loading</h6>             </td>             <td class="code">               <div class="highlight"><pre>  
   <span class="nv">loadCanvas: </span><span class="nf">(url, id, callback) -&gt;</span>
@@ -159,7 +162,9 @@ same instance.</p>             </td>             <td class="code">              
       <span class="nx">@context</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">@image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span>
 
     <span class="vi">@imageData = </span><span class="nx">@context</span><span class="p">.</span><span class="nx">getImageData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span>
+    
     <span class="vi">@pixelData = </span><span class="nx">@imageData</span><span class="p">.</span><span class="nx">data</span>
+    <span class="nx">@originalPixelData</span><span class="p">.</span><span class="nx">push</span> <span class="nx">pixel</span> <span class="k">for</span> <span class="nx">pixel</span> <span class="k">in</span> <span class="nx">@pixelData</span>
 
     <span class="vi">@dimensions =</span>
       <span class="nv">width: </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
