@@ -7,6 +7,7 @@ class Event
   @types = [
     "processStart"
     "processComplete"
+    "renderStart"
     "renderFinished"
     "blockStarted"
     "blockFinished"

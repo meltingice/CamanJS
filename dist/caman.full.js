@@ -915,7 +915,7 @@
 
     Event.events = {};
 
-    Event.types = ["processStart", "processComplete", "renderFinished", "blockStarted", "blockFinished"];
+    Event.types = ["processStart", "processComplete", "renderStart", "renderFinished", "blockStarted", "blockFinished"];
 
     Event.trigger = function(target, type, data) {
       var event, _i, _len, _ref, _results;
@@ -984,6 +984,7 @@
       if (callback == null) {
         callback = function() {};
       }
+      Event.trigger(this, "renderStart");
       return this.processNext(function() {
         _this.context.putImageData(_this.imageData, 0, 0);
         return callback.call(_this);

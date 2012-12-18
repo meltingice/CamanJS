@@ -14,6 +14,8 @@ class Filter
 
   # Begins the rendering process
   render: (callback = ->) ->
+    Event.trigger @, "renderStart"
+    
     @processNext =>
       @context.putImageData @imageData, 0, 0
       callback.call @
