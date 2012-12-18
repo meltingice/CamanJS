@@ -4,6 +4,8 @@ if exports?
   Canvas = require 'canvas'
   Image = Canvas.Image
 
+  Fiber = require 'fibers'
+
   fs = require 'fs'
 else
   Root = window
@@ -50,8 +52,10 @@ Caman.version =
 # Debug mode enables console logging
 Caman.DEBUG = false
 
+Caman.NodeJS = exports?
+
 # Should we check the DOM for images with Caman instructions?
-Caman.autoload = not exports?
+Caman.autoload = not Caman.NodeJS
 
 # Default cross-origin policy
 Caman.crossOrigin = "anonymous"

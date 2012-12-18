@@ -1,6 +1,12 @@
 {Caman} = require __dirname + '/../../dist/caman.full'
 Caman.DEBUG = true
 
-Caman "../images/pic.jpg", ->
+Caman __dirname + "/../images/test1_1280.jpg", ->
   @sunrise()
-  @render -> @save "./output.jpg"
+
+  start = (new Date()).getTime()
+  @render ->
+    end = (new Date()).getTime()
+    console.log "Rendered in #{end - start}ms"
+    
+    @save "./output.jpg"

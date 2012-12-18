@@ -3,7 +3,7 @@
 class RenderJob
   # The number of blocks to split the image into during the render process to simulate 
   # concurrency. This also helps the browser manage the (possibly) long running render jobs.
-  @Blocks = 4
+  @Blocks = if Caman.NodeJS then require('os').cpus().length else 4
 
   @execute: (instance, job, callback) ->
     rj = new RenderJob instance, job, callback
@@ -44,9 +44,15 @@ class RenderJob
         start = j * blockN
         end = start + (if j is RenderJob.Blocks - 1 then lastBlockN else blockN)
 
-        setTimeout do (j, start, end) => 
-          => @renderBlock(j, start, end)
-        , 0
+        if Caman.NodeJS
+          f = Fiber =>
+            @renderBlock j, start, end
+
+          f.run()
+        else
+          setTimeout do (j, start, end) => 
+            => @renderBlock(j, start, end)
+          , 0
     else
       @renderKernel()
 
@@ -87,6 +93,7 @@ class RenderJob
       @c.pixelData[i+3] = Util.clampRGB res.a
 
     @blockFinished(bnum)
+    Fiber.yield() if Caman.NodeJS
 
   # Applies an image kernel to the canvas
   renderKernel: ->
