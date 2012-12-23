@@ -68,7 +68,7 @@ If you're running OSX and have Growl installed, it's also recommended you have:
 
 * coffeescript-growl
 
-Because all plugins in a separate repository, make sure you run:
+Because all plugins are in a separate repository, make sure you run:
 
 ```
 git submodule init && git submodule update
