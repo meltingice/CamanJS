@@ -68,46 +68,34 @@ If you're running OSX and have Growl installed, it's also recommended you have:
 
 * coffeescript-growl
 
-To build, simply run:
+Because all plugins in a separate repository, make sure you run:
 
 ```
-cake build
+git submodule init && git submodule update
 ```
 
-The resulting files will be placed in the dist/ folder. Plugins will be automatically discovered and added to caman.full.js after the core library.
+To build, simply run `cake build`. The resulting files will be placed in the dist/ folder. Plugins will be automatically discovered and added to caman.full.js after the core library.
 
 If you add any files to the core library, you will need to add them to the `coffeeFiles` array in the Cakefile. The point of this is so that order is preserved when generating the file JS file. Plugins do not need to be added to the Cakefile.
 
-You will probably want to generate documentation if you make any changes or add a plugin. In addition to the normal requirements, you will also need:
+You will probably want to generate documentation if you make any changes. In addition to the normal requirements, you will also need:
 
 * docco
 * Pygments (Python library)
 
-To generate the documentation, run:
-
-```
-cake docs
-```
+To generate the documentation, run `cake docs`.
 
 ## CDN JS Hosting
 
-CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from [this URL](http://cdnjs.cloudflare.com/ajax/libs/camanjs/3.2.2/caman.full.min.js) for usage on your site.
+CamanJS is hosted on CDN JS if you're looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from [this URL](http://cdnjs.cloudflare.com/ajax/libs/camanjs/3.3.0/caman.full.min.js) for usage on your site.
 
 ## NodeJS Compatibility
 
-CamanJS is fully compatible with NodeJS. The easiest way to install and use it is:
+CamanJS is fully compatible with NodeJS. The easiest way to install it is:
 
 ```
 npm install caman
 ```
-
-If you wish to do things a bit manually, the required libraries are:
-
-* cairo >= 1.10.0
-* libjpeg
-* libpng
-* [node-canvas](https://github.com/LearnBoost/node-canvas)
-  * Can also use: npm install canvas
 
 **Saving from NodeJS**
 
