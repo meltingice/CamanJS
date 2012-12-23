@@ -11,7 +11,7 @@
     if (root == null) {
       root = document;
     }
-    if (typeof sel === "object") {
+    if (typeof sel === "object" || (typeof exports !== "undefined" && exports !== null)) {
       return sel;
     }
     return root.querySelector(sel);
@@ -55,6 +55,23 @@
       return val;
     };
 
+    Util.copyAttributes = function(from, to, opts) {
+      var attr, _i, _len, _ref, _ref1, _results;
+      if (opts == null) {
+        opts = {};
+      }
+      _ref = from.attributes;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        attr = _ref[_i];
+        if ((opts.except != null) && (_ref1 = attr.nodeName, __indexOf.call(opts.except, _ref1) >= 0)) {
+          continue;
+        }
+        _results.push(to.setAttribute(attr.nodeName.attr.nodeValue));
+      }
+      return _results;
+    };
+
     return Util;
 
   })();
@@ -69,57 +86,107 @@
     Root = window;
   }
 
-  Root.Caman = Caman = function() {
-    if (arguments.length === 0) {
-      throw "Invalid arguments given";
+  Root.Caman = Caman = (function() {
+
+    Caman.version = {
+      release: "3.4.0",
+      date: "12/17/12"
+    };
+
+    Caman.DEBUG = false;
+
+    Caman.NodeJS = typeof exports !== "undefined" && exports !== null;
+
+    Caman.autoload = !Caman.NodeJS;
+
+    Caman.crossOrigin = "anonymous";
+
+    Caman.toString = function() {
+      return "Version " + Caman.version.release + ", Released " + Caman.version.date;
+    };
+
+    Caman.remoteProxy = "";
+
+    function Caman() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (this instanceof Caman) {
+        this.parseArguments(args);
+        this.setup();
+      } else {
+        return new Caman(args);
+      }
     }
-    if (typeof exports !== "undefined" && exports !== null) {
-      return new CamanInstance(arguments, CamanInstance.Type.Node);
-    }
-    switch (arguments.length) {
-      case 1:
-        if (Store.has(arguments[0])) {
-          return Store.get(arguments[0]);
-        }
-        return new CamanInstance(arguments, CamanInstance.Type.Unknown);
-      case 2:
-        if (Store.has(arguments[0])) {
-          return Store.execute(arguments[0], arguments[1]);
-        }
-        if (typeof arguments[1] === 'function') {
-          return new CamanInstance(arguments, CamanInstance.Type.Unknown);
-        } else {
-          return new CamanInstance(arguments, CamanInstance.Type.Canvas);
-        }
-        break;
-      case 3:
-        if (Store.has(arguments[0])) {
-          return Store.execute(arguments[1], arguments[2]);
-        }
-        return new CamanInstance(arguments, CamanInstance.Type.Canvas);
-    }
-  };
 
-  Caman.version = {
-    release: "3.4.0",
-    date: "12/17/12"
-  };
+    Caman.prototype.parseArguments = function(args) {
+      if (args.length === 0) {
+        throw "Invalid arguments given";
+      }
+      this.initObj = null;
+      this.initType = null;
+      this.imageUrl = null;
+      this.callback = function() {};
+      this.setInitObject(args[0]);
+      if (args.length === 1) {
+        return;
+      }
+      switch (typeof args[1]) {
+        case "string":
+          this.imageUrl = args[1];
+          break;
+        case "function":
+          this.callback = args[1];
+      }
+      if (args.length === 2) {
+        return;
+      }
+      return this.callback = args[2];
+    };
 
-  Caman.DEBUG = false;
+    Caman.prototype.setInitObject = function(obj) {
+      if (typeof obj === "object") {
+        this.initObj = obj;
+      } else {
+        this.initObj = $(obj);
+      }
+      if (Caman.NodeJS) {
+        return this.initType = 'node';
+      } else {
+        return this.initType = obj.nodeName.toLowerCase();
+      }
+    };
 
-  Caman.NodeJS = typeof exports !== "undefined" && exports !== null;
+    Caman.prototype.setup = function() {
+      switch (this.initType) {
+        case "node":
+          return this.initNode();
+        case "img":
+          return this.initImage();
+        case "canvas":
+          return this.initCanvas();
+      }
+    };
 
-  Caman.autoload = !Caman.NodeJS;
+    Caman.prototype.initNode = function() {
+      var img;
+      img = new Image();
+      img.onload = this.loadFinished;
+      img.onerror = function(err) {
+        throw err;
+      };
+      return img.src = this.initObj;
+    };
 
-  Caman.crossOrigin = "anonymous";
+    Caman.prototype.initImage = function() {
+      this.canvas = document.createElement('canvas');
+      return Util.copyAttributes(this.initObj, this.canvas, {
+        except: ['src']
+      });
+    };
 
-  Caman.toString = function() {
-    return "Version " + Caman.version.release + ", Released " + Caman.version.date;
-  };
+    return Caman;
 
-  Caman.remoteProxy = "";
-
-  Caman.Util = Util;
+  })();
 
   CamanInstance = (function() {
 

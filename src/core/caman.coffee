@@ -24,44 +24,100 @@ else
 # The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
 # This is also why this piece of code is a bit gross. Once everything is loaded, and Caman is 
 # initialized, the callback function is fired.
-Root.Caman = Caman = ->
-  throw "Invalid arguments given" if arguments.length is 0
+Root.Caman = class Caman
+  @version:
+    release: "3.4.0"
+    date: "12/17/12"
 
-  # NodeJS version
-  return new CamanInstance arguments, CamanInstance.Type.Node if exports?
+  # Debug mode enables console logging
+  @DEBUG: false
+  @NodeJS: exports?
 
-  switch arguments.length
-    when 1
-      return Store.get(arguments[0]) if Store.has arguments[0]
-      return new CamanInstance arguments, CamanInstance.Type.Unknown
-    when 2
-      return Store.execute arguments[0], arguments[1] if Store.has arguments[0]
-      
-      if typeof arguments[1] is 'function'
-        return new CamanInstance(arguments, CamanInstance.Type.Unknown)
-      else
-        return new CamanInstance(arguments, CamanInstance.Type.Canvas)
-    when 3
-      return Store.execute arguments[1], arguments[2] if Store.has arguments[0]
-      return new CamanInstance(arguments, CamanInstance.Type.Canvas)
+  # Should we check the DOM for images with Caman instructions?
+  @autoload: not Caman.NodeJS
+
+  # Default cross-origin policy
+  @crossOrigin: "anonymous"
+
+  @toString: ->
+    "Version " + Caman.version.release + ", Released " + Caman.version.date;
+
+  @remoteProxy = ""
+
+  constructor: (args...) ->
+    if @ instanceof Caman
+      @parseArguments(args)
+      @setup()
+
+    else return new Caman(args)
+
+  # All possible combinations:
+  #
+  # 1 argument
+  #   - Image selector
+  #   - Image object
+  #   - Canvas selector
+  #   - Canvas object
+  # 2 arguments
+  #   - Image selector + callback
+  #   - Image object + callback
+  #   - Canvas selector + URL
+  #   - Canvas object + URL
+  # 3 arguments
+  #   - Canvas selector + URL + callback
+  #   - Canvas object + URL + callback
+  # NodeJS
+  #   - file path
+  #   - file object
+  #   - file path + callback
+  #   - file object + callback
+  parseArguments: (args) ->
+    throw "Invalid arguments given" if args.length is 0
+
+    # Defaults
+    @initObj = null
+    @initType = null
+    @imageUrl = null
+    @callback = ->
+
+    # First argument is always our canvas/image
+    @setInitObject args[0]
+    return if args.length is 1
     
-Caman.version =
-  release: "3.4.0"
-  date: "12/17/12"
+    switch typeof args[1]
+      when "string" then @imageUrl = args[1]
+      when "function" then @callback = args[1]
+      
+    return if args.length is 2
 
-# Debug mode enables console logging
-Caman.DEBUG = false
+    @callback = args[2]
 
-Caman.NodeJS = exports?
+  setInitObject: (obj) ->
+    if typeof obj is "object"
+      @initObj = obj
+    else
+      @initObj = $(obj)
 
-# Should we check the DOM for images with Caman instructions?
-Caman.autoload = not Caman.NodeJS
+    if Caman.NodeJS
+      @initType = 'node'
+    else
+      @initType = obj.nodeName.toLowerCase()
 
-# Default cross-origin policy
-Caman.crossOrigin = "anonymous"
+  setup: ->
+    switch @initType
+      when "node" then @initNode()
+      when "img" then @initImage()
+      when "canvas" then @initCanvas()
 
-Caman.toString = ->
-  "Version " + Caman.version.release + ", Released " + Caman.version.date;
+  initNode: ->
+    img = new Image()
+    img.onload = @loadFinished
+    img.onerror = (err) -> throw err
+    img.src = @initObj
 
-Caman.remoteProxy = ""
-Caman.Util = Util
+  initImage: ->
+    @canvas = document.createElement 'canvas'
+    Util.copyAttributes @initObj, @canvas, except: ['src']
+    
+
+  

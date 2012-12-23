@@ -2,8 +2,9 @@
 slice = Array::slice
 
 # DOM simplifier (no jQuery dependency)
+# NodeJS compatible
 $ = (sel, root = document) ->
-  return sel if typeof sel is "object"
+  return sel if typeof sel is "object" or exports?
   root.querySelector sel
 
 class Util
@@ -29,3 +30,8 @@ class Util
     return 0 if val < 0
     return 255 if val > 255
     val
+
+  @copyAttributes: (from, to, opts={}) ->
+    for attr in from.attributes
+      continue if opts.except? and attr.nodeName in opts.except
+      to.setAttribute(attr.nodeName. attr.nodeValue)
