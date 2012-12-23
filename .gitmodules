@@ -1,3 +1,6 @@
 [submodule "test/qunit"]
 	path = test/qunit
 	url = https://github.com/jquery/qunit.git
+[submodule "src/plugins"]
+	path = src/plugins
+	url = https://github.com/meltingice/CamanJS-Plugins.git
