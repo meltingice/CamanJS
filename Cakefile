@@ -57,7 +57,7 @@ coffeeFiles		= [
 	"lib/filters"
 ]
 
-pluginsFolder = "src/plugins"
+pluginsFolder = "src/plugins/src"
 
 ###
 Event System
