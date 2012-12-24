@@ -68,7 +68,7 @@
         if ((opts.except != null) && (_ref1 = attr.nodeName, __indexOf.call(opts.except, _ref1) >= 0)) {
           continue;
         }
-        _results.push(to.setAttribute(attr.nodeName.attr.nodeValue));
+        _results.push(to.setAttribute(attr.nodeName, attr.nodeValue));
       }
       return _results;
     };
@@ -170,7 +170,7 @@
       } else {
         this.initObj = $(obj);
       }
-      return this.initType = obj.nodeName.toLowerCase();
+      return this.initType = this.initObj.nodeName.toLowerCase();
     };
 
     Caman.prototype.setup = function() {
@@ -205,8 +205,21 @@
         except: ['src']
       });
       return this.imageLoaded(function() {
-        _this.image.parentNode.replaceChild(_this.canvas, _this.image);
-        return _this.finishInit();
+        _this.canvas.width = _this.image.width;
+        _this.canvas.height = _this.image.height;
+        if (_this.needsHiDPISwap()) {
+          Log.debug(_this.image.src, "->", _this.hiDPIReplacement());
+          _this.image.src = _this.hiDPIReplacement();
+          return _this.imageLoaded(function() {
+            Log.debug("HiDPI version loaded");
+            _this.swapped = true;
+            _this.image.parentNode.replaceChild(_this.canvas, _this.image);
+            return _this.finishInit();
+          });
+        } else {
+          _this.image.parentNode.replaceChild(_this.canvas, _this.image);
+          return _this.finishInit();
+        }
       });
     };
 
@@ -232,9 +245,11 @@
       var pixel, _i, _len, _ref;
       this.assignId();
       this.context = this.canvas.getContext('2d');
+      this.originalWidth = this.width = this.canvas.width;
+      this.originalHeight = this.height = this.canvas.height;
       this.hiDPIAdjustments();
       if (this.image != null) {
-        this.context.drawImage(this.image, 0, 0);
+        this.context.drawImage(this.image, 0, 0, this.image.width, this.image.height, 0, 0, this.originalWidth, this.originalHeight);
       }
       this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
       this.pixelData = this.imageData.data;
@@ -262,24 +277,50 @@
       return this.canvas.getAttribute('data-caman-id');
     };
 
+    Caman.prototype.hiDPIDisabled = function() {
+      return this.canvas.getAttribute('data-caman-hidpi-disabled') !== null;
+    };
+
     Caman.prototype.hiDPIAdjustments = function() {
-      var backingStoreRatio, devicePixelRatio, oldHeight, oldWidth, ratio;
-      if (Caman.NodeJS) {
+      var ratio;
+      if (Caman.NodeJS || this.hiDPIDisabled()) {
         return;
       }
+      ratio = this.hiDPIRatio();
+      if (ratio !== 1) {
+        Log.debug("HiDPI ratio = " + ratio);
+        this.scaled = true;
+        this.originalWidth = this.canvas.width;
+        this.originalHeight = this.canvas.height;
+        this.canvas.width = this.originalWidth * ratio;
+        this.canvas.height = this.originalHeight * ratio;
+        this.canvas.style.width = "" + this.originalWidth + "px";
+        this.canvas.style.height = "" + this.originalHeight + "px";
+        this.context.scale(ratio, ratio);
+        this.width = this.canvas.width;
+        return this.height = this.canvas.height;
+      }
+    };
+
+    Caman.prototype.hiDPIRatio = function() {
+      var backingStoreRatio, devicePixelRatio;
       devicePixelRatio = window.devicePixelRatio || 1;
       backingStoreRatio = this.context.webkitBackingStorePixelRatio || this.context.mozBackingStorePixelRatio || this.context.msBackingStorePixelRatio || this.context.oBackingStorePixelRatio || this.context.backingStorePixelRatio || 1;
-      ratio = devicePixelRatio / backingStoreRatio;
-      if (devicePixelRatio !== backingStoreRatio) {
-        this.scaled = true;
-        oldWidth = this.canvas.width;
-        oldHeight = this.canvas.height;
-        this.canvas.width = oldWidth * ratio;
-        this.canvas.height = oldHeight * ratio;
-        this.canvas.style.width = "" + oldWidth + "px";
-        this.canvas.style.height = "" + oldHeight + "px";
-        return this.context.scale(ratio, ratio);
+      return devicePixelRatio / backingStoreRatio;
+    };
+
+    Caman.prototype.needsHiDPISwap = function() {
+      if (this.hiDPIDisabled() || (window.devicePixelRatio || 1) === 1) {
+        return false;
       }
+      return this.hiDPIReplacement() !== null;
+    };
+
+    Caman.prototype.hiDPIReplacement = function() {
+      if (this.image == null) {
+        return null;
+      }
+      return this.image.getAttribute('data-caman-hidpi');
     };
 
     Caman.prototype.replaceCanvas = function(newCanvas) {

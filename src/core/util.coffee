@@ -34,4 +34,4 @@ class Util
   @copyAttributes: (from, to, opts={}) ->
     for attr in from.attributes
       continue if opts.except? and attr.nodeName in opts.except
-      to.setAttribute(attr.nodeName. attr.nodeValue)
+      to.setAttribute(attr.nodeName, attr.nodeValue)

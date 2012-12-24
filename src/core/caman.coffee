@@ -22,8 +22,6 @@ else
 # image element, load the image, then continue with initialization.
 #
 # The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
-# This is also why this piece of code is a bit gross. Once everything is loaded, and Caman is 
-# initialized, the callback function is fired.
 Root.Caman = class Caman
   @version:
     release: "3.4.0"
@@ -123,7 +121,7 @@ Root.Caman = class Caman
     else
       @initObj = $(obj)
 
-    @initType = obj.nodeName.toLowerCase()
+    @initType = @initObj.nodeName.toLowerCase()
 
   setup: ->
     switch @initType
@@ -146,8 +144,21 @@ Root.Caman = class Caman
     Util.copyAttributes @image, @canvas, except: ['src']
     
     @imageLoaded =>
-      @image.parentNode.replaceChild @canvas, @image
-      @finishInit()
+      @canvas.width = @image.width
+      @canvas.height = @image.height
+
+      if @needsHiDPISwap()
+        Log.debug @image.src, "->", @hiDPIReplacement()
+        @image.src = @hiDPIReplacement()
+
+        @imageLoaded =>
+          Log.debug "HiDPI version loaded"
+          @swapped = true
+          @image.parentNode.replaceChild @canvas, @image
+          @finishInit()
+      else
+        @image.parentNode.replaceChild @canvas, @image
+        @finishInit()
 
   initCanvas: ->
     if @imageUrl?
@@ -167,9 +178,18 @@ Root.Caman = class Caman
     @assignId()
 
     @context = @canvas.getContext '2d'
+
+    @originalWidth = @width = @canvas.width
+    @originalHeight = @height = @canvas.height
+
     @hiDPIAdjustments()
 
-    @context.drawImage @image, 0, 0 if @image?
+    if @image?
+      @context.drawImage @image, 
+        0, 0, 
+        @image.width, @image.height, 
+        0, 0, 
+        @originalWidth, @originalHeight
     
     @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
     @pixelData = @imageData.data
@@ -189,10 +209,32 @@ Root.Caman = class Caman
 
   getId: -> @canvas.getAttribute 'data-caman-id'
 
-  hiDPIAdjustments: ->
-    return if Caman.NodeJS
+  hiDPIDisabled: ->
+    @canvas.getAttribute('data-caman-hidpi-disabled') isnt null
 
-    # HiDPI support
+  hiDPIAdjustments: ->
+    return if Caman.NodeJS or @hiDPIDisabled()
+
+    ratio = @hiDPIRatio()
+
+    if ratio isnt 1
+      Log.debug "HiDPI ratio = #{ratio}"
+      @scaled = true
+
+      @originalWidth = @canvas.width
+      @originalHeight = @canvas.height
+
+      @canvas.width = @originalWidth * ratio
+      @canvas.height = @originalHeight * ratio
+      @canvas.style.width = "#{@originalWidth}px"
+      @canvas.style.height = "#{@originalHeight}px"
+
+      @context.scale ratio, ratio
+
+      @width = @canvas.width
+      @height = @canvas.height
+
+  hiDPIRatio: ->
     devicePixelRatio = window.devicePixelRatio or 1
     backingStoreRatio = @context.webkitBackingStorePixelRatio or
                         @context.mozBackingStorePixelRatio or
@@ -200,20 +242,15 @@ Root.Caman = class Caman
                         @context.oBackingStorePixelRatio or
                         @context.backingStorePixelRatio or 1
 
-    ratio = devicePixelRatio / backingStoreRatio
+    devicePixelRatio / backingStoreRatio
 
-    if devicePixelRatio isnt backingStoreRatio
-      @scaled = true
+  needsHiDPISwap: ->
+    return false if @hiDPIDisabled() or (window.devicePixelRatio or 1) is 1
+    @hiDPIReplacement() isnt null
 
-      oldWidth = @canvas.width
-      oldHeight = @canvas.height
-
-      @canvas.width = oldWidth * ratio
-      @canvas.height = oldHeight * ratio
-      @canvas.style.width = "#{oldWidth}px"
-      @canvas.style.height = "#{oldHeight}px"
-
-      @context.scale ratio, ratio
+  hiDPIReplacement: ->
+    return null unless @image?
+    @image.getAttribute 'data-caman-hidpi'
 
   replaceCanvas: (newCanvas) ->
     oldCanvas = @canvas

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CamanJS Testing Playground</title>
+  
+  <script type="text/javascript" src="../../dist/caman.full.js"></script>
+</head>
+<body>
+  <h1>CamanJS Testing Playground</h1>
+  <p>Note: this cannot be accessed locally via the file:// protocol thanks to same-domain origin policy. It must be placed behind a webserver.</p>
+  
+  <table>
+    <tr>
+      <td>
+        <img
+          id="test" 
+          alt="test image" 
+          src="../images/test1_600.jpg"
+          data-caman-hidpi="../images/test1_1280.jpg"
+        />
+      </td>
+    </tr>
+  </table>
+
+  <script type="text/javascript">
+  Caman.DEBUG = true;
+  var test = Caman("#test", function () {
+      this.curves('v', [0, 0], [100, 30], [180, 240], [255, 255]);
+
+      this.curves('r', [0, 0], [40, 200], [255, 255])
+
+      this.render();
+  });
+  </script>
+</body>
+</html>
