@@ -1413,7 +1413,7 @@
 
     Renderer.prototype.renderBlock = function(bnum, start, end) {
       var data, i, pixelInfo, res, _i;
-      Log.debug("BLOCK #" + bnum + " - Filter: " + this.currentJob.name + ", Start: " + start + ", End: " + end);
+      Log.debug("Block #" + bnum + " - Filter: " + this.currentJob.name + ", Start: " + start + ", End: " + end);
       Event.trigger(this.c, "blockStarted", {
         blockNum: bnum,
         totalBlocks: Renderer.Blocks,

@@ -84,7 +84,7 @@ class Renderer
 
   # Renders a single block of the canvas with the current filter function
   renderBlock: (bnum, start, end) ->
-    Log.debug "BLOCK ##{bnum} - Filter: #{@currentJob.name}, Start: #{start}, End: #{end}"
+    Log.debug "Block ##{bnum} - Filter: #{@currentJob.name}, Start: #{start}, End: #{end}"
     Event.trigger @c, "blockStarted",
       blockNum: bnum
       totalBlocks: Renderer.Blocks

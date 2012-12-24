@@ -2,7 +2,6 @@
 Caman.DEBUG = true
 
 Caman __dirname + "/../images/test1_1280.jpg", ->
-  console.log "TEST"
   @brightness 10
   @contrast 30
   @sepia 75
