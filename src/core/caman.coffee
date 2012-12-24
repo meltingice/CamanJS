@@ -61,13 +61,24 @@ Root.Caman = class Caman
       @analyze = new Analyze @
       @renderer = new Renderer @
 
-
-      @parseArguments(args)
-      @setup()
+      @domIsLoaded =>
+        @parseArguments(args)
+        @setup()
 
       return @
     else
       return new Caman(arguments)
+
+  domIsLoaded: (cb) ->
+    return cb.call(@) if Caman.NodeJS
+
+    if document.readyState is "complete"
+      cb.call(@)
+    else
+      listener = =>
+        cb.call(@) if document.readyState is "complete"
+
+      document.addEventListener "readystatechange", listener, false
 
   # All possible combinations:
   #

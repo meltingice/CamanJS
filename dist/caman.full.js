@@ -111,7 +111,8 @@
     function Caman() {
       this.finishInit = __bind(this.finishInit, this);
 
-      var args;
+      var args,
+        _this = this;
       if (arguments.length === 0) {
         throw "Invalid arguments";
       }
@@ -126,13 +127,33 @@
         this.scaled = false;
         this.analyze = new Analyze(this);
         this.renderer = new Renderer(this);
-        this.parseArguments(args);
-        this.setup();
+        this.domIsLoaded(function() {
+          _this.parseArguments(args);
+          return _this.setup();
+        });
         return this;
       } else {
         return new Caman(arguments);
       }
     }
+
+    Caman.prototype.domIsLoaded = function(cb) {
+      var listener,
+        _this = this;
+      if (Caman.NodeJS) {
+        return cb.call(this);
+      }
+      if (document.readyState === "complete") {
+        return cb.call(this);
+      } else {
+        listener = function() {
+          if (document.readyState === "complete") {
+            return cb.call(_this);
+          }
+        };
+        return document.addEventListener("readystatechange", listener, false);
+      }
+    };
 
     Caman.prototype.parseArguments = function(args) {
       if (args.length === 0) {
