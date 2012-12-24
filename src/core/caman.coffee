@@ -44,12 +44,32 @@ Root.Caman = class Caman
 
   @remoteProxy = ""
 
-  constructor: (args...) ->
+  constructor: ->
+    throw "Invalid arguments" if arguments.length is 0
+
     if @ instanceof Caman
+      args = arguments[0]
+
+      # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
+      # same instance.
+      @id = Util.uniqid.get()
+      @originalPixelData = []
+      @pixelStack = []  # Stores the pixel layers
+      @layerStack = []  # Stores all of the layers waiting to be rendered
+      @canvasQueue = [] # Stores all of the canvases to be processed
+      @currentLayer = null
+      @scaled = false
+
+      @analyze = new Analyze @
+      @renderer = new Renderer @
+
+      
       @parseArguments(args)
       @setup()
 
-    else return new Caman(args)
+      return @
+    else
+      return new Caman(arguments)
 
   # All possible combinations:
   #
@@ -93,15 +113,17 @@ Root.Caman = class Caman
     @callback = args[2]
 
   setInitObject: (obj) ->
+    if Caman.NodeJS
+      @initObj = obj
+      @initType = 'node'
+      return
+
     if typeof obj is "object"
       @initObj = obj
     else
       @initObj = $(obj)
 
-    if Caman.NodeJS
-      @initType = 'node'
-    else
-      @initType = obj.nodeName.toLowerCase()
+    @initType = obj.nodeName.toLowerCase()
 
   setup: ->
     switch @initType
@@ -110,14 +132,174 @@ Root.Caman = class Caman
       when "canvas" then @initCanvas()
 
   initNode: ->
-    img = new Image()
-    img.onload = @loadFinished
-    img.onerror = (err) -> throw err
-    img.src = @initObj
+    @image = new Image()
+    @image.onload = =>
+      @canvas = new Canvas @image.width, @image.height
+      @finish()
+
+    @image.onerror = (err) -> throw err
+    @image.src = @initObj
 
   initImage: ->
+    @image = @initObj
     @canvas = document.createElement 'canvas'
-    Util.copyAttributes @initObj, @canvas, except: ['src']
+    Util.copyAttributes @image, @canvas, except: ['src']
     
+    @imageLoaded =>
+      @image.parentNode.replaceChild @canvas, @image
+      @finish()
 
-  
+  initCanvas: ->
+    if @imageUrl?
+      @image = document.createElement 'img'
+      @image.src = @imageUrl
+      @imageLoaded @finish
+    else
+      @finish()
+
+  imageLoaded: (cb) ->
+    if @image.complete
+      cb()
+    else
+      @image.onload = cb
+
+  finish: =>
+    @assignId()
+
+    @context = @canvas.getContext '2d'
+    @hiDPIAdjustments()
+
+    @context.drawImage @image, 0, 0 if @image?
+    
+    @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
+    @pixelData = @imageData.data
+    @originalPixelData.push pixel for pixel in @pixelData
+
+    @dimensions =
+      width: @canvas.width
+      height: @canvas.height
+
+    Store.put @getId, @
+
+    @callback.call @,@
+
+  assignId: ->
+    return if Caman.NodeJS or @canvas.getAttribute 'data-caman-id'
+    @canvas.setAttribute 'data-caman-id', @id
+
+  getId: -> @canvas.getAttribute 'data-caman-id'
+
+  hiDPIAdjustments: ->
+    return if Caman.NodeJS
+
+    # HiDPI support
+    devicePixelRatio = window.devicePixelRatio or 1
+    backingStoreRatio = @context.webkitBackingStorePixelRatio or
+                        @context.mozBackingStorePixelRatio or
+                        @context.msBackingStorePixelRatio or
+                        @context.oBackingStorePixelRatio or
+                        @context.backingStorePixelRatio or 1
+
+    ratio = devicePixelRatio / backingStoreRatio
+
+    if devicePixelRatio isnt backingStoreRatio
+      @scaled = true
+
+      oldWidth = @canvas.width
+      oldHeight = @canvas.height
+
+      @canvas.width = oldWidth * ratio
+      @canvas.height = oldHeight * ratio
+      @canvas.style.width = "#{oldWidth}px"
+      @canvas.style.height = "#{oldHeight}px"
+
+      @context.scale ratio, ratio
+
+  replaceCanvas: (newCanvas) ->
+    oldCanvas = @canvas
+    @canvas = newCanvas
+
+    oldCanvas.parentNode.replaceChild @canvas, oldCanvas
+    @finish()
+
+  # Begins the rendering process
+  render: (callback = ->) ->
+    Event.trigger @, "renderStart"
+    
+    @renderer.execute =>
+      @context.putImageData @imageData, 0, 0
+      callback.call @
+
+  # Reverts the canvas back to it's original state.
+  # This used to be asynchronous, so we provide the option of
+  # providing a callback to keep backwards compatibility.
+  revert: (ready = ->) ->
+    @pixelData[i] = pixel for pixel, i in @originalPixelData
+    @context.putImageData @imageData, 0, 0
+    ready.call @
+
+  # Pushes the filter callback that modifies the RGBA object into the
+  # render queue
+  process: (name, processFn) ->
+    @renderer.add
+      type: Filter.Type.Single
+      name: name
+      processFn: processFn
+
+    return @
+
+  # Pushes the kernel into the render queue
+  processKernel: (name, adjust, divisor, bias) ->
+    if not divisor
+      divisor = 0
+      divisor += adjust[i] for i in [0...adjust.length]
+
+    @renderer.add
+      type: Filter.Type.Kernel
+      name: name
+      adjust: adjust
+      divisor: divisor
+      bias: bias or 0
+
+    return @
+
+  # Adds a standalone plugin into the render queue
+  processPlugin: (plugin, args) ->
+    @renderer.add
+      type: Filter.Type.Plugin
+      plugin: plugin
+      args: args
+
+    return @
+
+  # Pushes a new layer operation into the render queue and calls the layer
+  # callback
+  newLayer: (callback) ->
+    layer = new Layer @
+    @canvasQueue.push layer
+    @renderer.add type: Filter.Type.LayerDequeue
+
+    callback.call layer
+
+    @renderer.add type: Filter.Type.LayerFinished
+    return @
+
+  # Pushes the layer context and moves to the next operation
+  executeLayer: (layer) ->
+    @pushContext layer
+    @processNext()
+
+  # Set all of the relevant data to the new layer
+  pushContext: (layer) ->
+    @layerStack.push @currentLayer
+    @pixelStack.push @pixelData
+    @currentLayer = layer
+    @pixelData = layer.pixelData
+
+  # Restore the previous layer context
+  popContext: ->
+    @pixelData = @pixelStack.pop()
+    @currentLayer = @layerStack.pop()
+
+  # Applies the current layer to its parent layer
+  applyCurrentLayer: -> @currentLayer.applyToParent()

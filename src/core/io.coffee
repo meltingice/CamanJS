@@ -1,5 +1,5 @@
 # Various I/O based operations
-class IO
+Caman.IO = class IO
   @domainRegex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/
 
   # Is the given URL remote?
@@ -35,49 +35,46 @@ class IO
     lang = langToExt[lang] if langToExt[lang]?
     "proxies/caman_proxy.#{lang}"
   
-  # Grabs the canvas data, encodes it to Base64, then sets the browser location to 
-  # the encoded data so that the user will be prompted to download it.
-  save: ->
-    if exports?
-      @nodeSave.apply @, arguments
-    else
-      @browserSave.apply @, arguments
+# Grabs the canvas data, encodes it to Base64, then sets the browser location to 
+# the encoded data so that the user will be prompted to download it.
+Caman::save = ->
+  if exports?
+    @nodeSave.apply @, arguments
+  else
+    @browserSave.apply @, arguments
 
-  browserSave: (type = "png") ->
-    type = type.toLowerCase()
+Caman::browserSave = (type = "png") ->
+  type = type.toLowerCase()
 
-    # Force download (its a bit hackish)
-    image = @toBase64(type).replace "image/#{type}", "image/octet-stream"
-    document.location.href = image
+  # Force download (its a bit hackish)
+  image = @toBase64(type).replace "image/#{type}", "image/octet-stream"
+  document.location.href = image
 
-  nodeSave: (file, overwrite = true) ->
-    try
-      stats = fs.statSync file
-      return false if stats.isFile() and not overwrite
-    catch e
-      Log.debug "Creating output file #{file}"
+Caman::nodeSave = (file, overwrite = true) ->
+  try
+    stats = fs.statSync file
+    return false if stats.isFile() and not overwrite
+  catch e
+    Log.debug "Creating output file #{file}"
 
-    fs.writeFile file, @canvas.toBuffer(), ->
-      Log.debug "Finished writing to #{file}"
+  fs.writeFile file, @canvas.toBuffer(), ->
+    Log.debug "Finished writing to #{file}"
 
-  # Takes the current canvas data, converts it to Base64, then sets it as the source 
-  # of a new Image object and returns it.
-  toImage: (type) ->
-    img = document.createElement 'img'
-    img.src = @toBase64 type
-    img.width = @dimensions.width
-    img.height = @dimensions.height
+# Takes the current canvas data, converts it to Base64, then sets it as the source 
+# of a new Image object and returns it.
+Caman::toImage = (type) ->
+  img = document.createElement 'img'
+  img.src = @toBase64 type
+  img.width = @dimensions.width
+  img.height = @dimensions.height
 
-    if window.devicePixelRatio
-      img.width /= window.devicePixelRatio
-      img.height /= window.devicePixelRatio
+  if window.devicePixelRatio
+    img.width /= window.devicePixelRatio
+    img.height /= window.devicePixelRatio
 
-    return img
+  return img
 
-  # Base64 encodes the current canvas
-  toBase64: (type = "png") ->
-    type = type.toLowerCase()
-    return @canvas.toDataURL "image/#{type}"
-
-Util.extend CamanInstance::, IO::
-Caman.IO = IO
+# Base64 encodes the current canvas
+Caman::toBase64 = (type = "png") ->
+  type = type.toLowerCase()
+  return @canvas.toDataURL "image/#{type}"

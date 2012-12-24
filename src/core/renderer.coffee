@@ -1,28 +1,46 @@
 # Handles all of the various rendering methods in Caman. Most of the image modification happens 
-# here. A new RenderJob object is created for every render operation.
-class RenderJob
+# here. A new Renderer object is created for every render operation.
+class Renderer
   # The number of blocks to split the image into during the render process to simulate 
   # concurrency. This also helps the browser manage the (possibly) long running render jobs.
   @Blocks = if Caman.NodeJS then require('os').cpus().length else 4
 
-  @execute: (instance, job, callback) ->
-    rj = new RenderJob instance, job, callback
+  constructor: (@c) ->
+    @renderQueue = []
 
-    switch job.type
+  add: (job) ->
+    return unless job?
+    @renderQueue.push job
+
+  # Grabs the next operation from the render queue and passes it to Renderer
+  # for execution
+  processNext: =>
+    # If the queue is empty, fire the finished callback
+    if @renderQueue.length is 0
+      Event.trigger @, "renderFinished"
+      @finishedFn.call(@c) if @finishedFn?
+
+      return @
+
+    @currentJob = @renderQueue.shift()
+
+    switch @currentJob.type
       when Filter.Type.LayerDequeue
         layer = instance.canvasQueue.shift()
-        instance.executeLayer layer
+        @c.executeLayer layer
       when Filter.Type.LayerFinished
-        instance.applyCurrentLayer()
-        instance.popContext()
-        callback()
-      when Filter.Type.LoadOverlay then rj.loadOverlay job.layer, job.src
-      when Filter.Type.Plugin then rj.executePlugin()
-      else rj.executeFilter()
+        @c.applyCurrentLayer()
+        @c.popContext()
+      when Filter.Type.LoadOverlay
+        @loadOverlay @currentJob.layer, @currentJob.src
+      when Filter.Type.Plugin
+        @executePlugin()
+      else
+        @executeFilter()
 
-    return instance
-
-  constructor: (@c, @job, @renderDone) ->
+  execute: (callback) ->
+    @finishedFn = callback
+    @processNext()
 
   # The core of the image rendering, this function executes the provided filter.
   #
@@ -33,16 +51,16 @@ class RenderJob
     @blocksDone = 0
 
     n = @c.pixelData.length
-    blockPixelLength = Math.floor (n / 4) / RenderJob.Blocks
+    blockPixelLength = Math.floor (n / 4) / Renderer.Blocks
     blockN = blockPixelLength * 4
-    lastBlockN = blockN + ((n / 4) % RenderJob.Blocks) * 4
+    lastBlockN = blockN + ((n / 4) % Renderer.Blocks) * 4
 
-    Event.trigger @c, "processStart", @job
+    Event.trigger @c, "processStart", @currentJob
 
-    if @job.type is Filter.Type.Single
-      for j in [0...RenderJob.Blocks]
+    if @currentJob.type is Filter.Type.Single
+      for j in [0...Renderer.Blocks]
         start = j * blockN
-        end = start + (if j is RenderJob.Blocks - 1 then lastBlockN else blockN)
+        end = start + (if j is Renderer.Blocks - 1 then lastBlockN else blockN)
 
         if Caman.NodeJS
           f = Fiber =>
@@ -58,18 +76,18 @@ class RenderJob
 
   # Executes a standalone plugin
   executePlugin: ->
-    Log.debug "Executing plugin #{@job.plugin}"
-    Plugin.execute @c, @job.plugin, @job.args
-    Log.debug "Plugin #{@job.plugin} finished!"
+    Log.debug "Executing plugin #{@currentJob.plugin}"
+    Plugin.execute @c, @currentJob.plugin, @currentJob.args
+    Log.debug "Plugin #{@currentJob.plugin} finished!"
 
-    @renderDone()
+    @processNext()
 
   # Renders a single block of the canvas with the current filter function
   renderBlock: (bnum, start, end) ->
-    Log.debug "BLOCK ##{bnum} - Filter: #{@job.name}, Start: #{start}, End: #{end}"
+    Log.debug "BLOCK ##{bnum} - Filter: #{@currentJob.name}, Start: #{start}, End: #{end}"
     Event.trigger @c, "blockStarted",
       blockNum: bnum
-      totalBlocks: RenderJob.Blocks
+      totalBlocks: Renderer.Blocks
       startPixel: start
       endPixel: end
 
@@ -84,7 +102,7 @@ class RenderJob
       data.b = @c.pixelData[i+2]
       data.a = @c.pixelData[i+3]
 
-      res = @job.processFn.call pixelInfo, data
+      res = @currentJob.processFn.call pixelInfo, data
       res.a = data.a if not res.a?
 
       @c.pixelData[i]   = Util.clampRGB res.r
@@ -97,18 +115,18 @@ class RenderJob
 
   # Applies an image kernel to the canvas
   renderKernel: ->
-    name = @job.name
-    bias = @job.bias
-    divisor = @job.divisor
+    name = @currentJob.name
+    bias = @currentJob.bias
+    divisor = @currentJob.divisor
     n = @c.pixelData.length
 
-    adjust = @job.adjust
+    adjust = @currentJob.adjust
     adjustSize = Math.sqrt adjust.length
 
     kernel = []
     modPixelData = []
 
-    Log.debug "Rendering kernel - Filter: #{@job.name}"
+    Log.debug "Rendering kernel - Filter: #{@currentJob.name}"
 
     start = @c.dimensions.width * 4 * ((adjustSize - 1) / 2)
     end = n - (@c.dimensions.width * 4 * ((adjustSize - 1) / 2))
@@ -144,20 +162,20 @@ class RenderJob
   # Called when a single block is finished rendering. Once all blocks are done, we signal that this
   # filter is finished rendering and continue to the next step.
   blockFinished: (bnum) ->
-    Log.debug "Block ##{bnum} finished! Filter: #{@job.name}" if bnum >= 0
+    Log.debug "Block ##{bnum} finished! Filter: #{@currentJob.name}" if bnum >= 0
     @blocksDone++
 
     Event.trigger @c, "blockFinished",
       blockNum: bnum
       blocksFinished: @blocksDone
-      totalBlocks: RenderJob.Blocks
+      totalBlocks: Renderer.Blocks
 
-    if @blocksDone is RenderJob.Blocks or bnum is -1
-      Log.debug "Filter #{@job.name} finished!" if bnum >=0
-      Log.debug "Kernel filter #{@job.name} finished!" if bnum < 0
-      Event.trigger @c, "processComplete", @job
+    if @blocksDone is Renderer.Blocks or bnum is -1
+      Log.debug "Filter #{@currentJob.name} finished!" if bnum >=0
+      Log.debug "Kernel filter #{@currentJob.name} finished!" if bnum < 0
+      Event.trigger @c, "processComplete", @currentJob
 
-      @renderDone()
+      @processNext()
 
   # The "filter function" for kernel adjustments.
   processKernel: (adjust, kernel, divisor, bias) ->

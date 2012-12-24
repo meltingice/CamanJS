@@ -34,7 +34,7 @@ coffeeFiles		= [
 	
 	# Core library
 	"core/caman"
-	"core/camaninstance"
+	#"core/camaninstance"
 
 	# Everything else
 	"core/analyze"
@@ -49,7 +49,7 @@ coffeeFiles		= [
 	"core/logger"
 	"core/pixelinfo"
 	"core/plugin"
-	"core/renderjob"
+	"core/renderer"
 	"core/store"
 
 	# Non-core files
