@@ -10,7 +10,7 @@ For more information, I highly recommend taking a look at the [official website]
 
 CamanJS is written in [Coffeescript](http://coffeescript.org) as of version 3.0. **It works both in-browser and in NodeJS.**
 
-## Example Usage
+## Usage
 
 Include one of the versions in the `dist/` folder, then you can run:
 
@@ -30,33 +30,24 @@ Caman also supports modifying images via the `data-caman` HTML attribute. Simply
 <img data-caman="saturation(-10) brightness(20) vignette('10%')" src="path/to/image.jpg">
 ```
 
-## Upgrading from 2.x to 3.x
+### HiDPI Support
 
-For the end-user, there are no changes to CamanJS that will affect your code. Everything works exactly the same as before.
+Version 4 introduces better support for HiDPI (Retina) displays. It allows you to specify a higher resolution replacement either using a HTML data attribute or in Javascript.
 
-For developers, there are some major changes regarding how filters and plugins are added to CamanJS. Previously, you would explicitly extend the Caman.manip interface. This object no longer exists. Now, the way you add filters is:
+**HTML data attributes**
 
-``` coffeescript
-Caman.Filter.register "filterName", ->
-  # Variables that exist here will be available in the process function
-  # because of JS closure.
-  amt = 20
+* `data-caman-hidpi`: URL to the high resolution replacement image
+* `data-caman-hidpi-disabled`: HiDPI support is enabled by default, so add this attribute if you wish to disable it
 
-  @process "filterName", (rgba) ->
-    # Alter rgba pixel object here
-    return rgba
-```
+**Javascript**
 
-Plugins are similarly added:
+TODO
 
-``` coffeescript
-Caman.Plugin.register "pluginName", ->
-  return @
-```
-
-**Building CamanJS**
+## Development
 
 If you are a developer who is contributing directly to the project, there are some tools to help you out.
+
+### Building
 
 The requirements for building CamanJS are:
 
