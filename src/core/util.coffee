@@ -11,7 +11,7 @@ class Util
   # Unique value utility
   @uniqid = do ->
     id = 0
-    get: (prefix = '') -> "#{prefix}#{id++}"
+    get: -> id++
 
   # Helper function that extends one object with all the properies of other objects
   @extend = (obj) ->

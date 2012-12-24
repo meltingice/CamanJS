@@ -40,7 +40,7 @@
     "servedir": "*"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec ./test/node/*.coffee",
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/node/*.coffee",
     "examples": "./node_modules/servedir/bin/servedir"
   }
 }

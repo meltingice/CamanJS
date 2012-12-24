@@ -63,7 +63,7 @@ Root.Caman = class Caman
       @analyze = new Analyze @
       @renderer = new Renderer @
 
-      
+
       @parseArguments(args)
       @setup()
 
@@ -135,7 +135,7 @@ Root.Caman = class Caman
     @image = new Image()
     @image.onload = =>
       @canvas = new Canvas @image.width, @image.height
-      @finish()
+      @finishInit()
 
     @image.onerror = (err) -> throw err
     @image.src = @initObj
@@ -147,15 +147,15 @@ Root.Caman = class Caman
     
     @imageLoaded =>
       @image.parentNode.replaceChild @canvas, @image
-      @finish()
+      @finishInit()
 
   initCanvas: ->
     if @imageUrl?
       @image = document.createElement 'img'
       @image.src = @imageUrl
-      @imageLoaded @finish
+      @imageLoaded @finishInit
     else
-      @finish()
+      @finishInit()
 
   imageLoaded: (cb) ->
     if @image.complete
@@ -163,7 +163,7 @@ Root.Caman = class Caman
     else
       @image.onload = cb
 
-  finish: =>
+  finishInit: =>
     @assignId()
 
     @context = @canvas.getContext '2d'
@@ -220,7 +220,7 @@ Root.Caman = class Caman
     @canvas = newCanvas
 
     oldCanvas.parentNode.replaceChild @canvas, oldCanvas
-    @finish()
+    @finishInit()
 
   # Begins the rendering process
   render: (callback = ->) ->
@@ -281,7 +281,7 @@ Root.Caman = class Caman
 
     callback.call layer
 
-    @renderer.add type: Filter.Type.LayerFinished
+    @renderer.add type: Filter.Type.Layerfinished
     return @
 
   # Pushes the layer context and moves to the next operation

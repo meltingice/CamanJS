@@ -26,11 +26,8 @@
       var id;
       id = 0;
       return {
-        get: function(prefix) {
-          if (prefix == null) {
-            prefix = '';
-          }
-          return "" + prefix + (id++);
+        get: function() {
+          return id++;
         }
       };
     })();
@@ -112,7 +109,7 @@
     Caman.remoteProxy = "";
 
     function Caman() {
-      this.finish = __bind(this.finish, this);
+      this.finishInit = __bind(this.finishInit, this);
 
       var args;
       if (arguments.length === 0) {
@@ -192,7 +189,7 @@
       this.image = new Image();
       this.image.onload = function() {
         _this.canvas = new Canvas(_this.image.width, _this.image.height);
-        return _this.finish();
+        return _this.finishInit();
       };
       this.image.onerror = function(err) {
         throw err;
@@ -209,7 +206,7 @@
       });
       return this.imageLoaded(function() {
         _this.image.parentNode.replaceChild(_this.canvas, _this.image);
-        return _this.finish();
+        return _this.finishInit();
       });
     };
 
@@ -217,9 +214,9 @@
       if (this.imageUrl != null) {
         this.image = document.createElement('img');
         this.image.src = this.imageUrl;
-        return this.imageLoaded(this.finish);
+        return this.imageLoaded(this.finishInit);
       } else {
-        return this.finish();
+        return this.finishInit();
       }
     };
 
@@ -231,7 +228,7 @@
       }
     };
 
-    Caman.prototype.finish = function() {
+    Caman.prototype.finishInit = function() {
       var pixel, _i, _len, _ref;
       this.assignId();
       this.context = this.canvas.getContext('2d');
@@ -290,7 +287,7 @@
       oldCanvas = this.canvas;
       this.canvas = newCanvas;
       oldCanvas.parentNode.replaceChild(this.canvas, oldCanvas);
-      return this.finish();
+      return this.finishInit();
     };
 
     Caman.prototype.render = function(callback) {
@@ -364,7 +361,7 @@
       });
       callback.call(layer);
       this.renderer.add({
-        type: Filter.Type.LayerFinished
+        type: Filter.Type.Layerfinished
       });
       return this;
     };
