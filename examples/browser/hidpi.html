@@ -7,7 +7,12 @@
 
   <script type="text/javascript">
   Caman.DEBUG = true;
-  var test = Caman("#test", function () {
+  Caman("#original", function () {
+    this.sunrise();
+    this.render();
+  });
+
+  Caman("#hidpi", function () {
     this.sunrise();
     this.render();
   });
@@ -20,12 +25,19 @@
   <table>
     <tr>
       <td>
+        <img 
+          id="original"
+          src="../images/test1_640.jpg"
+        >
+        <p>Original</p>
+      </td>
+      <td>
         <img
-          id="test" 
-          alt="test image" 
-          src="../images/test1_600.jpg"
+          id="hidpi"
+          src="../images/test1_640.jpg"
           data-caman-hidpi="../images/test1_1280.jpg"
-        />
+        >
+        <p>HiDPI</p>
       </td>
     </tr>
   </table>

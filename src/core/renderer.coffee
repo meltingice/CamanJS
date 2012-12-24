@@ -26,7 +26,7 @@ class Renderer
 
     switch @currentJob.type
       when Filter.Type.LayerDequeue
-        layer = instance.canvasQueue.shift()
+        layer = @c.canvasQueue.shift()
         @c.executeLayer layer
       when Filter.Type.LayerFinished
         @c.applyCurrentLayer()

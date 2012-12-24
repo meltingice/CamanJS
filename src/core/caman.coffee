@@ -153,6 +153,8 @@ Root.Caman = class Caman
     @image = @initObj
     @canvas = document.createElement 'canvas'
     Util.copyAttributes @image, @canvas, except: ['src']
+
+    @image.parentNode.replaceChild @canvas, @image
     
     @imageLoaded =>
       @canvas.width = @image.width
@@ -165,10 +167,9 @@ Root.Caman = class Caman
         @imageLoaded =>
           Log.debug "HiDPI version loaded"
           @swapped = true
-          @image.parentNode.replaceChild @canvas, @image
+
           @finishInit()
       else
-        @image.parentNode.replaceChild @canvas, @image
         @finishInit()
 
   initCanvas: ->
@@ -186,14 +187,13 @@ Root.Caman = class Caman
       @image.onload = cb
 
   finishInit: =>
-    @assignId()
-
     @context = @canvas.getContext '2d'
 
     @originalWidth = @width = @canvas.width
     @originalHeight = @height = @canvas.height
 
     @hiDPIAdjustments()
+    @assignId()
 
     if @image?
       @context.drawImage @image, 
@@ -335,7 +335,7 @@ Root.Caman = class Caman
   # Pushes the layer context and moves to the next operation
   executeLayer: (layer) ->
     @pushContext layer
-    @processNext()
+    @renderer.processNext()
 
   # Set all of the relevant data to the new layer
   pushContext: (layer) ->

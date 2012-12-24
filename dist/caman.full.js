@@ -225,6 +225,7 @@
       Util.copyAttributes(this.image, this.canvas, {
         except: ['src']
       });
+      this.image.parentNode.replaceChild(this.canvas, this.image);
       return this.imageLoaded(function() {
         _this.canvas.width = _this.image.width;
         _this.canvas.height = _this.image.height;
@@ -234,11 +235,9 @@
           return _this.imageLoaded(function() {
             Log.debug("HiDPI version loaded");
             _this.swapped = true;
-            _this.image.parentNode.replaceChild(_this.canvas, _this.image);
             return _this.finishInit();
           });
         } else {
-          _this.image.parentNode.replaceChild(_this.canvas, _this.image);
           return _this.finishInit();
         }
       });
@@ -264,11 +263,11 @@
 
     Caman.prototype.finishInit = function() {
       var pixel, _i, _len, _ref;
-      this.assignId();
       this.context = this.canvas.getContext('2d');
       this.originalWidth = this.width = this.canvas.width;
       this.originalHeight = this.height = this.canvas.height;
       this.hiDPIAdjustments();
+      this.assignId();
       if (this.image != null) {
         this.context.drawImage(this.image, 0, 0, this.image.width, this.image.height, 0, 0, this.originalWidth, this.originalHeight);
       }
@@ -430,7 +429,7 @@
 
     Caman.prototype.executeLayer = function(layer) {
       this.pushContext(layer);
-      return this.processNext();
+      return this.renderer.processNext();
     };
 
     Caman.prototype.pushContext = function(layer) {
@@ -1414,7 +1413,7 @@
       this.currentJob = this.renderQueue.shift();
       switch (this.currentJob.type) {
         case Filter.Type.LayerDequeue:
-          layer = instance.canvasQueue.shift();
+          layer = this.c.canvasQueue.shift();
           return this.c.executeLayer(layer);
         case Filter.Type.LayerFinished:
           this.c.applyCurrentLayer();
