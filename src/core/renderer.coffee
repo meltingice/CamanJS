@@ -28,9 +28,11 @@ class Renderer
       when Filter.Type.LayerDequeue
         layer = @c.canvasQueue.shift()
         @c.executeLayer layer
+        @processNext()
       when Filter.Type.LayerFinished
         @c.applyCurrentLayer()
         @c.popContext()
+        @processNext()
       when Filter.Type.LoadOverlay
         @loadOverlay @currentJob.layer, @currentJob.src
       when Filter.Type.Plugin
@@ -201,7 +203,7 @@ class Renderer
 
       @c.pixelData = layer.pixelData
 
-      @c.processNext()
+      @processNext()
 
     proxyUrl = IO.remoteCheck src
     img.src = if proxyUrl? then proxyUrl else src

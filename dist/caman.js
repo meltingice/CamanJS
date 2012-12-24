@@ -422,14 +422,13 @@
       });
       callback.call(layer);
       this.renderer.add({
-        type: Filter.Type.Layerfinished
+        type: Filter.Type.LayerFinished
       });
       return this;
     };
 
     Caman.prototype.executeLayer = function(layer) {
-      this.pushContext(layer);
-      return this.renderer.processNext();
+      return this.pushContext(layer);
     };
 
     Caman.prototype.pushContext = function(layer) {
@@ -1414,10 +1413,12 @@
       switch (this.currentJob.type) {
         case Filter.Type.LayerDequeue:
           layer = this.c.canvasQueue.shift();
-          return this.c.executeLayer(layer);
+          this.c.executeLayer(layer);
+          return this.processNext();
         case Filter.Type.LayerFinished:
           this.c.applyCurrentLayer();
-          return this.c.popContext();
+          this.c.popContext();
+          return this.processNext();
         case Filter.Type.LoadOverlay:
           return this.loadOverlay(this.currentJob.layer, this.currentJob.src);
         case Filter.Type.Plugin:
@@ -1597,7 +1598,7 @@
         layer.imageData = layer.context.getImageData(0, 0, _this.c.dimensions.width, _this.c.dimensions.height);
         layer.pixelData = layer.imageData.data;
         _this.c.pixelData = layer.pixelData;
-        return _this.c.processNext();
+        return _this.processNext();
       };
       proxyUrl = IO.remoteCheck(src);
       return img.src = proxyUrl != null ? proxyUrl : src;

@@ -329,13 +329,11 @@ Root.Caman = class Caman
 
     callback.call layer
 
-    @renderer.add type: Filter.Type.Layerfinished
+    @renderer.add type: Filter.Type.LayerFinished
     return @
 
   # Pushes the layer context and moves to the next operation
-  executeLayer: (layer) ->
-    @pushContext layer
-    @renderer.processNext()
+  executeLayer: (layer) -> @pushContext layer
 
   # Set all of the relevant data to the new layer
   pushContext: (layer) ->
