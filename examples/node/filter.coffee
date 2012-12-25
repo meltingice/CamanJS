@@ -2,7 +2,7 @@
 Caman.DEBUG = true
 
 Caman __dirname + "/../images/test1_1280.jpg", ->
-  @sunrise()
+  @concentrate()
 
   start = (new Date()).getTime()
   @render ->

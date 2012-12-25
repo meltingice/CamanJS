@@ -2,10 +2,9 @@
 Caman.DEBUG = true
 
 Caman __dirname + "/../images/test1_1280.jpg", ->
-  # @brightness 10
-  # @contrast 30
-  # @sepia 75
-  @sharpen 50
+  @brightness 10
+  @contrast 30
+  @sepia 75
 
   start = (new Date()).getTime()
   @render ->

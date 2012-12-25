@@ -7,6 +7,7 @@ Caman.Renderer = class Renderer
 
   constructor: (@c) ->
     @renderQueue = []
+    @modPixelData = null
 
   add: (job) ->
     return unless job?
@@ -42,13 +43,11 @@ Caman.Renderer = class Renderer
 
   execute: (callback) ->
     @finishedFn = callback
+    @modPixelData = new Uint8Array(@c.pixelData.length)
+
     @processNext()
 
-  # The core of the image rendering, this function executes the provided filter.
-  #
-  # NOTE: this does not write the updated pixel data to the canvas. That happens when all filters 
-  # are finished rendering in order to be as fast as possible.
-  executeFilter: ->
+  eachBlock: (fn) ->
     # Prepare all the required render data
     @blocksDone = 0
 
@@ -57,24 +56,29 @@ Caman.Renderer = class Renderer
     blockN = blockPixelLength * 4
     lastBlockN = blockN + ((n / 4) % Renderer.Blocks) * 4
 
+    for i in [0...Renderer.Blocks]
+      start = i * blockN
+      end = start + (if i is Renderer.Blocks - 1 then lastBlockN else blockN)
+
+      if Caman.NodeJS
+        f = Fiber => fn.call(@, i, start, end)
+        f.run()
+      else
+        setTimeout =>
+          fn.call(@, i, start, end)
+        , 0
+
+  # The core of the image rendering, this function executes the provided filter.
+  #
+  # NOTE: this does not write the updated pixel data to the canvas. That happens when all filters 
+  # are finished rendering in order to be as fast as possible.
+  executeFilter: ->
     Event.trigger @c, "processStart", @currentJob
 
     if @currentJob.type is Filter.Type.Single
-      for j in [0...Renderer.Blocks]
-        start = j * blockN
-        end = start + (if j is Renderer.Blocks - 1 then lastBlockN else blockN)
-
-        if Caman.NodeJS
-          f = Fiber =>
-            @renderBlock j, start, end
-
-          f.run()
-        else
-          setTimeout do (j, start, end) => 
-            => @renderBlock(j, start, end)
-          , 0
+      @eachBlock @renderBlock
     else
-      @renderKernel()
+      @eachBlock @renderKernel
 
   # Executes a standalone plugin
   executePlugin: ->
@@ -112,11 +116,11 @@ Caman.Renderer = class Renderer
       @c.pixelData[i+2] = Util.clampRGB res.b
       @c.pixelData[i+3] = Util.clampRGB res.a
 
-    @blockFinished(bnum)
+    @blockFinished bnum
     Fiber.yield() if Caman.NodeJS
 
   # Applies an image kernel to the canvas
-  renderKernel: ->
+  renderKernel: (bnum, start, end) ->
     name = @currentJob.name
     bias = @currentJob.bias
     divisor = @currentJob.divisor
@@ -126,12 +130,11 @@ Caman.Renderer = class Renderer
     adjustSize = Math.sqrt adjust.length
 
     kernel = []
-    modPixelData = new Uint8Array(n)
 
     Log.debug "Rendering kernel - Filter: #{@currentJob.name}"
 
-    start = @c.dimensions.width * 4 * ((adjustSize - 1) / 2)
-    end = n - (@c.dimensions.width * 4 * ((adjustSize - 1) / 2))
+    start = Math.max start, @c.dimensions.width * 4 * ((adjustSize - 1) / 2)
+    end = Math.min end, n - (@c.dimensions.width * 4 * ((adjustSize - 1) / 2))
 
     builder = (adjustSize - 1) / 2
 
@@ -152,14 +155,13 @@ Caman.Renderer = class Renderer
 
       res = @processKernel adjust, kernel, divisor, bias
 
-      modPixelData[i] = Util.clampRGB(res.r)
-      modPixelData[i+1] = Util.clampRGB(res.g)
-      modPixelData[i+2] = Util.clampRGB(res.b)
-      modPixelData[i+3] = @c.pixelData[i+3]
+      @modPixelData[i]    = Util.clampRGB(res.r)
+      @modPixelData[i+1]  = Util.clampRGB(res.g)
+      @modPixelData[i+2]  = Util.clampRGB(res.b)
+      @modPixelData[i+3]  = @c.pixelData[i+3]
 
-    @c.pixelData[i] = modPixelData[i] for i in [start...end]
-
-    @blockFinished -1
+    @blockFinished bnum
+    Fiber.yield() if Caman.NodeJS
 
   # Called when a single block is finished rendering. Once all blocks are done, we signal that this
   # filter is finished rendering and continue to the next step.
@@ -172,9 +174,12 @@ Caman.Renderer = class Renderer
       blocksFinished: @blocksDone
       totalBlocks: Renderer.Blocks
 
-    if @blocksDone is Renderer.Blocks or bnum is -1
+    if @blocksDone is Renderer.Blocks
+      if @currentJob.type is Filter.Type.Kernel
+        for i in [0...@c.pixelData.length]
+          @c.pixelData[i] = @modPixelData[i]
+
       Log.debug "Filter #{@currentJob.name} finished!" if bnum >=0
-      Log.debug "Kernel filter #{@currentJob.name} finished!" if bnum < 0
       Event.trigger @c, "processComplete", @currentJob
 
       @processNext()

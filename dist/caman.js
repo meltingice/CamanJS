@@ -1395,6 +1395,7 @@
       this.processNext = __bind(this.processNext, this);
 
       this.renderQueue = [];
+      this.modPixelData = null;
     }
 
     Renderer.prototype.add = function(job) {
@@ -1434,39 +1435,42 @@
 
     Renderer.prototype.execute = function(callback) {
       this.finishedFn = callback;
+      this.modPixelData = new Uint8Array(this.c.pixelData.length);
       return this.processNext();
     };
 
-    Renderer.prototype.executeFilter = function() {
-      var blockN, blockPixelLength, end, f, j, lastBlockN, n, start, _i, _ref, _results,
+    Renderer.prototype.eachBlock = function(fn) {
+      var blockN, blockPixelLength, end, f, i, lastBlockN, n, start, _i, _ref, _results,
         _this = this;
       this.blocksDone = 0;
       n = this.c.pixelData.length;
       blockPixelLength = Math.floor((n / 4) / Renderer.Blocks);
       blockN = blockPixelLength * 4;
       lastBlockN = blockN + ((n / 4) % Renderer.Blocks) * 4;
+      _results = [];
+      for (i = _i = 0, _ref = Renderer.Blocks; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        start = i * blockN;
+        end = start + (i === Renderer.Blocks - 1 ? lastBlockN : blockN);
+        if (Caman.NodeJS) {
+          f = Fiber(function() {
+            return fn.call(_this, i, start, end);
+          });
+          _results.push(f.run());
+        } else {
+          _results.push(setTimeout(function() {
+            return fn.call(_this, i, start, end);
+          }, 0));
+        }
+      }
+      return _results;
+    };
+
+    Renderer.prototype.executeFilter = function() {
       Event.trigger(this.c, "processStart", this.currentJob);
       if (this.currentJob.type === Filter.Type.Single) {
-        _results = [];
-        for (j = _i = 0, _ref = Renderer.Blocks; 0 <= _ref ? _i < _ref : _i > _ref; j = 0 <= _ref ? ++_i : --_i) {
-          start = j * blockN;
-          end = start + (j === Renderer.Blocks - 1 ? lastBlockN : blockN);
-          if (Caman.NodeJS) {
-            f = Fiber(function() {
-              return _this.renderBlock(j, start, end);
-            });
-            _results.push(f.run());
-          } else {
-            _results.push(setTimeout((function(j, start, end) {
-              return function() {
-                return _this.renderBlock(j, start, end);
-              };
-            })(j, start, end), 0));
-          }
-        }
-        return _results;
+        return this.eachBlock(this.renderBlock);
       } else {
-        return this.renderKernel();
+        return this.eachBlock(this.renderKernel);
       }
     };
 
@@ -1514,8 +1518,8 @@
       }
     };
 
-    Renderer.prototype.renderKernel = function() {
-      var adjust, adjustSize, bias, builder, builderIndex, divisor, end, i, j, k, kernel, modPixelData, n, name, pixel, pixelInfo, res, start, _i, _j, _k, _l;
+    Renderer.prototype.renderKernel = function(bnum, start, end) {
+      var adjust, adjustSize, bias, builder, builderIndex, divisor, i, j, k, kernel, n, name, pixel, pixelInfo, res, _i, _j, _k;
       name = this.currentJob.name;
       bias = this.currentJob.bias;
       divisor = this.currentJob.divisor;
@@ -1523,10 +1527,9 @@
       adjust = this.currentJob.adjust;
       adjustSize = Math.sqrt(adjust.length);
       kernel = [];
-      modPixelData = new Uint8Array(n);
       Log.debug("Rendering kernel - Filter: " + this.currentJob.name);
-      start = this.c.dimensions.width * 4 * ((adjustSize - 1) / 2);
-      end = n - (this.c.dimensions.width * 4 * ((adjustSize - 1) / 2));
+      start = Math.max(start, this.c.dimensions.width * 4 * ((adjustSize - 1) / 2));
+      end = Math.min(end, n - (this.c.dimensions.width * 4 * ((adjustSize - 1) / 2)));
       builder = (adjustSize - 1) / 2;
       pixelInfo = new PixelInfo(this.c);
       for (i = _i = start; _i < end; i = _i += 4) {
@@ -1542,18 +1545,19 @@
           }
         }
         res = this.processKernel(adjust, kernel, divisor, bias);
-        modPixelData[i] = Util.clampRGB(res.r);
-        modPixelData[i + 1] = Util.clampRGB(res.g);
-        modPixelData[i + 2] = Util.clampRGB(res.b);
-        modPixelData[i + 3] = this.c.pixelData[i + 3];
+        this.modPixelData[i] = Util.clampRGB(res.r);
+        this.modPixelData[i + 1] = Util.clampRGB(res.g);
+        this.modPixelData[i + 2] = Util.clampRGB(res.b);
+        this.modPixelData[i + 3] = this.c.pixelData[i + 3];
       }
-      for (i = _l = start; start <= end ? _l < end : _l > end; i = start <= end ? ++_l : --_l) {
-        this.c.pixelData[i] = modPixelData[i];
+      this.blockFinished(bnum);
+      if (Caman.NodeJS) {
+        return Fiber["yield"]();
       }
-      return this.blockFinished(-1);
     };
 
     Renderer.prototype.blockFinished = function(bnum) {
+      var i, _i, _ref;
       if (bnum >= 0) {
         Log.debug("Block #" + bnum + " finished! Filter: " + this.currentJob.name);
       }
@@ -1563,12 +1567,14 @@
         blocksFinished: this.blocksDone,
         totalBlocks: Renderer.Blocks
       });
-      if (this.blocksDone === Renderer.Blocks || bnum === -1) {
+      if (this.blocksDone === Renderer.Blocks) {
+        if (this.currentJob.type === Filter.Type.Kernel) {
+          for (i = _i = 0, _ref = this.c.pixelData.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+            this.c.pixelData[i] = this.modPixelData[i];
+          }
+        }
         if (bnum >= 0) {
           Log.debug("Filter " + this.currentJob.name + " finished!");
-        }
-        if (bnum < 0) {
-          Log.debug("Kernel filter " + this.currentJob.name + " finished!");
         }
         Event.trigger(this.c, "processComplete", this.currentJob);
         return this.processNext();
