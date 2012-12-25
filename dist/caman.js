@@ -141,17 +141,20 @@
       var listener,
         _this = this;
       if (Caman.NodeJS) {
-        return cb.call(this);
-      }
-      if (document.readyState === "complete") {
-        return cb.call(this);
+        return setTimeout(function() {
+          return cb.call(_this);
+        }, 0);
       } else {
-        listener = function() {
-          if (document.readyState === "complete") {
-            return cb.call(_this);
-          }
-        };
-        return document.addEventListener("readystatechange", listener, false);
+        if (document.readyState === "complete") {
+          return cb.call(this);
+        } else {
+          listener = function() {
+            if (document.readyState === "complete") {
+              return cb.call(_this);
+            }
+          };
+          return document.addEventListener("readystatechange", listener, false);
+        }
       }
     };
 

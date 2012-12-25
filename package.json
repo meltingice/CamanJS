@@ -37,7 +37,9 @@
     "packer": "*",
     "mocha": "*",
     "chai": "*",
-    "servedir": "*"
+    "servedir": "*",
+    "cli": "*",
+    "cli-table": "*"
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/node/*.coffee",

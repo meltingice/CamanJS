@@ -141,17 +141,20 @@
       var listener,
         _this = this;
       if (Caman.NodeJS) {
-        return cb.call(this);
-      }
-      if (document.readyState === "complete") {
-        return cb.call(this);
+        return setTimeout(function() {
+          return cb.call(_this);
+        }, 0);
       } else {
-        listener = function() {
-          if (document.readyState === "complete") {
-            return cb.call(_this);
-          }
-        };
-        return document.addEventListener("readystatechange", listener, false);
+        if (document.readyState === "complete") {
+          return cb.call(this);
+        } else {
+          listener = function() {
+            if (document.readyState === "complete") {
+              return cb.call(_this);
+            }
+          };
+          return document.addEventListener("readystatechange", listener, false);
+        }
       }
     };
 
@@ -2035,10 +2038,6 @@
     return this.processKernel("Box Blur", [1, 1, 1, 1, 1, 1, 1, 1, 1]);
   });
 
-  Caman.Filter.register("radialBlur", function() {
-    return this.processKernel("Radial Blur", [0, 1, 0, 1, 1, 1, 0, 1, 0]);
-  });
-
   Caman.Filter.register("heavyRadialBlur", function() {
     return this.processKernel("Heavy Radial Blur", [0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0]);
   });
@@ -2047,7 +2046,7 @@
     return this.processKernel("Gaussian Blur", [1, 4, 6, 4, 1, 4, 16, 24, 16, 4, 6, 24, 36, 24, 6, 4, 16, 24, 16, 4, 1, 4, 6, 4, 1]);
   });
 
-  Caman.Filter.register("motionBlur", function() {
+  Caman.Filter.register("motionBlur", function(degrees) {
     var kernel;
     if (degrees === 0 || degrees === 180) {
       kernel = [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0];
@@ -2509,7 +2508,7 @@
         radiusFactor: 1.5,
         steps: 3
       };
-      opts = Caman.Util.extend(defaults, opts);
+      opts = Util.extend(defaults, opts);
       opts.angle *= Math.PI / 180;
       gradient = getLinearGradientMap(this.dimensions.width, this.dimensions.height, opts.center.x, opts.center.y, opts.angle, opts.focusWidth, true);
       return this.processPlugin("compoundBlur", [gradient, opts.startRadius, opts.radiusFactor, opts.steps]);
@@ -2527,7 +2526,7 @@
         steps: 3,
         radius: null
       };
-      opts = Caman.Util.extend(defaults, opts);
+      opts = Util.extend(defaults, opts);
       if (!opts.radius) {
         opts.radius = this.dimensions.width < this.dimensions.height ? this.dimensions.height : this.dimensions.width;
       }

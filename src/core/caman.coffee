@@ -72,15 +72,18 @@ Root.Caman = class Caman
       return new Caman(arguments)
 
   domIsLoaded: (cb) ->
-    return cb.call(@) if Caman.NodeJS
-
-    if document.readyState is "complete"
-      cb.call(@)
+    if Caman.NodeJS
+      setTimeout =>
+        cb.call(@)
+      , 0
     else
-      listener = =>
-        cb.call(@) if document.readyState is "complete"
+      if document.readyState is "complete"
+        cb.call(@)
+      else
+        listener = =>
+          cb.call(@) if document.readyState is "complete"
 
-      document.addEventListener "readystatechange", listener, false
+        document.addEventListener "readystatechange", listener, false
 
   # All possible combinations:
   #
