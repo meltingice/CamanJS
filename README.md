@@ -32,16 +32,12 @@ Caman also supports modifying images via the `data-caman` HTML attribute. Simply
 
 ### HiDPI Support
 
-Version 4 introduces better support for HiDPI (Retina) displays. It allows you to specify a higher resolution replacement either using a HTML data attribute or in Javascript. Keep in mind, however, that higher resolution images take longer to render.
+Version 4 introduces better support for HiDPI (Retina) displays. It allows you to specify a higher resolution replacement using HTML data attributes. Keep in mind, however, that higher resolution images take longer to render.
 
 **HTML data attributes**
 
 * `data-caman-hidpi`: URL to the high resolution replacement image
 * `data-caman-hidpi-disabled`: HiDPI support is enabled by default, so add this attribute if you wish to disable it
-
-**Javascript**
-
-TODO
 
 ## Development
 

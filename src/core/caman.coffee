@@ -255,8 +255,10 @@ Root.Caman = class Caman
 
     devicePixelRatio / backingStoreRatio
 
+  hiDPICapable: -> window.devicePixelRatio isnt 1
+
   needsHiDPISwap: ->
-    return false if @hiDPIDisabled() or (window.devicePixelRatio or 1) is 1
+    return false if @hiDPIDisabled() or !@hiDPICapable()
     @hiDPIReplacement() isnt null
 
   hiDPIReplacement: ->

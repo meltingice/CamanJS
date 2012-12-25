@@ -1,6 +1,6 @@
 # Handles all of the various rendering methods in Caman. Most of the image modification happens 
 # here. A new Renderer object is created for every render operation.
-class Renderer
+Caman.Renderer = class Renderer
   # The number of blocks to split the image into during the render process to simulate 
   # concurrency. This also helps the browser manage the (possibly) long running render jobs.
   @Blocks = if Caman.NodeJS then require('os').cpus().length else 4
@@ -126,7 +126,7 @@ class Renderer
     adjustSize = Math.sqrt adjust.length
 
     kernel = []
-    modPixelData = []
+    modPixelData = new Uint8Array(n)
 
     Log.debug "Rendering kernel - Filter: #{@currentJob.name}"
 

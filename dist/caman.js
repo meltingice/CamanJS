@@ -329,8 +329,12 @@
       return devicePixelRatio / backingStoreRatio;
     };
 
+    Caman.prototype.hiDPICapable = function() {
+      return window.devicePixelRatio !== 1;
+    };
+
     Caman.prototype.needsHiDPISwap = function() {
-      if (this.hiDPIDisabled() || (window.devicePixelRatio || 1) === 1) {
+      if (this.hiDPIDisabled() || !this.hiDPICapable()) {
         return false;
       }
       return this.hiDPIReplacement() !== null;
@@ -1382,7 +1386,7 @@
 
   Caman.Plugin = Plugin;
 
-  Renderer = (function() {
+  Caman.Renderer = Renderer = (function() {
 
     Renderer.Blocks = Caman.NodeJS ? require('os').cpus().length : 4;
 
@@ -1519,7 +1523,7 @@
       adjust = this.currentJob.adjust;
       adjustSize = Math.sqrt(adjust.length);
       kernel = [];
-      modPixelData = [];
+      modPixelData = new Uint8Array(n);
       Log.debug("Rendering kernel - Filter: " + this.currentJob.name);
       start = this.c.dimensions.width * 4 * ((adjustSize - 1) / 2);
       end = n - (this.c.dimensions.width * 4 * ((adjustSize - 1) / 2));
@@ -1608,7 +1612,7 @@
 
   })();
 
-  Store = (function() {
+  Caman.Store = Store = (function() {
 
     function Store() {}
 
@@ -1644,8 +1648,6 @@
     return Store;
 
   })();
-
-  Caman.Store = Store;
 
   Blender.register("normal", function(rgbaLayer, rgbaParent) {
     return {
