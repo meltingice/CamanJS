@@ -226,6 +226,9 @@
         except: ['src']
       });
       this.image.parentNode.replaceChild(this.canvas, this.image);
+      if (IO.isRemote(this.image)) {
+        this.image.src = IO.proxyUrl(this.image.src);
+      }
       return this.imageLoaded(function() {
         _this.canvas.width = _this.image.width;
         _this.canvas.height = _this.image.height;
@@ -247,6 +250,9 @@
       if (this.imageUrl != null) {
         this.image = document.createElement('img');
         this.image.src = this.imageUrl;
+        if (IO.isRemote(this.image)) {
+          this.image.src = IO.proxyUrl(this.image.src);
+        }
         return this.imageLoaded(this.finishInit);
       } else {
         return this.finishInit();
@@ -1063,12 +1069,15 @@
 
     IO.domainRegex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/;
 
-    IO.isRemote = function(url) {
+    IO.isRemote = function(img) {
       var matches;
-      if (!url) {
+      if (!img) {
         return;
       }
-      matches = url.match(this.domainRegex);
+      if (img.crossOrigin != null) {
+        return false;
+      }
+      matches = img.src.match(this.domainRegex);
       if (matches) {
         return matches[1] !== document.domain;
       } else {
@@ -1076,18 +1085,8 @@
       }
     };
 
-    IO.remoteCheck = function(src) {
-      if (this.isRemote(src)) {
-        if (!Caman.remoteProxy.length) {
-          Log.info("Attempting to load a remote image without a configured proxy. URL: " + src);
-        } else {
-          if (this.isRemote(Caman.remoteProxy)) {
-            Log.info("Cannot use a remote proxy for loading images.");
-            return;
-          }
-          return "" + Caman.remoteProxy + "?camanProxyUrl=" + (encodeURIComponent(src));
-        }
-      }
+    IO.proxyUrl = function(src) {
+      return "" + Caman.remoteProxy + "?camanProxyUrl=" + (encodeURIComponent(src));
     };
 
     IO.useProxy = function(lang) {

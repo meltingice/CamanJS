@@ -29,6 +29,8 @@ Root.Caman = class Caman
 
   # Debug mode enables console logging
   @DEBUG: false
+
+  # Are we in a NodeJS environment?
   @NodeJS: exports?
 
   # Should we check the DOM for images with Caman instructions?
@@ -155,6 +157,9 @@ Root.Caman = class Caman
     Util.copyAttributes @image, @canvas, except: ['src']
 
     @image.parentNode.replaceChild @canvas, @image
+
+    if IO.isRemote(@image)
+      @image.src = IO.proxyUrl(@image.src)
     
     @imageLoaded =>
       @canvas.width = @image.width
@@ -176,6 +181,10 @@ Root.Caman = class Caman
     if @imageUrl?
       @image = document.createElement 'img'
       @image.src = @imageUrl
+
+      if IO.isRemote(@image)
+        @image.src = IO.proxyUrl(@image.src)
+
       @imageLoaded @finishInit
     else
       @finishInit()

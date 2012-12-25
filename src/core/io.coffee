@@ -3,25 +3,17 @@ Caman.IO = class IO
   @domainRegex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/
 
   # Is the given URL remote?
-  @isRemote: (url) ->
-    return if not url
+  # If a cross-origin setting is set, we assume you have CORS
+  # properly configured.
+  @isRemote: (img) ->
+    return if not img
+    return false if img.crossOrigin?
 
-    matches = url.match @domainRegex
+    matches = img.src.match @domainRegex
     return if matches then matches[1] isnt document.domain else false
 
-  # Checks if the given URL is remote, and if so, returns the proxy URL (if
-  # one is defined)
-  @remoteCheck: (src) ->
-    if @isRemote src
-      if not Caman.remoteProxy.length
-        Log.info "Attempting to load a remote image without a configured proxy. URL: #{src}"
-        return
-      else
-        if @isRemote Caman.remoteProxy
-          Log.info "Cannot use a remote proxy for loading images."
-          return
-
-        "#{Caman.remoteProxy}?camanProxyUrl=#{encodeURIComponent(src)}"
+  @proxyUrl: (src) ->
+    "#{Caman.remoteProxy}?camanProxyUrl=#{encodeURIComponent(src)}"
 
   # Shortcut for using one of the bundled proxies.
   @useProxy: (lang) ->
