@@ -64,8 +64,8 @@ Caman.Renderer = class Renderer
         f = Fiber => fn.call(@, i, start, end)
         f.run()
       else
-        setTimeout =>
-          fn.call(@, i, start, end)
+        setTimeout do (i, start, end) =>
+          => fn.call(@, i, start, end)
         , 0
 
   # The core of the image rendering, this function executes the provided filter.

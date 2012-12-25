@@ -1457,9 +1457,11 @@
           });
           _results.push(f.run());
         } else {
-          _results.push(setTimeout(function() {
-            return fn.call(_this, i, start, end);
-          }, 0));
+          _results.push(setTimeout((function(i, start, end) {
+            return function() {
+              return fn.call(_this, i, start, end);
+            };
+          })(i, start, end), 0));
         }
       }
       return _results;
