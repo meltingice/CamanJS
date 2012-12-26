@@ -36,6 +36,7 @@ filters = [
 cli.parse
   samples: ['s', 'Number of samples per filter', 'number', 3]
   image: ['i', 'Image to use in the tests', 'path', __dirname + '/../examples/images/test1_640.jpg']
+  blocks: ['b', 'Number of blocks the renderer should use', 'number', require('os').cpus().length]
 
 class Bench
   currentSample: 0
@@ -89,11 +90,19 @@ class Bench
       data.push average
       @table.push data
 
+    console.log "\nResults"
     console.log "\n" + @table.toString()
 
 # Start the program
 cli.main (args, options) ->
-  console.log "Running #{options.samples} samples for #{filters.length} filters..."
+  console.log """
+  Running #{options.samples} samples for #{filters.length} filters.
+  The renderer will use #{options.blocks} blocks.
+  
+  """
+
+  Caman.Renderer.Blocks = options.blocks
+
   bench = new Bench(options)
   caman = Caman options.image, ->
     bench.setInstance caman
