@@ -29,3 +29,18 @@ describe "Layers", ->
         assert.equal a, 0
 
         done()
+
+  it "properly applies to the parent layer", (done) ->
+    Caman greyPath, ->
+      @newLayer ->
+        @setBlendingMode 'normal'
+        @opacity 100
+        @fillColor '#ff0000'
+
+      @render ->
+        assert.equal 255, @pixelData[0]
+        assert.equal 0, @pixelData[1]
+        assert.equal 0, @pixelData[2]
+        assert.equal 255, @pixelData[3]
+
+        done()
