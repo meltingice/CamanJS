@@ -1,4 +1,4 @@
-<!DOCTYPE html>  <html> <head>   <title>caman.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="analyze.html">                 analyze.coffee               </a>                                           <a class="source" href="autoload.html">                 autoload.coffee               </a>                                           <a class="source" href="blender.html">                 blender.coffee               </a>                                           <a class="source" href="calculate.html">                 calculate.coffee               </a>                                           <a class="source" href="caman.html">                 caman.coffee               </a>                                           <a class="source" href="camaninstance.html">                 camaninstance.coffee               </a>                                           <a class="source" href="convert.html">                 convert.coffee               </a>                                           <a class="source" href="event.html">                 event.coffee               </a>                                           <a class="source" href="filter.html">                 filter.coffee               </a>                                           <a class="source" href="io.html">                 io.coffee               </a>                                           <a class="source" href="layer.html">                 layer.coffee               </a>                                           <a class="source" href="logger.html">                 logger.coffee               </a>                                           <a class="source" href="pixelinfo.html">                 pixelinfo.coffee               </a>                                           <a class="source" href="plugin.html">                 plugin.coffee               </a>                                           <a class="source" href="renderjob.html">                 renderjob.coffee               </a>                                           <a class="source" href="store.html">                 store.coffee               </a>                                           <a class="source" href="util.html">                 util.coffee               </a>                                           <a class="source" href="blenders.html">                 blenders.coffee               </a>                                           <a class="source" href="filters.html">                 filters.coffee               </a>                                           <a class="source" href="blur.html">                 blur.coffee               </a>                                           <a class="source" href="camera.html">                 camera.coffee               </a>                                           <a class="source" href="compoundBlur.html">                 compoundBlur.coffee               </a>                                           <a class="source" href="edges.html">                 edges.coffee               </a>                                           <a class="source" href="posterize.html">                 posterize.coffee               </a>                                           <a class="source" href="presets.html">                 presets.coffee               </a>                                           <a class="source" href="size.html">                 size.coffee               </a>                                           <a class="source" href="stackBlur.html">                 stackBlur.coffee               </a>                                           <a class="source" href="threshold.html">                 threshold.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               caman.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>NodeJS compatibility</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">if</span> <span class="nx">exports</span><span class="o">?</span>
+<!DOCTYPE html>  <html> <head>   <title>caman.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="analyze.html">                 analyze.coffee               </a>                                           <a class="source" href="autoload.html">                 autoload.coffee               </a>                                           <a class="source" href="blender.html">                 blender.coffee               </a>                                           <a class="source" href="calculate.html">                 calculate.coffee               </a>                                           <a class="source" href="caman.html">                 caman.coffee               </a>                                           <a class="source" href="convert.html">                 convert.coffee               </a>                                           <a class="source" href="event.html">                 event.coffee               </a>                                           <a class="source" href="filter.html">                 filter.coffee               </a>                                           <a class="source" href="io.html">                 io.coffee               </a>                                           <a class="source" href="layer.html">                 layer.coffee               </a>                                           <a class="source" href="logger.html">                 logger.coffee               </a>                                           <a class="source" href="pixelinfo.html">                 pixelinfo.coffee               </a>                                           <a class="source" href="plugin.html">                 plugin.coffee               </a>                                           <a class="source" href="renderer.html">                 renderer.coffee               </a>                                           <a class="source" href="store.html">                 store.coffee               </a>                                           <a class="source" href="util.html">                 util.coffee               </a>                                           <a class="source" href="blenders.html">                 blenders.coffee               </a>                                           <a class="source" href="filters.html">                 filters.coffee               </a>                                           <a class="source" href="blur.html">                 blur.coffee               </a>                                           <a class="source" href="camera.html">                 camera.coffee               </a>                                           <a class="source" href="compoundBlur.html">                 compoundBlur.coffee               </a>                                           <a class="source" href="edges.html">                 edges.coffee               </a>                                           <a class="source" href="posterize.html">                 posterize.coffee               </a>                                           <a class="source" href="presets.html">                 presets.coffee               </a>                                           <a class="source" href="size.html">                 size.coffee               </a>                                           <a class="source" href="stackBlur.html">                 stackBlur.coffee               </a>                                           <a class="source" href="threshold.html">                 threshold.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               caman.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>NodeJS compatibility</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">if</span> <span class="nx">exports</span><span class="o">?</span>
   <span class="nv">Root = </span><span class="nx">exports</span>
   <span class="nv">Canvas = </span><span class="nx">require</span> <span class="s">&#39;canvas&#39;</span>
   <span class="nv">Image = </span><span class="nx">Canvas</span><span class="p">.</span><span class="nx">Image</span>
@@ -18,36 +18,292 @@ do this prematurely, the browser will throw a DOM Error, and chaos will ensue. I
 we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
 image element, load the image, then continue with initialization.</p>
 
-<p>The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
-This is also why this piece of code is a bit gross. Once everything is loaded, and Caman is 
-initialized, the callback function is fired.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Root.Caman = Caman = </span><span class="o">-&gt;</span>
-  <span class="k">throw</span> <span class="s">&quot;Invalid arguments given&quot;</span> <span class="k">if</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>NodeJS version</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">return</span> <span class="k">new</span> <span class="nx">CamanInstance</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Node</span> <span class="k">if</span> <span class="nx">exports</span><span class="o">?</span>
+<p>The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. </p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Root.Caman = </span><span class="k">class</span> <span class="nx">Caman</span>
+  <span class="vi">@version:</span>
+    <span class="nv">release: </span><span class="s">&quot;3.4.0&quot;</span>
+    <span class="nv">date: </span><span class="s">&quot;12/17/12&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Debug mode enables console logging</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="vi">@DEBUG: </span><span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Are we in a NodeJS environment?</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="vi">@NodeJS: </span><span class="nx">exports</span><span class="o">?</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Should we check the DOM for images with Caman instructions?</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="vi">@autoload: </span><span class="o">not</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">NodeJS</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Default cross-origin policy</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="vi">@crossOrigin: </span><span class="s">&quot;anonymous&quot;</span>
 
-  <span class="k">switch</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span>
-    <span class="k">when</span> <span class="mi">1</span>
-      <span class="k">return</span> <span class="nx">Store</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="nx">Store</span><span class="p">.</span><span class="nx">has</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-      <span class="k">return</span> <span class="k">new</span> <span class="nx">CamanInstance</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Unknown</span>
-    <span class="k">when</span> <span class="mi">2</span>
-      <span class="k">return</span> <span class="nx">Store</span><span class="p">.</span><span class="nx">execute</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nx">Store</span><span class="p">.</span><span class="nx">has</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-      
-      <span class="k">if</span> <span class="k">typeof</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">is</span> <span class="s">&#39;function&#39;</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">CamanInstance</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Unknown</span><span class="p">)</span>
+  <span class="vi">@toString: </span><span class="o">-&gt;</span>
+    <span class="s">&quot;Version &quot;</span> <span class="o">+</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">version</span><span class="p">.</span><span class="nx">release</span> <span class="o">+</span> <span class="s">&quot;, Released &quot;</span> <span class="o">+</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">version</span><span class="p">.</span><span class="nx">date</span><span class="p">;</span>
+
+  <span class="vi">@remoteProxy = </span><span class="s">&quot;&quot;</span>
+
+  <span class="nv">constructor: </span><span class="o">-&gt;</span>
+    <span class="k">throw</span> <span class="s">&quot;Invalid arguments&quot;</span> <span class="k">if</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="nx">@</span> <span class="k">instanceof</span> <span class="nx">Caman</span>
+      <span class="nv">args = </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
+same instance.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="vi">@id = </span><span class="nx">Util</span><span class="p">.</span><span class="nx">uniqid</span><span class="p">.</span><span class="nx">get</span><span class="p">()</span>
+      <span class="vi">@originalPixelData = </span><span class="p">[]</span>
+      <span class="vi">@pixelStack = </span><span class="p">[]</span>  <span class="c1"># Stores the pixel layers</span>
+      <span class="vi">@layerStack = </span><span class="p">[]</span>  <span class="c1"># Stores all of the layers waiting to be rendered</span>
+      <span class="vi">@canvasQueue = </span><span class="p">[]</span> <span class="c1"># Stores all of the canvases to be processed</span>
+      <span class="vi">@currentLayer = </span><span class="kc">null</span>
+      <span class="vi">@scaled = </span><span class="kc">false</span>
+
+      <span class="vi">@analyze = </span><span class="k">new</span> <span class="nx">Analyze</span> <span class="nx">@</span>
+      <span class="vi">@renderer = </span><span class="k">new</span> <span class="nx">Renderer</span> <span class="nx">@</span>
+
+      <span class="nx">@domIsLoaded</span> <span class="o">=&gt;</span>
+        <span class="nx">@parseArguments</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
+        <span class="nx">@setup</span><span class="p">()</span>
+
+      <span class="k">return</span> <span class="nx">@</span>
+    <span class="k">else</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nx">Caman</span><span class="p">(</span><span class="nx">arguments</span><span class="p">)</span>
+
+  <span class="nv">domIsLoaded: </span><span class="nf">(cb) -&gt;</span>
+    <span class="k">if</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">NodeJS</span>
+      <span class="nx">setTimeout</span> <span class="o">=&gt;</span>
+        <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">@</span><span class="p">)</span>
+      <span class="p">,</span> <span class="mi">0</span>
+    <span class="k">else</span>
+      <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s">&quot;complete&quot;</span>
+        <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">@</span><span class="p">)</span>
       <span class="k">else</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">CamanInstance</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Canvas</span><span class="p">)</span>
-    <span class="k">when</span> <span class="mi">3</span>
-      <span class="k">return</span> <span class="nx">Store</span><span class="p">.</span><span class="nx">execute</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="nx">Store</span><span class="p">.</span><span class="nx">has</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-      <span class="k">return</span> <span class="k">new</span> <span class="nx">CamanInstance</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CamanInstance</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Canvas</span><span class="p">)</span>
+        <span class="nv">listener = </span><span class="o">=&gt;</span>
+          <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">@</span><span class="p">)</span> <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s">&quot;complete&quot;</span>
+
+        <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s">&quot;readystatechange&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="p">,</span> <span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>All possible combinations:</p>
+
+<p>1 argument
+  - Image selector
+  - Image object
+  - Canvas selector
+  - Canvas object
+2 arguments
+  - Image selector + callback
+  - Image object + callback
+  - Canvas selector + URL
+  - Canvas object + URL
+3 arguments
+  - Canvas selector + URL + callback
+  - Canvas object + URL + callback
+NodeJS
+  - file path
+  - file object
+  - file path + callback
+  - file object + callback</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">parseArguments: </span><span class="nf">(args) -&gt;</span>
+    <span class="k">throw</span> <span class="s">&quot;Invalid arguments given&quot;</span> <span class="k">if</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Defaults</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@initObj = </span><span class="kc">null</span>
+    <span class="vi">@initType = </span><span class="kc">null</span>
+    <span class="vi">@imageUrl = </span><span class="kc">null</span>
+    <span class="vi">@callback = </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>First argument is always our canvas/image</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@setInitObject</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="k">if</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">1</span>
     
-<span class="nv">Caman.version =</span>
-  <span class="nv">release: </span><span class="s">&quot;3.4.0&quot;</span>
-  <span class="nv">date: </span><span class="s">&quot;12/17/12&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Debug mode enables console logging</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Caman.DEBUG = </span><span class="kc">false</span>
+    <span class="k">switch</span> <span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="k">when</span> <span class="s">&quot;string&quot;</span> <span class="k">then</span> <span class="vi">@imageUrl = </span><span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="k">when</span> <span class="s">&quot;function&quot;</span> <span class="k">then</span> <span class="vi">@callback = </span><span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      
+    <span class="k">return</span> <span class="k">if</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">2</span>
 
-<span class="nv">Caman.NodeJS = </span><span class="nx">exports</span><span class="o">?</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Should we check the DOM for images with Caman instructions?</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Caman.autoload = </span><span class="o">not</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">NodeJS</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Default cross-origin policy</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Caman.crossOrigin = </span><span class="s">&quot;anonymous&quot;</span>
+    <span class="vi">@callback = </span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-<span class="nv">Caman.toString = </span><span class="o">-&gt;</span>
-  <span class="s">&quot;Version &quot;</span> <span class="o">+</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">version</span><span class="p">.</span><span class="nx">release</span> <span class="o">+</span> <span class="s">&quot;, Released &quot;</span> <span class="o">+</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">version</span><span class="p">.</span><span class="nx">date</span><span class="p">;</span>
+  <span class="nv">setInitObject: </span><span class="nf">(obj) -&gt;</span>
+    <span class="k">if</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">NodeJS</span>
+      <span class="vi">@initObj = </span><span class="nx">obj</span>
+      <span class="vi">@initType = </span><span class="s">&#39;node&#39;</span>
+      <span class="k">return</span>
 
-<span class="nv">Caman.remoteProxy = </span><span class="s">&quot;&quot;</span>
-<span class="nv">Caman.Util = </span><span class="nx">Util</span>
+    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">obj</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span>
+      <span class="vi">@initObj = </span><span class="nx">obj</span>
+    <span class="k">else</span>
+      <span class="vi">@initObj = </span><span class="nx">$</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
+
+    <span class="vi">@initType = </span><span class="nx">@initObj</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+
+  <span class="nv">setup: </span><span class="o">-&gt;</span>
+    <span class="k">switch</span> <span class="nx">@initType</span>
+      <span class="k">when</span> <span class="s">&quot;node&quot;</span> <span class="k">then</span> <span class="nx">@initNode</span><span class="p">()</span>
+      <span class="k">when</span> <span class="s">&quot;img&quot;</span> <span class="k">then</span> <span class="nx">@initImage</span><span class="p">()</span>
+      <span class="k">when</span> <span class="s">&quot;canvas&quot;</span> <span class="k">then</span> <span class="nx">@initCanvas</span><span class="p">()</span>
+
+  <span class="nv">initNode: </span><span class="o">-&gt;</span>
+    <span class="vi">@image = </span><span class="k">new</span> <span class="nx">Image</span><span class="p">()</span>
+    <span class="vi">@image.onload = </span><span class="o">=&gt;</span>
+      <span class="vi">@canvas = </span><span class="k">new</span> <span class="nx">Canvas</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">height</span>
+      <span class="nx">@finishInit</span><span class="p">()</span>
+
+    <span class="vi">@image.onerror = </span><span class="nf">(err) -&gt;</span> <span class="k">throw</span> <span class="nx">err</span>
+    <span class="vi">@image.src = </span><span class="nx">@initObj</span>
+
+  <span class="nv">initImage: </span><span class="o">-&gt;</span>
+    <span class="vi">@image = </span><span class="nx">@initObj</span>
+    <span class="vi">@canvas = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s">&#39;canvas&#39;</span>
+    <span class="nx">Util</span><span class="p">.</span><span class="nx">copyAttributes</span> <span class="nx">@image</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">,</span> <span class="nv">except: </span><span class="p">[</span><span class="s">&#39;src&#39;</span><span class="p">]</span>
+
+    <span class="nx">@image</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span> <span class="nx">@canvas</span><span class="p">,</span> <span class="nx">@image</span>
+
+    <span class="k">if</span> <span class="nx">IO</span><span class="p">.</span><span class="nx">isRemote</span><span class="p">(</span><span class="nx">@image</span><span class="p">)</span>
+      <span class="vi">@image.src = </span><span class="nx">IO</span><span class="p">.</span><span class="nx">proxyUrl</span><span class="p">(</span><span class="nx">@image</span><span class="p">.</span><span class="nx">src</span><span class="p">)</span>
+    
+    <span class="nx">@imageLoaded</span> <span class="o">=&gt;</span>
+      <span class="vi">@canvas.width = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">width</span>
+      <span class="vi">@canvas.height = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">height</span>
+
+      <span class="k">if</span> <span class="nx">@needsHiDPISwap</span><span class="p">()</span>
+        <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">src</span><span class="p">,</span> <span class="s">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="nx">@hiDPIReplacement</span><span class="p">()</span>
+        <span class="vi">@image.src = </span><span class="nx">@hiDPIReplacement</span><span class="p">()</span>
+
+        <span class="nx">@imageLoaded</span> <span class="o">=&gt;</span>
+          <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;HiDPI version loaded&quot;</span>
+          <span class="vi">@swapped = </span><span class="kc">true</span>
+
+          <span class="nx">@finishInit</span><span class="p">()</span>
+      <span class="k">else</span>
+        <span class="nx">@finishInit</span><span class="p">()</span>
+
+  <span class="nv">initCanvas: </span><span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nx">@imageUrl</span><span class="o">?</span>
+      <span class="vi">@image = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s">&#39;img&#39;</span>
+      <span class="vi">@image.src = </span><span class="nx">@imageUrl</span>
+
+      <span class="k">if</span> <span class="nx">IO</span><span class="p">.</span><span class="nx">isRemote</span><span class="p">(</span><span class="nx">@image</span><span class="p">)</span>
+        <span class="vi">@image.src = </span><span class="nx">IO</span><span class="p">.</span><span class="nx">proxyUrl</span><span class="p">(</span><span class="nx">@image</span><span class="p">.</span><span class="nx">src</span><span class="p">)</span>
+
+      <span class="nx">@imageLoaded</span> <span class="nx">@finishInit</span>
+    <span class="k">else</span>
+      <span class="nx">@finishInit</span><span class="p">()</span>
+
+  <span class="nv">imageLoaded: </span><span class="nf">(cb) -&gt;</span>
+    <span class="k">if</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">complete</span>
+      <span class="nx">cb</span><span class="p">()</span>
+    <span class="k">else</span>
+      <span class="vi">@image.onload = </span><span class="nx">cb</span>
+
+  <span class="nv">finishInit: </span><span class="o">=&gt;</span>
+    <span class="vi">@context = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">getContext</span> <span class="s">&#39;2d&#39;</span>
+
+    <span class="vi">@originalWidth = @width = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
+    <span class="vi">@originalHeight = @height = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
+
+    <span class="nx">@hiDPIAdjustments</span><span class="p">()</span>
+    <span class="nx">@assignId</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nx">@image</span><span class="o">?</span>
+      <span class="nx">@context</span><span class="p">.</span><span class="nx">drawImage</span> <span class="nx">@image</span><span class="p">,</span> 
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> 
+        <span class="nx">@image</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span> 
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> 
+        <span class="nx">@originalWidth</span><span class="p">,</span> <span class="nx">@originalHeight</span>
+    
+    <span class="vi">@imageData = </span><span class="nx">@context</span><span class="p">.</span><span class="nx">getImageData</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
+    <span class="vi">@pixelData = </span><span class="nx">@imageData</span><span class="p">.</span><span class="nx">data</span>
+    <span class="nx">@originalPixelData</span><span class="p">.</span><span class="nx">push</span> <span class="nx">pixel</span> <span class="k">for</span> <span class="nx">pixel</span> <span class="k">in</span> <span class="nx">@pixelData</span>
+
+    <span class="vi">@dimensions =</span>
+      <span class="nv">width: </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
+      <span class="nv">height: </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
+
+    <span class="nx">Store</span><span class="p">.</span><span class="nx">put</span> <span class="nx">@getId</span><span class="p">,</span> <span class="nx">@</span>
+
+    <span class="nx">@callback</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@</span><span class="p">,</span><span class="nx">@</span>
+
+  <span class="nv">assignId: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="k">if</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">NodeJS</span> <span class="o">or</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">getAttribute</span> <span class="s">&#39;data-caman-id&#39;</span>
+    <span class="nx">@canvas</span><span class="p">.</span><span class="nx">setAttribute</span> <span class="s">&#39;data-caman-id&#39;</span><span class="p">,</span> <span class="nx">@id</span>
+
+  <span class="nv">getId: </span><span class="o">-&gt;</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">getAttribute</span> <span class="s">&#39;data-caman-id&#39;</span>
+
+  <span class="nv">hiDPIDisabled: </span><span class="o">-&gt;</span>
+    <span class="nx">@canvas</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s">&#39;data-caman-hidpi-disabled&#39;</span><span class="p">)</span> <span class="o">isnt</span> <span class="kc">null</span>
+
+  <span class="nv">hiDPIAdjustments: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="k">if</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">NodeJS</span> <span class="o">or</span> <span class="nx">@hiDPIDisabled</span><span class="p">()</span>
+
+    <span class="nv">ratio = </span><span class="nx">@hiDPIRatio</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nx">ratio</span> <span class="o">isnt</span> <span class="mi">1</span>
+      <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;HiDPI ratio = </span><span class="si">#{</span><span class="nx">ratio</span><span class="si">}</span><span class="s">&quot;</span>
+      <span class="vi">@scaled = </span><span class="kc">true</span>
+
+      <span class="vi">@originalWidth = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
+      <span class="vi">@originalHeight = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
+
+      <span class="vi">@canvas.width = </span><span class="nx">@originalWidth</span> <span class="o">*</span> <span class="nx">ratio</span>
+      <span class="vi">@canvas.height = </span><span class="nx">@originalHeight</span> <span class="o">*</span> <span class="nx">ratio</span>
+      <span class="vi">@canvas.style.width = </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">@originalWidth</span><span class="si">}</span><span class="s">px&quot;</span>
+      <span class="vi">@canvas.style.height = </span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">@originalHeight</span><span class="si">}</span><span class="s">px&quot;</span>
+
+      <span class="nx">@context</span><span class="p">.</span><span class="nx">scale</span> <span class="nx">ratio</span><span class="p">,</span> <span class="nx">ratio</span>
+
+      <span class="vi">@width = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
+      <span class="vi">@height = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
+
+  <span class="nv">hiDPIRatio: </span><span class="o">-&gt;</span>
+    <span class="nv">devicePixelRatio = </span><span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span> <span class="o">or</span> <span class="mi">1</span>
+    <span class="nv">backingStoreRatio = </span><span class="nx">@context</span><span class="p">.</span><span class="nx">webkitBackingStorePixelRatio</span> <span class="o">or</span>
+                        <span class="nx">@context</span><span class="p">.</span><span class="nx">mozBackingStorePixelRatio</span> <span class="o">or</span>
+                        <span class="nx">@context</span><span class="p">.</span><span class="nx">msBackingStorePixelRatio</span> <span class="o">or</span>
+                        <span class="nx">@context</span><span class="p">.</span><span class="nx">oBackingStorePixelRatio</span> <span class="o">or</span>
+                        <span class="nx">@context</span><span class="p">.</span><span class="nx">backingStorePixelRatio</span> <span class="o">or</span> <span class="mi">1</span>
+
+    <span class="nx">devicePixelRatio</span> <span class="o">/</span> <span class="nx">backingStoreRatio</span>
+
+  <span class="nv">hiDPICapable: </span><span class="o">-&gt;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span> <span class="o">isnt</span> <span class="mi">1</span>
+
+  <span class="nv">needsHiDPISwap: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="kc">false</span> <span class="k">if</span> <span class="nx">@hiDPIDisabled</span><span class="p">()</span> <span class="o">or</span> <span class="o">!</span><span class="nx">@hiDPICapable</span><span class="p">()</span>
+    <span class="nx">@hiDPIReplacement</span><span class="p">()</span> <span class="o">isnt</span> <span class="kc">null</span>
+
+  <span class="nv">hiDPIReplacement: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="kc">null</span> <span class="nx">unless</span> <span class="nx">@image</span><span class="o">?</span>
+    <span class="nx">@image</span><span class="p">.</span><span class="nx">getAttribute</span> <span class="s">&#39;data-caman-hidpi&#39;</span>
+
+  <span class="nv">replaceCanvas: </span><span class="nf">(newCanvas) -&gt;</span>
+    <span class="nv">oldCanvas = </span><span class="nx">@canvas</span>
+    <span class="vi">@canvas = </span><span class="nx">newCanvas</span>
+
+    <span class="nx">oldCanvas</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span> <span class="nx">@canvas</span><span class="p">,</span> <span class="nx">oldCanvas</span>
+    <span class="nx">@finishInit</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Begins the rendering process</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">render: </span><span class="nf">(callback = -&gt;) -&gt;</span>
+    <span class="nx">Event</span><span class="p">.</span><span class="nx">trigger</span> <span class="nx">@</span><span class="p">,</span> <span class="s">&quot;renderStart&quot;</span>
+    
+    <span class="nx">@renderer</span><span class="p">.</span><span class="nx">execute</span> <span class="o">=&gt;</span>
+      <span class="nx">@context</span><span class="p">.</span><span class="nx">putImageData</span> <span class="nx">@imageData</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+      <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Reverts the canvas back to it's original state.
+This used to be asynchronous, so we provide the option of
+providing a callback to keep backwards compatibility.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">revert: </span><span class="nf">(ready = -&gt;) -&gt;</span>
+    <span class="nx">@pixelData</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pixel</span> <span class="k">for</span> <span class="nx">pixel</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@originalPixelData</span>
+    <span class="nx">@context</span><span class="p">.</span><span class="nx">putImageData</span> <span class="nx">@imageData</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="nx">ready</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Pushes the filter callback that modifies the RGBA object into the
+render queue</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">process: </span><span class="nf">(name, processFn) -&gt;</span>
+    <span class="nx">@renderer</span><span class="p">.</span><span class="nx">add</span>
+      <span class="nv">type: </span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Single</span>
+      <span class="nv">name: </span><span class="nx">name</span>
+      <span class="nv">processFn: </span><span class="nx">processFn</span>
+
+    <span class="k">return</span> <span class="nx">@</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Pushes the kernel into the render queue</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">processKernel: </span><span class="nf">(name, adjust, divisor, bias) -&gt;</span>
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">divisor</span>
+      <span class="nv">divisor = </span><span class="mi">0</span>
+      <span class="nx">divisor</span> <span class="o">+=</span> <span class="nx">adjust</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">...</span><span class="nx">adjust</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span>
+
+    <span class="nx">@renderer</span><span class="p">.</span><span class="nx">add</span>
+      <span class="nv">type: </span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Kernel</span>
+      <span class="nv">name: </span><span class="nx">name</span>
+      <span class="nv">adjust: </span><span class="nx">adjust</span>
+      <span class="nv">divisor: </span><span class="nx">divisor</span>
+      <span class="nv">bias: </span><span class="nx">bias</span> <span class="o">or</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="nx">@</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Adds a standalone plugin into the render queue</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">processPlugin: </span><span class="nf">(plugin, args) -&gt;</span>
+    <span class="nx">@renderer</span><span class="p">.</span><span class="nx">add</span>
+      <span class="nv">type: </span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">Plugin</span>
+      <span class="nv">plugin: </span><span class="nx">plugin</span>
+      <span class="nv">args: </span><span class="nx">args</span>
+
+    <span class="k">return</span> <span class="nx">@</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Pushes a new layer operation into the render queue and calls the layer
+callback</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">newLayer: </span><span class="nf">(callback) -&gt;</span>
+    <span class="nv">layer = </span><span class="k">new</span> <span class="nx">Layer</span> <span class="nx">@</span>
+    <span class="nx">@canvasQueue</span><span class="p">.</span><span class="nx">push</span> <span class="nx">layer</span>
+    <span class="nx">@renderer</span><span class="p">.</span><span class="nx">add</span> <span class="nv">type: </span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">LayerDequeue</span>
+
+    <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span> <span class="nx">layer</span>
+
+    <span class="nx">@renderer</span><span class="p">.</span><span class="nx">add</span> <span class="nv">type: </span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Type</span><span class="p">.</span><span class="nx">LayerFinished</span>
+    <span class="k">return</span> <span class="nx">@</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Pushes the layer context and moves to the next operation</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">executeLayer: </span><span class="nf">(layer) -&gt;</span> <span class="nx">@pushContext</span> <span class="nx">layer</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Set all of the relevant data to the new layer</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">pushContext: </span><span class="nf">(layer) -&gt;</span>
+    <span class="nx">@layerStack</span><span class="p">.</span><span class="nx">push</span> <span class="nx">@currentLayer</span>
+    <span class="nx">@pixelStack</span><span class="p">.</span><span class="nx">push</span> <span class="nx">@pixelData</span>
+    <span class="vi">@currentLayer = </span><span class="nx">layer</span>
+    <span class="vi">@pixelData = </span><span class="nx">layer</span><span class="p">.</span><span class="nx">pixelData</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Restore the previous layer context</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">popContext: </span><span class="o">-&gt;</span>
+    <span class="vi">@pixelData = </span><span class="nx">@pixelStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span>
+    <span class="vi">@currentLayer = </span><span class="nx">@layerStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Applies the current layer to its parent layer</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">applyCurrentLayer: </span><span class="o">-&gt;</span> <span class="nx">@currentLayer</span><span class="p">.</span><span class="nx">applyToParent</span><span class="p">()</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
