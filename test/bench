@@ -91,6 +91,9 @@ class Bench
       @table.push data
 
     console.log "\nResults"
+    console.log "Image: #{@options.image.split('/').pop()}"
+    console.log "Size: #{@c.dimensions.width}x#{@c.dimensions.height} - #{@c.pixelData.length / 4} pixels"
+    console.log "CPUs: #{require('os').cpus().length}"
     console.log "\n" + @table.toString()
 
 # Start the program
@@ -98,7 +101,7 @@ cli.main (args, options) ->
   console.log """
   Running #{options.samples} samples for #{filters.length} filters.
   The renderer will use #{options.blocks} blocks.
-  
+
   """
 
   Caman.Renderer.Blocks = options.blocks
