@@ -18,6 +18,7 @@ describe "Initialization", ->
       caman = Caman(greyPath)
       assert.isObject caman
       assert.isFunction caman.render
+      assert.instanceOf caman, Caman
 
   describe "with two arguments", ->
     it "accepts a file path and a callback", ->
