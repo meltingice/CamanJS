@@ -573,7 +573,7 @@
 
   })();
 
-  Blender = (function() {
+  Caman.Blender = Blender = (function() {
 
     function Blender() {}
 
@@ -590,8 +590,6 @@
     return Blender;
 
   })();
-
-  Caman.Blender = Blender;
 
   Calculate = (function() {
 

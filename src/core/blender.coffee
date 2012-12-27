@@ -1,5 +1,5 @@
 # Built-in layer blenders. Many of these mimic Photoshop blend modes.
-class Blender
+Caman.Blender = class Blender
   @blenders = {}
 
   # Registers a blender. Can be used to add your own blenders outside of
@@ -9,5 +9,3 @@ class Blender
   # Executes a blender to combine a layer with its parent.
   @execute: (name, rgbaLayer, rgbaParent) ->
     @blenders[name](rgbaLayer, rgbaParent)
-
-Caman.Blender = Blender
