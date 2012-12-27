@@ -44,11 +44,29 @@ Root.Caman = class Caman
 
   @remoteProxy = ""
 
+  @getAttrId: (canvas) ->
+    if typeof canvas is "string"
+      canvas = $(canvas)
+
+    return null unless canvas? and canvas.getAttribute?
+    canvas.getAttribute 'data-caman-id'
+
   constructor: ->
     throw "Invalid arguments" if arguments.length is 0
 
     if @ instanceof Caman
       args = arguments[0]
+
+      unless Caman.NodeJS
+        id = parseInt Caman.getAttrId(args[0]), 10
+        callback = if typeof args[1] is "function"
+          args[1]
+        else if typeof args[2] is "function"
+          args[2]
+        else
+          ->
+
+        return Store.execute(id, callback) if !isNaN(id)
 
       # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
       # same instance.
@@ -63,7 +81,7 @@ Root.Caman = class Caman
       @analyze = new Analyze @
       @renderer = new Renderer @
 
-      @domIsLoaded =>
+      @domIsLoaded =>  
         @parseArguments(args)
         @setup()
 
@@ -78,7 +96,9 @@ Root.Caman = class Caman
       , 0
     else
       if document.readyState is "complete"
-        cb.call(@)
+        setTimeout =>
+          cb.call(@)
+        , 0
       else
         listener = =>
           cb.call(@) if document.readyState is "complete"
@@ -222,15 +242,13 @@ Root.Caman = class Caman
       width: @canvas.width
       height: @canvas.height
 
-    Store.put @getId, @
+    Store.put @id, @
 
     @callback.call @,@
 
   assignId: ->
     return if Caman.NodeJS or @canvas.getAttribute 'data-caman-id'
     @canvas.setAttribute 'data-caman-id', @id
-
-  getId: -> @canvas.getAttribute 'data-caman-id'
 
   hiDPIDisabled: ->
     @canvas.getAttribute('data-caman-hidpi-disabled') isnt null

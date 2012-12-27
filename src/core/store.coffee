@@ -6,6 +6,12 @@ Caman.Store = class Store
   @has: (search) -> @items[search]?
   @get: (search) -> @items[search]
   @put: (name, obj) -> @items[name] = obj
-  @execute: (search, callback) -> callback.call @get(search), @get(search)
+  @execute: (search, callback) ->
+    setTimeout =>
+      callback.call @get(search), @get(search)
+    , 0
+
+    return @get(search)
+    
   @flush: (name = false) ->
     if name then delete @items[name] else @items = {}

@@ -108,16 +108,33 @@
 
     Caman.remoteProxy = "";
 
+    Caman.getAttrId = function(canvas) {
+      if (typeof canvas === "string") {
+        canvas = $(canvas);
+      }
+      if (!((canvas != null) && (canvas.getAttribute != null))) {
+        return null;
+      }
+      return canvas.getAttribute('data-caman-id');
+    };
+
     function Caman() {
       this.finishInit = __bind(this.finishInit, this);
 
-      var args,
+      var args, callback, id,
         _this = this;
       if (arguments.length === 0) {
         throw "Invalid arguments";
       }
       if (this instanceof Caman) {
         args = arguments[0];
+        if (!Caman.NodeJS) {
+          id = parseInt(Caman.getAttrId(args[0]), 10);
+          callback = typeof args[1] === "function" ? args[1] : typeof args[2] === "function" ? args[2] : function() {};
+          if (!isNaN(id)) {
+            return Store.execute(id, callback);
+          }
+        }
         this.id = Util.uniqid.get();
         this.originalPixelData = [];
         this.pixelStack = [];
@@ -146,7 +163,9 @@
         }, 0);
       } else {
         if (document.readyState === "complete") {
-          return cb.call(this);
+          return setTimeout(function() {
+            return cb.call(_this);
+          }, 0);
         } else {
           listener = function() {
             if (document.readyState === "complete") {
@@ -291,7 +310,7 @@
         width: this.canvas.width,
         height: this.canvas.height
       };
-      Store.put(this.getId, this);
+      Store.put(this.id, this);
       return this.callback.call(this, this);
     };
 
@@ -300,10 +319,6 @@
         return;
       }
       return this.canvas.setAttribute('data-caman-id', this.id);
-    };
-
-    Caman.prototype.getId = function() {
-      return this.canvas.getAttribute('data-caman-id');
     };
 
     Caman.prototype.hiDPIDisabled = function() {
@@ -1639,7 +1654,11 @@
     };
 
     Store.execute = function(search, callback) {
-      return callback.call(this.get(search), this.get(search));
+      var _this = this;
+      setTimeout(function() {
+        return callback.call(_this.get(search), _this.get(search));
+      }, 0);
+      return this.get(search);
     };
 
     Store.flush = function(name) {
