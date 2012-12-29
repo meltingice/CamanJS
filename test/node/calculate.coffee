@@ -43,3 +43,27 @@ describe "Calculate", ->
       value = Caman.Calculate.luminance(rgb)
       assert.typeOf value, 'number'
       assert.strictEqual @expected, value
+
+  describe "bezier", ->
+    before ->
+      @bezier = Caman.Calculate.bezier [0, 0], [100, 100], [200, 200], [255, 255]
+
+    it "returns an object", ->
+      assert.typeOf @bezier, 'object'
+
+    it "returns a Y value for every X value", ->
+      # Simple curve
+      assert.property @bezier, i for i in [0..255]
+
+      # More intense curve
+      bezier = Caman.Calculate.bezier [0, 0], [100, 5], [105, 200], [255, 255]
+      assert.property bezier, i for i in [0..255]
+
+      # curve that isn't between [0..255]
+      bezier2 = Caman.Calculate.bezier [20, 20], [100, 100], [200, 150], [220, 200]
+      assert.property bezier2, i for i in [20..220]
+
+    it "properly clamps Y values when set", ->
+      # This makes a straight line
+      bezier = Caman.Calculate.bezier [0, 100], [100, 0], [200, 255], [255, 100], 100, 100
+      assert.propertyVal bezier, i, 100 for i in [0..255]

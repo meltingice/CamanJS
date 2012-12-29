@@ -20,6 +20,10 @@ Caman.Calculate = class Calculate
   # a way that we can use it more like a simple input -> output system, or a one-to-one function. 
   # In other words we can provide an input color value, and immediately receive an output modified 
   # color value.
+  #
+  # Note that, by design, this does not force X values to be in the range [0..255]. This is to
+  # generalize the function a bit more. If you give it a starting X value that isn't 0, and/or a
+  # ending X value that isn't 255, you may run into problems with your filter!
   @bezier: (start, ctrl1, ctrl2, end, lowBound, highBound) ->
     x0 = start[0]
     y0 = start[1]
