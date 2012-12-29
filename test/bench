@@ -91,6 +91,7 @@ class Bench
       @table.push data
 
     console.log "\nResults"
+    console.log "NodeJS #{process.version}"
     console.log "Image: #{@options.image.split('/').pop()}"
     console.log "Size: #{@c.dimensions.width}x#{@c.dimensions.height} - #{@c.pixelData.length / 4} pixels"
     console.log "CPUs: #{require('os').cpus().length}"
