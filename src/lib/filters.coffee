@@ -90,7 +90,7 @@ Filter.register "greyscale", (adjust) ->
   @process "greyscale", (rgba) ->
     # Calculate the average value of the 3 color channels 
     # using the special factors
-    avg = 0.3 * rgba.r + 0.59 * rgba.g + 0.11 * rgba.b
+    avg = Calculate.luminance(rgba)
 
     rgba.r = avg
     rgba.g = avg

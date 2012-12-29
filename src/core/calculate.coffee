@@ -1,5 +1,5 @@
 # Various math-heavy helpers
-class Calculate
+Caman.Calculate = class Calculate
   # Calculates the distance between two points
   @distance: (x1, y1, x2, y2) ->
     Math.sqrt Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
@@ -11,7 +11,7 @@ class Calculate
     return if getFloat then rand.toFixed(getFloat) else Math.round(rand)
 
   # Calculates the luminance of a single pixel using a special weighted sum
-  @luminance: (rgba) -> (0.27 * rgba.r) + (0.67 * rgba.g) + (0.06 * rgba.b)
+  @luminance: (rgba) -> (0.299 * rgba.r) + (0.587 * rgba.g) + (0.114 * rgba.b)
 
   # Generates a bezier curve given a start and end point, with two control points in between.
   # Can also optionally bound the y values between a low and high bound.

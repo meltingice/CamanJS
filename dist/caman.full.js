@@ -606,7 +606,7 @@
 
   })();
 
-  Calculate = (function() {
+  Caman.Calculate = Calculate = (function() {
 
     function Calculate() {}
 
@@ -628,7 +628,7 @@
     };
 
     Calculate.luminance = function(rgba) {
-      return (0.27 * rgba.r) + (0.67 * rgba.g) + (0.06 * rgba.b);
+      return (0.299 * rgba.r) + (0.587 * rgba.g) + (0.114 * rgba.b);
     };
 
     Calculate.bezier = function(start, ctrl1, ctrl2, end, lowBound, highBound) {
@@ -1829,7 +1829,7 @@
   Filter.register("greyscale", function(adjust) {
     return this.process("greyscale", function(rgba) {
       var avg;
-      avg = 0.3 * rgba.r + 0.59 * rgba.g + 0.11 * rgba.b;
+      avg = Calculate.luminance(rgba);
       rgba.r = avg;
       rgba.g = avg;
       rgba.b = avg;
