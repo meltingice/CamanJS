@@ -269,13 +269,19 @@
     };
 
     Caman.prototype.initCanvas = function() {
+      var _this = this;
+      this.canvas = this.initObj;
       if (this.imageUrl != null) {
         this.image = document.createElement('img');
         this.image.src = this.imageUrl;
         if (IO.isRemote(this.image)) {
           this.image.src = IO.proxyUrl(this.image.src);
         }
-        return this.imageLoaded(this.finishInit);
+        return this.imageLoaded(function() {
+          _this.canvas.width = _this.image.width;
+          _this.canvas.height = _this.image.height;
+          return _this.finishInit();
+        });
       } else {
         return this.finishInit();
       }

@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
   <title>CamanJS Testing Playground</title>
-  
   <script type="text/javascript" src="../../dist/caman.full.js"></script>
 
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="../../test/benchmark/flot/jquery.flot.min.js"></script>
+  <script type="text/javascript">
+  Caman("#test-image", function() {
+    this.sunrise();
+    this.render();
+  });
 
-  <style type="text/css">
-  .level-graph {
-    width: 800px;
-    height: 400px;
-  }
-  </style>
+  Caman("#test-canvas", "../images/test1_640.jpg", function () {
+    this.sunrise();
+    this.render();
+  });
+  </script>
 </head>
 <body>
   <h1>CamanJS Testing Playground</h1>
@@ -22,78 +23,10 @@
   <table>
     <tr>
       <td>
-       	<img id="test" src="../images/test1_640.jpg" />
+       	<img id="test-image" src="../images/test1_640.jpg" />
+        <canvas id="test-canvas"></canvas>
       </td>
     </tr>
   </table>
-
-  <h2>Levels</h2>
-
-  <h3>Red</h3>
-  <div id="r-levels" class="level-graph"></div>
-
-  <h3>Green</h3>
-  <div id="g-levels" class="level-graph"></div>
-
-  <h3>Blue</h3>
-  <div id="b-levels" class="level-graph"></div>
-  
-  <script type="text/javascript">
-  Caman.DEBUG = true;
-  var test = Caman("#test", function () {
-    var levels = this.analyze.calculateLevels();
-
-    var chartData = [];
-    $.each(levels, function (color, data) {
-      $.each(data, function (i, val) {
-        chartData.push({data: [[i, val]], label: color});  
-      })
-      
-      var colorCSS;
-      switch (color) {
-        case "r":
-          colorCSS = "rgb(255, 0, 0)";
-          break;
-        case "g":
-          colorCSS = "rgb(0, 255, 0)";
-          break;
-        case "b":
-          colorCSS = "rgb(0, 0, 255)";
-          break;
-      }
-
-      plot = $.plot($("#" + color + "-levels"), chartData, {
-        series: {
-          color: colorCSS,
-          bars: {show: true, barWidth: 1/255, align: "left"}
-        },
-        legend: {show: false}
-      });
-    });
-  });
-
-  /*
-  var test = Caman('#test', function () { 
-    this.sharpen(50);
-    this.saturation(-50);
-    this.colorize("#fd4803", 20);
-
-    this.newLayer(function () {
-      this.setBlendingMode('multiply');
-      this.opacity(80);
-      this.copyParent();
-
-      this.filter.contrast(50);
-      this.filter.sharpen(5);
-    });
-
-    this.brightness(10);
-    this.vignette("40%", 30);
-
-    this.render(function () {
-      console.log("Done!");
-    });
-  });*/
-  </script>
 </body>
 </html>

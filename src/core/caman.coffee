@@ -201,6 +201,8 @@ Root.Caman = class Caman
         @finishInit()
 
   initCanvas: ->
+    @canvas = @initObj
+
     if @imageUrl?
       @image = document.createElement 'img'
       @image.src = @imageUrl
@@ -208,7 +210,10 @@ Root.Caman = class Caman
       if IO.isRemote(@image)
         @image.src = IO.proxyUrl(@image.src)
 
-      @imageLoaded @finishInit
+      @imageLoaded =>
+        @canvas.width = @image.width
+        @canvas.height = @image.height
+        @finishInit()
     else
       @finishInit()
 
