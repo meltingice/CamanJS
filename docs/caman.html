@@ -28,11 +28,29 @@ image element, load the image, then continue with initialization.</p>
 
   <span class="vi">@remoteProxy = </span><span class="s">&quot;&quot;</span>
 
+  <span class="vi">@getAttrId: </span><span class="nf">(canvas) -&gt;</span>
+    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">canvas</span> <span class="o">is</span> <span class="s">&quot;string&quot;</span>
+      <span class="nv">canvas = </span><span class="nx">$</span><span class="p">(</span><span class="nx">canvas</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">null</span> <span class="nx">unless</span> <span class="nx">canvas</span><span class="o">?</span> <span class="o">and</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getAttribute</span><span class="o">?</span>
+    <span class="nx">canvas</span><span class="p">.</span><span class="nx">getAttribute</span> <span class="s">&#39;data-caman-id&#39;</span>
+
   <span class="nv">constructor: </span><span class="o">-&gt;</span>
     <span class="k">throw</span> <span class="s">&quot;Invalid arguments&quot;</span> <span class="k">if</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span>
 
     <span class="k">if</span> <span class="nx">@</span> <span class="k">instanceof</span> <span class="nx">Caman</span>
-      <span class="nv">args = </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
+      <span class="nv">args = </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+      <span class="nx">unless</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">NodeJS</span>
+        <span class="nv">id = </span><span class="nb">parseInt</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">getAttrId</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">10</span>
+        <span class="nv">callback = </span><span class="k">if</span> <span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">is</span> <span class="s">&quot;function&quot;</span>
+          <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="k">typeof</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">is</span> <span class="s">&quot;function&quot;</span>
+          <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span>
+          <span class="o">-&gt;</span>
+
+        <span class="k">return</span> <span class="nx">Store</span><span class="p">.</span><span class="nx">execute</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="k">if</span> <span class="o">!</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
 same instance.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="vi">@id = </span><span class="nx">Util</span><span class="p">.</span><span class="nx">uniqid</span><span class="p">.</span><span class="nx">get</span><span class="p">()</span>
       <span class="vi">@originalPixelData = </span><span class="p">[]</span>
       <span class="vi">@pixelStack = </span><span class="p">[]</span>  <span class="c1"># Stores the pixel layers</span>
@@ -44,7 +62,7 @@ same instance.</p>             </td>             <td class="code">              
       <span class="vi">@analyze = </span><span class="k">new</span> <span class="nx">Analyze</span> <span class="nx">@</span>
       <span class="vi">@renderer = </span><span class="k">new</span> <span class="nx">Renderer</span> <span class="nx">@</span>
 
-      <span class="nx">@domIsLoaded</span> <span class="o">=&gt;</span>
+      <span class="nx">@domIsLoaded</span> <span class="o">=&gt;</span>  
         <span class="nx">@parseArguments</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
         <span class="nx">@setup</span><span class="p">()</span>
 
@@ -59,7 +77,9 @@ same instance.</p>             </td>             <td class="code">              
       <span class="p">,</span> <span class="mi">0</span>
     <span class="k">else</span>
       <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s">&quot;complete&quot;</span>
-        <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">@</span><span class="p">)</span>
+        <span class="nx">setTimeout</span> <span class="o">=&gt;</span>
+          <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">@</span><span class="p">)</span>
+        <span class="p">,</span> <span class="mi">0</span>
       <span class="k">else</span>
         <span class="nv">listener = </span><span class="o">=&gt;</span>
           <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">@</span><span class="p">)</span> <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s">&quot;complete&quot;</span>
@@ -153,6 +173,8 @@ NodeJS
         <span class="nx">@finishInit</span><span class="p">()</span>
 
   <span class="nv">initCanvas: </span><span class="o">-&gt;</span>
+    <span class="vi">@canvas = </span><span class="nx">@initObj</span>
+
     <span class="k">if</span> <span class="nx">@imageUrl</span><span class="o">?</span>
       <span class="vi">@image = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s">&#39;img&#39;</span>
       <span class="vi">@image.src = </span><span class="nx">@imageUrl</span>
@@ -160,7 +182,10 @@ NodeJS
       <span class="k">if</span> <span class="nx">IO</span><span class="p">.</span><span class="nx">isRemote</span><span class="p">(</span><span class="nx">@image</span><span class="p">)</span>
         <span class="vi">@image.src = </span><span class="nx">IO</span><span class="p">.</span><span class="nx">proxyUrl</span><span class="p">(</span><span class="nx">@image</span><span class="p">.</span><span class="nx">src</span><span class="p">)</span>
 
-      <span class="nx">@imageLoaded</span> <span class="nx">@finishInit</span>
+      <span class="nx">@imageLoaded</span> <span class="o">=&gt;</span>
+        <span class="vi">@canvas.width = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">width</span>
+        <span class="vi">@canvas.height = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">height</span>
+        <span class="nx">@finishInit</span><span class="p">()</span>
     <span class="k">else</span>
       <span class="nx">@finishInit</span><span class="p">()</span>
 
@@ -194,15 +219,13 @@ NodeJS
       <span class="nv">width: </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
       <span class="nv">height: </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
 
-    <span class="nx">Store</span><span class="p">.</span><span class="nx">put</span> <span class="nx">@getId</span><span class="p">,</span> <span class="nx">@</span>
+    <span class="nx">Store</span><span class="p">.</span><span class="nx">put</span> <span class="nx">@id</span><span class="p">,</span> <span class="nx">@</span>
 
     <span class="nx">@callback</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@</span><span class="p">,</span><span class="nx">@</span>
 
   <span class="nv">assignId: </span><span class="o">-&gt;</span>
     <span class="k">return</span> <span class="k">if</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">NodeJS</span> <span class="o">or</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">getAttribute</span> <span class="s">&#39;data-caman-id&#39;</span>
     <span class="nx">@canvas</span><span class="p">.</span><span class="nx">setAttribute</span> <span class="s">&#39;data-caman-id&#39;</span><span class="p">,</span> <span class="nx">@id</span>
-
-  <span class="nv">getId: </span><span class="o">-&gt;</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">getAttribute</span> <span class="s">&#39;data-caman-id&#39;</span>
 
   <span class="nv">hiDPIDisabled: </span><span class="o">-&gt;</span>
     <span class="nx">@canvas</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s">&#39;data-caman-hidpi-disabled&#39;</span><span class="p">)</span> <span class="o">isnt</span> <span class="kc">null</span>
