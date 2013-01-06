@@ -5,6 +5,8 @@
   <script type="text/javascript" src="../../dist/caman.full.js"></script>
 
   <script type="text/javascript">
+  Caman.DEBUG = ('console' in window);
+  Caman.remoteProxy = "/";
   Caman("#test-image", function() {
     this.sunrise();
     this.render();
@@ -23,7 +25,7 @@
   <table>
     <tr>
       <td>
-       	<img id="test-image" src="../images/test1_640.jpg" />
+       	<img id="test-image" src="http://farm9.staticflickr.com/8195/8349630622_969ab1d359.jpg" />
         <canvas id="test-canvas"></canvas>
       </td>
     </tr>

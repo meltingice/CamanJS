@@ -1,8 +1,8 @@
 {
   "name": "caman",
-  "version": "3.4.0",
-  "description": "Pure Javascript (Ca)nvas (Man)ipulation. Easy, but powerful, image manipulation library.",
-  "keywords": ["canvas", "image", "manipulate", "filter", "image manipulation"],
+  "version": "4.0.0",
+  "description": "Javascript (Ca)nvas (Man)ipulation for NodeJS and the browser image editing",
+  "keywords": ["canvas", "image", "manipulate", "filter", "image manipulation", "editing"],
   "homepage": "http://camanjs.com",
   "author": {
     "name": "Ryan LeFevre",
@@ -20,6 +20,18 @@
     {
       "name": "Cezar Sa Espinola",
       "url": "http://github.com/cezarsa"
+    },
+    {
+      "name": "Jarques Pretorius",
+      "url": "http://twitter.com/jarques"
+    },
+    {
+      "name": "Hosselaer",
+      "url": "https://github.com/Hosselaer"
+    },
+    {
+      "name": "Mario Klingemann",
+      "url": "http://www.quasimondo.com"
     }
   ],
   "main": "./dist/caman.full.js",

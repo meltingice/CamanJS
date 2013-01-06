@@ -119,19 +119,19 @@
     };
 
     function Caman() {
-      this.finishInit = __bind(this.finishInit, this);
-
       var args, callback, id,
         _this = this;
       if (arguments.length === 0) {
         throw "Invalid arguments";
       }
       if (this instanceof Caman) {
+        this.finishInit = this.finishInit.bind(this);
+        this.imageLoaded = this.imageLoaded.bind(this);
         args = arguments[0];
         if (!Caman.NodeJS) {
           id = parseInt(Caman.getAttrId(args[0]), 10);
           callback = typeof args[1] === "function" ? args[1] : typeof args[2] === "function" ? args[2] : function() {};
-          if (!isNaN(id)) {
+          if (!isNaN(id) && Store.has(id)) {
             return Store.execute(id, callback);
           }
         }
@@ -163,12 +163,14 @@
         }, 0);
       } else {
         if (document.readyState === "complete") {
+          Log.debug("DOM initialized");
           return setTimeout(function() {
             return cb.call(_this);
           }, 0);
         } else {
           listener = function() {
             if (document.readyState === "complete") {
+              Log.debug("DOM initialized");
               return cb.call(_this);
             }
           };
@@ -229,8 +231,10 @@
 
     Caman.prototype.initNode = function() {
       var _this = this;
+      Log.debug("Initializing for NodeJS");
       this.image = new Image();
       this.image.onload = function() {
+        Log.debug("Image loaded. Width = " + _this.image.width + ", Height = " + _this.image.height);
         _this.canvas = new Canvas(_this.image.width, _this.image.height);
         return _this.finishInit();
       };
@@ -241,63 +245,67 @@
     };
 
     Caman.prototype.initImage = function() {
-      var _this = this;
       this.image = this.initObj;
       this.canvas = document.createElement('canvas');
+      this.context = this.canvas.getContext('2d');
       Util.copyAttributes(this.image, this.canvas, {
         except: ['src']
       });
       this.image.parentNode.replaceChild(this.canvas, this.image);
-      if (IO.isRemote(this.image)) {
-        this.image.src = IO.proxyUrl(this.image.src);
-      }
-      return this.imageLoaded(function() {
-        _this.canvas.width = _this.image.width;
-        _this.canvas.height = _this.image.height;
-        if (_this.needsHiDPISwap()) {
-          Log.debug(_this.image.src, "->", _this.hiDPIReplacement());
-          _this.image.src = _this.hiDPIReplacement();
-          return _this.imageLoaded(function() {
-            Log.debug("HiDPI version loaded");
-            _this.swapped = true;
-            return _this.finishInit();
-          });
-        } else {
-          return _this.finishInit();
-        }
-      });
+      this.imageAdjustments();
+      return this.waitForImageLoaded();
     };
 
     Caman.prototype.initCanvas = function() {
-      var _this = this;
       this.canvas = this.initObj;
+      this.context = this.canvas.getContext('2d');
       if (this.imageUrl != null) {
         this.image = document.createElement('img');
         this.image.src = this.imageUrl;
-        if (IO.isRemote(this.image)) {
-          this.image.src = IO.proxyUrl(this.image.src);
-        }
-        return this.imageLoaded(function() {
-          _this.canvas.width = _this.image.width;
-          _this.canvas.height = _this.image.height;
-          return _this.finishInit();
-        });
+        this.imageAdjustments();
+        return this.waitForImageLoaded();
       } else {
         return this.finishInit();
       }
     };
 
-    Caman.prototype.imageLoaded = function(cb) {
-      if (this.image.complete) {
-        return cb();
-      } else {
-        return this.image.onload = cb;
+    Caman.prototype.imageAdjustments = function() {
+      if (this.needsHiDPISwap()) {
+        Log.debug(this.image.src, "->", this.hiDPIReplacement());
+        this.swapped = true;
+        this.image.src = this.hiDPIReplacement();
       }
+      if (IO.isRemote(this.image)) {
+        this.image.src = IO.proxyUrl(this.image.src);
+        return Log.debug("Remote image detected, using URL = " + this.image.src);
+      }
+    };
+
+    Caman.prototype.waitForImageLoaded = function() {
+      if (this.image.complete) {
+        return this.imageLoaded();
+      } else {
+        return this.image.onload = this.imageLoaded;
+      }
+    };
+
+    Caman.prototype.imageLoaded = function() {
+      Log.debug("Image loaded. Width = " + this.image.width + ", Height = " + this.image.height);
+      if (this.swapped) {
+        this.canvas.width = this.image.width / this.hiDPIRatio();
+        this.canvas.height = this.image.height / this.hiDPIRatio();
+      } else {
+        this.canvas.width = this.image.width;
+        this.canvas.height = this.image.height;
+      }
+      return this.finishInit();
     };
 
     Caman.prototype.finishInit = function() {
       var pixel, _i, _len, _ref;
-      this.context = this.canvas.getContext('2d');
+      if (this.context == null) {
+        this.context = this.canvas.getContext('2d');
+      }
       this.originalWidth = this.width = this.canvas.width;
       this.originalHeight = this.height = this.canvas.height;
       this.hiDPIAdjustments();

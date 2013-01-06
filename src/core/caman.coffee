@@ -55,6 +55,13 @@ Root.Caman = class Caman
     throw "Invalid arguments" if arguments.length is 0
 
     if @ instanceof Caman
+      # We have to do this to avoid polluting the global scope
+      # because of how Coffeescript binds functions specified 
+      # with => and the fact that Caman can be invoked as both
+      # a function and as a 'new' object.
+      @finishInit = @finishInit.bind(@)
+      @imageLoaded = @imageLoaded.bind(@)
+
       args = arguments[0]
 
       unless Caman.NodeJS
@@ -66,7 +73,8 @@ Root.Caman = class Caman
         else
           ->
 
-        return Store.execute(id, callback) if !isNaN(id)
+        if !isNaN(id) and Store.has(id)
+          return Store.execute(id, callback)
 
       # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
       # same instance.
@@ -96,12 +104,15 @@ Root.Caman = class Caman
       , 0
     else
       if document.readyState is "complete"
+        Log.debug "DOM initialized"
         setTimeout =>
           cb.call(@)
         , 0
       else
         listener = =>
-          cb.call(@) if document.readyState is "complete"
+          if document.readyState is "complete"
+            Log.debug "DOM initialized"
+            cb.call(@)
 
         document.addEventListener "readystatechange", listener, false
 
@@ -166,8 +177,11 @@ Root.Caman = class Caman
       when "canvas" then @initCanvas()
 
   initNode: ->
+    Log.debug "Initializing for NodeJS"
+
     @image = new Image()
     @image.onload = =>
+      Log.debug "Image loaded. Width = #{@image.width}, Height = #{@image.height}"
       @canvas = new Canvas @image.width, @image.height
       @finishInit()
 
@@ -177,54 +191,58 @@ Root.Caman = class Caman
   initImage: ->
     @image = @initObj
     @canvas = document.createElement 'canvas'
+    @context = @canvas.getContext '2d'
     Util.copyAttributes @image, @canvas, except: ['src']
 
     @image.parentNode.replaceChild @canvas, @image
 
-    if IO.isRemote(@image)
-      @image.src = IO.proxyUrl(@image.src)
-    
-    @imageLoaded =>
-      @canvas.width = @image.width
-      @canvas.height = @image.height
-
-      if @needsHiDPISwap()
-        Log.debug @image.src, "->", @hiDPIReplacement()
-        @image.src = @hiDPIReplacement()
-
-        @imageLoaded =>
-          Log.debug "HiDPI version loaded"
-          @swapped = true
-
-          @finishInit()
-      else
-        @finishInit()
+    @imageAdjustments()
+    @waitForImageLoaded()
 
   initCanvas: ->
     @canvas = @initObj
+    @context = @canvas.getContext '2d'
 
     if @imageUrl?
       @image = document.createElement 'img'
       @image.src = @imageUrl
 
-      if IO.isRemote(@image)
-        @image.src = IO.proxyUrl(@image.src)
-
-      @imageLoaded =>
-        @canvas.width = @image.width
-        @canvas.height = @image.height
-        @finishInit()
+      @imageAdjustments()
+      @waitForImageLoaded()
     else
       @finishInit()
 
-  imageLoaded: (cb) ->
-    if @image.complete
-      cb()
-    else
-      @image.onload = cb
+  imageAdjustments: ->
+    if @needsHiDPISwap()
+      Log.debug @image.src, "->", @hiDPIReplacement()
 
-  finishInit: =>
-    @context = @canvas.getContext '2d'
+      @swapped = true
+      @image.src = @hiDPIReplacement()
+
+    if IO.isRemote(@image)
+      @image.src = IO.proxyUrl(@image.src)
+      Log.debug "Remote image detected, using URL = #{@image.src}"
+
+  waitForImageLoaded: ->
+    if @image.complete
+      @imageLoaded()
+    else
+      @image.onload = @imageLoaded
+
+  imageLoaded: ->
+    Log.debug "Image loaded. Width = #{@image.width}, Height = #{@image.height}"
+
+    if @swapped
+      @canvas.width = @image.width / @hiDPIRatio()
+      @canvas.height = @image.height / @hiDPIRatio()
+    else
+      @canvas.width = @image.width
+      @canvas.height = @image.height
+
+    @finishInit()
+
+  finishInit: ->
+    @context = @canvas.getContext '2d' unless @context?
 
     @originalWidth = @width = @canvas.width
     @originalHeight = @height = @canvas.height
