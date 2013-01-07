@@ -6,14 +6,17 @@ Caman.IO = class IO
   # If a cross-origin setting is set, we assume you have CORS
   # properly configured.
   @isRemote: (img) ->
-    return if not img
-    return false if img.crossOrigin?
+    return false unless img?
+    return false if @corsEnabled(img)
 
     matches = img.src.match @domainRegex
     return if matches then matches[1] isnt document.domain else false
 
+  @corsEnabled: (img) ->
+    img.crossOrigin? and img.crossOrigin.toLowerCase() in ['anonymous', 'use-credentials']
+
   @proxyUrl: (src) ->
-    "#{Caman.remoteProxy}?camanProxyUrl=#{encodeURIComponent(src)}"
+    "#{Caman.remoteProxy}?#{Caman.proxyParam}=#{encodeURIComponent(src)}"
 
   # Shortcut for using one of the bundled proxies.
   @useProxy: (lang) ->

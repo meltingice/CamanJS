@@ -42,7 +42,11 @@ Root.Caman = class Caman
   @toString: ->
     "Version " + Caman.version.release + ", Released " + Caman.version.date;
 
+  # Set the URL of the image proxy script
   @remoteProxy = ""
+
+  # Change the GET param used with the proxy script if needed
+  @proxyParam = "camanProxyUrl"
 
   @getAttrId: (canvas) ->
     if typeof canvas is "string"

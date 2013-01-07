@@ -108,6 +108,8 @@
 
     Caman.remoteProxy = "";
 
+    Caman.proxyParam = "camanProxyUrl";
+
     Caman.getAttrId = function(canvas) {
       if (typeof canvas === "string") {
         canvas = $(canvas);
@@ -1101,10 +1103,10 @@
 
     IO.isRemote = function(img) {
       var matches;
-      if (!img) {
-        return;
+      if (img == null) {
+        return false;
       }
-      if (img.crossOrigin != null) {
+      if (this.corsEnabled(img)) {
         return false;
       }
       matches = img.src.match(this.domainRegex);
@@ -1115,8 +1117,13 @@
       }
     };
 
+    IO.corsEnabled = function(img) {
+      var _ref;
+      return (img.crossOrigin != null) && ((_ref = img.crossOrigin.toLowerCase()) === 'anonymous' || _ref === 'use-credentials');
+    };
+
     IO.proxyUrl = function(src) {
-      return "" + Caman.remoteProxy + "?camanProxyUrl=" + (encodeURIComponent(src));
+      return "" + Caman.remoteProxy + "?" + Caman.proxyParam + "=" + (encodeURIComponent(src));
     };
 
     IO.useProxy = function(lang) {
