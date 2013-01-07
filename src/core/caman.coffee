@@ -24,8 +24,8 @@ else
 # The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
 Root.Caman = class Caman
   @version:
-    release: "3.4.0"
-    date: "12/17/12"
+    release: "4.0.0"
+    date: "1/6/13"
 
   # Debug mode enables console logging
   @DEBUG: false
