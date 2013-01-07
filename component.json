@@ -1,7 +1,7 @@
 {
   "name": "caman",
   "version": "4.0.0",
-  "main": ["dist/caman.min.js", "dist/caman.full.min.js"],
+  "main": ["./dist/caman.min.js", "./dist/caman.full.min.js"],
   "dependencies": {
   }
 }
