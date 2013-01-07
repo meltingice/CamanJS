@@ -37,7 +37,7 @@ Version 4 introduces better support for HiDPI (Retina) displays. It allows you t
 **HTML data attributes**
 
 * `data-caman-hidpi`: URL to the high resolution replacement image
-* `data-caman-hidpi-disabled`: HiDPI support is enabled by default, so add this attribute if you wish to disable it
+* `data-caman-hidpi-disabled`: HiDPI support is enabled by default, so add this attribute if you wish to force disable it
 
 ## Development
 
