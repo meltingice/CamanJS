@@ -85,11 +85,9 @@ Caman "./path/to/file.jpg", ->
 
 # Testing
 
-The test suite for CamanJS is currently being rewritten since the old one was next to useless. It uses Mocha, and can be run by executing:
+The test suite is currently under heavy expansion, but a number of tests exist for NodeJS, which test a good part of the core library. Browser-based tests still need to be written, mostly for initialization and proxy URL testing.
 
-```
-npm test
-```
+To run the NodeJS tests, run `npm test`.
 
 # Project Contributors
 
