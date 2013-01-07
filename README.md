@@ -45,15 +45,7 @@ If you are a developer who is contributing directly to the project, there are so
 
 ### Building
 
-The requirements for building CamanJS are:
-
-* node
-* coffeescript
-* jsmin (for node)
-
-If you're running OSX and have Growl installed, it's also recommended you have:
-
-* coffeescript-growl
+To install all dependencies required for development, run `npm install -d`.
 
 Because all plugins are in a separate repository, make sure you run:
 
@@ -61,14 +53,11 @@ Because all plugins are in a separate repository, make sure you run:
 git submodule init && git submodule update
 ```
 
-To build, simply run `cake build`. The resulting files will be placed in the dist/ folder. Plugins will be automatically discovered and added to caman.full.js after the core library.
+To build, simply run `cake build`. The resulting files will be placed in the dist/ folder. Plugins will be automatically discovered and added to caman.full.js after the core library. You can also auto-compile when a file changes by using `cake watch`.
 
 If you add any files to the core library, you will need to add them to the `coffeeFiles` array in the Cakefile. The point of this is so that order is preserved when generating the file JS file. Plugins do not need to be added to the Cakefile.
 
-You will probably want to generate documentation if you make any changes. In addition to the normal requirements, you will also need:
-
-* docco
-* Pygments (Python library)
+You will probably want to generate documentation if you make any changes. In addition to the normal requirements, you will also need the Python library Pygments.
 
 To generate the documentation, run `cake docs`.
 
