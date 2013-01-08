@@ -39,6 +39,16 @@ Version 4 introduces better support for HiDPI (Retina) displays. It allows you t
 * `data-caman-hidpi`: URL to the high resolution replacement image
 * `data-caman-hidpi-disabled`: HiDPI support is enabled by default, so add this attribute if you wish to force disable it
 
+## Upgrading to Version 4
+
+There is only 1 breaking change that occured with the version 4 release. When you initialize CamanJS with a canvas and an image, the parameter order has changed. It is now:
+
+``` javascript
+Caman("#canvas-id", "/path/to/image.png", function() {});
+```
+
+This is in order to be more consistent with initialization, such that the "initialization object" is always the first parameter. Update your code accordingly.
+
 ## Development
 
 If you are a developer who is contributing directly to the project, there are some tools to help you out.
