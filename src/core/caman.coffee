@@ -49,6 +49,8 @@ Root.Caman = class Caman
   @proxyParam = "camanProxyUrl"
 
   @getAttrId: (canvas) ->
+    return true if Caman.NodeJS
+
     if typeof canvas is "string"
       canvas = $(canvas)
 
@@ -83,7 +85,10 @@ Root.Caman = class Caman
       # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
       # same instance.
       @id = Util.uniqid.get()
+      
       @originalPixelData = []
+      @cropCoordinates = x: 0, y: 0
+
       @pixelStack = []  # Stores the pixel layers
       @layerStack = []  # Stores all of the layers waiting to be rendered
       @canvasQueue = [] # Stores all of the canvases to be processed
@@ -248,22 +253,23 @@ Root.Caman = class Caman
   finishInit: ->
     @context = @canvas.getContext '2d' unless @context?
 
-    @originalWidth = @width = @canvas.width
-    @originalHeight = @height = @canvas.height
+    @originalWidth = @preScaledWidth = @width = @canvas.width
+    @originalHeight = @preScaledHeight = @height = @canvas.height
 
     @hiDPIAdjustments()
-    @assignId()
+    @assignId() unless @hasId()
 
     if @image?
       @context.drawImage @image, 
         0, 0, 
         @image.width, @image.height, 
         0, 0, 
-        @originalWidth, @originalHeight
+        @preScaledWidth, @preScaledHeight
     
     @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
     @pixelData = @imageData.data
-    @originalPixelData.push pixel for pixel in @pixelData
+    
+    @resetOriginalPixelData()
 
     @dimensions =
       width: @canvas.width
@@ -272,6 +278,16 @@ Root.Caman = class Caman
     Store.put @id, @
 
     @callback.call @,@
+
+    # Reset the callback so re-initialization doesn't
+    # trigger it again.
+    @callback = ->
+
+  resetOriginalPixelData: ->
+    @originalPixelData = []
+    @originalPixelData.push pixel for pixel in @pixelData
+
+  hasId: -> Caman.getAttrId(@canvas)?
 
   assignId: ->
     return if Caman.NodeJS or @canvas.getAttribute 'data-caman-id'
@@ -289,13 +305,13 @@ Root.Caman = class Caman
       Log.debug "HiDPI ratio = #{ratio}"
       @scaled = true
 
-      @originalWidth = @canvas.width
-      @originalHeight = @canvas.height
+      @preScaledWidth = @canvas.width
+      @preScaledHeight = @canvas.height
 
-      @canvas.width = @originalWidth * ratio
-      @canvas.height = @originalHeight * ratio
-      @canvas.style.width = "#{@originalWidth}px"
-      @canvas.style.height = "#{@originalHeight}px"
+      @canvas.width = @preScaledWidth * ratio
+      @canvas.height = @preScaledHeight * ratio
+      @canvas.style.width = "#{@preScaledWidth}px"
+      @canvas.style.height = "#{@preScaledHeight}px"
 
       @context.scale ratio, ratio
 
@@ -325,9 +341,19 @@ Root.Caman = class Caman
   replaceCanvas: (newCanvas) ->
     oldCanvas = @canvas
     @canvas = newCanvas
+    @context = @canvas.getContext '2d'
 
     oldCanvas.parentNode.replaceChild @canvas, oldCanvas
-    @finishInit()
+
+    @width  = @canvas.width
+    @height = @canvas.height
+
+    @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
+    @pixelData = @imageData.data
+
+    @dimensions =
+      width: @canvas.width
+      height: @canvas.height
 
   # Begins the rendering process
   render: (callback = ->) ->
@@ -337,13 +363,36 @@ Root.Caman = class Caman
       @context.putImageData @imageData, 0, 0
       callback.call @
 
-  # Reverts the canvas back to it's original state.
-  # This used to be asynchronous, so we provide the option of
-  # providing a callback to keep backwards compatibility.
-  revert: (ready = ->) ->
-    @pixelData[i] = pixel for pixel, i in @originalPixelData
+  # Reverts the canvas back to it's original state while
+  # maintaining any cropped or resized dimensions.
+  revert: ->
+    @pixelData[i] = pixel for pixel, i in @originalVisiblePixels()
     @context.putImageData @imageData, 0, 0
-    ready.call @
+
+  # Completely resets the canvas back to it's original state.
+  # Any size adjustments will also be reset.
+  reset: ->
+    
+
+  # Returns the original pixel data while maintaining any
+  # cropping or resizing that may have occured.
+  originalVisiblePixels: ->
+    pixels = []
+
+    startX = @cropCoordinates.x
+    endX = startX + @width
+    startY = @cropCoordinates.y
+    endY = startY + @height
+
+    for i in [0...@originalPixelData.length] by 4
+      coord = PixelInfo.locationToCoordinates(i, @originalWidth)
+      if (startX <= coord.x < endX) and (startY <= coord.y < endY)
+        pixels.push @originalPixelData[i], 
+          @originalPixelData[i+1],
+          @originalPixelData[i+2], 
+          @originalPixelData[i+3]
+
+    pixels
 
   # Pushes the filter callback that modifies the RGBA object into the
   # render queue

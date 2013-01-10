@@ -2,6 +2,15 @@
 # access to any arbitrary pixel in the image, as well as information about the current pixel in 
 # the loop.
 class PixelInfo
+  @coordinatesToLocation: (x, y, width) ->
+    (y * width + x) * 4
+
+  @locationToCoordinates: (loc, width) ->
+    y = Math.floor(loc / (width * 4))
+    x = (loc % (width * 4)) / 4
+
+    return x: x, y: y
+
   constructor: (@c) -> @loc = 0
 
   # Retrieves the X, Y location of the current pixel. The origin is at the bottom left corner of 
@@ -45,7 +54,7 @@ class PixelInfo
 
   # Gets an RGBA object for an arbitrary pixel in the canvas specified by absolute X, Y coordinates
   getPixel: (x, y) ->
-    loc = (y * @c.dimensions.width + x) * 4
+    loc = @coordinatesToLocation(x, y, @width)
 
     return {
       r: @c.pixelData[loc]
@@ -56,7 +65,7 @@ class PixelInfo
 
   # Updates the pixel at the given X, Y coordinate
   putPixel: (x, y, rgba) ->
-    loc = (y * @c.dimensions.width + x) * 4
+    loc = @coordinatesToLocation(x, y, @width)
 
     @c.pixelData[loc] = rgba.r
     @c.pixelData[loc + 1] = rgba.g

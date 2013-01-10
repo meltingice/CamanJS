@@ -55,6 +55,7 @@ coffeeFiles		= [
 	# Non-core files
 	"lib/blenders"
 	"lib/filters"
+	"lib/size"
 ]
 
 pluginsFolder = "src/plugins/src"
