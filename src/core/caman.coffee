@@ -372,7 +372,21 @@ Root.Caman = class Caman
   # Completely resets the canvas back to it's original state.
   # Any size adjustments will also be reset.
   reset: ->
-    
+    canvas = document.createElement('canvas')
+    Util.copyAttributes(@canvas, canvas)
+
+    canvas.width = @originalWidth
+    canvas.height = @originalHeight
+
+    ctx = canvas.getContext('2d')
+    imageData = ctx.getImageData 0, 0, canvas.width, canvas.height
+    pixelData = imageData.data
+
+    pixelData[i] = pixel for pixel, i in @originalPixelData
+
+    ctx.putImageData imageData, 0, 0
+
+    @replaceCanvas(canvas)
 
   # Returns the original pixel data while maintaining any
   # cropping or resizing that may have occured.

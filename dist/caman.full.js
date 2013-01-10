@@ -446,7 +446,23 @@
       return this.context.putImageData(this.imageData, 0, 0);
     };
 
-    Caman.prototype.reset = function() {};
+    Caman.prototype.reset = function() {
+      var canvas, ctx, i, imageData, pixel, pixelData, _i, _len, _ref;
+      canvas = document.createElement('canvas');
+      Util.copyAttributes(this.canvas, canvas);
+      canvas.width = this.originalWidth;
+      canvas.height = this.originalHeight;
+      ctx = canvas.getContext('2d');
+      imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      pixelData = imageData.data;
+      _ref = this.originalPixelData;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        pixel = _ref[i];
+        pixelData[i] = pixel;
+      }
+      ctx.putImageData(imageData, 0, 0);
+      return this.replaceCanvas(canvas);
+    };
 
     Caman.prototype.originalVisiblePixels = function() {
       var coord, endX, endY, i, pixels, startX, startY, _i, _ref, _ref1, _ref2;
