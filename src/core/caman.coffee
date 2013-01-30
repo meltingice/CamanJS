@@ -86,8 +86,10 @@ Root.Caman = class Caman
       # same instance.
       @id = Util.uniqid.get()
       
-      @originalPixelData = []
+      @initializedPixelData = @originalPixelData = null
       @cropCoordinates = x: 0, y: 0
+      @cropped = false
+      @resized = false
 
       @pixelStack = []  # Stores the pixel layers
       @layerStack = []  # Stores all of the layers waiting to be rendered
@@ -269,7 +271,12 @@ Root.Caman = class Caman
     @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
     @pixelData = @imageData.data
     
-    @resetOriginalPixelData()
+    @initializedPixelData = new Uint8Array(@pixelData.length)
+    @originalPixelData = new Uint8Array(@pixelData.length)
+
+    for pixel, i in @pixelData
+      @initializedPixelData[i] = pixel
+      @originalPixelData[i] = pixel
 
     @dimensions =
       width: @canvas.width
@@ -284,7 +291,7 @@ Root.Caman = class Caman
     @callback = ->
 
   resetOriginalPixelData: ->
-    @originalPixelData = []
+    @originalPixelData = new Uint8Array(@pixelData.length)
     @originalPixelData.push pixel for pixel in @pixelData
 
   hasId: -> Caman.getAttrId(@canvas)?
@@ -315,8 +322,8 @@ Root.Caman = class Caman
 
       @context.scale ratio, ratio
 
-      @width = @canvas.width
-      @height = @canvas.height
+      @width = @originalWidth = @canvas.width
+      @height = @originalHeight = @canvas.height
 
   hiDPIRatio: ->
     devicePixelRatio = window.devicePixelRatio or 1
@@ -355,6 +362,8 @@ Root.Caman = class Caman
       width: @canvas.width
       height: @canvas.height
 
+    @hiDPIAdjustments()
+
   # Begins the rendering process
   render: (callback = ->) ->
     Event.trigger @, "renderStart"
@@ -382,9 +391,12 @@ Root.Caman = class Caman
     imageData = ctx.getImageData 0, 0, canvas.width, canvas.height
     pixelData = imageData.data
 
-    pixelData[i] = pixel for pixel, i in @originalPixelData
+    pixelData[i] = pixel for pixel, i in @initializedPixelData
 
     ctx.putImageData imageData, 0, 0
+
+    @cropCoordinates = x: 0, y: 0
+    @resized = false
 
     @replaceCanvas(canvas)
 
@@ -398,13 +410,39 @@ Root.Caman = class Caman
     startY = @cropCoordinates.y
     endY = startY + @height
 
-    for i in [0...@originalPixelData.length] by 4
-      coord = PixelInfo.locationToCoordinates(i, @originalWidth)
+    if @resized
+      canvas = document.createElement('canvas')
+      canvas.width = @originalWidth
+      canvas.height = @originalHeight
+
+      ctx = canvas.getContext('2d')
+      imageData = ctx.getImageData 0, 0, canvas.width, canvas.height
+      pixelData = imageData.data
+
+      pixelData[i] = pixel for pixel, i in @originalPixelData
+
+      ctx.putImageData imageData, 0, 0
+
+      scaledCanvas = document.createElement('canvas')
+      scaledCanvas.width = @width
+      scaledCanvas.height = @height
+
+      ctx = scaledCanvas.getContext('2d')
+      ctx.drawImage canvas, 0, 0, @originalWidth, @originalHeight, 0, 0, @width, @height
+
+      pixelData = ctx.getImageData(0, 0, @width, @height).data
+      width = @width
+    else
+      pixelData = @originalPixelData
+      width = @originalWidth
+
+    for i in [0...pixelData.length] by 4
+      coord = PixelInfo.locationToCoordinates(i, width)
       if (startX <= coord.x < endX) and (startY <= coord.y < endY)
-        pixels.push @originalPixelData[i], 
-          @originalPixelData[i+1],
-          @originalPixelData[i+2], 
-          @originalPixelData[i+3]
+        pixels.push pixelData[i], 
+          pixelData[i+1],
+          pixelData[i+2], 
+          pixelData[i+3]
 
     pixels
 

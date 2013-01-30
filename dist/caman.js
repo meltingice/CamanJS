@@ -141,11 +141,13 @@
           }
         }
         this.id = Util.uniqid.get();
-        this.originalPixelData = [];
+        this.initializedPixelData = this.originalPixelData = null;
         this.cropCoordinates = {
           x: 0,
           y: 0
         };
+        this.cropped = false;
+        this.resized = false;
         this.pixelStack = [];
         this.layerStack = [];
         this.canvasQueue = [];
@@ -311,6 +313,7 @@
     };
 
     Caman.prototype.finishInit = function() {
+      var i, pixel, _i, _len, _ref;
       if (this.context == null) {
         this.context = this.canvas.getContext('2d');
       }
@@ -325,7 +328,14 @@
       }
       this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
       this.pixelData = this.imageData.data;
-      this.resetOriginalPixelData();
+      this.initializedPixelData = new Uint8Array(this.pixelData.length);
+      this.originalPixelData = new Uint8Array(this.pixelData.length);
+      _ref = this.pixelData;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        pixel = _ref[i];
+        this.initializedPixelData[i] = pixel;
+        this.originalPixelData[i] = pixel;
+      }
       this.dimensions = {
         width: this.canvas.width,
         height: this.canvas.height
@@ -337,7 +347,7 @@
 
     Caman.prototype.resetOriginalPixelData = function() {
       var pixel, _i, _len, _ref, _results;
-      this.originalPixelData = [];
+      this.originalPixelData = new Uint8Array(this.pixelData.length);
       _ref = this.pixelData;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -378,8 +388,8 @@
         this.canvas.style.width = "" + this.preScaledWidth + "px";
         this.canvas.style.height = "" + this.preScaledHeight + "px";
         this.context.scale(ratio, ratio);
-        this.width = this.canvas.width;
-        return this.height = this.canvas.height;
+        this.width = this.originalWidth = this.canvas.width;
+        return this.height = this.originalHeight = this.canvas.height;
       }
     };
 
@@ -418,10 +428,11 @@
       this.height = this.canvas.height;
       this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
       this.pixelData = this.imageData.data;
-      return this.dimensions = {
+      this.dimensions = {
         width: this.canvas.width,
         height: this.canvas.height
       };
+      return this.hiDPIAdjustments();
     };
 
     Caman.prototype.render = function(callback) {
@@ -455,26 +466,55 @@
       ctx = canvas.getContext('2d');
       imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       pixelData = imageData.data;
-      _ref = this.originalPixelData;
+      _ref = this.initializedPixelData;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         pixel = _ref[i];
         pixelData[i] = pixel;
       }
       ctx.putImageData(imageData, 0, 0);
+      this.cropCoordinates = {
+        x: 0,
+        y: 0
+      };
+      this.resized = false;
       return this.replaceCanvas(canvas);
     };
 
     Caman.prototype.originalVisiblePixels = function() {
-      var coord, endX, endY, i, pixels, startX, startY, _i, _ref, _ref1, _ref2;
+      var canvas, coord, ctx, endX, endY, i, imageData, pixel, pixelData, pixels, scaledCanvas, startX, startY, width, _i, _j, _len, _ref, _ref1, _ref2, _ref3;
       pixels = [];
       startX = this.cropCoordinates.x;
       endX = startX + this.width;
       startY = this.cropCoordinates.y;
       endY = startY + this.height;
-      for (i = _i = 0, _ref = this.originalPixelData.length; _i < _ref; i = _i += 4) {
-        coord = PixelInfo.locationToCoordinates(i, this.originalWidth);
-        if (((startX <= (_ref1 = coord.x) && _ref1 < endX)) && ((startY <= (_ref2 = coord.y) && _ref2 < endY))) {
-          pixels.push(this.originalPixelData[i], this.originalPixelData[i + 1], this.originalPixelData[i + 2], this.originalPixelData[i + 3]);
+      if (this.resized) {
+        canvas = document.createElement('canvas');
+        canvas.width = this.originalWidth;
+        canvas.height = this.originalHeight;
+        ctx = canvas.getContext('2d');
+        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        pixelData = imageData.data;
+        _ref = this.originalPixelData;
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          pixel = _ref[i];
+          pixelData[i] = pixel;
+        }
+        ctx.putImageData(imageData, 0, 0);
+        scaledCanvas = document.createElement('canvas');
+        scaledCanvas.width = this.width;
+        scaledCanvas.height = this.height;
+        ctx = scaledCanvas.getContext('2d');
+        ctx.drawImage(canvas, 0, 0, this.originalWidth, this.originalHeight, 0, 0, this.width, this.height);
+        pixelData = ctx.getImageData(0, 0, this.width, this.height).data;
+        width = this.width;
+      } else {
+        pixelData = this.originalPixelData;
+        width = this.originalWidth;
+      }
+      for (i = _j = 0, _ref1 = pixelData.length; _j < _ref1; i = _j += 4) {
+        coord = PixelInfo.locationToCoordinates(i, width);
+        if (((startX <= (_ref2 = coord.x) && _ref2 < endX)) && ((startY <= (_ref3 = coord.y) && _ref3 < endY))) {
+          pixels.push(pixelData[i], pixelData[i + 1], pixelData[i + 2], pixelData[i + 3]);
         }
       }
       return pixels;
@@ -2167,6 +2207,7 @@
       x: x,
       y: y
     };
+    this.cropped = true;
     return this.replaceCanvas(canvas);
   });
 
@@ -2194,20 +2235,15 @@
     }
     ctx = canvas.getContext('2d');
     ctx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, newDims.width, newDims.height);
+    this.resized = true;
     return this.replaceCanvas(canvas);
   });
 
-  Caman.Filter.register("crop", function(width, height, x, y) {
-    if (x == null) {
-      x = 0;
-    }
-    if (y == null) {
-      y = 0;
-    }
+  Caman.Filter.register("crop", function() {
     return this.processPlugin("crop", Array.prototype.slice.call(arguments, 0));
   });
 
-  Caman.Filter.register("resize", function(width, height) {
+  Caman.Filter.register("resize", function() {
     return this.processPlugin("resize", Array.prototype.slice.call(arguments, 0));
   });
 

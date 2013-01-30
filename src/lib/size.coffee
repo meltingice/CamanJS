@@ -19,6 +19,7 @@ Caman.Plugin.register "crop", (width, height, x = 0, y = 0) ->
   @cropCoordinates = x: x, y: y
 
   # Update all of the references
+  @cropped = true
   @replaceCanvas canvas
 
 # Resize the canvas and the image to a new size
@@ -52,10 +53,11 @@ Caman.Plugin.register "resize", (newDims = null) ->
     0, 0, 
     newDims.width, newDims.height
 
+  @resized = true
   @replaceCanvas canvas
 
-Caman.Filter.register "crop", (width, height, x = 0, y = 0) ->
+Caman.Filter.register "crop", ->
   @processPlugin "crop", Array.prototype.slice.call(arguments, 0)
 
-Caman.Filter.register "resize", (width, height) ->
+Caman.Filter.register "resize", ->
   @processPlugin "resize", Array.prototype.slice.call(arguments, 0)
