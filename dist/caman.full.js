@@ -100,6 +100,8 @@
 
     Caman.autoload = !Caman.NodeJS;
 
+    Caman.allowRevert = true;
+
     Caman.crossOrigin = "anonymous";
 
     Caman.toString = function() {
@@ -191,6 +193,7 @@
     };
 
     Caman.prototype.parseArguments = function(args) {
+      var key, val, _ref, _results;
       if (args.length === 0) {
         throw "Invalid arguments given";
       }
@@ -212,7 +215,17 @@
       if (args.length === 2) {
         return;
       }
-      return this.callback = args[2];
+      this.callback = args[2];
+      if (args.length === 4) {
+        _ref = args[4];
+        _results = [];
+        for (key in _ref) {
+          if (!__hasProp.call(_ref, key)) continue;
+          val = _ref[key];
+          _results.push(this.options[key] = val);
+        }
+        return _results;
+      }
     };
 
     Caman.prototype.setInitObject = function(obj) {
@@ -328,13 +341,15 @@
       }
       this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
       this.pixelData = this.imageData.data;
-      this.initializedPixelData = new Uint8Array(this.pixelData.length);
-      this.originalPixelData = new Uint8Array(this.pixelData.length);
-      _ref = this.pixelData;
-      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-        pixel = _ref[i];
-        this.initializedPixelData[i] = pixel;
-        this.originalPixelData[i] = pixel;
+      if (Caman.allowRevert) {
+        this.initializedPixelData = new Uint8Array(this.pixelData.length);
+        this.originalPixelData = new Uint8Array(this.pixelData.length);
+        _ref = this.pixelData;
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          pixel = _ref[i];
+          this.initializedPixelData[i] = pixel;
+          this.originalPixelData[i] = pixel;
+        }
       }
       this.dimensions = {
         width: this.canvas.width,
@@ -347,6 +362,9 @@
 
     Caman.prototype.resetOriginalPixelData = function() {
       var pixel, _i, _len, _ref, _results;
+      if (!Caman.allowRevert) {
+        throw "Revert disabled";
+      }
       this.originalPixelData = new Uint8Array(this.pixelData.length);
       _ref = this.pixelData;
       _results = [];
@@ -449,6 +467,9 @@
 
     Caman.prototype.revert = function() {
       var i, pixel, _i, _len, _ref;
+      if (!Caman.allowRevert) {
+        throw "Revert disabled";
+      }
       _ref = this.originalVisiblePixels();
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         pixel = _ref[i];
@@ -482,6 +503,9 @@
 
     Caman.prototype.originalVisiblePixels = function() {
       var canvas, coord, ctx, endX, endY, i, imageData, pixel, pixelData, pixels, scaledCanvas, startX, startY, width, _i, _j, _len, _ref, _ref1, _ref2, _ref3;
+      if (!Caman.allowRevert) {
+        throw "Revert disabled";
+      }
       pixels = [];
       startX = this.cropCoordinates.x;
       endX = startX + this.width;

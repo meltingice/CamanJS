@@ -36,6 +36,11 @@ Root.Caman = class Caman
   # Should we check the DOM for images with Caman instructions?
   @autoload: not Caman.NodeJS
 
+  # Allow reverting the canvas?
+  # If your JS process is running out of memory, disabling
+  # this could help drastically.
+  @allowRevert: true
+
   # Default cross-origin policy
   @crossOrigin: "anonymous"
 
@@ -43,10 +48,10 @@ Root.Caman = class Caman
     "Version " + Caman.version.release + ", Released " + Caman.version.date;
 
   # Set the URL of the image proxy script
-  @remoteProxy = ""
+  @remoteProxy: ""
 
   # Change the GET param used with the proxy script if needed
-  @proxyParam = "camanProxyUrl"
+  @proxyParam: "camanProxyUrl"
 
   @getAttrId: (canvas) ->
     return true if Caman.NodeJS
@@ -168,6 +173,9 @@ Root.Caman = class Caman
 
     @callback = args[2]
 
+    if args.length is 4
+      @options[key] = val for own key, val of args[4]
+
   setInitObject: (obj) ->
     if Caman.NodeJS
       @initObj = obj
@@ -271,12 +279,13 @@ Root.Caman = class Caman
     @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
     @pixelData = @imageData.data
     
-    @initializedPixelData = new Uint8Array(@pixelData.length)
-    @originalPixelData = new Uint8Array(@pixelData.length)
+    if Caman.allowRevert
+      @initializedPixelData = new Uint8Array(@pixelData.length)
+      @originalPixelData = new Uint8Array(@pixelData.length)
 
-    for pixel, i in @pixelData
-      @initializedPixelData[i] = pixel
-      @originalPixelData[i] = pixel
+      for pixel, i in @pixelData
+        @initializedPixelData[i] = pixel
+        @originalPixelData[i] = pixel
 
     @dimensions =
       width: @canvas.width
@@ -291,6 +300,8 @@ Root.Caman = class Caman
     @callback = ->
 
   resetOriginalPixelData: ->
+    throw "Revert disabled" unless Caman.allowRevert
+
     @originalPixelData = new Uint8Array(@pixelData.length)
     @originalPixelData.push pixel for pixel in @pixelData
 
@@ -375,6 +386,8 @@ Root.Caman = class Caman
   # Reverts the canvas back to it's original state while
   # maintaining any cropped or resized dimensions.
   revert: ->
+    throw "Revert disabled" unless Caman.allowRevert
+
     @pixelData[i] = pixel for pixel, i in @originalVisiblePixels()
     @context.putImageData @imageData, 0, 0
 
@@ -403,6 +416,8 @@ Root.Caman = class Caman
   # Returns the original pixel data while maintaining any
   # cropping or resizing that may have occured.
   originalVisiblePixels: ->
+    throw "Revert disabled" unless Caman.allowRevert
+
     pixels = []
 
     startX = @cropCoordinates.x
