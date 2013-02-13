@@ -446,11 +446,10 @@
       this.height = this.canvas.height;
       this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
       this.pixelData = this.imageData.data;
-      this.dimensions = {
+      return this.dimensions = {
         width: this.canvas.width,
         height: this.canvas.height
       };
-      return this.hiDPIAdjustments();
     };
 
     Caman.prototype.render = function(callback) {

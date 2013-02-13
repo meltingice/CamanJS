@@ -373,8 +373,6 @@ Root.Caman = class Caman
       width: @canvas.width
       height: @canvas.height
 
-    @hiDPIAdjustments()
-
   # Begins the rendering process
   render: (callback = ->) ->
     Event.trigger @, "renderStart"
