@@ -1612,7 +1612,7 @@
     };
 
     Renderer.prototype.eachBlock = function(fn) {
-      var blockN, blockPixelLength, end, f, i, lastBlockN, n, start, _i, _ref, _results,
+      var blockN, blockPixelLength, bnum, end, f, i, lastBlockN, n, start, _i, _ref, _results,
         _this = this;
       this.blocksDone = 0;
       n = this.c.pixelData.length;
@@ -1627,7 +1627,8 @@
           f = Fiber(function() {
             return fn.call(_this, i, start, end);
           });
-          _results.push(f.run());
+          bnum = f.run();
+          _results.push(this.blockFinished(bnum));
         } else {
           _results.push(setTimeout((function(i, start, end) {
             return function() {
@@ -1686,9 +1687,10 @@
         this.c.pixelData[i + 2] = Util.clampRGB(res.b);
         this.c.pixelData[i + 3] = Util.clampRGB(res.a);
       }
-      this.blockFinished(bnum);
       if (Caman.NodeJS) {
-        return Fiber["yield"]();
+        return Fiber["yield"](bnum);
+      } else {
+        return this.blockFinished(bnum);
       }
     };
 
@@ -1724,9 +1726,10 @@
         this.modPixelData[i + 2] = Util.clampRGB(res.b);
         this.modPixelData[i + 3] = this.c.pixelData[i + 3];
       }
-      this.blockFinished(bnum);
       if (Caman.NodeJS) {
-        return Fiber["yield"]();
+        return Fiber["yield"](bnum);
+      } else {
+        return this.blockFinished(bnum);
       }
     };
 

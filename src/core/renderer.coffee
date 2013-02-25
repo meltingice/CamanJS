@@ -62,7 +62,8 @@ Caman.Renderer = class Renderer
 
       if Caman.NodeJS
         f = Fiber => fn.call(@, i, start, end)
-        f.run()
+        bnum = f.run()
+        @blockFinished(bnum)
       else
         setTimeout do (i, start, end) =>
           => fn.call(@, i, start, end)
@@ -116,8 +117,10 @@ Caman.Renderer = class Renderer
       @c.pixelData[i+2] = Util.clampRGB res.b
       @c.pixelData[i+3] = Util.clampRGB res.a
 
-    @blockFinished bnum
-    Fiber.yield() if Caman.NodeJS
+    if Caman.NodeJS
+      Fiber.yield(bnum)
+    else
+      @blockFinished bnum
 
   # Applies an image kernel to the canvas
   renderKernel: (bnum, start, end) ->
@@ -160,8 +163,10 @@ Caman.Renderer = class Renderer
       @modPixelData[i+2]  = Util.clampRGB(res.b)
       @modPixelData[i+3]  = @c.pixelData[i+3]
 
-    @blockFinished bnum
-    Fiber.yield() if Caman.NodeJS
+    if Caman.NodeJS
+      Fiber.yield(bnum)
+    else
+      @blockFinished bnum
 
   # Called when a single block is finished rendering. Once all blocks are done, we signal that this
   # filter is finished rendering and continue to the next step.
