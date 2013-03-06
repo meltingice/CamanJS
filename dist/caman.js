@@ -1315,7 +1315,7 @@
         image = $(image).src;
       }
       if (!image) return this;
-      this.c.renderQueue.push({
+      this.c.renderer.renderQueue.push({
         type: Filter.Type.LoadOverlay,
         src: image,
         layer: this
