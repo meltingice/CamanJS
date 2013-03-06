@@ -34,7 +34,6 @@ coffeeFiles		= [
 	
 	# Core library
 	"core/caman"
-	#"core/camaninstance"
 
 	# Everything else
 	"core/analyze"
@@ -114,7 +113,8 @@ task 'build', 'Compile and minify all CoffeeScript source files', ->
 	finishListener 'js', -> invoke 'minify'
 	invoke 'compile'
 
-task 'compile', 'Compile all CoffeeScript source files', ->
+option '-m', '--map', 'Compile with source maps'
+task 'compile', 'Compile all CoffeeScript source files', (options) ->
 	util.log "Building #{targetCoreJS} and #{targetFullJS}"
 	contents = []
 	remaining = coffeeFiles.length
@@ -132,6 +132,11 @@ task 'compile', 'Compile all CoffeeScript source files', ->
 	process = ->
 		core = contents.join("\n\n")
 		full = core + "\n\n" + getPlugins()
+
+		if options.map
+			util.log "Source map support enabled"
+			coffeeCoreOpts = "-m #{coffeeCoreOpts}"
+			coffeeFullOpts = "-m #{coffeeFullOpts}"
 
 		fs.writeFile "#{targetCoffee}.coffee", core, "utf8", (err) ->
 			util.log err if err
