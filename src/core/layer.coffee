@@ -72,7 +72,7 @@ class Layer
 
     return @ if not image
 
-    @c.renderQueue.push
+    @c.renderer.renderQueue.push
       type: Filter.Type.LoadOverlay
       src: image
       layer: @
