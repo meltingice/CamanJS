@@ -8,12 +8,27 @@ Caman.IO = class IO
   @isRemote: (img) ->
     return false unless img?
     return false if @corsEnabled(img)
-
-    matches = img.src.match @domainRegex
-    return if matches then matches[1] isnt document.domain else false
+    return @isURLRemote img.src
 
   @corsEnabled: (img) ->
     img.crossOrigin? and img.crossOrigin.toLowerCase() in ['anonymous', 'use-credentials']
+
+  @isURLRemote: (url) ->
+    matches = url.match @domainRegex
+    return if matches then matches[1] isnt document.domain else false
+
+  @remoteCheck: (src) ->
+    if @isURLRemote src
+      if not Caman.remoteProxy.length
+        Log.info "Attempting to load a remote image without a configured proxy. URL: #{src}"
+        return
+      else
+        if Caman.isURLRemote Caman.remoteProxy
+          Log.info "Cannot use a remote proxy for loading images."
+          return
+          
+        "#{Caman.remoteProxy}?camanProxyUrl=#{encodeURIComponent(src)}"
+
 
   @proxyUrl: (src) ->
     "#{Caman.remoteProxy}?#{Caman.proxyParam}=#{encodeURIComponent(src)}"
