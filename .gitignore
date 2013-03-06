@@ -3,3 +3,4 @@
 *.sublime-workspace
 sftp-config.json
 node_modules/
+dist/*.coffee
