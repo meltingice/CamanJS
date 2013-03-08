@@ -1,0 +1,1 @@
+window.assert = chai.assert;

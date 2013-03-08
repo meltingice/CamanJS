@@ -1,6 +1,6 @@
-# Make sure CamanJS loads without errors
-{Caman} = require "../../dist/caman.full"
-{assert} = require 'chai'
+if exports?
+  {Caman} = require "../../dist/caman.full"
+  {assert} = require 'chai'
 
 describe "Calculate", ->
   describe "random ranges", ->
@@ -18,7 +18,7 @@ describe "Calculate", ->
       assert.notStrictEqual value, Math.round(value)
 
   describe "luminance", ->
-    before ->
+    beforeEach ->
       @rgba = 
         r: 100
         g: 100
@@ -45,7 +45,7 @@ describe "Calculate", ->
       assert.strictEqual @expected, value
 
   describe "bezier", ->
-    before ->
+    beforeEach ->
       @bezier = Caman.Calculate.bezier [0, 0], [100, 100], [200, 200], [255, 255]
 
     it "returns an object", ->

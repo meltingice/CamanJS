@@ -95,9 +95,31 @@ Caman "./path/to/file.jpg", ->
 
 # Testing
 
-The test suite is currently under heavy expansion, but a number of tests exist for NodeJS, which test a good part of the core library. Browser-based tests still need to be written, mostly for initialization and proxy URL testing.
+Tests for CamanJS run both in NodeJS and the browser.
 
-To run the NodeJS tests, run `npm test`.
+## NodeJS
+
+The NodeJS tests use mocha as the test runner. The simplest way to run the test suite is:
+
+```
+npm test
+```
+
+## Browser
+
+The browser tests are run by Testacular. It will start up Chrome, Firefox, and Safari in the background. If you're running Windows, you will want to remove Safari by editing `test/testacular.conf.js`. You can minimize each of these browsers if desired. It will automatically run tests after CamanJS is recompiled by the Cakefile as well. 
+
+**Because it prefers to be installed globally, Testacular is a soft dependency.**
+
+**Install**
+```
+npm install -g testacular
+```
+
+**Run**
+```
+testacular start test/testacular.conf.js
+```
 
 # Project Contributors
 

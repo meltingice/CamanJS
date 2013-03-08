@@ -44,7 +44,7 @@
     "fibers": "*"
   },
   "devDependencies": {
-    "coffee-script": ">= 1.3.1",
+    "coffee-script": ">= 1.6.1",
     "jsmin": "*",
     "packer": "*",
     "mocha": "*",
@@ -54,7 +54,7 @@
     "cli-table": "*"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/node/*.coffee",
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee",
     "examples": "./node_modules/servedir/bin/servedir"
   }
 }

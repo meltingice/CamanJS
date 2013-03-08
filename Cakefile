@@ -139,7 +139,7 @@ task 'compile', 'Compile all CoffeeScript source files', (options) ->
       fullOpts = "#{coffeeFullOpts} -m #{targetCoffee}.full.coffee"
     else
       coreOpts = "#{coffeeCoreOpts} -c #{targetCoffee}.coffee"
-      fullOpts = "#{coffeeCoreOpts} -c #{targetCoffee}.full.coffee"
+      fullOpts = "#{coffeeFullOpts} -c #{targetCoffee}.full.coffee"
 
     fs.writeFile "#{targetCoffee}.coffee", core, "utf8", (err) ->
       util.log err if err

@@ -1,11 +1,12 @@
-# Make sure CamanJS loads without errors
-{Caman} = require "../../dist/caman.full"
-{assert} = require 'chai'
-{greyImage, greyPath, rgbData}   = require '../ext/grey'
+if exports?
+  {Caman} = require "../../dist/caman.full"
+  {assert} = require 'chai'
+  {greyImage, greyPath, rgbData}   = require '../ext/grey'
 
 describe "Renderer", ->
   it "has the proper number of default blocks", ->
-    assert.equal Caman.Renderer.Blocks, require('os').cpus().length
+    cpus = if Caman.NodeJS then require('os').cpus().length else 4
+    assert.equal Caman.Renderer.Blocks, cpus
 
   it "executes callback when there are no jobs", (done) ->
     Caman greyImage, ->

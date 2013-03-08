@@ -1,9 +1,9 @@
-# Make sure CamanJS loads without errors
-{Caman} = require "../../dist/caman.full"
-{assert} = require 'chai'
+if exports?
+  {Caman} = require "../../dist/caman.full"
+  {assert} = require 'chai'
 
 describe "Blenders", ->
-  before ->
+  beforeEach ->
     @rgbaLayer =
       r: 100
       g: 100
