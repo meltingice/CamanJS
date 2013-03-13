@@ -134,20 +134,23 @@ Root.Caman = class Caman
 
   # All possible combinations:
   #
-  # 1 argument
+  # **1 argument**
   #   - Image selector
   #   - Image object
   #   - Canvas selector
   #   - Canvas object
-  # 2 arguments
+  #
+  # **2 arguments**
   #   - Image selector + callback
   #   - Image object + callback
   #   - Canvas selector + URL
   #   - Canvas object + URL
-  # 3 arguments
+  #
+  # **3 arguments**
   #   - Canvas selector + URL + callback
   #   - Canvas object + URL + callback
-  # NodeJS
+  #
+  # **NodeJS**
   #   - file path
   #   - file object
   #   - file path + callback

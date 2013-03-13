@@ -96,7 +96,7 @@ task 'docs', 'Generates documentation for the coffee files', ->
     continue if fs.statSync("#{pluginsFolder}/#{plugin}").isDirectory()
     files.push "#{pluginsFolder}/#{plugin}"
 
-  exec "docco #{files.join(' ')}", (err, stdout, stderr) ->
+  exec "node_modules/docco/bin/docco -l parallel #{files.join(' ')}", (err, stdout, stderr) ->
     util.log err if err
     util.log "Documentation built into docs/ folder."
         
