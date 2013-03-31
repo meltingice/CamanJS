@@ -279,8 +279,7 @@ Root.Caman = class Caman
         0, 0, 
         @preScaledWidth, @preScaledHeight
     
-    @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
-    @pixelData = @imageData.data
+    @reloadCanvasData()
     
     if Caman.allowRevert
       @initializedPixelData = new Uint8Array(@pixelData.length)
@@ -301,6 +300,13 @@ Root.Caman = class Caman
     # Reset the callback so re-initialization doesn't
     # trigger it again.
     @callback = ->
+
+  # If you have a separate context reference to this canvas outside of CamanJS
+  # and you make a change to the canvas outside of CamanJS, you will have to call
+  # this function to update our context reference to include those changes.
+  reloadCanvasData: ->
+    @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
+    @pixelData = @imageData.data
 
   resetOriginalPixelData: ->
     throw "Revert disabled" unless Caman.allowRevert
@@ -369,8 +375,7 @@ Root.Caman = class Caman
     @width  = @canvas.width
     @height = @canvas.height
 
-    @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
-    @pixelData = @imageData.data
+    @reloadCanvasData()
 
     @dimensions =
       width: @canvas.width
