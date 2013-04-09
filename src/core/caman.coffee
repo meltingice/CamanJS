@@ -205,8 +205,8 @@ Root.Caman = class Caman
 
     @image = new Image()
     @image.onload = =>
-      Log.debug "Image loaded. Width = #{@image.width}, Height = #{@image.height}"
-      @canvas = new Canvas @image.width, @image.height
+      Log.debug "Image loaded. Width = #{@imageWidth()}, Height = #{@imageHeight()}"
+      @canvas = new Canvas @imageWidth(), @imageHeight()
       @finishInit()
 
     @image.onerror = (err) -> throw err
@@ -248,20 +248,28 @@ Root.Caman = class Caman
       Log.debug "Remote image detected, using URL = #{@image.src}"
 
   waitForImageLoaded: ->
-    if @image.complete
+    if @isImageLoaded()
       @imageLoaded()
     else
       @image.onload = @imageLoaded
 
+  isImageLoaded: ->
+    return false unless @image.complete
+    return false if @image.naturalWidth? and @image.naturalWidth is 0
+    return true
+
+  imageWidth: -> @image.width or @image.naturalWidth
+  imageHeight: -> @image.height or @image.naturalHeight
+
   imageLoaded: ->
-    Log.debug "Image loaded. Width = #{@image.width}, Height = #{@image.height}"
+    Log.debug "Image loaded. Width = #{@imageWidth()}, Height = #{@imageHeight()}"
 
     if @swapped
-      @canvas.width = @image.width / @hiDPIRatio()
-      @canvas.height = @image.height / @hiDPIRatio()
+      @canvas.width = @imageWidth() / @hiDPIRatio()
+      @canvas.height = @imageHeight() / @hiDPIRatio()
     else
-      @canvas.width = @image.width
-      @canvas.height = @image.height
+      @canvas.width = @imageWidth()
+      @canvas.height = @imageHeight()
 
     @finishInit()
 
@@ -277,7 +285,7 @@ Root.Caman = class Caman
     if @image?
       @context.drawImage @image, 
         0, 0, 
-        @image.width, @image.height, 
+        @imageWidth(), @imageHeight(), 
         0, 0, 
         @preScaledWidth, @preScaledHeight
     

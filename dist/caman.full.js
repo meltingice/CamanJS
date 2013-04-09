@@ -261,8 +261,8 @@
       Log.debug("Initializing for NodeJS");
       this.image = new Image();
       this.image.onload = function() {
-        Log.debug("Image loaded. Width = " + _this.image.width + ", Height = " + _this.image.height);
-        _this.canvas = new Canvas(_this.image.width, _this.image.height);
+        Log.debug("Image loaded. Width = " + (_this.imageWidth()) + ", Height = " + (_this.imageHeight()));
+        _this.canvas = new Canvas(_this.imageWidth(), _this.imageHeight());
         return _this.finishInit();
       };
       this.image.onerror = function(err) {
@@ -309,21 +309,39 @@
     };
 
     Caman.prototype.waitForImageLoaded = function() {
-      if (this.image.complete) {
+      if (this.isImageLoaded()) {
         return this.imageLoaded();
       } else {
         return this.image.onload = this.imageLoaded;
       }
     };
 
+    Caman.prototype.isImageLoaded = function() {
+      if (!this.image.complete) {
+        return false;
+      }
+      if ((this.image.naturalWidth != null) && this.image.naturalWidth === 0) {
+        return false;
+      }
+      return true;
+    };
+
+    Caman.prototype.imageWidth = function() {
+      return this.image.width || this.image.naturalWidth;
+    };
+
+    Caman.prototype.imageHeight = function() {
+      return this.image.height || this.image.naturalHeight;
+    };
+
     Caman.prototype.imageLoaded = function() {
-      Log.debug("Image loaded. Width = " + this.image.width + ", Height = " + this.image.height);
+      Log.debug("Image loaded. Width = " + (this.imageWidth()) + ", Height = " + (this.imageHeight()));
       if (this.swapped) {
-        this.canvas.width = this.image.width / this.hiDPIRatio();
-        this.canvas.height = this.image.height / this.hiDPIRatio();
+        this.canvas.width = this.imageWidth() / this.hiDPIRatio();
+        this.canvas.height = this.imageHeight() / this.hiDPIRatio();
       } else {
-        this.canvas.width = this.image.width;
-        this.canvas.height = this.image.height;
+        this.canvas.width = this.imageWidth();
+        this.canvas.height = this.imageHeight();
       }
       return this.finishInit();
     };
@@ -340,7 +358,7 @@
         this.assignId();
       }
       if (this.image != null) {
-        this.context.drawImage(this.image, 0, 0, this.image.width, this.image.height, 0, 0, this.preScaledWidth, this.preScaledHeight);
+        this.context.drawImage(this.image, 0, 0, this.imageWidth(), this.imageHeight(), 0, 0, this.preScaledWidth, this.preScaledHeight);
       }
       this.reloadCanvasData();
       if (Caman.allowRevert) {
