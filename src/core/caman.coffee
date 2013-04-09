@@ -190,6 +190,8 @@ Root.Caman = class Caman
     else
       @initObj = $(obj)
 
+    throw "Could not find image or canvas for initialization." unless @initObj?
+
     @initType = @initObj.nodeName.toLowerCase()
 
   setup: ->
@@ -355,7 +357,7 @@ Root.Caman = class Caman
 
     devicePixelRatio / backingStoreRatio
 
-  hiDPICapable: -> window.devicePixelRatio isnt 1
+  hiDPICapable: -> window.devicePixelRatio? and window.devicePixelRatio isnt 1
 
   needsHiDPISwap: ->
     return false if @hiDPIDisabled() or !@hiDPICapable()

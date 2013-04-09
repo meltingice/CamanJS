@@ -239,6 +239,9 @@
       } else {
         this.initObj = $(obj);
       }
+      if (this.initObj == null) {
+        throw "Could not find image or canvas for initialization.";
+      }
       return this.initType = this.initObj.nodeName.toLowerCase();
     };
 
@@ -423,7 +426,7 @@
     };
 
     Caman.prototype.hiDPICapable = function() {
-      return window.devicePixelRatio !== 1;
+      return (window.devicePixelRatio != null) && window.devicePixelRatio !== 1;
     };
 
     Caman.prototype.needsHiDPISwap = function() {
