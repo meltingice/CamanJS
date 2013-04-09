@@ -1,6 +1,6 @@
 {
   "name": "caman",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Javascript (Ca)nvas (Man)ipulation for NodeJS and the browser",
   "keywords": ["canvas", "image", "manipulate", "filter", "image manipulation", "editing"],
   "homepage": "http://camanjs.com",

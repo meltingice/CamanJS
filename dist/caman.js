@@ -100,8 +100,8 @@
   Root.Caman = Caman = (function() {
 
     Caman.version = {
-      release: "4.1.0",
-      date: "2/12/2013"
+      release: "4.1.1",
+      date: "4/8/2013"
     };
 
     Caman.DEBUG = false;
