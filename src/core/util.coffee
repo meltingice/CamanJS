@@ -35,3 +35,7 @@ class Util
     for attr in from.attributes
       continue if opts.except? and attr.nodeName in opts.except
       to.setAttribute(attr.nodeName, attr.nodeValue)
+
+  @dataArray: (length = 0) ->
+    return new Uint8Array(length) if Caman.NodeJS or window.Uint8Array?
+    return new Array(length)

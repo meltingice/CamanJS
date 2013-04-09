@@ -3,9 +3,13 @@ class Logger
   constructor: ->
     for name in ['log', 'info', 'warn', 'error']
       @[name] = do (name) ->
-        ->
+        (args...) ->
           return if not Caman.DEBUG
-          console[name].apply console, arguments
+          try
+            console[name].apply console, args
+          catch e
+            # We're probably using IE9 or earlier
+            console[name] args
 
     @debug = @log
 

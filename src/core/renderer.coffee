@@ -43,7 +43,7 @@ Caman.Renderer = class Renderer
 
   execute: (callback) ->
     @finishedFn = callback
-    @modPixelData = new Uint8Array(@c.pixelData.length)
+    @modPixelData = Util.dataArray(@c.pixelData.length)
 
     @processNext()
 

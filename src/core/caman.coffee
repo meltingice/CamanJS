@@ -292,8 +292,8 @@ Root.Caman = class Caman
     @reloadCanvasData()
     
     if Caman.allowRevert
-      @initializedPixelData = new Uint8Array(@pixelData.length)
-      @originalPixelData = new Uint8Array(@pixelData.length)
+      @initializedPixelData = Util.dataArray(@pixelData.length)
+      @originalPixelData = Util.dataArray(@pixelData.length)
 
       for pixel, i in @pixelData
         @initializedPixelData[i] = pixel
@@ -321,7 +321,7 @@ Root.Caman = class Caman
   resetOriginalPixelData: ->
     throw "Revert disabled" unless Caman.allowRevert
 
-    @originalPixelData = new Uint8Array(@pixelData.length)
+    @originalPixelData = Util.dataArray(@pixelData.length)
     @originalPixelData.push pixel for pixel in @pixelData
 
   hasId: -> Caman.getAttrId(@canvas)?

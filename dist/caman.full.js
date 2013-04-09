@@ -3,8 +3,8 @@
   var $, Analyze, Blender, Calculate, Caman, CamanParser, Canvas, Convert, Event, Fiber, Filter, IO, Image, Layer, Log, Logger, PixelInfo, Plugin, Renderer, Root, Store, Util, fs, slice, vignetteFilters,
     __hasProp = {}.hasOwnProperty,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
-    _this = this,
-    __slice = [].slice;
+    __slice = [].slice,
+    _this = this;
 
   slice = Array.prototype.slice;
 
@@ -71,6 +71,16 @@
         _results.push(to.setAttribute(attr.nodeName, attr.nodeValue));
       }
       return _results;
+    };
+
+    Util.dataArray = function(length) {
+      if (length == null) {
+        length = 0;
+      }
+      if (Caman.NodeJS || (window.Uint8Array != null)) {
+        return new Uint8Array(length);
+      }
+      return new Array(length);
     };
 
     return Util;
@@ -362,8 +372,8 @@
       }
       this.reloadCanvasData();
       if (Caman.allowRevert) {
-        this.initializedPixelData = new Uint8Array(this.pixelData.length);
-        this.originalPixelData = new Uint8Array(this.pixelData.length);
+        this.initializedPixelData = Util.dataArray(this.pixelData.length);
+        this.originalPixelData = Util.dataArray(this.pixelData.length);
         _ref = this.pixelData;
         for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
           pixel = _ref[i];
@@ -390,7 +400,7 @@
       if (!Caman.allowRevert) {
         throw "Revert disabled";
       }
-      this.originalPixelData = new Uint8Array(this.pixelData.length);
+      this.originalPixelData = Util.dataArray(this.pixelData.length);
       _ref = this.pixelData;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1477,10 +1487,16 @@
         name = _ref[_i];
         this[name] = (function(name) {
           return function() {
+            var args;
+            args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
             if (!Caman.DEBUG) {
               return;
             }
-            return console[name].apply(console, arguments);
+            try {
+              return console[name].apply(console, args);
+            } catch (e) {
+              return console[name](args);
+            }
           };
         })(name);
       }
@@ -1651,7 +1667,7 @@
 
     Renderer.prototype.execute = function(callback) {
       this.finishedFn = callback;
-      this.modPixelData = new Uint8Array(this.c.pixelData.length);
+      this.modPixelData = Util.dataArray(this.c.pixelData.length);
       return this.processNext();
     };
 
