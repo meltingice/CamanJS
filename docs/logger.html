@@ -181,9 +181,27 @@
   <span class="nv">constructor: </span><span class="o">-&gt;</span>
     <span class="k">for</span> <span class="nx">name</span> <span class="k">in</span> <span class="p">[</span><span class="s">&#39;log&#39;</span><span class="p">,</span> <span class="s">&#39;info&#39;</span><span class="p">,</span> <span class="s">&#39;warn&#39;</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">]</span>
       <span class="nx">@</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">do</span> <span class="nf">(name) -&gt;</span>
-        <span class="o">-&gt;</span>
+        <span class="nf">(args...) -&gt;</span>
           <span class="k">return</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">DEBUG</span>
-          <span class="nx">console</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">apply</span> <span class="nx">console</span><span class="p">,</span> <span class="nx">arguments</span>
+          <span class="k">try</span>
+            <span class="nx">console</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">apply</span> <span class="nx">console</span><span class="p">,</span> <span class="nx">args</span>
+          <span class="k">catch</span> <span class="nx">e</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              
+<p>We&#39;re probably using IE9 or earlier</p>
+
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>            <span class="nx">console</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="nx">args</span>
 
     <span class="vi">@debug = </span><span class="nx">@log</span>
 

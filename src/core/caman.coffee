@@ -258,6 +258,9 @@ Root.Caman = class Caman
     return false if @image.naturalWidth? and @image.naturalWidth is 0
     return true
 
+  # Internet Explorer has issues figuring out image dimensions when they aren't
+  # explicitly defined apparently. We check the normal width/height properties first,
+  # but fall back to natural sizes if they are 0.
   imageWidth: -> @image.width or @image.naturalWidth
   imageHeight: -> @image.height or @image.naturalHeight
 

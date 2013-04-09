@@ -532,6 +532,8 @@ same instance.</p>
     <span class="k">else</span>
       <span class="vi">@initObj = </span><span class="nx">$</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
 
+    <span class="k">throw</span> <span class="s">&quot;Could not find image or canvas for initialization.&quot;</span> <span class="nx">unless</span> <span class="nx">@initObj</span><span class="o">?</span>
+
     <span class="vi">@initType = </span><span class="nx">@initObj</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
 
   <span class="nv">setup: </span><span class="o">-&gt;</span>
@@ -545,8 +547,8 @@ same instance.</p>
 
     <span class="vi">@image = </span><span class="k">new</span> <span class="nx">Image</span><span class="p">()</span>
     <span class="vi">@image.onload = </span><span class="o">=&gt;</span>
-      <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;Image loaded. Width = </span><span class="si">#{</span><span class="nx">@image</span><span class="p">.</span><span class="nx">width</span><span class="si">}</span><span class="s">, Height = </span><span class="si">#{</span><span class="nx">@image</span><span class="p">.</span><span class="nx">height</span><span class="si">}</span><span class="s">&quot;</span>
-      <span class="vi">@canvas = </span><span class="k">new</span> <span class="nx">Canvas</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">height</span>
+      <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;Image loaded. Width = </span><span class="si">#{</span><span class="nx">@imageWidth</span><span class="p">()</span><span class="si">}</span><span class="s">, Height = </span><span class="si">#{</span><span class="nx">@imageHeight</span><span class="p">()</span><span class="si">}</span><span class="s">&quot;</span>
+      <span class="vi">@canvas = </span><span class="k">new</span> <span class="nx">Canvas</span> <span class="nx">@imageWidth</span><span class="p">(),</span> <span class="nx">@imageHeight</span><span class="p">()</span>
       <span class="nx">@finishInit</span><span class="p">()</span>
 
     <span class="vi">@image.onerror = </span><span class="nf">(err) -&gt;</span> <span class="k">throw</span> <span class="nx">err</span>
@@ -588,20 +590,44 @@ same instance.</p>
       <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;Remote image detected, using URL = </span><span class="si">#{</span><span class="nx">@image</span><span class="p">.</span><span class="nx">src</span><span class="si">}</span><span class="s">&quot;</span>
 
   <span class="nv">waitForImageLoaded: </span><span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">complete</span>
+    <span class="k">if</span> <span class="nx">@isImageLoaded</span><span class="p">()</span>
       <span class="nx">@imageLoaded</span><span class="p">()</span>
     <span class="k">else</span>
       <span class="vi">@image.onload = </span><span class="nx">@imageLoaded</span>
 
+  <span class="nv">isImageLoaded: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="kc">false</span> <span class="nx">unless</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">complete</span>
+    <span class="k">return</span> <span class="kc">false</span> <span class="k">if</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">naturalWidth</span><span class="o">?</span> <span class="o">and</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">naturalWidth</span> <span class="o">is</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="kc">true</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              
+<p>Internet Explorer has issues figuring out image dimensions when they aren&#39;t
+explicitly defined apparently. We check the normal width/height properties first,
+but fall back to natural sizes if they are 0.</p>
+
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>  <span class="nv">imageWidth: </span><span class="o">-&gt;</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">width</span> <span class="o">or</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">naturalWidth</span>
+  <span class="nv">imageHeight: </span><span class="o">-&gt;</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">height</span> <span class="o">or</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">naturalHeight</span>
+
   <span class="nv">imageLoaded: </span><span class="o">-&gt;</span>
-    <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;Image loaded. Width = </span><span class="si">#{</span><span class="nx">@image</span><span class="p">.</span><span class="nx">width</span><span class="si">}</span><span class="s">, Height = </span><span class="si">#{</span><span class="nx">@image</span><span class="p">.</span><span class="nx">height</span><span class="si">}</span><span class="s">&quot;</span>
+    <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;Image loaded. Width = </span><span class="si">#{</span><span class="nx">@imageWidth</span><span class="p">()</span><span class="si">}</span><span class="s">, Height = </span><span class="si">#{</span><span class="nx">@imageHeight</span><span class="p">()</span><span class="si">}</span><span class="s">&quot;</span>
 
     <span class="k">if</span> <span class="nx">@swapped</span>
-      <span class="vi">@canvas.width = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">@hiDPIRatio</span><span class="p">()</span>
-      <span class="vi">@canvas.height = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">@hiDPIRatio</span><span class="p">()</span>
+      <span class="vi">@canvas.width = </span><span class="nx">@imageWidth</span><span class="p">()</span> <span class="o">/</span> <span class="nx">@hiDPIRatio</span><span class="p">()</span>
+      <span class="vi">@canvas.height = </span><span class="nx">@imageHeight</span><span class="p">()</span> <span class="o">/</span> <span class="nx">@hiDPIRatio</span><span class="p">()</span>
     <span class="k">else</span>
-      <span class="vi">@canvas.width = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">width</span>
-      <span class="vi">@canvas.height = </span><span class="nx">@image</span><span class="p">.</span><span class="nx">height</span>
+      <span class="vi">@canvas.width = </span><span class="nx">@imageWidth</span><span class="p">()</span>
+      <span class="vi">@canvas.height = </span><span class="nx">@imageHeight</span><span class="p">()</span>
 
     <span class="nx">@finishInit</span><span class="p">()</span>
 
@@ -617,16 +643,15 @@ same instance.</p>
     <span class="k">if</span> <span class="nx">@image</span><span class="o">?</span>
       <span class="nx">@context</span><span class="p">.</span><span class="nx">drawImage</span> <span class="nx">@image</span><span class="p">,</span> 
         <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> 
-        <span class="nx">@image</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@image</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span> 
+        <span class="nx">@imageWidth</span><span class="p">(),</span> <span class="nx">@imageHeight</span><span class="p">(),</span> 
         <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> 
         <span class="nx">@preScaledWidth</span><span class="p">,</span> <span class="nx">@preScaledHeight</span>
     
-    <span class="vi">@imageData = </span><span class="nx">@context</span><span class="p">.</span><span class="nx">getImageData</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
-    <span class="vi">@pixelData = </span><span class="nx">@imageData</span><span class="p">.</span><span class="nx">data</span>
+    <span class="nx">@reloadCanvasData</span><span class="p">()</span>
     
     <span class="k">if</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">allowRevert</span>
-      <span class="vi">@initializedPixelData = </span><span class="k">new</span> <span class="nx">Uint8Array</span><span class="p">(</span><span class="nx">@pixelData</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
-      <span class="vi">@originalPixelData = </span><span class="k">new</span> <span class="nx">Uint8Array</span><span class="p">(</span><span class="nx">@pixelData</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+      <span class="vi">@initializedPixelData = </span><span class="nx">Util</span><span class="p">.</span><span class="nx">dataArray</span><span class="p">(</span><span class="nx">@pixelData</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+      <span class="vi">@originalPixelData = </span><span class="nx">Util</span><span class="p">.</span><span class="nx">dataArray</span><span class="p">(</span><span class="nx">@pixelData</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
 
       <span class="k">for</span> <span class="nx">pixel</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@pixelData</span>
         <span class="nx">@initializedPixelData</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">pixel</span>
@@ -643,11 +668,11 @@ same instance.</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               
 <p>Reset the callback so re-initialization doesn&#39;t
@@ -655,12 +680,32 @@ trigger it again.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="vi">@callback = </span><span class="o">-&gt;</span>
+            <div class="content"><div class="highlight"><pre>    <span class="vi">@callback = </span><span class="o">-&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              
+<p>If you have a separate context reference to this canvas outside of CamanJS
+and you make a change to the canvas outside of CamanJS, you will have to call
+this function to update our context reference to include those changes.</p>
+
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>  <span class="nv">reloadCanvasData: </span><span class="o">-&gt;</span>
+    <span class="vi">@imageData = </span><span class="nx">@context</span><span class="p">.</span><span class="nx">getImageData</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
+    <span class="vi">@pixelData = </span><span class="nx">@imageData</span><span class="p">.</span><span class="nx">data</span>
 
   <span class="nv">resetOriginalPixelData: </span><span class="o">-&gt;</span>
     <span class="k">throw</span> <span class="s">&quot;Revert disabled&quot;</span> <span class="nx">unless</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">allowRevert</span>
 
-    <span class="vi">@originalPixelData = </span><span class="k">new</span> <span class="nx">Uint8Array</span><span class="p">(</span><span class="nx">@pixelData</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+    <span class="vi">@originalPixelData = </span><span class="nx">Util</span><span class="p">.</span><span class="nx">dataArray</span><span class="p">(</span><span class="nx">@pixelData</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
     <span class="nx">@originalPixelData</span><span class="p">.</span><span class="nx">push</span> <span class="nx">pixel</span> <span class="k">for</span> <span class="nx">pixel</span> <span class="k">in</span> <span class="nx">@pixelData</span>
 
   <span class="nv">hasId: </span><span class="o">-&gt;</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">getAttrId</span><span class="p">(</span><span class="nx">@canvas</span><span class="p">)</span><span class="o">?</span>
@@ -704,7 +749,7 @@ trigger it again.</p>
 
     <span class="nx">devicePixelRatio</span> <span class="o">/</span> <span class="nx">backingStoreRatio</span>
 
-  <span class="nv">hiDPICapable: </span><span class="o">-&gt;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span> <span class="o">isnt</span> <span class="mi">1</span>
+  <span class="nv">hiDPICapable: </span><span class="o">-&gt;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span><span class="o">?</span> <span class="o">and</span> <span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span> <span class="o">isnt</span> <span class="mi">1</span>
 
   <span class="nv">needsHiDPISwap: </span><span class="o">-&gt;</span>
     <span class="k">return</span> <span class="kc">false</span> <span class="k">if</span> <span class="nx">@hiDPIDisabled</span><span class="p">()</span> <span class="o">or</span> <span class="o">!</span><span class="nx">@hiDPICapable</span><span class="p">()</span>
@@ -724,8 +769,7 @@ trigger it again.</p>
     <span class="vi">@width  = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
     <span class="vi">@height = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
 
-    <span class="vi">@imageData = </span><span class="nx">@context</span><span class="p">.</span><span class="nx">getImageData</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
-    <span class="vi">@pixelData = </span><span class="nx">@imageData</span><span class="p">.</span><span class="nx">data</span>
+    <span class="nx">@reloadCanvasData</span><span class="p">()</span>
 
     <span class="vi">@dimensions =</span>
       <span class="nv">width: </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
@@ -734,11 +778,11 @@ trigger it again.</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               
 <p>Begins the rendering process</p>
@@ -755,11 +799,11 @@ trigger it again.</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               
 <p>Reverts the canvas back to it&#39;s original state while
@@ -776,11 +820,11 @@ maintaining any cropped or resized dimensions.</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               
 <p>Completely resets the canvas back to it&#39;s original state.
@@ -811,11 +855,11 @@ Any size adjustments will also be reset.</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               
 <p>Returns the original pixel data while maintaining any
@@ -872,11 +916,11 @@ cropping or resizing that may have occured.</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               
 <p>Pushes the filter callback that modifies the RGBA object into the
@@ -895,11 +939,11 @@ render queue</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               
 <p>Pushes the kernel into the render queue</p>
@@ -923,11 +967,11 @@ render queue</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               
 <p>Adds a standalone plugin into the render queue</p>
@@ -945,11 +989,11 @@ render queue</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               
 <p>Pushes a new layer operation into the render queue and calls the layer
@@ -970,11 +1014,11 @@ callback</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               
 <p>Pushes the layer context and moves to the next operation</p>
@@ -986,11 +1030,11 @@ callback</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               
 <p>Set all of the relevant data to the new layer</p>
@@ -1006,11 +1050,11 @@ callback</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               
 <p>Restore the previous layer context</p>
@@ -1024,11 +1068,11 @@ callback</p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               
 <p>Applies the current layer to its parent layer</p>

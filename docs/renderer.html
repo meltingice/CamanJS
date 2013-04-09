@@ -262,7 +262,7 @@ for execution</p>
 
   <span class="nv">execute: </span><span class="nf">(callback) -&gt;</span>
     <span class="vi">@finishedFn = </span><span class="nx">callback</span>
-    <span class="vi">@modPixelData = </span><span class="k">new</span> <span class="nx">Uint8Array</span><span class="p">(</span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+    <span class="vi">@modPixelData = </span><span class="nx">Util</span><span class="p">.</span><span class="nx">dataArray</span><span class="p">(</span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
 
     <span class="nx">@processNext</span><span class="p">()</span>
 
