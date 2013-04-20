@@ -292,7 +292,8 @@ Root.Caman = class Caman
         0, 0, 
         @preScaledWidth, @preScaledHeight
     
-    @reloadCanvasData()
+    @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
+    @pixelData = @imageData.data
     
     if Caman.allowRevert
       @initializedPixelData = Util.dataArray(@pixelData.length)
@@ -325,7 +326,7 @@ Root.Caman = class Caman
     throw "Revert disabled" unless Caman.allowRevert
 
     @originalPixelData = Util.dataArray(@pixelData.length)
-    @originalPixelData.push pixel for pixel in @pixelData
+    @originalPixelData[i] = pixel for pixel, i in @pixelData
 
   hasId: -> Caman.getAttrId(@canvas)?
 
@@ -337,7 +338,7 @@ Root.Caman = class Caman
     @canvas.getAttribute('data-caman-hidpi-disabled') isnt null
 
   hiDPIAdjustments: ->
-    return if Caman.NodeJS or @hiDPIDisabled()
+    return if Caman.NodeJS or !@needsHiDPISwap()
 
     ratio = @hiDPIRatio()
 

@@ -370,7 +370,8 @@
       if (this.image != null) {
         this.context.drawImage(this.image, 0, 0, this.imageWidth(), this.imageHeight(), 0, 0, this.preScaledWidth, this.preScaledHeight);
       }
-      this.reloadCanvasData();
+      this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+      this.pixelData = this.imageData.data;
       if (Caman.allowRevert) {
         this.initializedPixelData = Util.dataArray(this.pixelData.length);
         this.originalPixelData = Util.dataArray(this.pixelData.length);
@@ -396,16 +397,16 @@
     };
 
     Caman.prototype.resetOriginalPixelData = function() {
-      var pixel, _i, _len, _ref, _results;
+      var i, pixel, _i, _len, _ref, _results;
       if (!Caman.allowRevert) {
         throw "Revert disabled";
       }
       this.originalPixelData = Util.dataArray(this.pixelData.length);
       _ref = this.pixelData;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        pixel = _ref[_i];
-        _results.push(this.originalPixelData.push(pixel));
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        pixel = _ref[i];
+        _results.push(this.originalPixelData[i] = pixel);
       }
       return _results;
     };
@@ -427,7 +428,7 @@
 
     Caman.prototype.hiDPIAdjustments = function() {
       var ratio;
-      if (Caman.NodeJS || this.hiDPIDisabled()) {
+      if (Caman.NodeJS || !this.needsHiDPISwap()) {
         return;
       }
       ratio = this.hiDPIRatio();
