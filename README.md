@@ -107,18 +107,18 @@ npm test
 
 ### Browser
 
-The browser tests are run by Testacular. It will start up Chrome, Firefox, and Safari in the background. If you're running Windows, you will want to remove Safari by editing `test/testacular.conf.js`. You can minimize each of these browsers if desired. It will automatically run tests after CamanJS is recompiled by the Cakefile as well. 
+The browser tests are run by Karma. It will start up Chrome, Firefox, and Safari in the background. If you're running Windows, you will want to remove Safari by editing `test/karma.conf.js`. You can minimize each of these browsers if desired. It will automatically run tests after CamanJS is recompiled by the Cakefile as well. 
 
-**Because it prefers to be installed globally, Testacular is a soft dependency.**
+**Because it prefers to be installed globally, Karma is a soft dependency.**
 
 **Install**
 ```
-npm install -g testacular
+npm install -g karma
 ```
 
 **Run**
 ```
-testacular start test/testacular.conf.js
+karma start test/karma.conf.js
 ```
 
 # Project Contributors
