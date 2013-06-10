@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -177,15 +182,15 @@
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="k">class</span> <span class="nx">Logger</span>
-  <span class="nv">constructor: </span><span class="o">-&gt;</span>
-    <span class="k">for</span> <span class="nx">name</span> <span class="k">in</span> <span class="p">[</span><span class="s">&#39;log&#39;</span><span class="p">,</span> <span class="s">&#39;info&#39;</span><span class="p">,</span> <span class="s">&#39;warn&#39;</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">]</span>
-      <span class="nx">@</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">do</span> <span class="nf">(name) -&gt;</span>
-        <span class="nf">(args...) -&gt;</span>
-          <span class="k">return</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">DEBUG</span>
-          <span class="k">try</span>
-            <span class="nx">console</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">apply</span> <span class="nx">console</span><span class="p">,</span> <span class="nx">args</span>
-          <span class="k">catch</span> <span class="nx">e</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Logger</span></span>
+  constructor: -&gt;
+    <span class="keyword">for</span> name <span class="keyword">in</span> [<span class="string">'log'</span>, <span class="string">'info'</span>, <span class="string">'warn'</span>, <span class="string">'error'</span>]
+      @[name] = <span class="keyword">do</span> (name) -&gt;
+        (args...) -&gt;
+          <span class="keyword">return</span> <span class="keyword">if</span> <span class="keyword">not</span> Caman.DEBUG
+          <span class="keyword">try</span>
+            console[name].apply console, args
+          <span class="keyword">catch</span> e</pre></div></div>
             
         </li>
         
@@ -196,18 +201,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>We&#39;re probably using IE9 or earlier</p>
+              <p>We&#39;re probably using IE9 or earlier</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>            <span class="nx">console</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="nx">args</span>
+            <div class="content"><div class='highlight'><pre>            console[name] args
 
-    <span class="vi">@debug = </span><span class="nx">@log</span>
+    <span class="property">@debug</span> = <span class="property">@log</span>
 
-<span class="nv">Log = </span><span class="k">new</span> <span class="nx">Logger</span><span class="p">()</span>
-
-</pre></div></div>
+Log = <span class="keyword">new</span> Logger()</pre></div></div>
             
         </li>
         

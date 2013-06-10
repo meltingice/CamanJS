@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -176,77 +181,75 @@
               
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;boxBlur&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@processKernel</span> <span class="s">&quot;Box Blur&quot;</span><span class="p">,</span> <span class="p">[</span>
-    <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
-  <span class="p">]</span>
+            <div class="content"><div class='highlight'><pre>Caman.Filter.register <span class="string">"boxBlur"</span>, -&gt;
+  <span class="property">@processKernel</span> <span class="string">"Box Blur"</span>, [
+    <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>,
+    <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>,
+    <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>
+  ]
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;heavyRadialBlur&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@processKernel</span> <span class="s">&quot;Heavy Radial Blur&quot;</span><span class="p">,</span> <span class="p">[</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-  <span class="p">]</span>
+Caman.Filter.register <span class="string">"heavyRadialBlur"</span>, -&gt;
+  <span class="property">@processKernel</span> <span class="string">"Heavy Radial Blur"</span>, [
+    <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>,
+    <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>,
+    <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>,
+    <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>,
+    <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>
+  ]
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;gaussianBlur&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@processKernel</span> <span class="s">&quot;Gaussian Blur&quot;</span><span class="p">,</span> <span class="p">[</span>
-    <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="mi">6</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span>
-    <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span>
-  <span class="p">]</span>
+Caman.Filter.register <span class="string">"gaussianBlur"</span>, -&gt;
+  <span class="property">@processKernel</span> <span class="string">"Gaussian Blur"</span>, [
+    <span class="number">1</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">4</span>, <span class="number">1</span>,
+    <span class="number">4</span>, <span class="number">16</span>, <span class="number">24</span>, <span class="number">16</span>, <span class="number">4</span>,
+    <span class="number">6</span>, <span class="number">24</span>, <span class="number">36</span>, <span class="number">24</span>, <span class="number">6</span>,
+    <span class="number">4</span>, <span class="number">16</span>, <span class="number">24</span>, <span class="number">16</span>, <span class="number">4</span>,
+    <span class="number">1</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">4</span>, <span class="number">1</span>
+  ]
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;motionBlur&quot;</span><span class="p">,</span> <span class="nf">(degrees) -&gt;</span>
-  <span class="k">if</span> <span class="nx">degrees</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">]</span>
-    <span class="nv">kernel = </span><span class="p">[</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-    <span class="p">]</span>
-  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">degrees</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">degrees</span> <span class="o">&lt;</span> <span class="mi">90</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">degrees</span> <span class="o">&gt;</span> <span class="mi">180</span> <span class="o">&amp;&amp;</span> <span class="nx">degrees</span> <span class="o">&lt;</span> <span class="mi">270</span><span class="p">)</span>
-    <span class="nv">kernel = </span><span class="p">[</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-    <span class="p">]</span>
-  <span class="k">else</span> <span class="k">if</span> <span class="nx">degrees</span> <span class="k">in</span> <span class="p">[</span><span class="mi">90</span><span class="p">,</span> <span class="mi">270</span><span class="p">]</span>
-    <span class="nv">kernel = </span><span class="p">[</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-    <span class="p">]</span>
-  <span class="k">else</span>
-    <span class="nv">kernel = </span><span class="p">[</span>
-      <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
-    <span class="p">]</span>
+Caman.Filter.register <span class="string">"motionBlur"</span>, (degrees) -&gt;
+  <span class="keyword">if</span> degrees <span class="keyword">in</span> [<span class="number">0</span>, <span class="number">180</span>]
+    kernel = [
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>
+    ]
+  <span class="keyword">else</span> <span class="keyword">if</span> (degrees &gt; <span class="number">0</span> &amp;&amp; degrees &lt; <span class="number">90</span>) || (degrees &gt; <span class="number">180</span> &amp;&amp; degrees &lt; <span class="number">270</span>)
+    kernel = [
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>
+    ]
+  <span class="keyword">else</span> <span class="keyword">if</span> degrees <span class="keyword">in</span> [<span class="number">90</span>, <span class="number">270</span>]
+    kernel = [
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>
+    ]
+  <span class="keyword">else</span>
+    kernel = [
+      <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>,
+      <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>
+    ]
 
-  <span class="nx">@processKernel</span> <span class="s">&quot;Motion Blur&quot;</span><span class="p">,</span> <span class="nx">kernel</span>
+  <span class="property">@processKernel</span> <span class="string">"Motion Blur"</span>, kernel
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;sharpen&quot;</span><span class="p">,</span> <span class="nf">(amt = 100) -&gt;</span>
-  <span class="nx">amt</span> <span class="o">/=</span> <span class="mi">100</span>
+Caman.Filter.register <span class="string">"sharpen"</span>, (amt = <span class="number">100</span>) -&gt;
+  amt /= <span class="number">100</span>
 
-  <span class="nx">@processKernel</span> <span class="s">&quot;Sharpen&quot;</span><span class="p">,</span> <span class="p">[</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="nx">amt</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="o">-</span><span class="nx">amt</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="nx">amt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="nx">amt</span><span class="p">,</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="nx">amt</span><span class="p">,</span> <span class="mi">0</span>
-  <span class="p">]</span>
-
-</pre></div></div>
+  <span class="property">@processKernel</span> <span class="string">"Sharpen"</span>, [
+    <span class="number">0</span>, -amt, <span class="number">0</span>,
+    -amt, <span class="number">4</span> * amt + <span class="number">1</span>, -amt,
+    <span class="number">0</span>, -amt, <span class="number">0</span>
+  ]</pre></div></div>
             
         </li>
         

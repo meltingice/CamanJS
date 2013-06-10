@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -179,17 +184,17 @@ the loop.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="k">class</span> <span class="nx">PixelInfo</span>
-  <span class="vi">@coordinatesToLocation: </span><span class="nf">(x, y, width) -&gt;</span>
-    <span class="p">(</span><span class="nx">y</span> <span class="o">*</span> <span class="nx">width</span> <span class="o">+</span> <span class="nx">x</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">PixelInfo</span></span>
+  <span class="property">@coordinatesToLocation</span>: (x, y, width) -&gt;
+    (y * width + x) * <span class="number">4</span>
 
-  <span class="vi">@locationToCoordinates: </span><span class="nf">(loc, width) -&gt;</span>
-    <span class="nv">y = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">loc</span> <span class="o">/</span> <span class="p">(</span><span class="nx">width</span> <span class="o">*</span> <span class="mi">4</span><span class="p">))</span>
-    <span class="nv">x = </span><span class="p">(</span><span class="nx">loc</span> <span class="o">%</span> <span class="p">(</span><span class="nx">width</span> <span class="o">*</span> <span class="mi">4</span><span class="p">))</span> <span class="o">/</span> <span class="mi">4</span>
+  <span class="property">@locationToCoordinates</span>: (loc, width) -&gt;
+    y = Math.floor(loc / (width * <span class="number">4</span>))
+    x = (loc % (width * <span class="number">4</span>)) / <span class="number">4</span>
 
-    <span class="k">return</span> <span class="nv">x: </span><span class="nx">x</span><span class="p">,</span> <span class="nv">y: </span><span class="nx">y</span>
+    <span class="keyword">return</span> x: x, y: y
 
-  <span class="nv">constructor: </span><span class="nf">(@c) -&gt;</span> <span class="vi">@loc = </span><span class="mi">0</span></pre></div></div>
+  constructor: (<span class="property">@c</span>) -&gt; <span class="property">@loc</span> = <span class="number">0</span></pre></div></div>
             
         </li>
         
@@ -200,17 +205,16 @@ the loop.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>Retrieves the X, Y location of the current pixel. The origin is at the bottom left corner of 
+              <p>Retrieves the X, Y location of the current pixel. The origin is at the bottom left corner of 
 the image, like a normal coordinate system.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nv">locationXY: </span><span class="o">-&gt;</span>
-    <span class="nv">y = </span><span class="nx">@c</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">height</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">@loc</span> <span class="o">/</span> <span class="p">(</span><span class="nx">@c</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="mi">4</span><span class="p">))</span>
-    <span class="nv">x = </span><span class="p">(</span><span class="nx">@loc</span> <span class="o">%</span> <span class="p">(</span><span class="nx">@c</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="mi">4</span><span class="p">))</span> <span class="o">/</span> <span class="mi">4</span>
+            <div class="content"><div class='highlight'><pre>  locationXY: -&gt;
+    y = <span class="property">@c</span>.dimensions.height - Math.floor(<span class="property">@loc</span> / (<span class="property">@c</span>.dimensions.width * <span class="number">4</span>))
+    x = (<span class="property">@loc</span> % (<span class="property">@c</span>.dimensions.width * <span class="number">4</span>)) / <span class="number">4</span>
 
-    <span class="k">return</span> <span class="nv">x: </span><span class="nx">x</span><span class="p">,</span> <span class="nv">y: </span><span class="nx">y</span></pre></div></div>
+    <span class="keyword">return</span> x: x, y: y</pre></div></div>
             
         </li>
         
@@ -221,13 +225,12 @@ the image, like a normal coordinate system.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Returns an RGBA object for a pixel whose location is specified in relation to the current 
+              <p>Returns an RGBA object for a pixel whose location is specified in relation to the current 
 pixel.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nv">getPixelRelative: </span><span class="nf">(horiz, vert) -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  getPixelRelative: (horiz, vert) -&gt;</pre></div></div>
             
         </li>
         
@@ -238,23 +241,22 @@ pixel.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<p>We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
+              <p>We invert the vert_offset in order to make the coordinate system non-inverted. In laymans
 terms: -1 means down and +1 means up.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">newLoc = </span><span class="nx">@loc</span> <span class="o">+</span> <span class="p">(</span><span class="nx">@c</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="nx">vert</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="nx">horiz</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>    newLoc = <span class="property">@loc</span> + (<span class="property">@c</span>.dimensions.width * <span class="number">4</span> * (vert * -<span class="number">1</span>)) + (<span class="number">4</span> * horiz)
 
-    <span class="k">if</span> <span class="nx">newLoc</span> <span class="o">&gt;</span> <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">.</span><span class="nx">length</span> <span class="o">or</span> <span class="nx">newLoc</span> <span class="o">&lt;</span> <span class="mi">0</span>
-      <span class="k">return</span> <span class="nv">r: </span><span class="mi">0</span><span class="p">,</span> <span class="nv">g: </span><span class="mi">0</span><span class="p">,</span> <span class="nv">b: </span><span class="mi">0</span><span class="p">,</span> <span class="nv">a: </span><span class="mi">0</span>
+    <span class="keyword">if</span> newLoc &gt; <span class="property">@c</span>.pixelData.length <span class="keyword">or</span> newLoc &lt; <span class="number">0</span>
+      <span class="keyword">return</span> r: <span class="number">0</span>, g: <span class="number">0</span>, b: <span class="number">0</span>, a: <span class="number">0</span>
 
-    <span class="k">return</span> <span class="p">{</span>
-      <span class="nv">r: </span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">newLoc</span><span class="p">]</span>
-      <span class="nv">g: </span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">newLoc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-      <span class="nv">b: </span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">newLoc</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
-      <span class="nv">a: </span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">newLoc</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span>
-    <span class="p">}</span></pre></div></div>
+    <span class="keyword">return</span> {
+      r: <span class="property">@c</span>.pixelData[newLoc]
+      g: <span class="property">@c</span>.pixelData[newLoc + <span class="number">1</span>]
+      b: <span class="property">@c</span>.pixelData[newLoc + <span class="number">2</span>]
+      a: <span class="property">@c</span>.pixelData[newLoc + <span class="number">3</span>]
+    }</pre></div></div>
             
         </li>
         
@@ -265,23 +267,22 @@ terms: -1 means down and +1 means up.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<p>The counterpart to getPixelRelative, this updates the value of a pixel whose location is 
+              <p>The counterpart to getPixelRelative, this updates the value of a pixel whose location is 
 specified in relation to the current pixel.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nv">putPixelRelative: </span><span class="nf">(horiz, vert, rgba) -&gt;</span>
-    <span class="nv">nowLoc = </span><span class="nx">@loc</span> <span class="o">+</span> <span class="p">(</span><span class="nx">@c</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="nx">vert</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="nx">horiz</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>  putPixelRelative: (horiz, vert, rgba) -&gt;
+    nowLoc = <span class="property">@loc</span> + (<span class="property">@c</span>.dimensions.width * <span class="number">4</span> * (vert * -<span class="number">1</span>)) + (<span class="number">4</span> * horiz)
 
-    <span class="k">return</span> <span class="k">if</span> <span class="nx">newLoc</span> <span class="o">&gt;</span> <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">.</span><span class="nx">length</span> <span class="o">or</span> <span class="nx">newLoc</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="keyword">return</span> <span class="keyword">if</span> newLoc &gt; <span class="property">@c</span>.pixelData.length <span class="keyword">or</span> newLoc &lt; <span class="number">0</span>
 
-    <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">newLoc</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span>
-    <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">newLoc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span>
-    <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">newLoc</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span>
-    <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">newLoc</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">a</span>
+    <span class="property">@c</span>.pixelData[newLoc] = rgba.r
+    <span class="property">@c</span>.pixelData[newLoc + <span class="number">1</span>] = rgba.g
+    <span class="property">@c</span>.pixelData[newLoc + <span class="number">2</span>] = rgba.b
+    <span class="property">@c</span>.pixelData[newLoc + <span class="number">3</span>] = rgba.a
 
-    <span class="k">return</span> <span class="kc">true</span></pre></div></div>
+    <span class="keyword">return</span> <span class="literal">true</span></pre></div></div>
             
         </li>
         
@@ -292,20 +293,19 @@ specified in relation to the current pixel.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
-<p>Gets an RGBA object for an arbitrary pixel in the canvas specified by absolute X, Y coordinates</p>
+              <p>Gets an RGBA object for an arbitrary pixel in the canvas specified by absolute X, Y coordinates</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nv">getPixel: </span><span class="nf">(x, y) -&gt;</span>
-    <span class="nv">loc = </span><span class="nx">@coordinatesToLocation</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">@width</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>  getPixel: (x, y) -&gt;
+    loc = <span class="property">@coordinatesToLocation</span>(x, y, <span class="property">@width</span>)
 
-    <span class="k">return</span> <span class="p">{</span>
-      <span class="nv">r: </span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">loc</span><span class="p">]</span>
-      <span class="nv">g: </span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">loc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-      <span class="nv">b: </span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">loc</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
-      <span class="nv">a: </span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">loc</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span>
-    <span class="p">}</span></pre></div></div>
+    <span class="keyword">return</span> {
+      r: <span class="property">@c</span>.pixelData[loc]
+      g: <span class="property">@c</span>.pixelData[loc + <span class="number">1</span>]
+      b: <span class="property">@c</span>.pixelData[loc + <span class="number">2</span>]
+      a: <span class="property">@c</span>.pixelData[loc + <span class="number">3</span>]
+    }</pre></div></div>
             
         </li>
         
@@ -316,20 +316,17 @@ specified in relation to the current pixel.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
-<p>Updates the pixel at the given X, Y coordinate</p>
+              <p>Updates the pixel at the given X, Y coordinate</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nv">putPixel: </span><span class="nf">(x, y, rgba) -&gt;</span>
-    <span class="nv">loc = </span><span class="nx">@coordinatesToLocation</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">@width</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>  putPixel: (x, y, rgba) -&gt;
+    loc = <span class="property">@coordinatesToLocation</span>(x, y, <span class="property">@width</span>)
 
-    <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">loc</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span>
-    <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">loc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span>
-    <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">loc</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span>
-    <span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">loc</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">a</span>
-
-</pre></div></div>
+    <span class="property">@c</span>.pixelData[loc] = rgba.r
+    <span class="property">@c</span>.pixelData[loc + <span class="number">1</span>] = rgba.g
+    <span class="property">@c</span>.pixelData[loc + <span class="number">2</span>] = rgba.b
+    <span class="property">@c</span>.pixelData[loc + <span class="number">3</span>] = rgba.a</pre></div></div>
             
         </li>
         

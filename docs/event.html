@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -178,8 +183,8 @@ during certain times in the render process.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="k">class</span> <span class="nx">Event</span>
-  <span class="vi">@events = </span><span class="p">{}</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Event</span></span>
+  <span class="property">@events</span> = {}</pre></div></div>
             
         </li>
         
@@ -190,19 +195,18 @@ during certain times in the render process.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>All of the supported event types</p>
+              <p>All of the supported event types</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@types = </span><span class="p">[</span>
-    <span class="s">&quot;processStart&quot;</span>
-    <span class="s">&quot;processComplete&quot;</span>
-    <span class="s">&quot;renderStart&quot;</span>
-    <span class="s">&quot;renderFinished&quot;</span>
-    <span class="s">&quot;blockStarted&quot;</span>
-    <span class="s">&quot;blockFinished&quot;</span>
-  <span class="p">]</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@types</span> = [
+    <span class="string">"processStart"</span>
+    <span class="string">"processComplete"</span>
+    <span class="string">"renderStart"</span>
+    <span class="string">"renderFinished"</span>
+    <span class="string">"blockStarted"</span>
+    <span class="string">"blockFinished"</span>
+  ]</pre></div></div>
             
         </li>
         
@@ -213,17 +217,15 @@ during certain times in the render process.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Trigger an event</p>
+              <p>Trigger an event</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@trigger: </span><span class="nf">(target, type, data) -&gt;</span>
-    <span class="k">if</span> <span class="nx">@events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">and</span> <span class="nx">@events</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">length</span>
-      <span class="k">for</span> <span class="nx">event</span> <span class="k">in</span> <span class="nx">@events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span> <span class="o">is</span> <span class="kc">null</span> <span class="o">or</span> <span class="nx">target</span><span class="p">.</span><span class="nx">id</span> <span class="o">is</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">id</span>
-          <span class="nx">event</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">call</span> <span class="nx">target</span><span class="p">,</span> <span class="nx">data</span> 
-  </pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@trigger</span>: (target, type, data) -&gt;
+    <span class="keyword">if</span> <span class="property">@events</span>[type] <span class="keyword">and</span> <span class="property">@events</span>[type].length
+      <span class="keyword">for</span> event <span class="keyword">in</span> <span class="property">@events</span>[type]
+        <span class="keyword">if</span> event.target <span class="keyword">is</span> <span class="literal">null</span> <span class="keyword">or</span> target.id <span class="keyword">is</span> event.target.id
+          event.fn.call target, data</pre></div></div>
             
         </li>
         
@@ -234,13 +236,12 @@ during certain times in the render process.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<p>Listen for an event. Optionally bind the listen to a single CamanInstance
+              <p>Listen for an event. Optionally bind the listen to a single CamanInstance
 or all CamanInstances.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@listen: </span><span class="nf">(target, type, fn) -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@listen</span>: (target, type, fn) -&gt;</pre></div></div>
             
         </li>
         
@@ -251,18 +252,17 @@ or all CamanInstances.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<p>Adjust arguments if target is omitted</p>
+              <p>Adjust arguments if target is omitted</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">target</span> <span class="o">is</span> <span class="s">&quot;string&quot;</span>
-      <span class="nv">_type = </span><span class="nx">target</span>
-      <span class="nv">_fn = </span><span class="nx">type</span>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> <span class="keyword">typeof</span> target <span class="keyword">is</span> <span class="string">"string"</span>
+      _type = target
+      _fn = type
 
-      <span class="nv">target = </span><span class="kc">null</span>
-      <span class="nv">type = </span><span class="nx">_type</span>
-      <span class="nv">fn = </span><span class="nx">_fn</span></pre></div></div>
+      target = <span class="literal">null</span>
+      type = _type
+      fn = _fn</pre></div></div>
             
         </li>
         
@@ -273,21 +273,18 @@ or all CamanInstances.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
-<p>Validation</p>
+              <p>Validation</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="k">return</span> <span class="kc">false</span> <span class="k">if</span> <span class="nx">type</span> <span class="o">not</span> <span class="k">in</span> <span class="nx">@types</span>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> type <span class="keyword">not</span> <span class="keyword">in</span> <span class="property">@types</span>
 
-    <span class="nx">@events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">@events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span>
-    <span class="nx">@events</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">push</span> <span class="nv">target: </span><span class="nx">target</span><span class="p">,</span> <span class="nv">fn: </span><span class="nx">fn</span>
+    <span class="property">@events</span>[type] = [] <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@events</span>[type]
+    <span class="property">@events</span>[type].push target: target, fn: fn
 
-    <span class="k">return</span> <span class="kc">true</span>
+    <span class="keyword">return</span> <span class="literal">true</span>
 
-<span class="nv">Caman.Event = </span><span class="nx">Event</span>
-
-</pre></div></div>
+Caman.Event = Event</pre></div></div>
             
         </li>
         

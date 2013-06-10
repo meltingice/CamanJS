@@ -10,9 +10,10 @@ if exports?
 else
   Root = window
 
+###*
 # Here it begins. Caman is defined.
 # There are many different initialization for Caman, which are described on the 
-# [Basic Usage](http://camanjs.com/docs) page.
+# [Basic Usage](http://camanjs.com/guides) page.
 #
 # Initialization is tricky because we need to make sure everything we need is actually fully 
 # loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
@@ -22,6 +23,10 @@ else
 # image element, load the image, then continue with initialization.
 #
 # The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
+#
+# @class Caman
+# @constructor
+###
 Root.Caman = class Caman
   @version:
     release: "4.1.1"

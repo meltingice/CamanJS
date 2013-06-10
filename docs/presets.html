@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -176,264 +181,262 @@
               
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;vintage&quot;</span><span class="p">,</span> <span class="nf">(vignette = true) -&gt;</span>
-  <span class="nx">@greyscale</span><span class="p">()</span>
-  <span class="nx">@contrast</span> <span class="mi">5</span>
-  <span class="nx">@noise</span> <span class="mi">3</span>
-  <span class="nx">@sepia</span> <span class="mi">100</span>
-  <span class="nx">@channels</span> <span class="nv">red: </span><span class="mi">8</span><span class="p">,</span> <span class="nv">blue: </span><span class="mi">2</span><span class="p">,</span> <span class="nv">green: </span><span class="mi">4</span>
-  <span class="nx">@gamma</span> <span class="mf">0.87</span>
+            <div class="content"><div class='highlight'><pre>Caman.Filter.register <span class="string">"vintage"</span>, (vignette = <span class="literal">true</span>) -&gt;
+  <span class="property">@greyscale</span>()
+  <span class="property">@contrast</span> <span class="number">5</span>
+  <span class="property">@noise</span> <span class="number">3</span>
+  <span class="property">@sepia</span> <span class="number">100</span>
+  <span class="property">@channels</span> red: <span class="number">8</span>, blue: <span class="number">2</span>, green: <span class="number">4</span>
+  <span class="property">@gamma</span> <span class="number">0.87</span>
 
-  <span class="nx">@vignette</span><span class="p">(</span><span class="s">&quot;40%&quot;</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span> <span class="k">if</span> <span class="nx">vignette</span>
+  <span class="property">@vignette</span>(<span class="string">"40%"</span>, <span class="number">30</span>) <span class="keyword">if</span> vignette
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;lomo&quot;</span><span class="p">,</span> <span class="nf">(vignette = true) -&gt;</span>
-  <span class="nx">@brightness</span> <span class="mi">15</span>
-  <span class="nx">@exposure</span> <span class="mi">15</span>
-  <span class="nx">@curves</span> <span class="s">&#39;rgb&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">155</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@saturation</span> <span class="o">-</span><span class="mi">20</span>
-  <span class="nx">@gamma</span> <span class="mf">1.8</span>
-  <span class="nx">@vignette</span><span class="p">(</span><span class="s">&quot;50%&quot;</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span> <span class="k">if</span> <span class="nx">vignette</span>
-  <span class="nx">@brightness</span> <span class="mi">5</span>
+Caman.Filter.register <span class="string">"lomo"</span>, (vignette = <span class="literal">true</span>) -&gt;
+  <span class="property">@brightness</span> <span class="number">15</span>
+  <span class="property">@exposure</span> <span class="number">15</span>
+  <span class="property">@curves</span> <span class="string">'rgb'</span>, [<span class="number">0</span>, <span class="number">0</span>], [<span class="number">200</span>, <span class="number">0</span>], [<span class="number">155</span>, <span class="number">255</span>], [<span class="number">255</span>, <span class="number">255</span>]
+  <span class="property">@saturation</span> -<span class="number">20</span>
+  <span class="property">@gamma</span> <span class="number">1.8</span>
+  <span class="property">@vignette</span>(<span class="string">"50%"</span>, <span class="number">60</span>) <span class="keyword">if</span> vignette
+  <span class="property">@brightness</span> <span class="number">5</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;clarity&quot;</span><span class="p">,</span> <span class="nf">(grey = false) -&gt;</span>
-  <span class="nx">@vibrance</span> <span class="mi">20</span>
-  <span class="nx">@curves</span> <span class="s">&#39;rgb&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">130</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span> <span class="p">[</span><span class="mi">190</span><span class="p">,</span> <span class="mi">220</span><span class="p">],</span> <span class="p">[</span><span class="mi">250</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@sharpen</span> <span class="mi">15</span>
-  <span class="nx">@vignette</span> <span class="s">&quot;45%&quot;</span><span class="p">,</span> <span class="mi">20</span>
+Caman.Filter.register <span class="string">"clarity"</span>, (grey = <span class="literal">false</span>) -&gt;
+  <span class="property">@vibrance</span> <span class="number">20</span>
+  <span class="property">@curves</span> <span class="string">'rgb'</span>, [<span class="number">5</span>, <span class="number">0</span>], [<span class="number">130</span>, <span class="number">150</span>], [<span class="number">190</span>, <span class="number">220</span>], [<span class="number">250</span>, <span class="number">255</span>]
+  <span class="property">@sharpen</span> <span class="number">15</span>
+  <span class="property">@vignette</span> <span class="string">"45%"</span>, <span class="number">20</span>
 
-  <span class="k">if</span> <span class="nx">grey</span>
-    <span class="nx">@greyscale</span><span class="p">()</span>
-    <span class="nx">@contrast</span> <span class="mi">4</span>
+  <span class="keyword">if</span> grey
+    <span class="property">@greyscale</span>()
+    <span class="property">@contrast</span> <span class="number">4</span>
 
-  <span class="nx">@</span>
+  @
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;sinCity&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@contrast</span> <span class="mi">100</span>
-  <span class="nx">@brightness</span> <span class="mi">15</span>
-  <span class="nx">@exposure</span> <span class="mi">10</span>
-  <span class="nx">@posterize</span> <span class="mi">80</span>
-  <span class="nx">@clip</span> <span class="mi">30</span>
-  <span class="nx">@greyscale</span><span class="p">()</span>
+Caman.Filter.register <span class="string">"sinCity"</span>, -&gt;
+  <span class="property">@contrast</span> <span class="number">100</span>
+  <span class="property">@brightness</span> <span class="number">15</span>
+  <span class="property">@exposure</span> <span class="number">10</span>
+  <span class="property">@posterize</span> <span class="number">80</span>
+  <span class="property">@clip</span> <span class="number">30</span>
+  <span class="property">@greyscale</span>()
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;sunrise&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@exposure</span> <span class="mf">3.5</span>
-  <span class="nx">@saturation</span> <span class="o">-</span><span class="mi">5</span>
-  <span class="nx">@vibrance</span> <span class="mi">50</span>
-  <span class="nx">@sepia</span> <span class="mi">60</span>
-  <span class="nx">@colorize</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">e87b22&quot;</span><span class="p">,</span> <span class="mi">10</span>
-  <span class="nx">@channels</span> <span class="nv">red: </span><span class="mi">8</span><span class="p">,</span> <span class="nv">blue: </span><span class="mi">8</span>
-  <span class="nx">@contrast</span> <span class="mi">5</span>
-  <span class="nx">@gamma</span> <span class="mf">1.2</span>
-  <span class="nx">@vignette</span> <span class="s">&quot;55%&quot;</span><span class="p">,</span> <span class="mi">25</span>
+Caman.Filter.register <span class="string">"sunrise"</span>, -&gt;
+  <span class="property">@exposure</span> <span class="number">3.5</span>
+  <span class="property">@saturation</span> -<span class="number">5</span>
+  <span class="property">@vibrance</span> <span class="number">50</span>
+  <span class="property">@sepia</span> <span class="number">60</span>
+  <span class="property">@colorize</span> <span class="string">"#e87b22"</span>, <span class="number">10</span>
+  <span class="property">@channels</span> red: <span class="number">8</span>, blue: <span class="number">8</span>
+  <span class="property">@contrast</span> <span class="number">5</span>
+  <span class="property">@gamma</span> <span class="number">1.2</span>
+  <span class="property">@vignette</span> <span class="string">"55%"</span>, <span class="number">25</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;crossProcess&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@exposure</span> <span class="mi">5</span>
-  <span class="nx">@colorize</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">e87b22&quot;</span><span class="p">,</span> <span class="mi">4</span>
-  <span class="nx">@sepia</span> <span class="mi">20</span>
-  <span class="nx">@channels</span> <span class="nv">blue: </span><span class="mi">8</span><span class="p">,</span> <span class="nv">red: </span><span class="mi">3</span>
-  <span class="nx">@curves</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@contrast</span> <span class="mi">15</span>
-  <span class="nx">@vibrance</span> <span class="mi">75</span>
-  <span class="nx">@gamma</span> <span class="mf">1.6</span>
+Caman.Filter.register <span class="string">"crossProcess"</span>, -&gt;
+  <span class="property">@exposure</span> <span class="number">5</span>
+  <span class="property">@colorize</span> <span class="string">"#e87b22"</span>, <span class="number">4</span>
+  <span class="property">@sepia</span> <span class="number">20</span>
+  <span class="property">@channels</span> blue: <span class="number">8</span>, red: <span class="number">3</span>
+  <span class="property">@curves</span> <span class="string">'b'</span>, [<span class="number">0</span>, <span class="number">0</span>], [<span class="number">100</span>, <span class="number">150</span>], [<span class="number">180</span>, <span class="number">180</span>], [<span class="number">255</span>, <span class="number">255</span>]
+  <span class="property">@contrast</span> <span class="number">15</span>
+  <span class="property">@vibrance</span> <span class="number">75</span>
+  <span class="property">@gamma</span> <span class="number">1.6</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;orangePeel&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@curves</span> <span class="s">&#39;rgb&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span> <span class="p">[</span><span class="mi">140</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@vibrance</span> <span class="o">-</span><span class="mi">30</span>
-  <span class="nx">@saturation</span> <span class="o">-</span><span class="mi">30</span>
-  <span class="nx">@colorize</span> <span class="s">&#39;#ff9000&#39;</span><span class="p">,</span> <span class="mi">30</span>
-  <span class="nx">@contrast</span> <span class="o">-</span><span class="mi">5</span>
-  <span class="nx">@gamma</span> <span class="mf">1.4</span>
+Caman.Filter.register <span class="string">"orangePeel"</span>, -&gt;
+  <span class="property">@curves</span> <span class="string">'rgb'</span>, [<span class="number">0</span>, <span class="number">0</span>], [<span class="number">100</span>, <span class="number">50</span>], [<span class="number">140</span>, <span class="number">200</span>], [<span class="number">255</span>, <span class="number">255</span>]
+  <span class="property">@vibrance</span> -<span class="number">30</span>
+  <span class="property">@saturation</span> -<span class="number">30</span>
+  <span class="property">@colorize</span> <span class="string">'#ff9000'</span>, <span class="number">30</span>
+  <span class="property">@contrast</span> -<span class="number">5</span>
+  <span class="property">@gamma</span> <span class="number">1.4</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;love&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@brightness</span> <span class="mi">5</span>
-  <span class="nx">@exposure</span> <span class="mi">8</span>
-  <span class="nx">@contrast</span> <span class="mi">4</span>
-  <span class="nx">@colorize</span> <span class="s">&#39;#c42007&#39;</span><span class="p">,</span> <span class="mi">30</span>
-  <span class="nx">@vibrance</span> <span class="mi">50</span>
-  <span class="nx">@gamma</span> <span class="mf">1.3</span>
+Caman.Filter.register <span class="string">"love"</span>, -&gt;
+  <span class="property">@brightness</span> <span class="number">5</span>
+  <span class="property">@exposure</span> <span class="number">8</span>
+  <span class="property">@contrast</span> <span class="number">4</span>
+  <span class="property">@colorize</span> <span class="string">'#c42007'</span>, <span class="number">30</span>
+  <span class="property">@vibrance</span> <span class="number">50</span>
+  <span class="property">@gamma</span> <span class="number">1.3</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;grungy&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@gamma</span> <span class="mf">1.5</span>
-  <span class="nx">@clip</span> <span class="mi">25</span>
-  <span class="nx">@saturation</span> <span class="o">-</span><span class="mi">60</span>
-  <span class="nx">@contrast</span> <span class="mi">5</span>
-  <span class="nx">@noise</span> <span class="mi">5</span>
-  <span class="nx">@vignette</span> <span class="s">&quot;50%&quot;</span><span class="p">,</span> <span class="mi">30</span>
+Caman.Filter.register <span class="string">"grungy"</span>, -&gt;
+  <span class="property">@gamma</span> <span class="number">1.5</span>
+  <span class="property">@clip</span> <span class="number">25</span>
+  <span class="property">@saturation</span> -<span class="number">60</span>
+  <span class="property">@contrast</span> <span class="number">5</span>
+  <span class="property">@noise</span> <span class="number">5</span>
+  <span class="property">@vignette</span> <span class="string">"50%"</span>, <span class="number">30</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;jarques&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@saturation</span> <span class="o">-</span><span class="mi">35</span>
-  <span class="nx">@curves</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span> <span class="p">[</span><span class="mi">186</span><span class="p">,</span> <span class="mi">144</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">230</span><span class="p">]</span>
-  <span class="nx">@curves</span> <span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">144</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="p">[</span><span class="mi">138</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@curves</span> <span class="s">&#39;g&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">115</span><span class="p">,</span> <span class="mi">105</span><span class="p">],</span> <span class="p">[</span><span class="mi">148</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">248</span><span class="p">]</span>
-  <span class="nx">@curves</span> <span class="s">&#39;rgb&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">140</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@sharpen</span> <span class="mi">20</span>
+Caman.Filter.register <span class="string">"jarques"</span>, -&gt;
+  <span class="property">@saturation</span> -<span class="number">35</span>
+  <span class="property">@curves</span> <span class="string">'b'</span>, [<span class="number">20</span>, <span class="number">0</span>], [<span class="number">90</span>, <span class="number">120</span>], [<span class="number">186</span>, <span class="number">144</span>], [<span class="number">255</span>, <span class="number">230</span>]
+  <span class="property">@curves</span> <span class="string">'r'</span>, [<span class="number">0</span>, <span class="number">0</span>], [<span class="number">144</span>, <span class="number">90</span>], [<span class="number">138</span>, <span class="number">120</span>], [<span class="number">255</span>, <span class="number">255</span>]
+  <span class="property">@curves</span> <span class="string">'g'</span>, [<span class="number">10</span>, <span class="number">0</span>], [<span class="number">115</span>, <span class="number">105</span>], [<span class="number">148</span>, <span class="number">100</span>], [<span class="number">255</span>, <span class="number">248</span>]
+  <span class="property">@curves</span> <span class="string">'rgb'</span>, [<span class="number">0</span>, <span class="number">0</span>], [<span class="number">120</span>, <span class="number">100</span>], [<span class="number">128</span>, <span class="number">140</span>], [<span class="number">255</span>, <span class="number">255</span>]
+  <span class="property">@sharpen</span> <span class="number">20</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;pinhole&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@greyscale</span><span class="p">()</span>
-  <span class="nx">@sepia</span> <span class="mi">10</span>
-  <span class="nx">@exposure</span> <span class="mi">10</span>
-  <span class="nx">@contrast</span> <span class="mi">15</span>
-  <span class="nx">@vignette</span> <span class="s">&quot;60%&quot;</span><span class="p">,</span> <span class="mi">35</span>
+Caman.Filter.register <span class="string">"pinhole"</span>, -&gt;
+  <span class="property">@greyscale</span>()
+  <span class="property">@sepia</span> <span class="number">10</span>
+  <span class="property">@exposure</span> <span class="number">10</span>
+  <span class="property">@contrast</span> <span class="number">15</span>
+  <span class="property">@vignette</span> <span class="string">"60%"</span>, <span class="number">35</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;oldBoot&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@saturation</span> <span class="o">-</span><span class="mi">20</span>
-  <span class="nx">@vibrance</span> <span class="o">-</span><span class="mi">50</span>
-  <span class="nx">@gamma</span> <span class="mf">1.1</span>
-  <span class="nx">@sepia</span> <span class="mi">30</span>
-  <span class="nx">@channels</span> <span class="nv">red: </span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="nv">blue: </span><span class="mi">5</span>
-  <span class="nx">@curves</span> <span class="s">&#39;rgb&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">80</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">230</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@vignette</span> <span class="s">&quot;60%&quot;</span><span class="p">,</span> <span class="mi">30</span>
+Caman.Filter.register <span class="string">"oldBoot"</span>, -&gt;
+  <span class="property">@saturation</span> -<span class="number">20</span>
+  <span class="property">@vibrance</span> -<span class="number">50</span>
+  <span class="property">@gamma</span> <span class="number">1.1</span>
+  <span class="property">@sepia</span> <span class="number">30</span>
+  <span class="property">@channels</span> red: -<span class="number">10</span>, blue: <span class="number">5</span>
+  <span class="property">@curves</span> <span class="string">'rgb'</span>, [<span class="number">0</span>, <span class="number">0</span>], [<span class="number">80</span>, <span class="number">50</span>], [<span class="number">128</span>, <span class="number">230</span>], [<span class="number">255</span>, <span class="number">255</span>]
+  <span class="property">@vignette</span> <span class="string">"60%"</span>, <span class="number">30</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;glowingSun&quot;</span><span class="p">,</span> <span class="nf">(vignette = true) -&gt;</span>
-  <span class="nx">@brightness</span> <span class="mi">10</span>
+Caman.Filter.register <span class="string">"glowingSun"</span>, (vignette = <span class="literal">true</span>) -&gt;
+  <span class="property">@brightness</span> <span class="number">10</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&quot;multiply&quot;</span>
-    <span class="nx">@opacity</span> <span class="mi">80</span>
-    <span class="nx">@copyParent</span><span class="p">()</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">"multiply"</span>
+    <span class="property">@opacity</span> <span class="number">80</span>
+    <span class="property">@copyParent</span>()
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">gamma</span> <span class="mf">0.8</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">contrast</span> <span class="mi">50</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">exposure</span> <span class="mi">10</span>
+    <span class="property">@filter</span>.gamma <span class="number">0.8</span>
+    <span class="property">@filter</span>.contrast <span class="number">50</span>
+    <span class="property">@filter</span>.exposure <span class="number">10</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&quot;softLight&quot;</span>
-    <span class="nx">@opacity</span> <span class="mi">80</span>
-    <span class="nx">@fillColor</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">f49600&quot;</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">"softLight"</span>
+    <span class="property">@opacity</span> <span class="number">80</span>
+    <span class="property">@fillColor</span> <span class="string">"#f49600"</span>
 
-  <span class="nx">@exposure</span> <span class="mi">20</span>
-  <span class="nx">@gamma</span> <span class="mf">0.8</span>
-  <span class="nx">@vignette</span> <span class="s">&quot;45%&quot;</span><span class="p">,</span> <span class="mi">20</span> <span class="k">if</span> <span class="nx">vignette</span>
+  <span class="property">@exposure</span> <span class="number">20</span>
+  <span class="property">@gamma</span> <span class="number">0.8</span>
+  <span class="property">@vignette</span> <span class="string">"45%"</span>, <span class="number">20</span> <span class="keyword">if</span> vignette
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;hazyDays&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@gamma</span> <span class="mf">1.2</span>
+Caman.Filter.register <span class="string">"hazyDays"</span>, -&gt;
+  <span class="property">@gamma</span> <span class="number">1.2</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&quot;overlay&quot;</span>
-    <span class="nx">@opacity</span> <span class="mi">60</span>
-    <span class="nx">@copyParent</span><span class="p">()</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">"overlay"</span>
+    <span class="property">@opacity</span> <span class="number">60</span>
+    <span class="property">@copyParent</span>()
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">channels</span> <span class="nv">red: </span><span class="mi">5</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">stackBlur</span> <span class="mi">15</span>
+    <span class="property">@filter</span>.channels red: <span class="number">5</span>
+    <span class="property">@filter</span>.stackBlur <span class="number">15</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&quot;addition&quot;</span>
-    <span class="nx">@opacity</span> <span class="mi">40</span>
-    <span class="nx">@fillColor</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">6899ba&quot;</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">"addition"</span>
+    <span class="property">@opacity</span> <span class="number">40</span>
+    <span class="property">@fillColor</span> <span class="string">"#6899ba"</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&quot;multiply&quot;</span>
-    <span class="nx">@opacity</span> <span class="mi">35</span>
-    <span class="nx">@copyParent</span><span class="p">()</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">"multiply"</span>
+    <span class="property">@opacity</span> <span class="number">35</span>
+    <span class="property">@copyParent</span>()
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">brightness</span> <span class="mi">40</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">vibrance</span> <span class="mi">40</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">exposure</span> <span class="mi">30</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">contrast</span> <span class="mi">15</span>
+    <span class="property">@filter</span>.brightness <span class="number">40</span>
+    <span class="property">@filter</span>.vibrance <span class="number">40</span>
+    <span class="property">@filter</span>.exposure <span class="number">30</span>
+    <span class="property">@filter</span>.contrast <span class="number">15</span>
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">curves</span> <span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">]</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">curves</span> <span class="s">&#39;g&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">]</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">curves</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">]</span>
+    <span class="property">@filter</span>.curves <span class="string">'r'</span>, [<span class="number">0</span>, <span class="number">40</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">255</span>, <span class="number">215</span>]
+    <span class="property">@filter</span>.curves <span class="string">'g'</span>, [<span class="number">0</span>, <span class="number">40</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">255</span>, <span class="number">215</span>]
+    <span class="property">@filter</span>.curves <span class="string">'b'</span>, [<span class="number">0</span>, <span class="number">40</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">255</span>, <span class="number">215</span>]
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">stackBlur</span> <span class="mi">5</span>
+    <span class="property">@filter</span>.stackBlur <span class="number">5</span>
 
-  <span class="nx">@curves</span> <span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">158</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">235</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@curves</span> <span class="s">&#39;g&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">235</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@curves</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">108</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="p">[</span><span class="mi">235</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
+  <span class="property">@curves</span> <span class="string">'r'</span>, [<span class="number">20</span>, <span class="number">0</span>], [<span class="number">128</span>, <span class="number">158</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">235</span>, <span class="number">255</span>]
+  <span class="property">@curves</span> <span class="string">'g'</span>, [<span class="number">20</span>, <span class="number">0</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">235</span>, <span class="number">255</span>]
+  <span class="property">@curves</span> <span class="string">'b'</span>, [<span class="number">20</span>, <span class="number">0</span>], [<span class="number">128</span>, <span class="number">108</span>], [<span class="number">128</span>, <span class="number">128</span>], [<span class="number">235</span>, <span class="number">255</span>]
 
-  <span class="nx">@vignette</span> <span class="s">&quot;45%&quot;</span><span class="p">,</span> <span class="mi">20</span>
+  <span class="property">@vignette</span> <span class="string">"45%"</span>, <span class="number">20</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;herMajesty&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@brightness</span> <span class="mi">40</span>
-  <span class="nx">@colorize</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">ea1c5d&quot;</span><span class="p">,</span> <span class="mi">10</span>
-  <span class="nx">@curves</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">180</span><span class="p">],</span> <span class="p">[</span><span class="mi">190</span><span class="p">,</span> <span class="mi">190</span><span class="p">],</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
+Caman.Filter.register <span class="string">"herMajesty"</span>, -&gt;
+  <span class="property">@brightness</span> <span class="number">40</span>
+  <span class="property">@colorize</span> <span class="string">"#ea1c5d"</span>, <span class="number">10</span>
+  <span class="property">@curves</span> <span class="string">'b'</span>, [<span class="number">0</span>, <span class="number">10</span>], [<span class="number">128</span>, <span class="number">180</span>], [<span class="number">190</span>, <span class="number">190</span>], [<span class="number">255</span>, <span class="number">255</span>]
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&#39;overlay&#39;</span>
-    <span class="nx">@opacity</span> <span class="mi">50</span>
-    <span class="nx">@copyParent</span><span class="p">()</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">'overlay'</span>
+    <span class="property">@opacity</span> <span class="number">50</span>
+    <span class="property">@copyParent</span>()
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">gamma</span> <span class="mf">0.7</span>
-    <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-      <span class="nx">@setBlendingMode</span> <span class="s">&#39;normal&#39;</span>
-      <span class="nx">@opacity</span> <span class="mi">60</span>
-      <span class="nx">@fillColor</span> <span class="s">&#39;#ea1c5d&#39;</span>
+    <span class="property">@filter</span>.gamma <span class="number">0.7</span>
+    <span class="property">@newLayer</span> -&gt;
+      <span class="property">@setBlendingMode</span> <span class="string">'normal'</span>
+      <span class="property">@opacity</span> <span class="number">60</span>
+      <span class="property">@fillColor</span> <span class="string">'#ea1c5d'</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&#39;multiply&#39;</span>
-    <span class="nx">@opacity</span> <span class="mi">60</span>
-    <span class="nx">@copyParent</span><span class="p">()</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">'multiply'</span>
+    <span class="property">@opacity</span> <span class="number">60</span>
+    <span class="property">@copyParent</span>()
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">saturation</span> <span class="mi">50</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">hue</span> <span class="mi">90</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">contrast</span> <span class="mi">10</span>
+    <span class="property">@filter</span>.saturation <span class="number">50</span>
+    <span class="property">@filter</span>.hue <span class="number">90</span>
+    <span class="property">@filter</span>.contrast <span class="number">10</span>
 
-  <span class="nx">@gamma</span> <span class="mf">1.4</span>
-  <span class="nx">@vibrance</span> <span class="o">-</span><span class="mi">30</span>
+  <span class="property">@gamma</span> <span class="number">1.4</span>
+  <span class="property">@vibrance</span> -<span class="number">30</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@opacity</span> <span class="mi">10</span>
-    <span class="nx">@fillColor</span> <span class="s">&#39;#e5f0ff&#39;</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@opacity</span> <span class="number">10</span>
+    <span class="property">@fillColor</span> <span class="string">'#e5f0ff'</span>
 
-  <span class="nx">@</span>
+  @
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;nostalgia&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@saturation</span> <span class="mi">20</span>
-  <span class="nx">@gamma</span> <span class="mf">1.4</span>
-  <span class="nx">@greyscale</span><span class="p">()</span>
-  <span class="nx">@contrast</span> <span class="mi">5</span>
-  <span class="nx">@sepia</span> <span class="mi">100</span>
-  <span class="nx">@channels</span> <span class="nv">red: </span><span class="mi">8</span><span class="p">,</span> <span class="nv">blue: </span><span class="mi">2</span><span class="p">,</span> <span class="nv">green: </span><span class="mi">4</span>
-  <span class="nx">@gamma</span> <span class="mf">0.8</span>
-  <span class="nx">@contrast</span> <span class="mi">5</span>
-  <span class="nx">@exposure</span> <span class="mi">10</span>
+Caman.Filter.register <span class="string">"nostalgia"</span>, -&gt;
+  <span class="property">@saturation</span> <span class="number">20</span>
+  <span class="property">@gamma</span> <span class="number">1.4</span>
+  <span class="property">@greyscale</span>()
+  <span class="property">@contrast</span> <span class="number">5</span>
+  <span class="property">@sepia</span> <span class="number">100</span>
+  <span class="property">@channels</span> red: <span class="number">8</span>, blue: <span class="number">2</span>, green: <span class="number">4</span>
+  <span class="property">@gamma</span> <span class="number">0.8</span>
+  <span class="property">@contrast</span> <span class="number">5</span>
+  <span class="property">@exposure</span> <span class="number">10</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&#39;overlay&#39;</span>
-    <span class="nx">@copyParent</span><span class="p">()</span>
-    <span class="nx">@opacity</span> <span class="mi">55</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">'overlay'</span>
+    <span class="property">@copyParent</span>()
+    <span class="property">@opacity</span> <span class="number">55</span>
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">stackBlur</span> <span class="mi">10</span>
+    <span class="property">@filter</span>.stackBlur <span class="number">10</span>
 
-  <span class="nx">@vignette</span> <span class="s">&quot;50%&quot;</span><span class="p">,</span> <span class="mi">30</span>
+  <span class="property">@vignette</span> <span class="string">"50%"</span>, <span class="number">30</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;hemingway&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@greyscale</span><span class="p">()</span>
-  <span class="nx">@contrast</span> <span class="mi">10</span>
-  <span class="nx">@gamma</span> <span class="mf">0.9</span>
+Caman.Filter.register <span class="string">"hemingway"</span>, -&gt;
+  <span class="property">@greyscale</span>()
+  <span class="property">@contrast</span> <span class="number">10</span>
+  <span class="property">@gamma</span> <span class="number">0.9</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&quot;multiply&quot;</span>
-    <span class="nx">@opacity</span> <span class="mi">40</span>
-    <span class="nx">@copyParent</span><span class="p">()</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">"multiply"</span>
+    <span class="property">@opacity</span> <span class="number">40</span>
+    <span class="property">@copyParent</span>()
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">exposure</span> <span class="mi">15</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">contrast</span> <span class="mi">15</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">channels</span> <span class="nv">green: </span><span class="mi">10</span><span class="p">,</span> <span class="nv">red: </span><span class="mi">5</span>
+    <span class="property">@filter</span>.exposure <span class="number">15</span>
+    <span class="property">@filter</span>.contrast <span class="number">15</span>
+    <span class="property">@filter</span>.channels green: <span class="number">10</span>, red: <span class="number">5</span>
 
-  <span class="nx">@sepia</span> <span class="mi">30</span>
-  <span class="nx">@curves</span> <span class="s">&#39;rgb&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span> <span class="p">[</span><span class="mi">235</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-  <span class="nx">@channels</span> <span class="nv">red: </span><span class="mi">5</span><span class="p">,</span> <span class="nv">green: </span><span class="o">-</span><span class="mi">2</span>
-  <span class="nx">@exposure</span> <span class="mi">15</span>
+  <span class="property">@sepia</span> <span class="number">30</span>
+  <span class="property">@curves</span> <span class="string">'rgb'</span>, [<span class="number">0</span>, <span class="number">10</span>], [<span class="number">120</span>, <span class="number">90</span>], [<span class="number">180</span>, <span class="number">200</span>], [<span class="number">235</span>, <span class="number">255</span>]
+  <span class="property">@channels</span> red: <span class="number">5</span>, green: -<span class="number">2</span>
+  <span class="property">@exposure</span> <span class="number">15</span>
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;concentrate&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@sharpen</span> <span class="mi">40</span>
-  <span class="nx">@saturation</span> <span class="o">-</span><span class="mi">50</span>
-  <span class="nx">@channels</span> <span class="nv">red: </span><span class="mi">3</span>
+Caman.Filter.register <span class="string">"concentrate"</span>, -&gt;
+  <span class="property">@sharpen</span> <span class="number">40</span>
+  <span class="property">@saturation</span> -<span class="number">50</span>
+  <span class="property">@channels</span> red: <span class="number">3</span>
 
-  <span class="nx">@newLayer</span> <span class="o">-&gt;</span>
-    <span class="nx">@setBlendingMode</span> <span class="s">&quot;multiply&quot;</span>
-    <span class="nx">@opacity</span> <span class="mi">80</span>
-    <span class="nx">@copyParent</span><span class="p">()</span>
+  <span class="property">@newLayer</span> -&gt;
+    <span class="property">@setBlendingMode</span> <span class="string">"multiply"</span>
+    <span class="property">@opacity</span> <span class="number">80</span>
+    <span class="property">@copyParent</span>()
 
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">sharpen</span> <span class="mi">5</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">contrast</span> <span class="mi">50</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">exposure</span> <span class="mi">10</span>
-    <span class="nx">@filter</span><span class="p">.</span><span class="nx">channels</span> <span class="nv">blue: </span><span class="mi">5</span>
+    <span class="property">@filter</span>.sharpen <span class="number">5</span>
+    <span class="property">@filter</span>.contrast <span class="number">50</span>
+    <span class="property">@filter</span>.exposure <span class="number">10</span>
+    <span class="property">@filter</span>.channels blue: <span class="number">5</span>
 
-  <span class="nx">@brightness</span> <span class="mi">10</span>
-
-</pre></div></div>
+  <span class="property">@brightness</span> <span class="number">10</span></pre></div></div>
             
         </li>
         

@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -178,23 +183,21 @@ already initialized element, it returns that object instead of re-initializing.<
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">Caman.Store = </span><span class="k">class</span> <span class="nx">Store</span>
-  <span class="vi">@items = </span><span class="p">{}</span>
+            <div class="content"><div class='highlight'><pre>Caman.Store = <span class="class"><span class="keyword">class</span> <span class="title">Store</span></span>
+  <span class="property">@items</span> = {}
   
-  <span class="vi">@has: </span><span class="nf">(search) -&gt;</span> <span class="nx">@items</span><span class="p">[</span><span class="nx">search</span><span class="p">]</span><span class="o">?</span>
-  <span class="vi">@get: </span><span class="nf">(search) -&gt;</span> <span class="nx">@items</span><span class="p">[</span><span class="nx">search</span><span class="p">]</span>
-  <span class="vi">@put: </span><span class="nf">(name, obj) -&gt;</span> <span class="nx">@items</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">obj</span>
-  <span class="vi">@execute: </span><span class="nf">(search, callback) -&gt;</span>
-    <span class="nx">setTimeout</span> <span class="o">=&gt;</span>
-      <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@get</span><span class="p">(</span><span class="nx">search</span><span class="p">),</span> <span class="nx">@get</span><span class="p">(</span><span class="nx">search</span><span class="p">)</span>
-    <span class="p">,</span> <span class="mi">0</span>
+  <span class="property">@has</span>: (search) -&gt; <span class="property">@items</span>[search]?
+  <span class="property">@get</span>: (search) -&gt; <span class="property">@items</span>[search]
+  <span class="property">@put</span>: (name, obj) -&gt; <span class="property">@items</span>[name] = obj
+  <span class="property">@execute</span>: (search, callback) -&gt;
+    setTimeout =&gt;
+      callback.call <span class="property">@get</span>(search), <span class="property">@get</span>(search)
+    , <span class="number">0</span>
 
-    <span class="k">return</span> <span class="nx">@get</span><span class="p">(</span><span class="nx">search</span><span class="p">)</span>
+    <span class="keyword">return</span> <span class="property">@get</span>(search)
     
-  <span class="vi">@flush: </span><span class="nf">(name = false) -&gt;</span>
-    <span class="k">if</span> <span class="nx">name</span> <span class="k">then</span> <span class="k">delete</span> <span class="nx">@items</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="k">else</span> <span class="vi">@items = </span><span class="p">{}</span>
-
-</pre></div></div>
+  <span class="property">@flush</span>: (name = <span class="literal">false</span>) -&gt;
+    <span class="keyword">if</span> name <span class="keyword">then</span> <span class="keyword">delete</span> <span class="property">@items</span>[name] <span class="keyword">else</span> <span class="property">@items</span> = {}</pre></div></div>
             
         </li>
         

@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -177,8 +182,8 @@
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">Caman.IO = </span><span class="k">class</span> <span class="nx">IO</span>
-  <span class="vi">@domainRegex = </span><span class="sr">/(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Caman.IO = <span class="class"><span class="keyword">class</span> <span class="title">IO</span></span>
+  <span class="property">@domainRegex</span> = <span class="regexp">/(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/</span></pre></div></div>
             
         </li>
         
@@ -189,40 +194,39 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>Is the given URL remote?
+              <p>Is the given URL remote?
 If a cross-origin setting is set, we assume you have CORS
 properly configured.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@isRemote: </span><span class="nf">(img) -&gt;</span>
-    <span class="k">return</span> <span class="kc">false</span> <span class="nx">unless</span> <span class="nx">img</span><span class="o">?</span>
-    <span class="k">return</span> <span class="kc">false</span> <span class="k">if</span> <span class="nx">@corsEnabled</span><span class="p">(</span><span class="nx">img</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nx">@isURLRemote</span> <span class="nx">img</span><span class="p">.</span><span class="nx">src</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@isRemote</span>: (img) -&gt;
+    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">unless</span> img?
+    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> <span class="property">@corsEnabled</span>(img)
+    <span class="keyword">return</span> <span class="property">@isURLRemote</span> img.src
 
-  <span class="vi">@corsEnabled: </span><span class="nf">(img) -&gt;</span>
-    <span class="nx">img</span><span class="p">.</span><span class="nx">crossOrigin</span><span class="o">?</span> <span class="o">and</span> <span class="nx">img</span><span class="p">.</span><span class="nx">crossOrigin</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="k">in</span> <span class="p">[</span><span class="s">&#39;anonymous&#39;</span><span class="p">,</span> <span class="s">&#39;use-credentials&#39;</span><span class="p">]</span>
+  <span class="property">@corsEnabled</span>: (img) -&gt;
+    img.crossOrigin? <span class="keyword">and</span> img.crossOrigin.toLowerCase() <span class="keyword">in</span> [<span class="string">'anonymous'</span>, <span class="string">'use-credentials'</span>]
 
-  <span class="vi">@isURLRemote: </span><span class="nf">(url) -&gt;</span>
-    <span class="nv">matches = </span><span class="nx">url</span><span class="p">.</span><span class="nx">match</span> <span class="nx">@domainRegex</span>
-    <span class="k">return</span> <span class="k">if</span> <span class="nx">matches</span> <span class="k">then</span> <span class="nx">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">isnt</span> <span class="nb">document</span><span class="p">.</span><span class="nx">domain</span> <span class="k">else</span> <span class="kc">false</span>
+  <span class="property">@isURLRemote</span>: (url) -&gt;
+    matches = url.match <span class="property">@domainRegex</span>
+    <span class="keyword">return</span> <span class="keyword">if</span> matches <span class="keyword">then</span> matches[<span class="number">1</span>] <span class="keyword">isnt</span> document.domain <span class="keyword">else</span> <span class="literal">false</span>
 
-  <span class="vi">@remoteCheck: </span><span class="nf">(src) -&gt;</span>
-    <span class="k">if</span> <span class="nx">@isURLRemote</span> <span class="nx">src</span>
-      <span class="k">if</span> <span class="o">not</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">remoteProxy</span><span class="p">.</span><span class="nx">length</span>
-        <span class="nx">Log</span><span class="p">.</span><span class="nx">info</span> <span class="s">&quot;Attempting to load a remote image without a configured proxy. URL: </span><span class="si">#{</span><span class="nx">src</span><span class="si">}</span><span class="s">&quot;</span>
-        <span class="k">return</span>
-      <span class="k">else</span>
-        <span class="k">if</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">isURLRemote</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">remoteProxy</span>
-          <span class="nx">Log</span><span class="p">.</span><span class="nx">info</span> <span class="s">&quot;Cannot use a remote proxy for loading images.&quot;</span>
-          <span class="k">return</span>
+  <span class="property">@remoteCheck</span>: (src) -&gt;
+    <span class="keyword">if</span> <span class="property">@isURLRemote</span> src
+      <span class="keyword">if</span> <span class="keyword">not</span> Caman.remoteProxy.length
+        Log.info <span class="string">"Attempting to load a remote image without a configured proxy. URL: <span class="subst">#{src}</span>"</span>
+        <span class="keyword">return</span>
+      <span class="keyword">else</span>
+        <span class="keyword">if</span> Caman.isURLRemote Caman.remoteProxy
+          Log.info <span class="string">"Cannot use a remote proxy for loading images."</span>
+          <span class="keyword">return</span>
           
-        <span class="s">&quot;</span><span class="si">#{</span><span class="nx">Caman</span><span class="p">.</span><span class="nx">remoteProxy</span><span class="si">}</span><span class="s">?camanProxyUrl=</span><span class="si">#{</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">src</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span>
+        <span class="string">"<span class="subst">#{Caman.remoteProxy}</span>?camanProxyUrl=<span class="subst">#{encodeURIComponent(src)}</span>"</span>
 
 
-  <span class="vi">@proxyUrl: </span><span class="nf">(src) -&gt;</span>
-    <span class="s">&quot;</span><span class="si">#{</span><span class="nx">Caman</span><span class="p">.</span><span class="nx">remoteProxy</span><span class="si">}</span><span class="s">?</span><span class="si">#{</span><span class="nx">Caman</span><span class="p">.</span><span class="nx">proxyParam</span><span class="si">}</span><span class="s">=</span><span class="si">#{</span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">src</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span></pre></div></div>
+  <span class="property">@proxyUrl</span>: (src) -&gt;
+    <span class="string">"<span class="subst">#{Caman.remoteProxy}</span>?<span class="subst">#{Caman.proxyParam}</span>=<span class="subst">#{encodeURIComponent(src)}</span>"</span></pre></div></div>
             
         </li>
         
@@ -233,22 +237,20 @@ properly configured.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Shortcut for using one of the bundled proxies.</p>
+              <p>Shortcut for using one of the bundled proxies.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@useProxy: </span><span class="nf">(lang) -&gt;</span>
-    <span class="nv">langToExt =</span>
-      <span class="nv">ruby: </span><span class="s">&#39;rb&#39;</span>
-      <span class="nv">python: </span><span class="s">&#39;py&#39;</span>
-      <span class="nv">perl: </span><span class="s">&#39;pl&#39;</span>
-      <span class="nv">javascript: </span><span class="s">&#39;js&#39;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@useProxy</span>: (lang) -&gt;
+    langToExt =
+      ruby: <span class="string">'rb'</span>
+      python: <span class="string">'py'</span>
+      perl: <span class="string">'pl'</span>
+      javascript: <span class="string">'js'</span>
 
-    <span class="nv">lang = </span><span class="nx">lang</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
-    <span class="nv">lang = </span><span class="nx">langToExt</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span> <span class="k">if</span> <span class="nx">langToExt</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span><span class="o">?</span>
-    <span class="s">&quot;proxies/caman_proxy.</span><span class="si">#{</span><span class="nx">lang</span><span class="si">}</span><span class="s">&quot;</span>
-  </pre></div></div>
+    lang = lang.toLowerCase()
+    lang = langToExt[lang] <span class="keyword">if</span> langToExt[lang]?
+    <span class="string">"proxies/caman_proxy.<span class="subst">#{lang}</span>"</span></pre></div></div>
             
         </li>
         
@@ -259,20 +261,19 @@ properly configured.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<p>Grabs the canvas data, encodes it to Base64, then sets the browser location to 
+              <p>Grabs the canvas data, encodes it to Base64, then sets the browser location to 
 the encoded data so that the user will be prompted to download it.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">Caman::save = </span><span class="o">-&gt;</span>
-  <span class="k">if</span> <span class="nx">exports</span><span class="o">?</span>
-    <span class="nx">@nodeSave</span><span class="p">.</span><span class="nx">apply</span> <span class="nx">@</span><span class="p">,</span> <span class="nx">arguments</span>
-  <span class="k">else</span>
-    <span class="nx">@browserSave</span><span class="p">.</span><span class="nx">apply</span> <span class="nx">@</span><span class="p">,</span> <span class="nx">arguments</span>
+            <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">save</span></span> = -&gt;
+  <span class="keyword">if</span> exports?
+    <span class="property">@nodeSave</span>.apply @, arguments
+  <span class="keyword">else</span>
+    <span class="property">@browserSave</span>.apply @, arguments
 
-<span class="nv">Caman::browserSave = </span><span class="nf">(type = &quot;png&quot;) -&gt;</span>
-  <span class="nv">type = </span><span class="nx">type</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span></pre></div></div>
+Caman::<span class="function"><span class="title">browserSave</span></span> = (type = <span class="string">"png"</span>) -&gt;
+  type = type.toLowerCase()</pre></div></div>
             
         </li>
         
@@ -283,23 +284,22 @@ the encoded data so that the user will be prompted to download it.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<p>Force download (its a bit hackish)</p>
+              <p>Force download (its a bit hackish)</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nv">image = </span><span class="nx">@toBase64</span><span class="p">(</span><span class="nx">type</span><span class="p">).</span><span class="nx">replace</span> <span class="s">&quot;image/</span><span class="si">#{</span><span class="nx">type</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;image/octet-stream&quot;</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nv">location.href = </span><span class="nx">image</span>
+            <div class="content"><div class='highlight'><pre>  image = <span class="property">@toBase64</span>(type).replace <span class="string">"image/<span class="subst">#{type}</span>"</span>, <span class="string">"image/octet-stream"</span>
+  document.location.href = image
 
-<span class="nv">Caman::nodeSave = </span><span class="nf">(file, overwrite = true) -&gt;</span>
-  <span class="k">try</span>
-    <span class="nv">stats = </span><span class="nx">fs</span><span class="p">.</span><span class="nx">statSync</span> <span class="nx">file</span>
-    <span class="k">return</span> <span class="kc">false</span> <span class="k">if</span> <span class="nx">stats</span><span class="p">.</span><span class="nx">isFile</span><span class="p">()</span> <span class="o">and</span> <span class="o">not</span> <span class="nx">overwrite</span>
-  <span class="k">catch</span> <span class="nx">e</span>
-    <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;Creating output file </span><span class="si">#{</span><span class="nx">file</span><span class="si">}</span><span class="s">&quot;</span>
+Caman::<span class="function"><span class="title">nodeSave</span></span> = (file, overwrite = <span class="literal">true</span>) -&gt;
+  <span class="keyword">try</span>
+    stats = fs.statSync file
+    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> stats.isFile() <span class="keyword">and</span> <span class="keyword">not</span> overwrite
+  <span class="keyword">catch</span> e
+    Log.debug <span class="string">"Creating output file <span class="subst">#{file}</span>"</span>
 
-  <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">toBuffer</span><span class="p">(),</span> <span class="o">-&gt;</span>
-    <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;Finished writing to </span><span class="si">#{</span><span class="nx">file</span><span class="si">}</span><span class="s">&quot;</span></pre></div></div>
+  fs.writeFile file, <span class="property">@canvas</span>.toBuffer(), -&gt;
+    Log.debug <span class="string">"Finished writing to <span class="subst">#{file}</span>"</span></pre></div></div>
             
         </li>
         
@@ -310,23 +310,22 @@ the encoded data so that the user will be prompted to download it.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
-<p>Takes the current canvas data, converts it to Base64, then sets it as the source 
+              <p>Takes the current canvas data, converts it to Base64, then sets it as the source 
 of a new Image object and returns it.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">Caman::toImage = </span><span class="nf">(type) -&gt;</span>
-  <span class="nv">img = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s">&#39;img&#39;</span>
-  <span class="nv">img.src = </span><span class="nx">@toBase64</span> <span class="nx">type</span>
-  <span class="nv">img.width = </span><span class="nx">@dimensions</span><span class="p">.</span><span class="nx">width</span>
-  <span class="nv">img.height = </span><span class="nx">@dimensions</span><span class="p">.</span><span class="nx">height</span>
+            <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">toImage</span></span> = (type) -&gt;
+  img = document.createElement <span class="string">'img'</span>
+  img.src = <span class="property">@toBase64</span> type
+  img.width = <span class="property">@dimensions</span>.width
+  img.height = <span class="property">@dimensions</span>.height
 
-  <span class="k">if</span> <span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span>
-    <span class="nx">img</span><span class="p">.</span><span class="nx">width</span> <span class="o">/=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span>
-    <span class="nx">img</span><span class="p">.</span><span class="nx">height</span> <span class="o">/=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">devicePixelRatio</span>
+  <span class="keyword">if</span> window.devicePixelRatio
+    img.width /= window.devicePixelRatio
+    img.height /= window.devicePixelRatio
 
-  <span class="k">return</span> <span class="nx">img</span></pre></div></div>
+  <span class="keyword">return</span> img</pre></div></div>
             
         </li>
         
@@ -337,16 +336,13 @@ of a new Image object and returns it.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
-<p>Base64 encodes the current canvas</p>
+              <p>Base64 encodes the current canvas</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">Caman::toBase64 = </span><span class="nf">(type = &quot;png&quot;) -&gt;</span>
-  <span class="nv">type = </span><span class="nx">type</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
-  <span class="k">return</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">toDataURL</span> <span class="s">&quot;image/</span><span class="si">#{</span><span class="nx">type</span><span class="si">}</span><span class="s">&quot;</span>
-
-</pre></div></div>
+            <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">toBase64</span></span> = (type = <span class="string">"png"</span>) -&gt;
+  type = type.toLowerCase()
+  <span class="keyword">return</span> <span class="property">@canvas</span>.toDataURL <span class="string">"image/<span class="subst">#{type}</span>"</span></pre></div></div>
             
         </li>
         

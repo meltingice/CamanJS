@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -177,7 +182,7 @@
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">Caman.Filter = </span><span class="k">class</span> <span class="nx">Filter</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Caman.Filter = <span class="class"><span class="keyword">class</span> <span class="title">Filter</span></span></pre></div></div>
             
         </li>
         
@@ -188,18 +193,17 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>All of the different render operatives</p>
+              <p>All of the different render operatives</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@Type =</span>
-    <span class="nv">Single: </span><span class="mi">1</span>
-    <span class="nv">Kernel: </span><span class="mi">2</span>
-    <span class="nv">LayerDequeue: </span><span class="mi">3</span>
-    <span class="nv">LayerFinished: </span><span class="mi">4</span>
-    <span class="nv">LoadOverlay: </span><span class="mi">5</span>
-    <span class="nv">Plugin: </span><span class="mi">6</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@Type</span> =
+    Single: <span class="number">1</span>
+    Kernel: <span class="number">2</span>
+    LayerDequeue: <span class="number">3</span>
+    LayerFinished: <span class="number">4</span>
+    LoadOverlay: <span class="number">5</span>
+    Plugin: <span class="number">6</span></pre></div></div>
             
         </li>
         
@@ -210,14 +214,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Registers a filter function</p>
+              <p>Registers a filter function</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@register: </span><span class="nf">(name, filterFunc) -&gt;</span> <span class="nx">Caman</span><span class="o">::</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">filterFunc</span>
-
-</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@register</span>: (name, filterFunc) -&gt; Caman::[name] = filterFunc</pre></div></div>
             
         </li>
         

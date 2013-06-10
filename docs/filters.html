@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -185,21 +190,21 @@ the plugins, check out the <a href="http://camanjs.com/docs/built-in">Built-In F
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;fillColor&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="k">if</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">1</span>
-    <span class="nv">color = </span><span class="nx">Convert</span><span class="p">.</span><span class="nx">hexToRGB</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-  <span class="k">else</span>
-    <span class="nv">color =</span>
-      <span class="nv">r: </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-      <span class="nv">g: </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-      <span class="nv">b: </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"fillColor"</span>, -&gt;
+  <span class="keyword">if</span> arguments.length <span class="keyword">is</span> <span class="number">1</span>
+    color = Convert.hexToRGB arguments[<span class="number">0</span>]
+  <span class="keyword">else</span>
+    color =
+      r: arguments[<span class="number">0</span>]
+      g: arguments[<span class="number">1</span>]
+      b: arguments[<span class="number">2</span>]
 
-  <span class="nx">@process</span> <span class="s">&quot;fillColor&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nv">rgba.r = </span><span class="nx">color</span><span class="p">.</span><span class="nx">r</span>
-    <span class="nv">rgba.g = </span><span class="nx">color</span><span class="p">.</span><span class="nx">g</span>
-    <span class="nv">rgba.b = </span><span class="nx">color</span><span class="p">.</span><span class="nx">b</span>
-    <span class="nv">rgba.a = </span><span class="mi">255</span>
-    <span class="nx">rgba</span></pre></div></div>
+  <span class="property">@process</span> <span class="string">"fillColor"</span>, (rgba) -&gt;
+    rgba.r = color.r
+    rgba.g = color.g
+    rgba.b = color.b
+    rgba.a = <span class="number">255</span>
+    rgba</pre></div></div>
             
         </li>
         
@@ -210,22 +215,21 @@ the plugins, check out the <a href="http://camanjs.com/docs/built-in">Built-In F
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<h2>Brightness</h2>
+              <h2>Brightness</h2>
 <p>Simple brightness adjustment</p>
 <h3>Arguments</h3>
 <p>Range is -100 to 100. Values &lt; 0 will darken image while values &gt; 0 will brighten.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;brightness&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nv">adjust = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span> <span class="mi">255</span> <span class="o">*</span> <span class="p">(</span><span class="nx">adjust</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"brightness"</span>, (adjust) -&gt;
+  adjust = Math.floor <span class="number">255</span> * (adjust / <span class="number">100</span>)
 
-  <span class="nx">@process</span> <span class="s">&quot;brightness&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">+=</span> <span class="nx">adjust</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">+=</span> <span class="nx">adjust</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">+=</span> <span class="nx">adjust</span>
-    <span class="nx">rgba</span></pre></div></div>
+  <span class="property">@process</span> <span class="string">"brightness"</span>, (rgba) -&gt;
+    rgba.r += adjust
+    rgba.g += adjust
+    rgba.b += adjust
+    rgba</pre></div></div>
             
         </li>
         
@@ -236,8 +240,7 @@ the plugins, check out the <a href="http://camanjs.com/docs/built-in">Built-In F
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<h2>Saturation</h2>
+              <h2>Saturation</h2>
 <p>Adjusts the color saturation of the image.</p>
 <h3>Arguments</h3>
 <p>Range is -100 to 100. Values &lt; 0 will desaturate the image while values &gt; 0 will saturate it.
@@ -246,16 +249,16 @@ recommended because it will yield better results.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;saturation&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nx">adjust</span> <span class="o">*=</span> <span class="o">-</span><span class="mf">0.01</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"saturation"</span>, (adjust) -&gt;
+  adjust *= -<span class="number">0.01</span>
 
-  <span class="nx">@process</span> <span class="s">&quot;saturation&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nv">max = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span><span class="p">,</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span><span class="p">,</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span>
+  <span class="property">@process</span> <span class="string">"saturation"</span>, (rgba) -&gt;
+    max = Math.max rgba.r, rgba.g, rgba.b
 
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">max</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">*</span> <span class="nx">adjust</span> <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">isnt</span> <span class="nx">max</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">max</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">*</span> <span class="nx">adjust</span> <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">isnt</span> <span class="nx">max</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">max</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">*</span> <span class="nx">adjust</span> <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">isnt</span> <span class="nx">max</span>
-    <span class="nx">rgba</span></pre></div></div>
+    rgba.r += (max - rgba.r) * adjust <span class="keyword">if</span> rgba.r <span class="keyword">isnt</span> max
+    rgba.g += (max - rgba.g) * adjust <span class="keyword">if</span> rgba.g <span class="keyword">isnt</span> max
+    rgba.b += (max - rgba.b) * adjust <span class="keyword">if</span> rgba.b <span class="keyword">isnt</span> max
+    rgba</pre></div></div>
             
         </li>
         
@@ -266,8 +269,7 @@ recommended because it will yield better results.</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<h2>Vibrance</h2>
+              <h2>Vibrance</h2>
 <p>Similar to saturation, but adjusts the saturation levels in a slightly smarter, more subtle way. 
 Vibrance will attempt to boost colors that are less saturated more and boost already saturated
 colors less, while saturation boosts all colors by the same level.</p>
@@ -278,19 +280,18 @@ recommended because it will yield better results.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;vibrance&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nx">adjust</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"vibrance"</span>, (adjust) -&gt;
+  adjust *= -<span class="number">1</span>
 
-  <span class="nx">@process</span> <span class="s">&quot;vibrance&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nv">max = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span><span class="p">,</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span><span class="p">,</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span>
-    <span class="nv">avg = </span><span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">+</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">+</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span>
-    <span class="nv">amt = </span><span class="p">((</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">max</span> <span class="o">-</span> <span class="nx">avg</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">255</span><span class="p">)</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+  <span class="property">@process</span> <span class="string">"vibrance"</span>, (rgba) -&gt;
+    max = Math.max rgba.r, rgba.g, rgba.b
+    avg = (rgba.r + rgba.g + rgba.b) / <span class="number">3</span>
+    amt = ((Math.abs(max - avg) * <span class="number">2</span> / <span class="number">255</span>) * adjust) / <span class="number">100</span>
 
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">max</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">*</span> <span class="nx">amt</span> <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">isnt</span> <span class="nx">max</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">max</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">*</span> <span class="nx">amt</span> <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">isnt</span> <span class="nx">max</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">max</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">*</span> <span class="nx">amt</span> <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">isnt</span> <span class="nx">max</span>
-    <span class="nx">rgba</span>
-    </pre></div></div>
+    rgba.r += (max - rgba.r) * amt <span class="keyword">if</span> rgba.r <span class="keyword">isnt</span> max
+    rgba.g += (max - rgba.g) * amt <span class="keyword">if</span> rgba.g <span class="keyword">isnt</span> max
+    rgba.b += (max - rgba.b) * amt <span class="keyword">if</span> rgba.b <span class="keyword">isnt</span> max
+    rgba</pre></div></div>
             
         </li>
         
@@ -301,8 +302,7 @@ recommended because it will yield better results.</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<h2>Greyscale</h2>
+              <h2>Greyscale</h2>
 <p>An improved greyscale function that should make prettier results
 than simply using the saturation filter to remove color. It does so by using factors
 that directly relate to how the human eye perceves color and values. There are
@@ -311,8 +311,8 @@ no arguments, it simply makes the image greyscale with no in-between.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;greyscale&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nx">@process</span> <span class="s">&quot;greyscale&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"greyscale"</span>, (adjust) -&gt;
+  <span class="property">@process</span> <span class="string">"greyscale"</span>, (rgba) -&gt;</pre></div></div>
             
         </li>
         
@@ -323,18 +323,17 @@ no arguments, it simply makes the image greyscale with no in-between.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
-<p>Calculate the average value of the 3 color channels 
+              <p>Calculate the average value of the 3 color channels 
 using the special factors</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">avg = </span><span class="nx">Calculate</span><span class="p">.</span><span class="nx">luminance</span><span class="p">(</span><span class="nx">rgba</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>    avg = Calculate.luminance(rgba)
 
-    <span class="nv">rgba.r = </span><span class="nx">avg</span>
-    <span class="nv">rgba.g = </span><span class="nx">avg</span>
-    <span class="nv">rgba.b = </span><span class="nx">avg</span>
-    <span class="nx">rgba</span></pre></div></div>
+    rgba.r = avg
+    rgba.g = avg
+    rgba.b = avg
+    rgba</pre></div></div>
             
         </li>
         
@@ -345,8 +344,7 @@ using the special factors</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
-<h2>Contrast</h2>
+              <h2>Contrast</h2>
 <p>Increases or decreases the color contrast of the image.</p>
 <h3>Arguments</h3>
 <p>Range is -100 to 100. Values &lt; 0 will decrease contrast while values &gt; 0 will increase contrast.
@@ -355,10 +353,10 @@ are usually around 5-10.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;contrast&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nv">adjust = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">((</span><span class="nx">adjust</span> <span class="o">+</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"contrast"</span>, (adjust) -&gt;
+  adjust = Math.pow((adjust + <span class="number">100</span>) / <span class="number">100</span>, <span class="number">2</span>)
 
-  <span class="nx">@process</span> <span class="s">&quot;contrast&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span></pre></div></div>
+  <span class="property">@process</span> <span class="string">"contrast"</span>, (rgba) -&gt;</pre></div></div>
             
         </li>
         
@@ -369,17 +367,15 @@ are usually around 5-10.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              
-<p>Red channel</p>
+              <p>Red channel</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">/=</span> <span class="mi">255</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">-=</span> <span class="mf">0.5</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">*=</span> <span class="nx">adjust</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">+=</span> <span class="mf">0.5</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">*=</span> <span class="mi">255</span><span class="p">;</span>
-    </pre></div></div>
+            <div class="content"><div class='highlight'><pre>    rgba.r /= <span class="number">255</span>;
+    rgba.r -= <span class="number">0.5</span>;
+    rgba.r *= adjust;
+    rgba.r += <span class="number">0.5</span>;
+    rgba.r *= <span class="number">255</span>;</pre></div></div>
             
         </li>
         
@@ -390,17 +386,15 @@ are usually around 5-10.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              
-<p>Green channel</p>
+              <p>Green channel</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">/=</span> <span class="mi">255</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">-=</span> <span class="mf">0.5</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">*=</span> <span class="nx">adjust</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">+=</span> <span class="mf">0.5</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">*=</span> <span class="mi">255</span><span class="p">;</span>
-    </pre></div></div>
+            <div class="content"><div class='highlight'><pre>    rgba.g /= <span class="number">255</span>;
+    rgba.g -= <span class="number">0.5</span>;
+    rgba.g *= adjust;
+    rgba.g += <span class="number">0.5</span>;
+    rgba.g *= <span class="number">255</span>;</pre></div></div>
             
         </li>
         
@@ -411,18 +405,17 @@ are usually around 5-10.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              
-<p>Blue channel</p>
+              <p>Blue channel</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">/=</span> <span class="mi">255</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">-=</span> <span class="mf">0.5</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">*=</span> <span class="nx">adjust</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">+=</span> <span class="mf">0.5</span><span class="p">;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">*=</span> <span class="mi">255</span><span class="p">;</span>
+            <div class="content"><div class='highlight'><pre>    rgba.b /= <span class="number">255</span>;
+    rgba.b -= <span class="number">0.5</span>;
+    rgba.b *= adjust;
+    rgba.b += <span class="number">0.5</span>;
+    rgba.b *= <span class="number">255</span>;
 
-    <span class="nx">rgba</span></pre></div></div>
+    rgba</pre></div></div>
             
         </li>
         
@@ -433,8 +426,7 @@ are usually around 5-10.</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              
-<h2>Hue</h2>
+              <h2>Hue</h2>
 <p>Adjusts the hue of the image. It can be used to shift the colors in an image in a uniform 
 fashion. If you are unfamiliar with Hue, I recommend reading this 
 <a href="http://en.wikipedia.org/wiki/Hue">Wikipedia article</a>.</p>
@@ -445,19 +437,19 @@ think of 0 to 100 representing the percentage of Hue shift in the 0 to 360 range
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;hue&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nx">@process</span> <span class="s">&quot;hue&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nv">hsv = </span><span class="nx">Convert</span><span class="p">.</span><span class="nx">rgbToHSV</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span><span class="p">,</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span><span class="p">,</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"hue"</span>, (adjust) -&gt;
+  <span class="property">@process</span> <span class="string">"hue"</span>, (rgba) -&gt;
+    hsv = Convert.rgbToHSV rgba.r, rgba.g, rgba.b
     
-    <span class="nv">h = </span><span class="nx">hsv</span><span class="p">.</span><span class="nx">h</span> <span class="o">*</span> <span class="mi">100</span>
-    <span class="nx">h</span> <span class="o">+=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span> <span class="nx">adjust</span>
-    <span class="nv">h = </span><span class="nx">h</span> <span class="o">%</span> <span class="mi">100</span>
-    <span class="nx">h</span> <span class="o">/=</span> <span class="mi">100</span>
-    <span class="nv">hsv.h = </span><span class="nx">h</span>
+    h = hsv.h * <span class="number">100</span>
+    h += Math.abs adjust
+    h = h % <span class="number">100</span>
+    h /= <span class="number">100</span>
+    hsv.h = h
 
-    <span class="nv">rgb = </span><span class="nx">Convert</span><span class="p">.</span><span class="nx">hsvToRGB</span> <span class="nx">hsv</span><span class="p">.</span><span class="nx">h</span><span class="p">,</span> <span class="nx">hsv</span><span class="p">.</span><span class="nx">s</span><span class="p">,</span> <span class="nx">hsv</span><span class="p">.</span><span class="nx">v</span>
-    <span class="nv">rgb.a = </span><span class="nx">rgba</span><span class="p">.</span><span class="nx">a</span>
-    <span class="nx">rgb</span></pre></div></div>
+    rgb = Convert.hsvToRGB hsv.h, hsv.s, hsv.v
+    rgb.a = rgba.a
+    rgb</pre></div></div>
             
         </li>
         
@@ -468,8 +460,7 @@ think of 0 to 100 representing the percentage of Hue shift in the 0 to 360 range
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              
-<h2>Colorize</h2>
+              <h2>Colorize</h2>
 <p>Uniformly shifts the colors in an image towards the given color. The adjustment range is from 0 
 to 100. The higher the value, the closer the colors in the image shift towards the given 
 adjustment color.</p>
@@ -479,23 +470,23 @@ string and an adjustment value, or RGB colors and an adjustment value.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;colorize&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="k">if</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">2</span>
-    <span class="nv">rgb = </span><span class="nx">Convert</span><span class="p">.</span><span class="nx">hexToRGB</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="nv">level = </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-  <span class="k">else</span> <span class="k">if</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">4</span>
-    <span class="nv">rgb =</span>
-      <span class="nv">r: </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-      <span class="nv">g: </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-      <span class="nv">b: </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"colorize"</span>, -&gt;
+  <span class="keyword">if</span> arguments.length <span class="keyword">is</span> <span class="number">2</span>
+    rgb = Convert.hexToRGB(arguments[<span class="number">0</span>])
+    level = arguments[<span class="number">1</span>]
+  <span class="keyword">else</span> <span class="keyword">if</span> arguments.length <span class="keyword">is</span> <span class="number">4</span>
+    rgb =
+      r: arguments[<span class="number">0</span>]
+      g: arguments[<span class="number">1</span>]
+      b: arguments[<span class="number">2</span>]
 
-    <span class="nv">level = </span><span class="nx">arguments</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    level = arguments[<span class="number">3</span>]
 
-  <span class="nx">@process</span> <span class="s">&quot;colorize&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">-=</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">-</span> <span class="nx">rgb</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nx">level</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">-=</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">-</span> <span class="nx">rgb</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nx">level</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">-=</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">-</span> <span class="nx">rgb</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nx">level</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="nx">rgba</span></pre></div></div>
+  <span class="property">@process</span> <span class="string">"colorize"</span>, (rgba) -&gt;
+    rgba.r -= (rgba.r - rgb.r) * (level / <span class="number">100</span>)
+    rgba.g -= (rgba.g - rgb.g) * (level / <span class="number">100</span>)
+    rgba.b -= (rgba.b - rgb.b) * (level / <span class="number">100</span>)
+    rgba</pre></div></div>
             
         </li>
         
@@ -506,19 +497,17 @@ string and an adjustment value, or RGB colors and an adjustment value.</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              
-<h2>Invert</h2>
+              <h2>Invert</h2>
 <p>Inverts all colors in the image by subtracting each color channel value from 255. No arguments.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;invert&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@process</span> <span class="s">&quot;invert&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nv">rgba.r = </span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span>
-    <span class="nv">rgba.g = </span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span>
-    <span class="nv">rgba.b = </span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span>
-    <span class="nx">rgba</span>
-    </pre></div></div>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"invert"</span>, -&gt;
+  <span class="property">@process</span> <span class="string">"invert"</span>, (rgba) -&gt;
+    rgba.r = <span class="number">255</span> - rgba.r
+    rgba.g = <span class="number">255</span> - rgba.g
+    rgba.b = <span class="number">255</span> - rgba.b
+    rgba</pre></div></div>
             
         </li>
         
@@ -529,18 +518,17 @@ string and an adjustment value, or RGB colors and an adjustment value.</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              
-<h2>Sepia</h2>
+              <h2>Sepia</h2>
 <p>Applies an adjustable sepia filter to the image.</p>
 <h3>Arguments</h3>
 <p>Assumes adjustment is between 0 and 100, which represents how much the sepia filter is applied.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;sepia&quot;</span><span class="p">,</span> <span class="nf">(adjust = 100) -&gt;</span>
-  <span class="nx">adjust</span> <span class="o">/=</span> <span class="mi">100</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"sepia"</span>, (adjust = <span class="number">100</span>) -&gt;
+  adjust /= <span class="number">100</span>
 
-  <span class="nx">@process</span> <span class="s">&quot;sepia&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span></pre></div></div>
+  <span class="property">@process</span> <span class="string">"sepia"</span>, (rgba) -&gt;</pre></div></div>
             
         </li>
         
@@ -551,18 +539,17 @@ string and an adjustment value, or RGB colors and an adjustment value.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              
-<p>All three color channels have special conversion factors that 
+              <p>All three color channels have special conversion factors that 
 define what sepia is. Here we adjust each channel individually, 
 with the twist that you can partially apply the sepia filter.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">rgba.r = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mf">0.607</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">)))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.769</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.189</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">)));</span>
-    <span class="nv">rgba.g = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.349</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mf">0.314</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">)))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.168</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">)));</span>
-    <span class="nv">rgba.b = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.272</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.534</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span> <span class="p">(</span><span class="mf">0.869</span> <span class="o">*</span> <span class="nx">adjust</span><span class="p">))));</span>
+            <div class="content"><div class='highlight'><pre>    rgba.r = Math.min(<span class="number">255</span>, (rgba.r * (<span class="number">1</span> - (<span class="number">0.607</span> * adjust))) + (rgba.g * (<span class="number">0.769</span> * adjust)) + (rgba.b * (<span class="number">0.189</span> * adjust)));
+    rgba.g = Math.min(<span class="number">255</span>, (rgba.r * (<span class="number">0.349</span> * adjust)) + (rgba.g * (<span class="number">1</span> - (<span class="number">0.314</span> * adjust))) + (rgba.b * (<span class="number">0.168</span> * adjust)));
+    rgba.b = Math.min(<span class="number">255</span>, (rgba.r * (<span class="number">0.272</span> * adjust)) + (rgba.g * (<span class="number">0.534</span> * adjust)) + (rgba.b * (<span class="number">1</span>- (<span class="number">0.869</span> * adjust))));
 
-    <span class="nx">rgba</span></pre></div></div>
+    rgba</pre></div></div>
             
         </li>
         
@@ -573,8 +560,7 @@ with the twist that you can partially apply the sepia filter.</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              
-<h2>Gamma</h2>
+              <h2>Gamma</h2>
 <p>Adjusts the gamma of the image.</p>
 <h3>Arguments</h3>
 <p>Range is from 0 to infinity, although sane values are from 0 to 4 or 5.
@@ -582,12 +568,12 @@ Values between 0 and 1 will lessen the contrast while values greater than 1 will
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;gamma&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nx">@process</span> <span class="s">&quot;gamma&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nv">rgba.r = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="nx">adjust</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
-    <span class="nv">rgba.g = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="nx">adjust</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
-    <span class="nv">rgba.b = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="nx">adjust</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
-    <span class="nx">rgba</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"gamma"</span>, (adjust) -&gt;
+  <span class="property">@process</span> <span class="string">"gamma"</span>, (rgba) -&gt;
+    rgba.r = Math.pow(rgba.r / <span class="number">255</span>, adjust) * <span class="number">255</span>
+    rgba.g = Math.pow(rgba.g / <span class="number">255</span>, adjust) * <span class="number">255</span>
+    rgba.b = Math.pow(rgba.b / <span class="number">255</span>, adjust) * <span class="number">255</span>
+    rgba</pre></div></div>
             
         </li>
         
@@ -598,23 +584,22 @@ Values between 0 and 1 will lessen the contrast while values greater than 1 will
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              
-<h2>Noise</h2>
+              <h2>Noise</h2>
 <p>Adds noise to the image on a scale from 1 - 100. However, the scale isn&#39;t constrained, so you 
 can specify a value &gt; 100 if you want a LOT of noise.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;noise&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nv">adjust = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">adjust</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2.55</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"noise"</span>, (adjust) -&gt;
+  adjust = Math.abs(adjust) * <span class="number">2.55</span>
   
-  <span class="nx">@process</span> <span class="s">&quot;noise&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nv">rand = </span><span class="nx">Calculate</span><span class="p">.</span><span class="nx">randomRange</span> <span class="nx">adjust</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">adjust</span>
+  <span class="property">@process</span> <span class="string">"noise"</span>, (rgba) -&gt;
+    rand = Calculate.randomRange adjust * -<span class="number">1</span>, adjust
 
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">+=</span> <span class="nx">rand</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">+=</span> <span class="nx">rand</span>
-    <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">+=</span> <span class="nx">rand</span>
-    <span class="nx">rgba</span></pre></div></div>
+    rgba.r += rand
+    rgba.g += rand
+    rgba.b += rand
+    rgba</pre></div></div>
             
         </li>
         
@@ -625,34 +610,33 @@ can specify a value &gt; 100 if you want a LOT of noise.</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              
-<h2>Clip</h2>
+              <h2>Clip</h2>
 <p>Clips a color to max values when it falls outside of the specified range.</p>
 <h3>Arguments</h3>
 <p>Supplied value should be between 0 and 100.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;clip&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nv">adjust = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">adjust</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2.55</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"clip"</span>, (adjust) -&gt;
+  adjust = Math.abs(adjust) * <span class="number">2.55</span>
 
-  <span class="nx">@process</span> <span class="s">&quot;clip&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">&gt;</span> <span class="mi">255</span> <span class="o">-</span> <span class="nx">adjust</span>
-      <span class="nv">rgba.r = </span><span class="mi">255</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">&lt;</span> <span class="nx">adjust</span>
-      <span class="nv">rgba.r = </span><span class="mi">0</span>
+  <span class="property">@process</span> <span class="string">"clip"</span>, (rgba) -&gt;
+    <span class="keyword">if</span> rgba.r &gt; <span class="number">255</span> - adjust
+      rgba.r = <span class="number">255</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> rgba.r &lt; adjust
+      rgba.r = <span class="number">0</span>
 
-    <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">&gt;</span> <span class="mi">255</span> <span class="o">-</span> <span class="nx">adjust</span>
-      <span class="nv">rgba.g = </span><span class="mi">255</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">&lt;</span> <span class="nx">adjust</span>
-      <span class="nv">rgba.g = </span><span class="mi">0</span>
+    <span class="keyword">if</span> rgba.g &gt; <span class="number">255</span> - adjust
+      rgba.g = <span class="number">255</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> rgba.g &lt; adjust
+      rgba.g = <span class="number">0</span>
       
-    <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">&gt;</span> <span class="mi">255</span> <span class="o">-</span> <span class="nx">adjust</span>
-      <span class="nv">rgba.b = </span><span class="mi">255</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">&lt;</span> <span class="nx">adjust</span>
-      <span class="nv">rgba.b = </span><span class="mi">0</span>
+    <span class="keyword">if</span> rgba.b &gt; <span class="number">255</span> - adjust
+      rgba.b = <span class="number">255</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> rgba.b &lt; adjust
+      rgba.b = <span class="number">0</span>
 
-    <span class="nx">rgba</span></pre></div></div>
+    rgba</pre></div></div>
             
         </li>
         
@@ -663,8 +647,7 @@ can specify a value &gt; 100 if you want a LOT of noise.</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              
-<h2>Channels</h2>
+              <h2>Channels</h2>
 <p>Lets you modify the intensity of any combination of red, green, or blue channels individually.</p>
 <h3>Arguments</h3>
 <p>Must be given at least one color channel to adjust in order to work.
@@ -675,41 +658,40 @@ Options format (must specify 1 - 3 colors):</p>
   blue: -40
 }</pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;channels&quot;</span><span class="p">,</span> <span class="nf">(options) -&gt;</span>
-  <span class="k">return</span> <span class="nx">@</span> <span class="k">if</span> <span class="k">typeof</span> <span class="nx">options</span> <span class="o">isnt</span> <span class="s">&quot;object&quot;</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"channels"</span>, (options) -&gt;
+  <span class="keyword">return</span> @ <span class="keyword">if</span> <span class="keyword">typeof</span> options <span class="keyword">isnt</span> <span class="string">"object"</span>
 
-  <span class="k">for</span> <span class="nx">own</span> <span class="nx">chan</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">options</span>
-    <span class="k">if</span> <span class="nx">value</span> <span class="o">is</span> <span class="mi">0</span>
-      <span class="k">delete</span> <span class="nx">options</span><span class="p">[</span><span class="nx">chan</span><span class="p">]</span>
-      <span class="k">continue</span>
+  <span class="keyword">for</span> own chan, value <span class="keyword">of</span> options
+    <span class="keyword">if</span> value <span class="keyword">is</span> <span class="number">0</span>
+      <span class="keyword">delete</span> options[chan]
+      <span class="keyword">continue</span>
 
-    <span class="nx">options</span><span class="p">[</span><span class="nx">chan</span><span class="p">]</span> <span class="o">/=</span> <span class="mi">100</span>
+    options[chan] /= <span class="number">100</span>
 
-  <span class="k">return</span> <span class="nx">@</span> <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span>
+  <span class="keyword">return</span> @ <span class="keyword">if</span> options.length <span class="keyword">is</span> <span class="number">0</span>
 
-  <span class="nx">@process</span> <span class="s">&quot;channels&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">red</span><span class="o">?</span>
-      <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">red</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">*</span> <span class="nx">options</span><span class="p">.</span><span class="nx">red</span>
-      <span class="k">else</span>
-        <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">-=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">red</span><span class="p">)</span>
+  <span class="property">@process</span> <span class="string">"channels"</span>, (rgba) -&gt;
+    <span class="keyword">if</span> options.red?
+      <span class="keyword">if</span> options.red &gt; <span class="number">0</span>
+        rgba.r += (<span class="number">255</span> - rgba.r) * options.red
+      <span class="keyword">else</span>
+        rgba.r -= rgba.r * Math.abs(options.red)
 
-    <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">green</span><span class="o">?</span>
-      <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">green</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">*</span> <span class="nx">options</span><span class="p">.</span><span class="nx">green</span>
-      <span class="k">else</span>
-        <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">-=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">green</span><span class="p">)</span>
+    <span class="keyword">if</span> options.green?
+      <span class="keyword">if</span> options.green &gt; <span class="number">0</span>
+        rgba.g += (<span class="number">255</span> - rgba.g) * options.green
+      <span class="keyword">else</span>
+        rgba.g -= rgba.g * Math.abs(options.green)
 
-    <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">blue</span><span class="o">?</span>
-      <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">blue</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">*</span> <span class="nx">options</span><span class="p">.</span><span class="nx">blue</span>
-      <span class="k">else</span>
-        <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">-=</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">blue</span><span class="p">)</span>
+    <span class="keyword">if</span> options.blue?
+      <span class="keyword">if</span> options.blue &gt; <span class="number">0</span>
+        rgba.b += (<span class="number">255</span> - rgba.b) * options.blue
+      <span class="keyword">else</span>
+        rgba.b -= rgba.b * Math.abs(options.blue)
 
-    <span class="nx">rgba</span></pre></div></div>
+    rgba</pre></div></div>
             
         </li>
         
@@ -720,8 +702,7 @@ Options format (must specify 1 - 3 colors):</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              
-<h2>Curves</h2>
+              <h2>Curves</h2>
 <p>Curves implementation using Bezier curve equation. If you&#39;re familiar with the Curves 
 functionality in Photoshop, this works in a very similar fashion.</p>
 <h3>Arguments.</h3>
@@ -742,7 +723,7 @@ output value.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;curves&quot;</span><span class="p">,</span> <span class="nf">(chans, cps...) -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"curves"</span>, (chans, cps...) -&gt;</pre></div></div>
             
         </li>
         
@@ -753,15 +734,14 @@ output value.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              
-<p>If channels are in a string, split to an array</p>
+              <p>If channels are in a string, split to an array</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nv">chans = </span><span class="nx">chans</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="k">typeof</span> <span class="nx">chans</span> <span class="o">is</span> <span class="s">&quot;string&quot;</span>
-  <span class="nv">chans = </span><span class="p">[</span><span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="nx">chans</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;v&quot;</span>
+            <div class="content"><div class='highlight'><pre>  chans = chans.split(<span class="string">""</span>) <span class="keyword">if</span> <span class="keyword">typeof</span> chans <span class="keyword">is</span> <span class="string">"string"</span>
+  chans = [<span class="string">'r'</span>, <span class="string">'g'</span>, <span class="string">'b'</span>] <span class="keyword">if</span> chans[<span class="number">0</span>] == <span class="string">"v"</span>
 
-  <span class="k">if</span> <span class="nx">cps</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="o">or</span> <span class="nx">cps</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">4</span></pre></div></div>
+  <span class="keyword">if</span> cps.length &lt; <span class="number">3</span> <span class="keyword">or</span> cps.length &gt; <span class="number">4</span></pre></div></div>
             
         </li>
         
@@ -772,17 +752,16 @@ output value.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              
-<p>might want to give a warning now</p>
+              <p>might want to give a warning now</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="k">throw</span> <span class="s">&quot;Invalid number of arguments to curves filter&quot;</span>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">throw</span> <span class="string">"Invalid number of arguments to curves filter"</span>
 
-  <span class="nv">start = </span><span class="nx">cps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-  <span class="nv">ctrl1 = </span><span class="nx">cps</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-  <span class="nv">ctrl2 = </span><span class="k">if</span> <span class="nx">cps</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">then</span> <span class="nx">cps</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">else</span> <span class="nx">cps</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-  <span class="nv">end = </span><span class="nx">cps</span><span class="p">[</span><span class="nx">cps</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span></pre></div></div>
+  start = cps[<span class="number">0</span>]
+  ctrl1 = cps[<span class="number">1</span>]
+  ctrl2 = <span class="keyword">if</span> cps.length == <span class="number">4</span> <span class="keyword">then</span> cps[<span class="number">2</span>] <span class="keyword">else</span> cps[<span class="number">1</span>]
+  end = cps[cps.length - <span class="number">1</span>]</pre></div></div>
             
         </li>
         
@@ -793,12 +772,11 @@ output value.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              
-<p>Generate a bezier curve</p>
+              <p>Generate a bezier curve</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nv">bezier = </span><span class="nx">Calculate</span><span class="p">.</span><span class="nx">bezier</span> <span class="nx">start</span><span class="p">,</span> <span class="nx">ctrl1</span><span class="p">,</span> <span class="nx">ctrl2</span><span class="p">,</span> <span class="nx">end</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  bezier = Calculate.bezier start, ctrl1, ctrl2, end, <span class="number">0</span>, <span class="number">255</span></pre></div></div>
             
         </li>
         
@@ -809,13 +787,12 @@ output value.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              
-<p>If the curve starts after x = 0, initialize it with a flat line
+              <p>If the curve starts after x = 0, initialize it with a flat line
 until the curve begins.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nx">bezier</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">...</span><span class="nx">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">if</span> <span class="nx">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  bezier[i] = start[<span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>..start[<span class="number">0</span>]] <span class="keyword">if</span> start[<span class="number">0</span>] &gt; <span class="number">0</span></pre></div></div>
             
         </li>
         
@@ -826,14 +803,13 @@ until the curve begins.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              
-<p>... and the same with the end point</p>
+              <p>... and the same with the end point</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nx">bezier</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">end</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="nx">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]..</span><span class="mi">255</span><span class="p">]</span> <span class="k">if</span> <span class="nx">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">255</span>
+            <div class="content"><div class='highlight'><pre>  bezier[i] = end[<span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> [end[<span class="number">0</span>].<span class="number">.255</span>] <span class="keyword">if</span> end[<span class="number">0</span>] &lt; <span class="number">255</span>
 
-  <span class="nx">@process</span> <span class="s">&quot;curves&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span></pre></div></div>
+  <span class="property">@process</span> <span class="string">"curves"</span>, (rgba) -&gt;</pre></div></div>
             
         </li>
         
@@ -844,14 +820,13 @@ until the curve begins.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              
-<p>Now that we have the bezier curve, we do a basic hashmap lookup
+              <p>Now that we have the bezier curve, we do a basic hashmap lookup
 to find and replace color values.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nx">rgba</span><span class="p">[</span><span class="nx">chans</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">bezier</span><span class="p">[</span><span class="nx">rgba</span><span class="p">[</span><span class="nx">chans</span><span class="p">[</span><span class="nx">i</span><span class="p">]]]</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">...</span><span class="nx">chans</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span>
-    <span class="nx">rgba</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    rgba[chans[i]] = bezier[rgba[chans[i]]] <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>..chans.length]
+    rgba</pre></div></div>
             
         </li>
         
@@ -862,27 +837,24 @@ to find and replace color values.</p>
               <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              
-<h2>Exposure</h2>
+              <h2>Exposure</h2>
 <p>Adjusts the exposure of the image by using the curves function.</p>
 <h3>Arguments</h3>
 <p>Range is -100 to 100. Values &lt; 0 will decrease exposure while values &gt; 0 will increase exposure.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;exposure&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nv">p = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">adjust</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"exposure"</span>, (adjust) -&gt;
+  p = Math.abs(adjust) / <span class="number">100</span>
 
-  <span class="nv">ctrl1 = </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span> <span class="o">*</span> <span class="nx">p</span><span class="p">]</span>
-  <span class="nv">ctrl2 = </span><span class="p">[</span><span class="mi">255</span> <span class="o">-</span> <span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="nx">p</span><span class="p">),</span> <span class="mi">255</span><span class="p">]</span>
+  ctrl1 = [<span class="number">0</span>, <span class="number">255</span> * p]
+  ctrl2 = [<span class="number">255</span> - (<span class="number">255</span> * p), <span class="number">255</span>]
 
-  <span class="k">if</span> <span class="nx">adjust</span> <span class="o">&lt;</span> <span class="mi">0</span>
-    <span class="nv">ctrl1 = </span><span class="nx">ctrl1</span><span class="p">.</span><span class="nx">reverse</span><span class="p">()</span>
-    <span class="nv">ctrl2 = </span><span class="nx">ctrl2</span><span class="p">.</span><span class="nx">reverse</span><span class="p">()</span>
+  <span class="keyword">if</span> adjust &lt; <span class="number">0</span>
+    ctrl1 = ctrl1.reverse()
+    ctrl2 = ctrl2.reverse()
 
-  <span class="nx">@curves</span> <span class="s">&#39;rgb&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="nx">ctrl1</span><span class="p">,</span> <span class="nx">ctrl2</span><span class="p">,</span> <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>
-
-</pre></div></div>
+  <span class="property">@curves</span> <span class="string">'rgb'</span>, [<span class="number">0</span>, <span class="number">0</span>], ctrl1, ctrl2, [<span class="number">255</span>, <span class="number">255</span>]</pre></div></div>
             
         </li>
         

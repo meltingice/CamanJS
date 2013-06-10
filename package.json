@@ -45,7 +45,8 @@
   },
   "devDependencies": {
     "coffee-script": ">= 1.6.1",
-    "docco": "0.6.0",
+    "docco": "0.6.2",
+    "codo": "*",
     "jsmin": "*",
     "packer": "*",
     "mocha": "*",
@@ -56,6 +57,8 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee",
-    "examples": "./node_modules/servedir/bin/servedir"
+    "examples": "./node_modules/servedir/bin/servedir",
+    "docs": "codo",
+    "docs-server": "codo --server"
   }
 }

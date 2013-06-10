@@ -86,10 +86,10 @@ getPlugins = ->
 Tasks
 ###
 task 'docs', 'Generates documentation for the coffee files', ->
-  util.log 'Invoking docco on the CoffeeScript source files'
+  util.log 'Invoking docco on the source files'
   
-  files = coffeeFiles
-  files[i] = "src/#{files[i]}.coffee" for i in [0...files.length]
+  files = []
+  files[i] = "src/#{coffeeFiles[i]}.coffee" for i in [0...coffeeFiles.length]
 
   pluginFiles = fs.readdirSync pluginsFolder
   for plugin in pluginFiles
@@ -98,16 +98,25 @@ task 'docs', 'Generates documentation for the coffee files', ->
 
   exec "node_modules/docco/bin/docco -l parallel #{files.join(' ')}", (err, stdout, stderr) ->
     util.log err if err
-    util.log "Documentation built into docs/ folder."
-        
-task 'watch', 'Automatically recompile the CoffeeScript files when updated', ->
+    util.log "Documentation built into the docs/ folder."
+
+  util.log 'Invoking codo on the source files'
+  exec "node_modules/codo/bin/codo", (err, stdout, stderr) ->
+    util.log err if err
+    util.log "API reference built into the api/ folder."
+    console.log stdout
+
+option '-d', '--docs', 'Automatically recompile documentation (used with watch)'        
+task 'watch', 'Automatically recompile the CoffeeScript files when updated', (options) ->
   util.log "Watching for changes in #{csSrcDir}"
+  util.log "Automatically recompiling documentation!" if options.docs
   
   for jsFile in coffeeFiles then do (jsFile) ->
     fs.watchFile "#{csSrcDir}/#{jsFile}.coffee", (curr, prev) ->
       if +curr.mtime isnt +prev.mtime
         util.log "#{csSrcDir}/#{jsFile}.coffee updated"
         invoke 'build'
+        invoke 'docs' if options.docs
         
 task 'build', 'Compile and minify all CoffeeScript source files', ->
   finishListener 'js', -> invoke 'minify'

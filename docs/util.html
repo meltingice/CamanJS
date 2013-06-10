@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -177,7 +182,7 @@
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">slice = </span><span class="nb">Array</span><span class="o">::</span><span class="nx">slice</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>slice = Array::slice</pre></div></div>
             
         </li>
         
@@ -188,17 +193,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>DOM simplifier (no jQuery dependency)
+              <p>DOM simplifier (no jQuery dependency)
 NodeJS compatible</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">$ = </span><span class="nf">(sel, root = document) -&gt;</span>
-  <span class="k">return</span> <span class="nx">sel</span> <span class="k">if</span> <span class="k">typeof</span> <span class="nx">sel</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span> <span class="o">or</span> <span class="nx">exports</span><span class="o">?</span>
-  <span class="nx">root</span><span class="p">.</span><span class="nx">querySelector</span> <span class="nx">sel</span>
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">$</span></span> = (sel, root = document) -&gt;
+  <span class="keyword">return</span> sel <span class="keyword">if</span> <span class="keyword">typeof</span> sel <span class="keyword">is</span> <span class="string">"object"</span> <span class="keyword">or</span> exports?
+  root.querySelector sel
 
-<span class="k">class</span> <span class="nx">Util</span></pre></div></div>
+<span class="class"><span class="keyword">class</span> <span class="title">Util</span></span></pre></div></div>
             
         </li>
         
@@ -209,14 +213,13 @@ NodeJS compatible</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Unique value utility</p>
+              <p>Unique value utility</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@uniqid = </span><span class="nx">do</span> <span class="o">-&gt;</span>
-    <span class="nv">id = </span><span class="mi">0</span>
-    <span class="nv">get: </span><span class="o">-&gt;</span> <span class="nx">id</span><span class="o">++</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@uniqid</span> = <span class="keyword">do</span> -&gt;
+    id = <span class="number">0</span>
+    get: -&gt; id++</pre></div></div>
             
         </li>
         
@@ -227,20 +230,19 @@ NodeJS compatible</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<p>Helper function that extends one object with all the properies of other objects</p>
+              <p>Helper function that extends one object with all the properies of other objects</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@extend = </span><span class="nf">(obj) -&gt;</span>
-    <span class="nv">dest = </span><span class="nx">obj</span>
-    <span class="nv">src = </span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span> <span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@extend</span> = (obj) -&gt;
+    dest = obj
+    src = slice.call arguments, <span class="number">1</span>
 
-    <span class="k">for</span> <span class="nx">copy</span> <span class="k">in</span> <span class="nx">src</span>
-      <span class="k">for</span> <span class="nx">own</span> <span class="nx">prop</span> <span class="k">of</span> <span class="nx">copy</span>
-        <span class="nx">dest</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">copy</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span>
+    <span class="keyword">for</span> copy <span class="keyword">in</span> src
+      <span class="keyword">for</span> own prop <span class="keyword">of</span> copy
+        dest[prop] = copy[prop]
 
-    <span class="k">return</span> <span class="nx">dest</span></pre></div></div>
+    <span class="keyword">return</span> dest</pre></div></div>
             
         </li>
         
@@ -251,21 +253,20 @@ NodeJS compatible</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<p>In order to stay true to the latest spec, RGB values must be clamped between
+              <p>In order to stay true to the latest spec, RGB values must be clamped between
 0 and 255. If we don&#39;t do this, weird things happen.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@clampRGB = </span><span class="nf">(val) -&gt;</span>
-    <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="nx">val</span> <span class="o">&lt;</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="mi">255</span> <span class="k">if</span> <span class="nx">val</span> <span class="o">&gt;</span> <span class="mi">255</span>
-    <span class="nx">val</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@clampRGB</span> = (val) -&gt;
+    <span class="keyword">return</span> <span class="number">0</span> <span class="keyword">if</span> val &lt; <span class="number">0</span>
+    <span class="keyword">return</span> <span class="number">255</span> <span class="keyword">if</span> val &gt; <span class="number">255</span>
+    val
 
-  <span class="vi">@copyAttributes: </span><span class="nf">(from, to, opts={}) -&gt;</span>
-    <span class="k">for</span> <span class="nx">attr</span> <span class="k">in</span> <span class="nx">from</span><span class="p">.</span><span class="nx">attributes</span>
-      <span class="k">continue</span> <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">except</span><span class="o">?</span> <span class="o">and</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">nodeName</span> <span class="k">in</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">except</span>
-      <span class="nx">to</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">,</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">nodeValue</span><span class="p">)</span></pre></div></div>
+  <span class="property">@copyAttributes</span>: (from, to, opts={}) -&gt;
+    <span class="keyword">for</span> attr <span class="keyword">in</span> from.attributes
+      <span class="keyword">continue</span> <span class="keyword">if</span> opts.except? <span class="keyword">and</span> attr.nodeName <span class="keyword">in</span> opts.except
+      to.setAttribute(attr.nodeName, attr.nodeValue)</pre></div></div>
             
         </li>
         
@@ -276,16 +277,13 @@ NodeJS compatible</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
-<p>Support for browsers that don&#39;t know Uint8Array (such as IE9)</p>
+              <p>Support for browsers that don&#39;t know Uint8Array (such as IE9)</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@dataArray: </span><span class="nf">(length = 0) -&gt;</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nx">Uint8Array</span><span class="p">(</span><span class="nx">length</span><span class="p">)</span> <span class="k">if</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">NodeJS</span> <span class="o">or</span> <span class="nb">window</span><span class="p">.</span><span class="nx">Uint8Array</span><span class="o">?</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">length</span><span class="p">)</span>
-
-</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@dataArray</span>: (length = <span class="number">0</span>) -&gt;
+    <span class="keyword">return</span> <span class="keyword">new</span> Uint8Array(length) <span class="keyword">if</span> Caman.NodeJS <span class="keyword">or</span> window.Uint8Array?
+    <span class="keyword">return</span> <span class="keyword">new</span> Array(length)</pre></div></div>
             
         </li>
         

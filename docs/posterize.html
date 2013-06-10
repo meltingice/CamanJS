@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -176,17 +181,15 @@
               
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;posterize&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nv">numOfAreas = </span><span class="mi">256</span> <span class="o">/</span> <span class="nx">adjust</span>
-  <span class="nv">numOfValues = </span><span class="mi">255</span> <span class="o">/</span> <span class="p">(</span><span class="nx">adjust</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>Caman.Filter.register <span class="string">"posterize"</span>, (adjust) -&gt;
+  numOfAreas = <span class="number">256</span> / adjust
+  numOfValues = <span class="number">255</span> / (adjust - <span class="number">1</span>)
 
-  <span class="nx">@process</span> <span class="s">&quot;posterize&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nv">rgba.r = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="nx">numOfAreas</span><span class="p">)</span> <span class="o">*</span> <span class="nx">numOfValues</span>
-    <span class="nv">rgba.g = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span> <span class="o">/</span> <span class="nx">numOfAreas</span><span class="p">)</span> <span class="o">*</span> <span class="nx">numOfValues</span>
-    <span class="nv">rgba.b = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span> <span class="o">/</span> <span class="nx">numOfAreas</span><span class="p">)</span> <span class="o">*</span> <span class="nx">numOfValues</span>
-    <span class="nx">rgba</span>
-
-</pre></div></div>
+  <span class="property">@process</span> <span class="string">"posterize"</span>, (rgba) -&gt;
+    rgba.r = Math.floor Math.floor(rgba.r / numOfAreas) * numOfValues
+    rgba.g = Math.floor Math.floor(rgba.g / numOfAreas) * numOfValues
+    rgba.b = Math.floor Math.floor(rgba.b / numOfAreas) * numOfValues
+    rgba</pre></div></div>
             
         </li>
         

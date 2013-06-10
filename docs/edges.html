@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -176,28 +181,26 @@
               
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;edgeEnhance&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@processKernel</span> <span class="s">&quot;Edge Enhance&quot;</span><span class="p">,</span> <span class="p">[</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-  <span class="p">]</span>
+            <div class="content"><div class='highlight'><pre>Caman.Filter.register <span class="string">"edgeEnhance"</span>, -&gt;
+  <span class="property">@processKernel</span> <span class="string">"Edge Enhance"</span>, [
+    <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>,
+    -<span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>,
+    <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>
+  ]
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;edgeDetect&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@processKernel</span> <span class="s">&quot;Edge Detect&quot;</span><span class="p">,</span> <span class="p">[</span>
-    <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-    <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-    <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
-  <span class="p">]</span>
+Caman.Filter.register <span class="string">"edgeDetect"</span>, -&gt;
+  <span class="property">@processKernel</span> <span class="string">"Edge Detect"</span>, [
+    -<span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>,
+    -<span class="number">1</span>, <span class="number">8</span>, -<span class="number">1</span>,
+    -<span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>
+  ]
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;emboss&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@processKernel</span> <span class="s">&quot;Emboss&quot;</span><span class="p">,</span> <span class="p">[</span>
-    <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
-  <span class="p">]</span>
-
-</pre></div></div>
+Caman.Filter.register <span class="string">"emboss"</span>, -&gt;
+  <span class="property">@processKernel</span> <span class="string">"Emboss"</span>, [
+    -<span class="number">2</span>, -<span class="number">1</span>, <span class="number">0</span>,
+    -<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>,
+    <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>
+  ]</pre></div></div>
             
         </li>
         

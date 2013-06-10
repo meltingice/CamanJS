@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -178,7 +183,7 @@ canvas.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Caman</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;crop&quot;</span><span class="p">,</span> <span class="nf">(width, height, x = 0, y = 0) -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Caman.Plugin.register <span class="string">"crop"</span>, (width, height, x = <span class="number">0</span>, y = <span class="number">0</span>) -&gt;</pre></div></div>
             
         </li>
         
@@ -189,21 +194,20 @@ canvas.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>Create our new canvas element</p>
+              <p>Create our new canvas element</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="k">if</span> <span class="nx">exports</span><span class="o">?</span>
-    <span class="nv">canvas = </span><span class="k">new</span> <span class="nx">Canvas</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span>
-  <span class="k">else</span>
-    <span class="nv">canvas = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s">&#39;canvas&#39;</span>
-    <span class="nx">Util</span><span class="p">.</span><span class="nx">copyAttributes</span> <span class="nx">@canvas</span><span class="p">,</span> <span class="nx">canvas</span>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> exports?
+    canvas = <span class="keyword">new</span> Canvas width, height
+  <span class="keyword">else</span>
+    canvas = document.createElement <span class="string">'canvas'</span>
+    Util.copyAttributes <span class="property">@canvas</span>, canvas
 
-    <span class="nv">canvas.width = </span><span class="nx">width</span>
-    <span class="nv">canvas.height = </span><span class="nx">height</span>
+    canvas.width = width
+    canvas.height = height
 
-  <span class="nv">ctx = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span> <span class="s">&#39;2d&#39;</span></pre></div></div>
+  ctx = canvas.getContext <span class="string">'2d'</span></pre></div></div>
             
         </li>
         
@@ -214,14 +218,13 @@ canvas.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Perform the cropping by drawing to the new canvas</p>
+              <p>Perform the cropping by drawing to the new canvas</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nx">ctx</span><span class="p">.</span><span class="nx">drawImage</span> <span class="nx">@canvas</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span>
+            <div class="content"><div class='highlight'><pre>  ctx.drawImage <span class="property">@canvas</span>, x, y, width, height, <span class="number">0</span>, <span class="number">0</span>, width, height
 
-  <span class="vi">@cropCoordinates = </span><span class="nv">x: </span><span class="nx">x</span><span class="p">,</span> <span class="nv">y: </span><span class="nx">y</span></pre></div></div>
+  <span class="property">@cropCoordinates</span> = x: x, y: y</pre></div></div>
             
         </li>
         
@@ -232,13 +235,12 @@ canvas.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<p>Update all of the references</p>
+              <p>Update all of the references</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@cropped = </span><span class="kc">true</span>
-  <span class="nx">@replaceCanvas</span> <span class="nx">canvas</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@cropped</span> = <span class="literal">true</span>
+  <span class="property">@replaceCanvas</span> canvas</pre></div></div>
             
         </li>
         
@@ -249,12 +251,11 @@ canvas.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<p>Resize the canvas and the image to a new size</p>
+              <p>Resize the canvas and the image to a new size</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Caman</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;resize&quot;</span><span class="p">,</span> <span class="nf">(newDims = null) -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Caman.Plugin.register <span class="string">"resize"</span>, (newDims = <span class="literal">null</span>) -&gt;</pre></div></div>
             
         </li>
         
@@ -265,16 +266,15 @@ canvas.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
-<p>Calculate new size</p>
+              <p>Calculate new size</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="k">if</span> <span class="nx">newDims</span> <span class="o">is</span> <span class="kc">null</span> <span class="o">or</span> <span class="p">(</span><span class="o">!</span><span class="nx">newDims</span><span class="p">.</span><span class="nx">width</span><span class="o">?</span> <span class="o">and</span> <span class="o">!</span><span class="nx">newDims</span><span class="p">.</span><span class="nx">height</span><span class="o">?</span><span class="p">)</span>
-    <span class="nx">Log</span><span class="p">.</span><span class="nx">error</span> <span class="s">&quot;Invalid or missing dimensions given for resize&quot;</span>
-    <span class="k">return</span>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> newDims <span class="keyword">is</span> <span class="literal">null</span> <span class="keyword">or</span> (!newDims.width? <span class="keyword">and</span> !newDims.height?)
+    Log.error <span class="string">"Invalid or missing dimensions given for resize"</span>
+    <span class="keyword">return</span>
 
-  <span class="k">if</span> <span class="o">not</span> <span class="nx">newDims</span><span class="p">.</span><span class="nx">width</span><span class="o">?</span></pre></div></div>
+  <span class="keyword">if</span> <span class="keyword">not</span> newDims.width?</pre></div></div>
             
         </li>
         
@@ -285,13 +285,12 @@ canvas.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
-<p>Calculate width</p>
+              <p>Calculate width</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">newDims.width = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="nx">newDims</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span>
-  <span class="k">else</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">newDims</span><span class="p">.</span><span class="nx">height</span><span class="o">?</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    newDims.width = <span class="property">@canvas</span>.width * newDims.height / <span class="property">@canvas</span>.height
+  <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">not</span> newDims.height?</pre></div></div>
             
         </li>
         
@@ -302,40 +301,37 @@ canvas.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              
-<p>Calculate height</p>
+              <p>Calculate height</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">newDims.height = </span><span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">*</span> <span class="nx">newDims</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span>
+            <div class="content"><div class='highlight'><pre>    newDims.height = <span class="property">@canvas</span>.height * newDims.width / <span class="property">@canvas</span>.width
 
-  <span class="k">if</span> <span class="nx">exports</span><span class="o">?</span>
-    <span class="nv">canvas = </span><span class="k">new</span> <span class="nx">Canvas</span> <span class="nx">newDims</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">newDims</span><span class="p">.</span><span class="nx">height</span>
-  <span class="k">else</span>
-    <span class="nv">canvas = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s">&#39;canvas&#39;</span>
-    <span class="nx">Util</span><span class="p">.</span><span class="nx">copyAttributes</span> <span class="nx">@canvas</span><span class="p">,</span> <span class="nx">canvas</span>
+  <span class="keyword">if</span> exports?
+    canvas = <span class="keyword">new</span> Canvas newDims.width, newDims.height
+  <span class="keyword">else</span>
+    canvas = document.createElement <span class="string">'canvas'</span>
+    Util.copyAttributes <span class="property">@canvas</span>, canvas
 
-    <span class="nv">canvas.width = </span><span class="nx">newDims</span><span class="p">.</span><span class="nx">width</span>
-    <span class="nv">canvas.height = </span><span class="nx">newDims</span><span class="p">.</span><span class="nx">height</span>
+    canvas.width = newDims.width
+    canvas.height = newDims.height
 
-  <span class="nv">ctx = </span><span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span> <span class="s">&#39;2d&#39;</span>
+  ctx = canvas.getContext <span class="string">'2d'</span>
 
-  <span class="nx">ctx</span><span class="p">.</span><span class="nx">drawImage</span> <span class="nx">@canvas</span><span class="p">,</span> 
-    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> 
-    <span class="nx">@canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">@canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span> 
-    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> 
-    <span class="nx">newDims</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">newDims</span><span class="p">.</span><span class="nx">height</span>
+  ctx.drawImage <span class="property">@canvas</span>, 
+    <span class="number">0</span>, <span class="number">0</span>, 
+    <span class="property">@canvas</span>.width, <span class="property">@canvas</span>.height, 
+    <span class="number">0</span>, <span class="number">0</span>, 
+    newDims.width, newDims.height
 
-  <span class="vi">@resized = </span><span class="kc">true</span>
-  <span class="nx">@replaceCanvas</span> <span class="nx">canvas</span>
+  <span class="property">@resized</span> = <span class="literal">true</span>
+  <span class="property">@replaceCanvas</span> canvas
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;crop&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@processPlugin</span> <span class="s">&quot;crop&quot;</span><span class="p">,</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+Caman.Filter.register <span class="string">"crop"</span>, -&gt;
+  <span class="property">@processPlugin</span> <span class="string">"crop"</span>, Array.prototype.slice.call(arguments, <span class="number">0</span>)
 
-<span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;resize&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="nx">@processPlugin</span> <span class="s">&quot;resize&quot;</span><span class="p">,</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
-</pre></div></div>
+Caman.Filter.register <span class="string">"resize"</span>, -&gt;
+  <span class="property">@processPlugin</span> <span class="string">"resize"</span>, Array.prototype.slice.call(arguments, <span class="number">0</span>)</pre></div></div>
             
         </li>
         

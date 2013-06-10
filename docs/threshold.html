@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -176,22 +181,20 @@
               
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Caman</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;threshold&quot;</span><span class="p">,</span> <span class="nf">(adjust) -&gt;</span>
-  <span class="nx">@process</span> <span class="s">&quot;threshold&quot;</span><span class="p">,</span> <span class="nf">(rgba) -&gt;</span>
-    <span class="nv">luminance = </span><span class="p">(</span><span class="mf">0.2126</span> <span class="o">*</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.7152</span> <span class="o">*</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.0722</span> <span class="o">*</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>Caman.Filter.register <span class="string">"threshold"</span>, (adjust) -&gt;
+  <span class="property">@process</span> <span class="string">"threshold"</span>, (rgba) -&gt;
+    luminance = (<span class="number">0.2126</span> * rgba.r) + (<span class="number">0.7152</span> * rgba.g) + (<span class="number">0.0722</span> * rgba.b)
 
-    <span class="k">if</span> <span class="nx">luminance</span> <span class="o">&lt;</span> <span class="nx">adjust</span>
-      <span class="nv">rgba.r = </span><span class="mi">0</span>
-      <span class="nv">rgba.g = </span><span class="mi">0</span>
-      <span class="nv">rgba.b = </span><span class="mi">0</span>
-    <span class="k">else</span>
-      <span class="nv">rgba.r = </span><span class="mi">255</span>
-      <span class="nv">rgba.g = </span><span class="mi">255</span>
-      <span class="nv">rgba.b = </span><span class="mi">255</span>
+    <span class="keyword">if</span> luminance &lt; adjust
+      rgba.r = <span class="number">0</span>
+      rgba.g = <span class="number">0</span>
+      rgba.b = <span class="number">0</span>
+    <span class="keyword">else</span>
+      rgba.r = <span class="number">255</span>
+      rgba.g = <span class="number">255</span>
+      rgba.b = <span class="number">255</span>
     
-    <span class="nx">rgba</span>
-
-</pre></div></div>
+    rgba</pre></div></div>
             
         </li>
         

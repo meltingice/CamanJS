@@ -1,6 +1,13 @@
+###
+Various image analysis methods
+###
 class Analyze
   constructor: (@c) ->
 
+  ###
+  Calculates the number of occurances of each color value throughout the image.
+  @return {Object} Hash of RGB channels and the occurance of each value
+  ###
   calculateLevels: ->
     levels =
       r: {}

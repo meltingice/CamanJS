@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -177,10 +182,10 @@
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;normal&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">r: </span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span>
-  <span class="nv">g: </span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span>
-  <span class="nv">b: </span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Blender.register <span class="string">"normal"</span>, (rgbaLayer, rgbaParent) -&gt;
+  r: rgbaLayer.r
+  g: rgbaLayer.g
+  b: rgbaLayer.b</pre></div></div>
             
         </li>
         
@@ -191,87 +196,84 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>Apply the child to the parent by multiplying the color values. This generally creates contrast.</p>
+              <p>Apply the child to the parent by multiplying the color values. This generally creates contrast.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;multiply&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">r: </span><span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
-  <span class="nv">g: </span><span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span> <span class="o">*</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
-  <span class="nv">b: </span><span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span> <span class="o">*</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
+            <div class="content"><div class='highlight'><pre>Blender.register <span class="string">"multiply"</span>, (rgbaLayer, rgbaParent) -&gt;
+  r: (rgbaLayer.r * rgbaParent.r) / <span class="number">255</span>
+  g: (rgbaLayer.g * rgbaParent.g) / <span class="number">255</span>
+  b: (rgbaLayer.b * rgbaParent.b) / <span class="number">255</span>
 
-<span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;screen&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">r: </span><span class="mi">255</span> <span class="o">-</span> <span class="p">(((</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span><span class="p">))</span> <span class="o">/</span> <span class="mi">255</span><span class="p">)</span>
-  <span class="nv">g: </span><span class="mi">255</span> <span class="o">-</span> <span class="p">(((</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span><span class="p">))</span> <span class="o">/</span> <span class="mi">255</span><span class="p">)</span>
-  <span class="nv">b: </span><span class="mi">255</span> <span class="o">-</span> <span class="p">(((</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span><span class="p">))</span> <span class="o">/</span> <span class="mi">255</span><span class="p">)</span>
+Blender.register <span class="string">"screen"</span>, (rgbaLayer, rgbaParent) -&gt;
+  r: <span class="number">255</span> - (((<span class="number">255</span> - rgbaLayer.r) * (<span class="number">255</span> - rgbaParent.r)) / <span class="number">255</span>)
+  g: <span class="number">255</span> - (((<span class="number">255</span> - rgbaLayer.g) * (<span class="number">255</span> - rgbaParent.g)) / <span class="number">255</span>)
+  b: <span class="number">255</span> - (((<span class="number">255</span> - rgbaLayer.b) * (<span class="number">255</span> - rgbaParent.b)) / <span class="number">255</span>)
   
 
-<span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;overlay&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">result = </span><span class="p">{}</span>
-  <span class="nv">result.r = </span>
-    <span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span> <span class="o">&gt;</span> <span class="mi">128</span>
-      <span class="mi">255</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
-    <span class="k">else</span> <span class="p">(</span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
+Blender.register <span class="string">"overlay"</span>, (rgbaLayer, rgbaParent) -&gt;
+  result = {}
+  result.r = 
+    <span class="keyword">if</span> rgbaParent.r &gt; <span class="number">128</span>
+      <span class="number">255</span> - <span class="number">2</span> * (<span class="number">255</span> - rgbaLayer.r) * (<span class="number">255</span> - rgbaParent.r) / <span class="number">255</span>
+    <span class="keyword">else</span> (rgbaParent.r * rgbaLayer.r * <span class="number">2</span>) / <span class="number">255</span>
 
-  <span class="nv">result.g =</span>
-    <span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span> <span class="o">&gt;</span> <span class="mi">128</span>
-      <span class="mi">255</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
-    <span class="k">else</span> <span class="p">(</span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span> <span class="o">*</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
+  result.g =
+    <span class="keyword">if</span> rgbaParent.g &gt; <span class="number">128</span>
+      <span class="number">255</span> - <span class="number">2</span> * (<span class="number">255</span> - rgbaLayer.g) * (<span class="number">255</span> - rgbaParent.g) / <span class="number">255</span>
+    <span class="keyword">else</span> (rgbaParent.g * rgbaLayer.g * <span class="number">2</span>) / <span class="number">255</span>
 
-  <span class="nv">result.b =</span>
-    <span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span> <span class="o">&gt;</span> <span class="mi">128</span>
-      <span class="mi">255</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
-    <span class="k">else</span> <span class="p">(</span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span> <span class="o">*</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
+  result.b =
+    <span class="keyword">if</span> rgbaParent.b &gt; <span class="number">128</span>
+      <span class="number">255</span> - <span class="number">2</span> * (<span class="number">255</span> - rgbaLayer.b) * (<span class="number">255</span> - rgbaParent.b) / <span class="number">255</span>
+    <span class="keyword">else</span> (rgbaParent.b * rgbaLayer.b * <span class="number">2</span>) / <span class="number">255</span>
 
-  <span class="nx">result</span>
+  result
 
-<span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;difference&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">r: </span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span>
-  <span class="nv">g: </span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span>
-  <span class="nv">b: </span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span>
+Blender.register <span class="string">"difference"</span>, (rgbaLayer, rgbaParent) -&gt;
+  r: rgbaLayer.r - rgbaParent.r
+  g: rgbaLayer.g - rgbaParent.g
+  b: rgbaLayer.b - rgbaParent.b
 
-<span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;addition&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">r: </span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span> <span class="o">+</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span>
-  <span class="nv">g: </span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span> <span class="o">+</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span>
-  <span class="nv">b: </span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span> <span class="o">+</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span>
+Blender.register <span class="string">"addition"</span>, (rgbaLayer, rgbaParent) -&gt;
+  r: rgbaParent.r + rgbaLayer.r
+  g: rgbaParent.g + rgbaLayer.g
+  b: rgbaParent.b + rgbaLayer.b
 
-<span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;exclusion&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">r: </span><span class="mi">128</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span> <span class="o">-</span> <span class="mi">128</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span> <span class="o">-</span> <span class="mi">128</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
-  <span class="nv">g: </span><span class="mi">128</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span> <span class="o">-</span> <span class="mi">128</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span> <span class="o">-</span> <span class="mi">128</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
-  <span class="nv">b: </span><span class="mi">128</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span> <span class="o">-</span> <span class="mi">128</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span> <span class="o">-</span> <span class="mi">128</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span>
+Blender.register <span class="string">"exclusion"</span>, (rgbaLayer, rgbaParent) -&gt;
+  r: <span class="number">128</span> - <span class="number">2</span> * (rgbaParent.r - <span class="number">128</span>) * (rgbaLayer.r - <span class="number">128</span>) / <span class="number">255</span>
+  g: <span class="number">128</span> - <span class="number">2</span> * (rgbaParent.g - <span class="number">128</span>) * (rgbaLayer.g - <span class="number">128</span>) / <span class="number">255</span>
+  b: <span class="number">128</span> - <span class="number">2</span> * (rgbaParent.b - <span class="number">128</span>) * (rgbaLayer.b - <span class="number">128</span>) / <span class="number">255</span>
 
-<span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;softLight&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">result = </span><span class="p">{}</span>
+Blender.register <span class="string">"softLight"</span>, (rgbaLayer, rgbaParent) -&gt;
+  result = {}
 
-  <span class="nv">result.r =</span>
-    <span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span> <span class="o">&gt;</span> <span class="mi">128</span>
-      <span class="mi">255</span> <span class="o">-</span> <span class="p">((</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span> <span class="o">-</span> <span class="mi">128</span><span class="p">)))</span> <span class="o">/</span> <span class="mi">255</span>
-    <span class="k">else</span> <span class="p">(</span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span> <span class="o">+</span> <span class="mi">128</span><span class="p">))</span> <span class="o">/</span> <span class="mi">255</span>
+  result.r =
+    <span class="keyword">if</span> rgbaParent.r &gt; <span class="number">128</span>
+      <span class="number">255</span> - ((<span class="number">255</span> - rgbaParent.r) * (<span class="number">255</span> - (rgbaLayer.r - <span class="number">128</span>))) / <span class="number">255</span>
+    <span class="keyword">else</span> (rgbaParent.r * (rgbaLayer.r + <span class="number">128</span>)) / <span class="number">255</span>
 
-  <span class="nv">result.g =</span>
-    <span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span> <span class="o">&gt;</span> <span class="mi">128</span>
-      <span class="mi">255</span> <span class="o">-</span> <span class="p">((</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span> <span class="o">-</span> <span class="mi">128</span><span class="p">)))</span> <span class="o">/</span> <span class="mi">255</span>
-    <span class="k">else</span> <span class="p">(</span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span> <span class="o">*</span> <span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span> <span class="o">+</span> <span class="mi">128</span><span class="p">))</span> <span class="o">/</span> <span class="mi">255</span>
+  result.g =
+    <span class="keyword">if</span> rgbaParent.g &gt; <span class="number">128</span>
+      <span class="number">255</span> - ((<span class="number">255</span> - rgbaParent.g) * (<span class="number">255</span> - (rgbaLayer.g - <span class="number">128</span>))) / <span class="number">255</span>
+    <span class="keyword">else</span> (rgbaParent.g * (rgbaLayer.g + <span class="number">128</span>)) / <span class="number">255</span>
 
-  <span class="nv">result.b =</span>
-    <span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span> <span class="o">&gt;</span> <span class="mi">128</span>
-      <span class="mi">255</span> <span class="o">-</span> <span class="p">((</span><span class="mi">255</span> <span class="o">-</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span> <span class="o">-</span> <span class="mi">128</span><span class="p">)))</span> <span class="o">/</span> <span class="mi">255</span>
-    <span class="k">else</span> <span class="p">(</span><span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span> <span class="o">*</span> <span class="p">(</span><span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span> <span class="o">+</span> <span class="mi">128</span><span class="p">))</span> <span class="o">/</span> <span class="mi">255</span>
+  result.b =
+    <span class="keyword">if</span> rgbaParent.b &gt; <span class="number">128</span>
+      <span class="number">255</span> - ((<span class="number">255</span> - rgbaParent.b) * (<span class="number">255</span> - (rgbaLayer.b - <span class="number">128</span>))) / <span class="number">255</span>
+    <span class="keyword">else</span> (rgbaParent.b * (rgbaLayer.b + <span class="number">128</span>)) / <span class="number">255</span>
 
-  <span class="nx">result</span>
+  result
 
-<span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;lighten&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">r: </span><span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span> <span class="o">&gt;</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span> <span class="k">then</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span> <span class="k">else</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span>
-  <span class="nv">g: </span><span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span> <span class="o">&gt;</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span> <span class="k">then</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span> <span class="k">else</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span>
-  <span class="nv">b: </span><span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span> <span class="o">&gt;</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span> <span class="k">then</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span> <span class="k">else</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span>
+Blender.register <span class="string">"lighten"</span>, (rgbaLayer, rgbaParent) -&gt;
+  r: <span class="keyword">if</span> rgbaParent.r &gt; rgbaLayer.r <span class="keyword">then</span> rgbaParent.r <span class="keyword">else</span> rgbaLayer.r
+  g: <span class="keyword">if</span> rgbaParent.g &gt; rgbaLayer.g <span class="keyword">then</span> rgbaParent.g <span class="keyword">else</span> rgbaLayer.g
+  b: <span class="keyword">if</span> rgbaParent.b &gt; rgbaLayer.b <span class="keyword">then</span> rgbaParent.b <span class="keyword">else</span> rgbaLayer.b
 
-<span class="nx">Blender</span><span class="p">.</span><span class="nx">register</span> <span class="s">&quot;darken&quot;</span><span class="p">,</span> <span class="nf">(rgbaLayer, rgbaParent) -&gt;</span>
-  <span class="nv">r: </span><span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span> <span class="o">&gt;</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span> <span class="k">then</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">r</span> <span class="k">else</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">r</span>
-  <span class="nv">g: </span><span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span> <span class="o">&gt;</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span> <span class="k">then</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">g</span> <span class="k">else</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">g</span>
-  <span class="nv">b: </span><span class="k">if</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span> <span class="o">&gt;</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span> <span class="k">then</span> <span class="nx">rgbaLayer</span><span class="p">.</span><span class="nx">b</span> <span class="k">else</span> <span class="nx">rgbaParent</span><span class="p">.</span><span class="nx">b</span>
-
-</pre></div></div>
+Blender.register <span class="string">"darken"</span>, (rgbaLayer, rgbaParent) -&gt;
+  r: <span class="keyword">if</span> rgbaParent.r &gt; rgbaLayer.r <span class="keyword">then</span> rgbaLayer.r <span class="keyword">else</span> rgbaParent.r
+  g: <span class="keyword">if</span> rgbaParent.g &gt; rgbaLayer.g <span class="keyword">then</span> rgbaLayer.g <span class="keyword">else</span> rgbaParent.g
+  b: <span class="keyword">if</span> rgbaParent.b &gt; rgbaLayer.b <span class="keyword">then</span> rgbaLayer.b <span class="keyword">else</span> rgbaParent.b</pre></div></div>
             
         </li>
         

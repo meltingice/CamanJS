@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -177,7 +182,7 @@
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">Caman.Calculate = </span><span class="k">class</span> <span class="nx">Calculate</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Caman.Calculate = <span class="class"><span class="keyword">class</span> <span class="title">Calculate</span></span></pre></div></div>
             
         </li>
         
@@ -188,13 +193,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>Calculates the distance between two points</p>
+              <p>Calculates the distance between two points</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@distance: </span><span class="nf">(x1, y1, x2, y2) -&gt;</span>
-    <span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">x2</span> <span class="o">-</span> <span class="nx">x1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">y2</span> <span class="o">-</span> <span class="nx">y1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@distance</span>: (x1, y1, x2, y2) -&gt;
+    Math.sqrt Math.pow(x2 - x1, <span class="number">2</span>) + Math.pow(y2 - y1, <span class="number">2</span>)</pre></div></div>
             
         </li>
         
@@ -205,15 +209,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Generates a pseudorandom number that lies within the max - mix range. The number can be either 
+              <p>Generates a pseudorandom number that lies within the max - mix range. The number can be either 
 an integer or a float depending on what the user specifies.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@randomRange: </span><span class="nf">(min, max, getFloat = false) -&gt;</span>
-    <span class="nv">rand = </span><span class="nx">min</span> <span class="o">+</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="nx">max</span> <span class="o">-</span> <span class="nx">min</span><span class="p">))</span>
-    <span class="k">return</span> <span class="k">if</span> <span class="nx">getFloat</span> <span class="k">then</span> <span class="nx">rand</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="nx">getFloat</span><span class="p">)</span> <span class="k">else</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">rand</span><span class="p">)</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@randomRange</span>: (min, max, getFloat = <span class="literal">false</span>) -&gt;
+    rand = min + (Math.random() * (max - min))
+    <span class="keyword">return</span> <span class="keyword">if</span> getFloat <span class="keyword">then</span> rand.toFixed(getFloat) <span class="keyword">else</span> Math.round(rand)</pre></div></div>
             
         </li>
         
@@ -224,12 +227,11 @@ an integer or a float depending on what the user specifies.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<p>Calculates the luminance of a single pixel using a special weighted sum</p>
+              <p>Calculates the luminance of a single pixel using a special weighted sum</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@luminance: </span><span class="nf">(rgba) -&gt;</span> <span class="p">(</span><span class="mf">0.299</span> <span class="o">*</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">r</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.587</span> <span class="o">*</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">g</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.114</span> <span class="o">*</span> <span class="nx">rgba</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@luminance</span>: (rgba) -&gt; (<span class="number">0.299</span> * rgba.r) + (<span class="number">0.587</span> * rgba.g) + (<span class="number">0.114</span> * rgba.b)</pre></div></div>
             
         </li>
         
@@ -240,8 +242,7 @@ an integer or a float depending on what the user specifies.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<p>Generates a bezier curve given a start and end point, with two control points in between.
+              <p>Generates a bezier curve given a start and end point, with two control points in between.
 Can also optionally bound the y values between a low and high bound.</p>
 <p>This is different than most bezier curve functions because it attempts to construct it in such 
 a way that we can use it more like a simple input -&gt; output system, or a one-to-one function. 
@@ -253,16 +254,16 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@bezier: </span><span class="nf">(start, ctrl1, ctrl2, end, lowBound, highBound) -&gt;</span>
-    <span class="nv">x0 = </span><span class="nx">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="nv">y0 = </span><span class="nx">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="nv">x1 = </span><span class="nx">ctrl1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="nv">y1 = </span><span class="nx">ctrl1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="nv">x2 = </span><span class="nx">ctrl2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="nv">y2 = </span><span class="nx">ctrl2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="nv">x3 = </span><span class="nx">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="nv">y3 = </span><span class="nx">end</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="nv">bezier = </span><span class="p">{}</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@bezier</span>: (start, ctrl1, ctrl2, end, lowBound, highBound) -&gt;
+    x0 = start[<span class="number">0</span>]
+    y0 = start[<span class="number">1</span>]
+    x1 = ctrl1[<span class="number">0</span>]
+    y1 = ctrl1[<span class="number">1</span>]
+    x2 = ctrl2[<span class="number">0</span>]
+    y2 = ctrl2[<span class="number">1</span>]
+    x3 = end[<span class="number">0</span>]
+    y3 = end[<span class="number">1</span>]
+    bezier = {}</pre></div></div>
             
         </li>
         
@@ -273,18 +274,17 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
-<p>Calculate our X/Y coefficients</p>
+              <p>Calculate our X/Y coefficients</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">Cx = </span><span class="nb">parseInt</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="nx">x1</span> <span class="o">-</span> <span class="nx">x0</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="nv">Bx = </span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="nx">x2</span> <span class="o">-</span> <span class="nx">x1</span><span class="p">)</span> <span class="o">-</span> <span class="nx">Cx</span>
-    <span class="nv">Ax = </span><span class="nx">x3</span> <span class="o">-</span> <span class="nx">x0</span> <span class="o">-</span> <span class="nx">Cx</span> <span class="o">-</span> <span class="nx">Bx</span>
+            <div class="content"><div class='highlight'><pre>    Cx = parseInt(<span class="number">3</span> * (x1 - x0), <span class="number">10</span>)
+    Bx = <span class="number">3</span> * (x2 - x1) - Cx
+    Ax = x3 - x0 - Cx - Bx
 
-    <span class="nv">Cy = </span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="nx">y1</span> <span class="o">-</span> <span class="nx">y0</span><span class="p">)</span>
-    <span class="nv">By = </span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="nx">y2</span> <span class="o">-</span> <span class="nx">y1</span><span class="p">)</span> <span class="o">-</span> <span class="nx">Cy</span>
-    <span class="nv">Ay = </span><span class="nx">y3</span> <span class="o">-</span> <span class="nx">y0</span> <span class="o">-</span> <span class="nx">Cy</span> <span class="o">-</span> <span class="nx">By</span></pre></div></div>
+    Cy = <span class="number">3</span> * (y1 - y0)
+    By = <span class="number">3</span> * (y2 - y1) - Cy
+    Ay = y3 - y0 - Cy - By</pre></div></div>
             
         </li>
         
@@ -295,8 +295,7 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
-<p>1000 is actually arbitrary. We need to make sure we do enough
+              <p>1000 is actually arbitrary. We need to make sure we do enough
 calculations between 0 and 255 that, in even the more extreme
 circumstances, we calculate as many values as possible. In the event
 that an X value is skipped, it will be found later on using linear
@@ -304,18 +303,18 @@ interpolation.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">...</span><span class="mi">1000</span><span class="p">]</span>
-      <span class="nv">t = </span><span class="nx">i</span> <span class="o">/</span> <span class="mi">1000</span>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>.<span class="number">.1000</span>]
+      t = i / <span class="number">1000</span>
 
-      <span class="nv">curveX = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span> <span class="p">(</span><span class="nx">Ax</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">Bx</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">Cx</span> <span class="o">*</span> <span class="nx">t</span><span class="p">)</span> <span class="o">+</span> <span class="nx">x0</span>
-      <span class="nv">curveY = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span> <span class="p">(</span><span class="nx">Ay</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">By</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="nx">Cy</span> <span class="o">*</span> <span class="nx">t</span><span class="p">)</span> <span class="o">+</span> <span class="nx">y0</span>
+      curveX = Math.round (Ax * Math.pow(t, <span class="number">3</span>)) + (Bx * Math.pow(t, <span class="number">2</span>)) + (Cx * t) + x0
+      curveY = Math.round (Ay * Math.pow(t, <span class="number">3</span>)) + (By * Math.pow(t, <span class="number">2</span>)) + (Cy * t) + y0
 
-      <span class="k">if</span> <span class="nx">lowBound</span> <span class="o">and</span> <span class="nx">curveY</span> <span class="o">&lt;</span> <span class="nx">lowBound</span>
-        <span class="nv">curveY = </span><span class="nx">lowBound</span>
-      <span class="k">else</span> <span class="k">if</span> <span class="nx">highBound</span> <span class="o">and</span> <span class="nx">curveY</span> <span class="o">&gt;</span> <span class="nx">highBound</span>
-        <span class="nv">curveY = </span><span class="nx">highBound</span>
+      <span class="keyword">if</span> lowBound <span class="keyword">and</span> curveY &lt; lowBound
+        curveY = lowBound
+      <span class="keyword">else</span> <span class="keyword">if</span> highBound <span class="keyword">and</span> curveY &gt; highBound
+        curveY = highBound
 
-      <span class="nx">bezier</span><span class="p">[</span><span class="nx">curveX</span><span class="p">]</span> <span class="o">=</span> <span class="nx">curveY</span></pre></div></div>
+      bezier[curveX] = curveY</pre></div></div>
             
         </li>
         
@@ -326,16 +325,15 @@ interpolation.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              
-<p>Do a search for missing values in the bezier array and use linear
+              <p>Do a search for missing values in the bezier array and use linear
 interpolation to approximate their values</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="k">if</span> <span class="nx">bezier</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
-      <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="k">if</span> <span class="o">not</span> <span class="nx">bezier</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="o">?</span>
-          <span class="nv">leftCoord = </span><span class="p">[</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">bezier</span><span class="p">[</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> bezier.length &lt; end[<span class="number">0</span>] + <span class="number">1</span>
+      <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>.end[<span class="number">0</span>]]
+        <span class="keyword">if</span> <span class="keyword">not</span> bezier[i]?
+          leftCoord = [i-<span class="number">1</span>, bezier[i-<span class="number">1</span>]]</pre></div></div>
             
         </li>
         
@@ -346,20 +344,19 @@ interpolation to approximate their values</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              
-<p>Find the first value to the right. Ideally this loop will break
+              <p>Find the first value to the right. Ideally this loop will break
 very quickly.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>          <span class="k">for</span> <span class="nx">j</span> <span class="k">in</span> <span class="p">[</span><span class="nx">i</span><span class="p">..</span><span class="nx">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-            <span class="k">if</span> <span class="nx">bezier</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span><span class="o">?</span>
-              <span class="nv">rightCoord = </span><span class="p">[</span><span class="nx">j</span><span class="p">,</span> <span class="nx">bezier</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span>
-              <span class="k">break</span>
+            <div class="content"><div class='highlight'><pre>          <span class="keyword">for</span> j <span class="keyword">in</span> [i..end[<span class="number">0</span>]]
+            <span class="keyword">if</span> bezier[j]?
+              rightCoord = [j, bezier[j]]
+              <span class="keyword">break</span>
 
-          <span class="nx">bezier</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">leftCoord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> 
-            <span class="p">((</span><span class="nx">rightCoord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nx">leftCoord</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="nx">rightCoord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nx">leftCoord</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">*</span> 
-            <span class="p">(</span><span class="nx">i</span> <span class="o">-</span> <span class="nx">leftCoord</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></pre></div></div>
+          bezier[i] = leftCoord[<span class="number">1</span>] + 
+            ((rightCoord[<span class="number">1</span>] - leftCoord[<span class="number">1</span>]) / (rightCoord[<span class="number">0</span>] - leftCoord[<span class="number">0</span>])) * 
+            (i - leftCoord[<span class="number">0</span>])</pre></div></div>
             
         </li>
         
@@ -370,17 +367,13 @@ very quickly.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              
-<p>Edge case</p>
+              <p>Edge case</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nx">bezier</span><span class="p">[</span><span class="nx">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">bezier</span><span class="p">[</span><span class="nx">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">bezier</span><span class="p">[</span><span class="nx">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">?</span>
+            <div class="content"><div class='highlight'><pre>    bezier[end[<span class="number">0</span>]] = bezier[end[<span class="number">0</span>] - <span class="number">1</span>] <span class="keyword">if</span> <span class="keyword">not</span> bezier[end[<span class="number">0</span>]]?
     
-    <span class="k">return</span> <span class="nx">bezier</span>
-      
-
-</pre></div></div>
+    <span class="keyword">return</span> bezier</pre></div></div>
             
         </li>
         

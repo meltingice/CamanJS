@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>analyze.coffee</title>
+  <title>#</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -159,31 +164,19 @@
     
     <ul class="sections">
         
-          <li id="title">
-              <div class="annotation">
-                  <h1>analyze.coffee</h1>
-              </div>
-          </li>
-        
         
         
         <li id="section-1">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <h1>#</h1>
+
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="k">class</span> <span class="nx">Analyze</span>
-  <span class="nv">constructor: </span><span class="nf">(@c) -&gt;</span>
-
-  <span class="nv">calculateLevels: </span><span class="o">-&gt;</span>
-    <span class="nv">levels =</span>
-      <span class="nv">r: </span><span class="p">{}</span>
-      <span class="nv">g: </span><span class="p">{}</span>
-      <span class="nv">b: </span><span class="p">{}</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Various image analysis methods</pre></div></div>
             
         </li>
         
@@ -191,18 +184,15 @@
         <li id="section-2">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>Initialize all values to 0 first so there are no data gaps</p>
+              <h1>#</h1>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="mi">255</span><span class="p">]</span>
-      <span class="nx">levels</span><span class="p">.</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-      <span class="nx">levels</span><span class="p">.</span><span class="nx">g</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-      <span class="nx">levels</span><span class="p">.</span><span class="nx">b</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Analyze</span></span>
+  constructor: (<span class="property">@c</span>) -&gt;</pre></div></div>
             
         </li>
         
@@ -210,18 +200,15 @@
         <li id="section-3">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Iterate through each pixel block and increment the level counters</p>
+              <h1>#</h1>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">...</span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="k">by</span> <span class="mi">4</span>
-      <span class="nx">levels</span><span class="p">.</span><span class="nx">r</span><span class="p">[</span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span><span class="o">++</span>
-      <span class="nx">levels</span><span class="p">.</span><span class="nx">g</span><span class="p">[</span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span><span class="o">++</span>
-      <span class="nx">levels</span><span class="p">.</span><span class="nx">b</span><span class="p">[</span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">2</span><span class="p">]]</span><span class="o">++</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Calculates the number <span class="keyword">of</span> occurances <span class="keyword">of</span> each color value throughout the image.
+  <span class="property">@return</span> {Object} Hash <span class="keyword">of</span> RGB channels <span class="keyword">and</span> the occurance <span class="keyword">of</span> each value</pre></div></div>
             
         </li>
         
@@ -229,25 +216,77 @@
         <li id="section-4">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  calculateLevels: -&gt;
+    levels =
+      r: {}
+      g: {}
+      b: {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
               
-<p>Normalize all of the numbers by converting them to percentages between
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Initialize all values to 0 first so there are no data gaps</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span><span class="number">.255</span>]
+      levels.r[i] = <span class="number">0</span>
+      levels.g[i] = <span class="number">0</span>
+      levels.b[i] = <span class="number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Iterate through each pixel block and increment the level counters</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>..<span class="property">@c</span>.pixelData.length] <span class="keyword">by</span> <span class="number">4</span>
+      levels.r[<span class="property">@c</span>.pixelData[i]]++
+      levels.g[<span class="property">@c</span>.pixelData[i+<span class="number">1</span>]]++
+      levels.b[<span class="property">@c</span>.pixelData[i+<span class="number">2</span>]]++</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Normalize all of the numbers by converting them to percentages between
 0 and 1.0</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">numPixels = </span><span class="nx">@c</span><span class="p">.</span><span class="nx">pixelData</span><span class="p">.</span><span class="nx">length</span> <span class="o">/</span> <span class="mi">4</span>
+            <div class="content"><div class='highlight'><pre>    numPixels = <span class="property">@c</span>.pixelData.length / <span class="number">4</span>
 
-    <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="mi">255</span><span class="p">]</span>
-      <span class="nx">levels</span><span class="p">.</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">/=</span> <span class="nx">numPixels</span>
-      <span class="nx">levels</span><span class="p">.</span><span class="nx">g</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">/=</span> <span class="nx">numPixels</span>
-      <span class="nx">levels</span><span class="p">.</span><span class="nx">b</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">/=</span> <span class="nx">numPixels</span>
+    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span><span class="number">.255</span>]
+      levels.r[i] /= numPixels
+      levels.g[i] /= numPixels
+      levels.b[i] /= numPixels
 
-    <span class="nx">levels</span>
-
-</pre></div></div>
+    levels</pre></div></div>
             
         </li>
         

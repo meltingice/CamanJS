@@ -99,6 +99,25 @@
     Root = window;
   }
 
+  /**
+  # Here it begins. Caman is defined.
+  # There are many different initialization for Caman, which are described on the 
+  # [Basic Usage](http://camanjs.com/guides) page.
+  #
+  # Initialization is tricky because we need to make sure everything we need is actually fully 
+  # loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
+  # image is done loading before converting it to a canvas element and writing the pixel data. If we 
+  # do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
+  # we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
+  # image element, load the image, then continue with initialization.
+  #
+  # The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
+  #
+  # @class Caman
+  # @constructor
+  */
+
+
   Root.Caman = Caman = (function() {
     Caman.version = {
       release: "4.1.1",
@@ -668,10 +687,21 @@
 
   })();
 
+  /*
+  Various image analysis methods
+  */
+
+
   Analyze = (function() {
     function Analyze(c) {
       this.c = c;
     }
+
+    /*
+    Calculates the number of occurances of each color value throughout the image.
+    @return {Object} Hash of RGB channels and the occurance of each value
+    */
+
 
     Analyze.prototype.calculateLevels = function() {
       var i, levels, numPixels, _i, _j, _k, _ref;
@@ -704,6 +734,12 @@
 
   })();
 
+  /*
+  Inform CamanJS that the DOM has been updated, and that it
+  should re-scan for CamanJS instances in the document.
+  */
+
+
   Caman.DOMUpdated = function() {
     var img, imgs, parser, _i, _len, _results;
 
@@ -732,15 +768,32 @@
     })();
   }
 
+  /*
+  Parses Caman instructions embedded in the HTML data-caman attribute.
+  */
+
+
   CamanParser = (function() {
     var INST_REGEX;
 
     INST_REGEX = "(\\w+)\\((.*?)\\)";
 
+    /*
+    Creates a new parser instance
+    @param [DOMObject] ele DOM object to be instantiated with CamanJS
+    @param [Function] ready Callback function to pass to CamanJS
+    */
+
+
     function CamanParser(ele, ready) {
       this.dataStr = ele.getAttribute('data-caman');
       this.caman = Caman(ele, ready.bind(this));
     }
+
+    /*
+    Parse the DOM object and call the parsed filter functions on the Caman object.
+    */
+
 
     CamanParser.prototype.parse = function() {
       var args, e, filter, func, inst, instFunc, m, r, unparsedInstructions, _i, _len, _ref, _results;
@@ -767,6 +820,11 @@
       }
       return _results;
     };
+
+    /*
+    Execute {Caman#render} on this Caman instance
+    */
+
 
     CamanParser.prototype.execute = function() {
       var ele;

@@ -144,6 +144,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -177,7 +182,7 @@
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="k">class</span> <span class="nx">Convert</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Convert</span></span></pre></div></div>
             
         </li>
         
@@ -188,24 +193,22 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>Converts the hex representation of a color to RGB values.
+              <p>Converts the hex representation of a color to RGB values.
 Hex value can optionally start with the hash (#).</p>
 <pre>
 @param   String  hex   The colors hex value
 @return  Array         The RGB representation
 </pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@hexToRGB: </span><span class="nf">(hex) -&gt;</span>
-    <span class="nv">hex = </span><span class="nx">hex</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="nx">hex</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">is</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">&quot;</span>
-    <span class="nv">r = </span><span class="nb">parseInt</span> <span class="nx">hex</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">16</span>
-    <span class="nv">g = </span><span class="nb">parseInt</span> <span class="nx">hex</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">16</span>
-    <span class="nv">b = </span><span class="nb">parseInt</span> <span class="nx">hex</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">16</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@hexToRGB</span>: (hex) -&gt;
+    hex = hex.substr(<span class="number">1</span>) <span class="keyword">if</span> hex.charAt(<span class="number">0</span>) <span class="keyword">is</span> <span class="string">"#"</span>
+    r = parseInt hex.substr(<span class="number">0</span>, <span class="number">2</span>), <span class="number">16</span>
+    g = parseInt hex.substr(<span class="number">2</span>, <span class="number">2</span>), <span class="number">16</span>
+    b = parseInt hex.substr(<span class="number">4</span>, <span class="number">2</span>), <span class="number">16</span>
 
-    <span class="nv">r: </span><span class="nx">r</span><span class="p">,</span> <span class="nv">g: </span><span class="nx">g</span><span class="p">,</span> <span class="nv">b: </span><span class="nx">b</span></pre></div></div>
+    r: r, g: g, b: b</pre></div></div>
             
         </li>
         
@@ -216,8 +219,7 @@ Hex value can optionally start with the hash (#).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Converts an RGB color to HSL.
+              <p>Converts an RGB color to HSL.
 Assumes r, g, and b are in the set [0, 255] and
 returns h, s, and l in the set [0, 1].</p>
 <pre>
@@ -227,36 +229,35 @@ returns h, s, and l in the set [0, 1].</p>
 @return              The HSL representation
 </pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@rgbToHSL: </span><span class="nf">(r, g, b) -&gt;</span>
-    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">r</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span>
-      <span class="nv">g = </span><span class="nx">r</span><span class="p">.</span><span class="nx">g</span>
-      <span class="nv">b = </span><span class="nx">r</span><span class="p">.</span><span class="nx">b</span>
-      <span class="nv">r = </span><span class="nx">r</span><span class="p">.</span><span class="nx">r</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@rgbToHSL</span>: (r, g, b) -&gt;
+    <span class="keyword">if</span> <span class="keyword">typeof</span> r <span class="keyword">is</span> <span class="string">"object"</span>
+      g = r.g
+      b = r.b
+      r = r.r
 
-    <span class="nx">r</span> <span class="o">/=</span> <span class="mi">255</span>
-    <span class="nx">g</span> <span class="o">/=</span> <span class="mi">255</span>
-    <span class="nx">b</span> <span class="o">/=</span> <span class="mi">255</span>
+    r /= <span class="number">255</span>
+    g /= <span class="number">255</span>
+    b /= <span class="number">255</span>
 
-    <span class="nv">max = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">b</span>
-    <span class="nv">min = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">min</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">b</span>
-    <span class="nv">l = </span><span class="p">(</span><span class="nx">max</span> <span class="o">+</span> <span class="nx">min</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    max = Math.max r, g, b
+    min = Math.min r, g, b
+    l = (max + min) / <span class="number">2</span>
 
-    <span class="k">if</span> <span class="nx">max</span> <span class="o">is</span> <span class="nx">min</span>
-      <span class="nv">h = s = </span><span class="mi">0</span>
-    <span class="k">else</span>
-      <span class="nv">d = </span><span class="nx">max</span> <span class="o">-</span> <span class="nx">min</span>
-      <span class="nv">s = </span><span class="k">if</span> <span class="nx">l</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="k">then</span> <span class="nx">d</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="nx">max</span> <span class="o">-</span> <span class="nx">min</span><span class="p">)</span> <span class="k">else</span> <span class="nx">d</span> <span class="o">/</span> <span class="p">(</span><span class="nx">max</span> <span class="o">+</span> <span class="nx">min</span><span class="p">)</span>
-      <span class="nv">h = </span><span class="k">switch</span> <span class="nx">max</span>
-        <span class="k">when</span> <span class="nx">r</span> <span class="k">then</span> <span class="p">(</span><span class="nx">g</span> <span class="o">-</span> <span class="nx">b</span><span class="p">)</span> <span class="o">/</span> <span class="nx">d</span> <span class="o">+</span> <span class="p">(</span><span class="k">if</span> <span class="nx">g</span> <span class="o">&lt;</span> <span class="nx">b</span> <span class="k">then</span> <span class="mi">6</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="k">when</span> <span class="nx">g</span> <span class="k">then</span> <span class="p">(</span><span class="nx">b</span> <span class="o">-</span> <span class="nx">r</span><span class="p">)</span> <span class="o">/</span> <span class="nx">d</span> <span class="o">+</span> <span class="mi">2</span>
-        <span class="k">when</span> <span class="nx">b</span> <span class="k">then</span> <span class="p">(</span><span class="nx">r</span> <span class="o">-</span> <span class="nx">g</span><span class="p">)</span> <span class="o">/</span> <span class="nx">d</span> <span class="o">+</span> <span class="mi">4</span>
+    <span class="keyword">if</span> max <span class="keyword">is</span> min
+      h = s = <span class="number">0</span>
+    <span class="keyword">else</span>
+      d = max - min
+      s = <span class="keyword">if</span> l &gt; <span class="number">0.5</span> <span class="keyword">then</span> d / (<span class="number">2</span> - max - min) <span class="keyword">else</span> d / (max + min)
+      h = <span class="keyword">switch</span> max
+        <span class="keyword">when</span> r <span class="keyword">then</span> (g - b) / d + (<span class="keyword">if</span> g &lt; b <span class="keyword">then</span> <span class="number">6</span> <span class="keyword">else</span> <span class="number">0</span>)
+        <span class="keyword">when</span> g <span class="keyword">then</span> (b - r) / d + <span class="number">2</span>
+        <span class="keyword">when</span> b <span class="keyword">then</span> (r - g) / d + <span class="number">4</span>
       
-      <span class="nx">h</span> <span class="o">/=</span> <span class="mi">6</span>
+      h /= <span class="number">6</span>
 
-    <span class="nv">h: </span><span class="nx">h</span><span class="p">,</span> <span class="nv">s: </span><span class="nx">s</span><span class="p">,</span> <span class="nv">l: </span><span class="nx">l</span></pre></div></div>
+    h: h, s: s, l: l</pre></div></div>
             
         </li>
         
@@ -267,8 +268,7 @@ returns h, s, and l in the set [0, 1].</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<p>Converts an HSL color value to RGB. Conversion formula
+              <p>Converts an HSL color value to RGB. Conversion formula
 adapted from <a href="http://en.wikipedia.org/wiki/HSL_color_space">http://en.wikipedia.org/wiki/HSL_color_space</a>.
 Assumes h, s, and l are contained in the set [0, 1] and
 returns r, g, and b in the set [0, 255].</p>
@@ -279,26 +279,25 @@ returns r, g, and b in the set [0, 255].</p>
 @return  Array           The RGB representation
 </pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@hslToRGB: </span><span class="nf">(h, s, l) -&gt;</span>
-    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">h</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span>
-      <span class="nv">s = </span><span class="nx">h</span><span class="p">.</span><span class="nx">s</span>
-      <span class="nv">l = </span><span class="nx">h</span><span class="p">.</span><span class="nx">l</span>
-      <span class="nv">h = </span><span class="nx">h</span><span class="p">.</span><span class="nx">h</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@hslToRGB</span>: (h, s, l) -&gt;
+    <span class="keyword">if</span> <span class="keyword">typeof</span> h <span class="keyword">is</span> <span class="string">"object"</span>
+      s = h.s
+      l = h.l
+      h = h.h
 
-    <span class="k">if</span> <span class="nx">s</span> <span class="o">is</span> <span class="mi">0</span>
-      <span class="nv">r = g = b = </span><span class="nx">l</span>
-    <span class="k">else</span>
-      <span class="nv">q = </span><span class="k">if</span> <span class="nx">l</span> <span class="o">&lt;</span> <span class="mf">0.5</span> <span class="k">then</span> <span class="nx">l</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="nx">s</span><span class="p">)</span> <span class="k">else</span> <span class="nx">l</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">-</span> <span class="nx">l</span> <span class="o">*</span> <span class="nx">s</span>
-      <span class="nv">p = </span><span class="mi">2</span> <span class="o">*</span> <span class="nx">l</span> <span class="o">-</span> <span class="nx">q</span>
+    <span class="keyword">if</span> s <span class="keyword">is</span> <span class="number">0</span>
+      r = g = b = l
+    <span class="keyword">else</span>
+      q = <span class="keyword">if</span> l &lt; <span class="number">0.5</span> <span class="keyword">then</span> l * (<span class="number">1</span> + s) <span class="keyword">else</span> l + s - l * s
+      p = <span class="number">2</span> * l - q
       
-      <span class="nv">r = </span><span class="nx">@hueToRGB</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">h</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span>
-      <span class="nv">g = </span><span class="nx">@hueToRGB</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">h</span>
-      <span class="nv">b = </span><span class="nx">@hueToRGB</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">h</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span>
+      r = <span class="property">@hueToRGB</span> p, q, h + <span class="number">1</span>/<span class="number">3</span>
+      g = <span class="property">@hueToRGB</span> p, q, h
+      b = <span class="property">@hueToRGB</span> p, q, h - <span class="number">1</span>/<span class="number">3</span>
 
-    <span class="nv">r: </span><span class="nx">r</span> <span class="o">*</span> <span class="mi">255</span><span class="p">,</span> <span class="nv">g: </span><span class="nx">g</span> <span class="o">*</span> <span class="mi">255</span><span class="p">,</span> <span class="nv">b: </span><span class="nx">b</span> <span class="o">*</span> <span class="mi">255</span></pre></div></div>
+    r: r * <span class="number">255</span>, g: g * <span class="number">255</span>, b: b * <span class="number">255</span></pre></div></div>
             
         </li>
         
@@ -309,18 +308,17 @@ returns r, g, and b in the set [0, 255].</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<p>Converts from the hue color space back to RGB</p>
+              <p>Converts from the hue color space back to RGB</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@hueToRGB: </span><span class="nf">(p, q, t) -&gt;</span>
-    <span class="k">if</span> <span class="nx">t</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">then</span> <span class="nx">t</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="nx">t</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">then</span> <span class="nx">t</span> <span class="o">-=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="nx">t</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span> <span class="k">then</span> <span class="k">return</span> <span class="nx">p</span> <span class="o">+</span> <span class="p">(</span><span class="nx">q</span> <span class="o">-</span> <span class="nx">p</span><span class="p">)</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">*</span> <span class="nx">t</span>
-    <span class="k">if</span> <span class="nx">t</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="k">then</span> <span class="k">return</span> <span class="nx">q</span>
-    <span class="k">if</span> <span class="nx">t</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span> <span class="k">then</span> <span class="k">return</span> <span class="nx">p</span> <span class="o">+</span> <span class="p">(</span><span class="nx">q</span> <span class="o">-</span> <span class="nx">p</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span> <span class="o">-</span> <span class="nx">t</span><span class="p">)</span> <span class="o">*</span> <span class="mi">6</span>
-    <span class="k">return</span> <span class="nx">p</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@hueToRGB</span>: (p, q, t) -&gt;
+    <span class="keyword">if</span> t &lt; <span class="number">0</span> <span class="keyword">then</span> t += <span class="number">1</span>
+    <span class="keyword">if</span> t &gt; <span class="number">1</span> <span class="keyword">then</span> t -= <span class="number">1</span>
+    <span class="keyword">if</span> t &lt; <span class="number">1</span>/<span class="number">6</span> <span class="keyword">then</span> <span class="keyword">return</span> p + (q - p) * <span class="number">6</span> * t
+    <span class="keyword">if</span> t &lt; <span class="number">1</span>/<span class="number">2</span> <span class="keyword">then</span> <span class="keyword">return</span> q
+    <span class="keyword">if</span> t &lt; <span class="number">2</span><span class="regexp">/3 then return p + (q - p) * (2/</span><span class="number">3</span> - t) * <span class="number">6</span>
+    <span class="keyword">return</span> p</pre></div></div>
             
         </li>
         
@@ -331,8 +329,7 @@ returns r, g, and b in the set [0, 255].</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
-<p>Converts an RGB color value to HSV. Conversion formula
+              <p>Converts an RGB color value to HSV. Conversion formula
 adapted from <a href="http://en.wikipedia.org/wiki/HSV_color_space">http://en.wikipedia.org/wiki/HSV_color_space</a>.
 Assumes r, g, and b are contained in the set [0, 255] and
 returns h, s, and v in the set [0, 1].</p>
@@ -343,32 +340,31 @@ returns h, s, and v in the set [0, 1].</p>
 @return  Array           The HSV representation
 </pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@rgbToHSV: </span><span class="nf">(r, g, b) -&gt;</span>
-    <span class="nx">r</span> <span class="o">/=</span> <span class="mi">255</span>
-    <span class="nx">g</span> <span class="o">/=</span> <span class="mi">255</span>
-    <span class="nx">b</span> <span class="o">/=</span> <span class="mi">255</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@rgbToHSV</span>: (r, g, b) -&gt;
+    r /= <span class="number">255</span>
+    g /= <span class="number">255</span>
+    b /= <span class="number">255</span>
 
-    <span class="nv">max = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">b</span>
-    <span class="nv">min = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">min</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">b</span>
-    <span class="nv">v = </span><span class="nx">max</span>
-    <span class="nv">d = </span><span class="nx">max</span> <span class="o">-</span> <span class="nx">min</span>
+    max = Math.max r, g, b
+    min = Math.min r, g, b
+    v = max
+    d = max - min
 
-    <span class="nv">s = </span><span class="k">if</span> <span class="nx">max</span> <span class="o">is</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span> <span class="k">else</span> <span class="nx">d</span> <span class="o">/</span> <span class="nx">max</span>
+    s = <span class="keyword">if</span> max <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> <span class="number">0</span> <span class="keyword">else</span> d / max
 
-    <span class="k">if</span> <span class="nx">max</span> <span class="o">is</span> <span class="nx">min</span>
-      <span class="nv">h = </span><span class="mi">0</span>
-    <span class="k">else</span>
-      <span class="nv">h = </span><span class="k">switch</span> <span class="nx">max</span>
-        <span class="k">when</span> <span class="nx">r</span> <span class="k">then</span> <span class="p">(</span><span class="nx">g</span> <span class="o">-</span> <span class="nx">b</span><span class="p">)</span> <span class="o">/</span> <span class="nx">d</span> <span class="o">+</span> <span class="p">(</span><span class="k">if</span> <span class="nx">g</span> <span class="o">&lt;</span> <span class="nx">b</span> <span class="k">then</span> <span class="mi">6</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="k">when</span> <span class="nx">g</span> <span class="k">then</span> <span class="p">(</span><span class="nx">b</span> <span class="o">-</span> <span class="nx">r</span><span class="p">)</span> <span class="o">/</span> <span class="nx">d</span> <span class="o">+</span> <span class="mi">2</span>
-        <span class="k">when</span> <span class="nx">b</span> <span class="k">then</span> <span class="p">(</span><span class="nx">r</span> <span class="o">-</span> <span class="nx">g</span><span class="p">)</span> <span class="o">/</span> <span class="nx">d</span> <span class="o">+</span> <span class="mi">4</span>
+    <span class="keyword">if</span> max <span class="keyword">is</span> min
+      h = <span class="number">0</span>
+    <span class="keyword">else</span>
+      h = <span class="keyword">switch</span> max
+        <span class="keyword">when</span> r <span class="keyword">then</span> (g - b) / d + (<span class="keyword">if</span> g &lt; b <span class="keyword">then</span> <span class="number">6</span> <span class="keyword">else</span> <span class="number">0</span>)
+        <span class="keyword">when</span> g <span class="keyword">then</span> (b - r) / d + <span class="number">2</span>
+        <span class="keyword">when</span> b <span class="keyword">then</span> (r - g) / d + <span class="number">4</span>
 
-      <span class="nx">h</span> <span class="o">/=</span> <span class="mi">6</span>
+      h /= <span class="number">6</span>
 
-    <span class="nv">h: </span><span class="nx">h</span><span class="p">,</span> <span class="nv">s: </span><span class="nx">s</span><span class="p">,</span> <span class="nv">v: </span><span class="nx">v</span></pre></div></div>
+    h: h, s: s, v: v</pre></div></div>
             
         </li>
         
@@ -379,8 +375,7 @@ returns h, s, and v in the set [0, 1].</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
-<p>Converts an HSV color value to RGB. Conversion formula
+              <p>Converts an HSV color value to RGB. Conversion formula
 adapted from <a href="http://en.wikipedia.org/wiki/HSV_color_space">http://en.wikipedia.org/wiki/HSV_color_space</a>.
 Assumes h, s, and v are contained in the set [0, 1] and
 returns r, g, and b in the set [0, 255].</p>
@@ -391,43 +386,42 @@ returns r, g, and b in the set [0, 255].</p>
 @return  Array           The RGB representation
 </pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@hsvToRGB: </span><span class="nf">(h, s, v) -&gt;</span>
-    <span class="nv">i = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span> <span class="nx">h</span> <span class="o">*</span> <span class="mi">6</span>
-    <span class="nv">f = </span><span class="nx">h</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">-</span> <span class="nx">i</span>
-    <span class="nv">p = </span><span class="nx">v</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">s</span><span class="p">)</span>
-    <span class="nv">q = </span><span class="nx">v</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">f</span> <span class="o">*</span> <span class="nx">s</span><span class="p">)</span>
-    <span class="nv">t = </span><span class="nx">v</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">f</span><span class="p">)</span> <span class="o">*</span> <span class="nx">s</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@hsvToRGB</span>: (h, s, v) -&gt;
+    i = Math.floor h * <span class="number">6</span>
+    f = h * <span class="number">6</span> - i
+    p = v * (<span class="number">1</span> - s)
+    q = v * (<span class="number">1</span> - f * s)
+    t = v * (<span class="number">1</span> - (<span class="number">1</span> - f) * s)
 
-    <span class="k">switch</span> <span class="nx">i</span> <span class="o">%</span> <span class="mi">6</span>
-      <span class="k">when</span> <span class="mi">0</span>
-        <span class="nv">r = </span><span class="nx">v</span>
-        <span class="nv">g = </span><span class="nx">t</span>
-        <span class="nv">b = </span><span class="nx">p</span>
-      <span class="k">when</span> <span class="mi">1</span>
-        <span class="nv">r = </span><span class="nx">q</span>
-        <span class="nv">g = </span><span class="nx">v</span>
-        <span class="nv">b = </span><span class="nx">p</span>
-      <span class="k">when</span> <span class="mi">2</span>
-        <span class="nv">r = </span><span class="nx">p</span>
-        <span class="nv">g = </span><span class="nx">v</span>
-        <span class="nv">b = </span><span class="nx">t</span>
-      <span class="k">when</span> <span class="mi">3</span>
-        <span class="nv">r = </span><span class="nx">p</span>
-        <span class="nv">g = </span><span class="nx">q</span>
-        <span class="nv">b = </span><span class="nx">v</span>
-      <span class="k">when</span> <span class="mi">4</span>
-        <span class="nv">r = </span><span class="nx">t</span>
-        <span class="nv">g = </span><span class="nx">p</span>
-        <span class="nv">b = </span><span class="nx">v</span>
-      <span class="k">when</span> <span class="mi">5</span>
-        <span class="nv">r = </span><span class="nx">v</span>
-        <span class="nv">g = </span><span class="nx">p</span>
-        <span class="nv">b = </span><span class="nx">q</span>
+    <span class="keyword">switch</span> i % <span class="number">6</span>
+      <span class="keyword">when</span> <span class="number">0</span>
+        r = v
+        g = t
+        b = p
+      <span class="keyword">when</span> <span class="number">1</span>
+        r = q
+        g = v
+        b = p
+      <span class="keyword">when</span> <span class="number">2</span>
+        r = p
+        g = v
+        b = t
+      <span class="keyword">when</span> <span class="number">3</span>
+        r = p
+        g = q
+        b = v
+      <span class="keyword">when</span> <span class="number">4</span>
+        r = t
+        g = p
+        b = v
+      <span class="keyword">when</span> <span class="number">5</span>
+        r = v
+        g = p
+        b = q
 
-    <span class="nv">r: </span><span class="nx">r</span> <span class="o">*</span> <span class="mi">255</span><span class="p">,</span> <span class="nv">g: </span><span class="nx">g</span> <span class="o">*</span> <span class="mi">255</span><span class="p">,</span> <span class="nv">b: </span><span class="nx">b</span> <span class="o">*</span> <span class="mi">255</span></pre></div></div>
+    r: r * <span class="number">255</span>, g: g * <span class="number">255</span>, b: b * <span class="number">255</span></pre></div></div>
             
         </li>
         
@@ -438,8 +432,7 @@ returns r, g, and b in the set [0, 255].</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              
-<p>Converts a RGB color value to the XYZ color space. Formulas
+              <p>Converts a RGB color value to the XYZ color space. Formulas
 are based on <a href="http://en.wikipedia.org/wiki/SRGB">http://en.wikipedia.org/wiki/SRGB</a> assuming that
 RGB values are sRGB.</p>
 <p>Assumes r, g, and b are contained in the set [0, 255] and
@@ -451,34 +444,33 @@ returns x, y, and z.</p>
 @return  Array           The XYZ representation
 </pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@rgbToXYZ: </span><span class="nf">(r, g, b) -&gt;</span>
-    <span class="nx">r</span> <span class="o">/=</span> <span class="mi">255</span>
-    <span class="nx">g</span> <span class="o">/=</span> <span class="mi">255</span>
-    <span class="nx">b</span> <span class="o">/=</span> <span class="mi">255</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@rgbToXYZ</span>: (r, g, b) -&gt;
+    r /= <span class="number">255</span>
+    g /= <span class="number">255</span>
+    b /= <span class="number">255</span>
 
-    <span class="k">if</span> <span class="nx">r</span> <span class="o">&gt;</span> <span class="mf">0.04045</span>
-      <span class="nv">r = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">((</span><span class="nx">r</span> <span class="o">+</span> <span class="mf">0.055</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.055</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">)</span>
-    <span class="k">else</span>
-      <span class="nx">r</span> <span class="o">/=</span> <span class="mf">12.92</span>
+    <span class="keyword">if</span> r &gt; <span class="number">0.04045</span>
+      r = Math.pow((r + <span class="number">0.055</span>) / <span class="number">1.055</span>, <span class="number">2.4</span>)
+    <span class="keyword">else</span>
+      r /= <span class="number">12.92</span>
 
-    <span class="k">if</span> <span class="nx">g</span> <span class="o">&gt;</span> <span class="mf">0.04045</span>
-      <span class="nv">g = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">((</span><span class="nx">g</span> <span class="o">+</span> <span class="mf">0.055</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.055</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">)</span>
-    <span class="k">else</span>
-      <span class="nx">g</span> <span class="o">/=</span> <span class="mf">12.92</span>
+    <span class="keyword">if</span> g &gt; <span class="number">0.04045</span>
+      g = Math.pow((g + <span class="number">0.055</span>) / <span class="number">1.055</span>, <span class="number">2.4</span>)
+    <span class="keyword">else</span>
+      g /= <span class="number">12.92</span>
 
-    <span class="k">if</span> <span class="nx">b</span> <span class="o">&gt;</span> <span class="mf">0.04045</span>
-      <span class="nv">b = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">((</span><span class="nx">b</span> <span class="o">+</span> <span class="mf">0.055</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.055</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">)</span>
-    <span class="k">else</span>
-      <span class="nx">b</span> <span class="o">/=</span> <span class="mf">12.92</span>
+    <span class="keyword">if</span> b &gt; <span class="number">0.04045</span>
+      b = Math.pow((b + <span class="number">0.055</span>) / <span class="number">1.055</span>, <span class="number">2.4</span>)
+    <span class="keyword">else</span>
+      b /= <span class="number">12.92</span>
 
-    <span class="nv">x = </span><span class="nx">r</span> <span class="o">*</span> <span class="mf">0.4124</span> <span class="o">+</span> <span class="nx">g</span> <span class="o">*</span> <span class="mf">0.3576</span> <span class="o">+</span> <span class="nx">b</span> <span class="o">*</span> <span class="mf">0.1805</span><span class="p">;</span>
-    <span class="nv">y = </span><span class="nx">r</span> <span class="o">*</span> <span class="mf">0.2126</span> <span class="o">+</span> <span class="nx">g</span> <span class="o">*</span> <span class="mf">0.7152</span> <span class="o">+</span> <span class="nx">b</span> <span class="o">*</span> <span class="mf">0.0722</span><span class="p">;</span>
-    <span class="nv">z = </span><span class="nx">r</span> <span class="o">*</span> <span class="mf">0.0193</span> <span class="o">+</span> <span class="nx">g</span> <span class="o">*</span> <span class="mf">0.1192</span> <span class="o">+</span> <span class="nx">b</span> <span class="o">*</span> <span class="mf">0.9505</span><span class="p">;</span>
+    x = r * <span class="number">0.4124</span> + g * <span class="number">0.3576</span> + b * <span class="number">0.1805</span>;
+    y = r * <span class="number">0.2126</span> + g * <span class="number">0.7152</span> + b * <span class="number">0.0722</span>;
+    z = r * <span class="number">0.0193</span> + g * <span class="number">0.1192</span> + b * <span class="number">0.9505</span>;
   
-    <span class="nv">x: </span><span class="nx">x</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="nv">y: </span><span class="nx">y</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="nv">z: </span><span class="nx">z</span> <span class="o">*</span> <span class="mi">100</span></pre></div></div>
+    x: x * <span class="number">100</span>, y: y * <span class="number">100</span>, z: z * <span class="number">100</span></pre></div></div>
             
         </li>
         
@@ -489,8 +481,7 @@ returns x, y, and z.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              
-<p>Converts a XYZ color value to the sRGB color space. Formulas
+              <p>Converts a XYZ color value to the sRGB color space. Formulas
 are based on <a href="http://en.wikipedia.org/wiki/SRGB">http://en.wikipedia.org/wiki/SRGB</a> and the resulting
 RGB value will be in the sRGB color space.
 Assumes x, y and z values are whatever they are and returns
@@ -502,34 +493,33 @@ r, g and b in the set [0, 255].</p>
 @return  Array           The RGB representation
 </pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@xyzToRGB: </span><span class="nf">(x, y, z) -&gt;</span>
-    <span class="nx">x</span> <span class="o">/=</span> <span class="mi">100</span>
-    <span class="nx">y</span> <span class="o">/=</span> <span class="mi">100</span>
-    <span class="nx">z</span> <span class="o">/=</span> <span class="mi">100</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@xyzToRGB</span>: (x, y, z) -&gt;
+    x /= <span class="number">100</span>
+    y /= <span class="number">100</span>
+    z /= <span class="number">100</span>
 
-    <span class="nv">r = </span><span class="p">(</span><span class="mf">3.2406</span>  <span class="o">*</span> <span class="nx">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.5372</span> <span class="o">*</span> <span class="nx">y</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.4986</span> <span class="o">*</span> <span class="nx">z</span><span class="p">)</span>
-    <span class="nv">g = </span><span class="p">(</span><span class="o">-</span><span class="mf">0.9689</span> <span class="o">*</span> <span class="nx">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.8758</span>  <span class="o">*</span> <span class="nx">y</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.0415</span>  <span class="o">*</span> <span class="nx">z</span><span class="p">)</span>
-    <span class="nv">b = </span><span class="p">(</span><span class="mf">0.0557</span>  <span class="o">*</span> <span class="nx">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2040</span> <span class="o">*</span> <span class="nx">y</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0570</span>  <span class="o">*</span> <span class="nx">z</span><span class="p">)</span>
+    r = (<span class="number">3.2406</span>  * x) + (-<span class="number">1.5372</span> * y) + (-<span class="number">0.4986</span> * z)
+    g = (-<span class="number">0.9689</span> * x) + (<span class="number">1.8758</span>  * y) + (<span class="number">0.0415</span>  * z)
+    b = (<span class="number">0.0557</span>  * x) + (-<span class="number">0.2040</span> * y) + (<span class="number">1.0570</span>  * z)
 
-    <span class="k">if</span> <span class="nx">r</span> <span class="o">&gt;</span> <span class="mf">0.0031308</span>
-      <span class="nv">r = </span><span class="p">(</span><span class="mf">1.055</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="mf">0.4166666667</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.055</span>
-    <span class="k">else</span>
-      <span class="nx">r</span> <span class="o">*=</span> <span class="mf">12.92</span>
+    <span class="keyword">if</span> r &gt; <span class="number">0.0031308</span>
+      r = (<span class="number">1.055</span> * Math.pow(r, <span class="number">0.4166666667</span>)) - <span class="number">0.055</span>
+    <span class="keyword">else</span>
+      r *= <span class="number">12.92</span>
 
-    <span class="k">if</span> <span class="nx">g</span> <span class="o">&gt;</span> <span class="mf">0.0031308</span>
-      <span class="nv">g = </span><span class="p">(</span><span class="mf">1.055</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">g</span><span class="p">,</span> <span class="mf">0.4166666667</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.055</span>
-    <span class="k">else</span>
-      <span class="nx">g</span> <span class="o">*=</span> <span class="mf">12.92</span>
+    <span class="keyword">if</span> g &gt; <span class="number">0.0031308</span>
+      g = (<span class="number">1.055</span> * Math.pow(g, <span class="number">0.4166666667</span>)) - <span class="number">0.055</span>
+    <span class="keyword">else</span>
+      g *= <span class="number">12.92</span>
 
-    <span class="k">if</span> <span class="nx">b</span> <span class="o">&gt;</span> <span class="mf">0.0031308</span>
-      <span class="nv">b = </span><span class="p">(</span><span class="mf">1.055</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="mf">0.4166666667</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.055</span>
-    <span class="k">else</span>
-      <span class="nx">b</span> <span class="o">*=</span> <span class="mf">12.92</span>
+    <span class="keyword">if</span> b &gt; <span class="number">0.0031308</span>
+      b = (<span class="number">1.055</span> * Math.pow(b, <span class="number">0.4166666667</span>)) - <span class="number">0.055</span>
+    <span class="keyword">else</span>
+      b *= <span class="number">12.92</span>
 
-    <span class="nv">r: </span><span class="nx">r</span> <span class="o">*</span> <span class="mi">255</span><span class="p">,</span> <span class="nv">g: </span><span class="nx">g</span> <span class="o">*</span> <span class="mi">255</span><span class="p">,</span> <span class="nv">b: </span><span class="nx">b</span> <span class="o">*</span> <span class="mi">255</span></pre></div></div>
+    r: r * <span class="number">255</span>, g: g * <span class="number">255</span>, b: b * <span class="number">255</span></pre></div></div>
             
         </li>
         
@@ -540,8 +530,7 @@ r, g and b in the set [0, 255].</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              
-<p>Converts a XYZ color value to the CIELAB color space. Formulas
+              <p>Converts a XYZ color value to the CIELAB color space. Formulas
 are based on <a href="http://en.wikipedia.org/wiki/Lab_color_space">http://en.wikipedia.org/wiki/Lab_color_space</a>
 The reference white point used in the conversion is D65.
 Assumes x, y and z values are whatever they are and returns
@@ -553,43 +542,42 @@ L<em>, a</em> and b* values</p>
 @return  Array           The Lab representation
 </pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@xyzToLab: </span><span class="nf">(x, y, z) -&gt;</span>
-    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span>
-      <span class="nv">y = </span><span class="nx">x</span><span class="p">.</span><span class="nx">y</span>
-      <span class="nv">z = </span><span class="nx">x</span><span class="p">.</span><span class="nx">z</span>
-      <span class="nv">x = </span><span class="nx">x</span><span class="p">.</span><span class="nx">x</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@xyzToLab</span>: (x, y, z) -&gt;
+    <span class="keyword">if</span> <span class="keyword">typeof</span> x <span class="keyword">is</span> <span class="string">"object"</span>
+      y = x.y
+      z = x.z
+      x = x.x
 
-    <span class="nv">whiteX = </span><span class="mf">95.047</span>
-    <span class="nv">whiteY = </span><span class="mf">100.0</span>
-    <span class="nv">whiteZ = </span><span class="mf">108.883</span>
+    whiteX = <span class="number">95.047</span>
+    whiteY = <span class="number">100.0</span>
+    whiteZ = <span class="number">108.883</span>
 
-    <span class="nx">x</span> <span class="o">/=</span> <span class="nx">whiteX</span>
-    <span class="nx">y</span> <span class="o">/=</span> <span class="nx">whiteY</span>
-    <span class="nx">z</span> <span class="o">/=</span> <span class="nx">whiteZ</span>
+    x /= whiteX
+    y /= whiteY
+    z /= whiteZ
 
-    <span class="k">if</span> <span class="nx">x</span> <span class="o">&gt;</span> <span class="mf">0.008856451679</span>
-      <span class="nv">x = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="mf">0.3333333333</span><span class="p">)</span>
-    <span class="k">else</span>
-      <span class="nv">x = </span><span class="p">(</span><span class="mf">7.787037037</span> <span class="o">*</span> <span class="nx">x</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1379310345</span>
+    <span class="keyword">if</span> x &gt; <span class="number">0.008856451679</span>
+      x = Math.pow(x, <span class="number">0.3333333333</span>)
+    <span class="keyword">else</span>
+      x = (<span class="number">7.787037037</span> * x) + <span class="number">0.1379310345</span>
   
-    <span class="k">if</span> <span class="nx">y</span> <span class="o">&gt;</span> <span class="mf">0.008856451679</span>
-      <span class="nv">y = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">y</span><span class="p">,</span> <span class="mf">0.3333333333</span><span class="p">)</span>
-    <span class="k">else</span>
-      <span class="nv">y = </span><span class="p">(</span><span class="mf">7.787037037</span> <span class="o">*</span> <span class="nx">y</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1379310345</span>
+    <span class="keyword">if</span> y &gt; <span class="number">0.008856451679</span>
+      y = Math.pow(y, <span class="number">0.3333333333</span>)
+    <span class="keyword">else</span>
+      y = (<span class="number">7.787037037</span> * y) + <span class="number">0.1379310345</span>
   
-    <span class="k">if</span> <span class="nx">z</span> <span class="o">&gt;</span> <span class="mf">0.008856451679</span>
-      <span class="nv">z = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">z</span><span class="p">,</span> <span class="mf">0.3333333333</span><span class="p">)</span>
-    <span class="k">else</span>
-      <span class="nv">z = </span><span class="p">(</span><span class="mf">7.787037037</span> <span class="o">*</span> <span class="nx">z</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1379310345</span>
+    <span class="keyword">if</span> z &gt; <span class="number">0.008856451679</span>
+      z = Math.pow(z, <span class="number">0.3333333333</span>)
+    <span class="keyword">else</span>
+      z = (<span class="number">7.787037037</span> * z) + <span class="number">0.1379310345</span>
 
-    <span class="nv">l = </span><span class="mi">116</span> <span class="o">*</span> <span class="nx">y</span> <span class="o">-</span> <span class="mi">16</span>
-    <span class="nv">a = </span><span class="mi">500</span> <span class="o">*</span> <span class="p">(</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">y</span><span class="p">)</span>
-    <span class="nv">b = </span><span class="mi">200</span> <span class="o">*</span> <span class="p">(</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">z</span><span class="p">)</span>
+    l = <span class="number">116</span> * y - <span class="number">16</span>
+    a = <span class="number">500</span> * (x - y)
+    b = <span class="number">200</span> * (y - z)
 
-    <span class="nv">l: </span><span class="nx">l</span><span class="p">,</span> <span class="nv">a: </span><span class="nx">a</span><span class="p">,</span> <span class="nv">b: </span><span class="nx">b</span></pre></div></div>
+    l: l, a: a, b: b</pre></div></div>
             
         </li>
         
@@ -600,8 +588,7 @@ L<em>, a</em> and b* values</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              
-<p>Converts a L<em>, a</em>, b* color values from the CIELAB color space
+              <p>Converts a L<em>, a</em>, b* color values from the CIELAB color space
 to the XYZ color space. Formulas are based on
 <a href="http://en.wikipedia.org/wiki/Lab_color_space">http://en.wikipedia.org/wiki/Lab_color_space</a></p>
 <p>The reference white point used in the conversion is D65.
@@ -614,33 +601,32 @@ x, y and z values.</p>
 @return  Array           The XYZ representation
 </pre>
 
-
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@labToXYZ: </span><span class="nf">(l, a, b) -&gt;</span>
-    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">l</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span>
-      <span class="nv">a = </span><span class="nx">l</span><span class="p">.</span><span class="nx">a</span>
-      <span class="nv">b = </span><span class="nx">l</span><span class="p">.</span><span class="nx">b</span>
-      <span class="nv">l = </span><span class="nx">l</span><span class="p">.</span><span class="nx">l</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@labToXYZ</span>: (l, a, b) -&gt;
+    <span class="keyword">if</span> <span class="keyword">typeof</span> l <span class="keyword">is</span> <span class="string">"object"</span>
+      a = l.a
+      b = l.b
+      l = l.l
 
-    <span class="nv">y = </span><span class="p">(</span><span class="nx">l</span> <span class="o">+</span> <span class="mi">16</span><span class="p">)</span> <span class="o">/</span> <span class="mi">116</span>
-    <span class="nv">x = </span><span class="nx">y</span> <span class="o">+</span> <span class="p">(</span><span class="nx">a</span> <span class="o">/</span> <span class="mi">500</span><span class="p">)</span>
-    <span class="nv">z = </span><span class="nx">y</span> <span class="o">-</span> <span class="p">(</span><span class="nx">b</span> <span class="o">/</span> <span class="mi">200</span><span class="p">)</span>
+    y = (l + <span class="number">16</span>) / <span class="number">116</span>
+    x = y + (a / <span class="number">500</span>)
+    z = y - (b / <span class="number">200</span>)
 
-    <span class="k">if</span> <span class="nx">x</span> <span class="o">&gt;</span> <span class="mf">0.2068965517</span>
-      <span class="nv">x = </span><span class="nx">x</span> <span class="o">*</span> <span class="nx">x</span> <span class="o">*</span> <span class="nx">x</span>
-    <span class="k">else</span>
-      <span class="nv">x = </span><span class="mf">0.1284185493</span> <span class="o">*</span> <span class="p">(</span><span class="nx">x</span> <span class="o">-</span> <span class="mf">0.1379310345</span><span class="p">)</span>
+    <span class="keyword">if</span> x &gt; <span class="number">0.2068965517</span>
+      x = x * x * x
+    <span class="keyword">else</span>
+      x = <span class="number">0.1284185493</span> * (x - <span class="number">0.1379310345</span>)
   
-    <span class="k">if</span> <span class="nx">y</span> <span class="o">&gt;</span> <span class="mf">0.2068965517</span>
-      <span class="nv">y = </span><span class="nx">y</span> <span class="o">*</span> <span class="nx">y</span> <span class="o">*</span> <span class="nx">y</span>
-    <span class="k">else</span>
-      <span class="nv">y = </span><span class="mf">0.1284185493</span> <span class="o">*</span> <span class="p">(</span><span class="nx">y</span> <span class="o">-</span> <span class="mf">0.1379310345</span><span class="p">)</span>
+    <span class="keyword">if</span> y &gt; <span class="number">0.2068965517</span>
+      y = y * y * y
+    <span class="keyword">else</span>
+      y = <span class="number">0.1284185493</span> * (y - <span class="number">0.1379310345</span>)
   
-    <span class="k">if</span> <span class="nx">z</span> <span class="o">&gt;</span> <span class="mf">0.2068965517</span>
-      <span class="nv">z = </span><span class="nx">z</span> <span class="o">*</span> <span class="nx">z</span> <span class="o">*</span> <span class="nx">z</span>
-    <span class="k">else</span>
-      <span class="nv">z = </span><span class="mf">0.1284185493</span> <span class="o">*</span> <span class="p">(</span><span class="nx">z</span> <span class="o">-</span> <span class="mf">0.1379310345</span><span class="p">)</span></pre></div></div>
+    <span class="keyword">if</span> z &gt; <span class="number">0.2068965517</span>
+      z = z * z * z
+    <span class="keyword">else</span>
+      z = <span class="number">0.1284185493</span> * (z - <span class="number">0.1379310345</span>)</pre></div></div>
             
         </li>
         
@@ -651,26 +637,22 @@ x, y and z values.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              
-<p>D65 reference white point</p>
+              <p>D65 reference white point</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">x: </span><span class="nx">x</span> <span class="o">*</span> <span class="mf">95.047</span><span class="p">,</span> <span class="nv">y: </span><span class="nx">y</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">,</span> <span class="nv">z: </span><span class="nx">z</span> <span class="o">*</span> <span class="mf">108.883</span>
+            <div class="content"><div class='highlight'><pre>    x: x * <span class="number">95.047</span>, y: y * <span class="number">100.0</span>, z: z * <span class="number">108.883</span>
 
-  <span class="vi">@rgbToLab: </span><span class="nf">(r, g, b) -&gt;</span>
-    <span class="k">if</span> <span class="k">typeof</span> <span class="nx">r</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span>
-      <span class="nv">g = </span><span class="nx">r</span><span class="p">.</span><span class="nx">g</span>
-      <span class="nv">b = </span><span class="nx">r</span><span class="p">.</span><span class="nx">b</span>
-      <span class="nv">r = </span><span class="nx">r</span><span class="p">.</span><span class="nx">r</span>
+  <span class="property">@rgbToLab</span>: (r, g, b) -&gt;
+    <span class="keyword">if</span> <span class="keyword">typeof</span> r <span class="keyword">is</span> <span class="string">"object"</span>
+      g = r.g
+      b = r.b
+      r = r.r
     
-    <span class="nv">xyz = </span><span class="nx">@rgbToXYZ</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">g</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
-    <span class="nx">@xyzToLab</span> <span class="nx">xyz</span>
+    xyz = <span class="property">@rgbToXYZ</span>(r, g, b)
+    <span class="property">@xyzToLab</span> xyz
 
-  <span class="vi">@labToRGB: </span><span class="nf">(l, a, b) -&gt;</span>
-    
-
-</pre></div></div>
+  <span class="property">@labToRGB</span>: (l, a, b) -&gt;</pre></div></div>
             
         </li>
         
