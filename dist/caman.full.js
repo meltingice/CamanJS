@@ -99,22 +99,6 @@
     Root = window;
   }
 
-  /*
-  Here it begins. Caman is defined.
-  There are many different initialization for Caman, which are described on the 
-  [Guides](http://camanjs.com/guides).
-  
-  Initialization is tricky because we need to make sure everything we need is actually fully 
-  loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
-  image is done loading before converting it to a canvas element and writing the pixel data. If we 
-  do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
-  we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
-  image element, load the image, then continue with initialization.
-  
-  The main goal for Caman was simplicity, so all of this is handled transparently to the end-user.
-  */
-
-
   Caman = (function() {
     Caman.version = {
       release: "4.1.1",
@@ -135,22 +119,9 @@
 
     Caman.autoload = !Caman.NodeJS;
 
-    /*
-    Custom toString()
-    @return [String] Version and release information.
-    */
-
-
     Caman.toString = function() {
       return "Version " + Caman.version.release + ", Released " + Caman.version.date;
     };
-
-    /*
-    Get the ID assigned to this canvas by Caman.
-    @param [DOMObject] canvas The canvas to inspect.
-    @return [String] The Caman ID associated with this canvas.
-    */
-
 
     Caman.getAttrId = function(canvas) {
       if (Caman.NodeJS) {
@@ -164,40 +135,6 @@
       }
       return canvas.getAttribute('data-caman-id');
     };
-
-    /*
-    The Caman function. While technically a constructor, it was made to be called without
-    the `new` keyword. Caman will figure it out.
-    
-    @param [DOMObject, String] initializer The DOM selector or DOM object to initialize.
-    @overload Caman(initializer)
-      Initialize Caman without a callback.
-    
-    @overload Caman(initializer, callback)
-      Initialize Caman with a callback.
-      @param [Function] callback Function to call once initialization completes.
-    
-    @overload Caman(initializer, url)
-      Initialize Caman with a URL to an image and no callback.
-      @param [String] url URl to an image to draw to the canvas.
-    
-    @overload Caman(initializer, url, callback)
-      Initialize Caman with a canvas, URL to an image, and a callback.
-      @param [String] url URl to an image to draw to the canvas.
-      @param [Function] callback Function to call once initialization completes.
-    
-    @overload Caman(file)
-      **NodeJS**: Initialize Caman with a path to an image file and no callback.
-      @param [String, File] file File object or path to image to read.
-    
-    @overload Caman(file, callback)
-      **NodeJS**: Initialize Caman with a file and a callback.
-      @param [String, File] file File object or path to image to read.
-      @param [Function] callback Function to call once initialization completes.
-    
-    @return [Caman] Initialized Caman instance.
-    */
-
 
     function Caman() {
       var args, callback, id,
@@ -667,7 +604,13 @@
     Caman.prototype.processKernel = function(name, adjust, divisor, bias) {
       var i, _i, _ref;
 
-      if (!divisor) {
+      if (divisor == null) {
+        divisor = null;
+      }
+      if (bias == null) {
+        bias = 0;
+      }
+      if (divisor == null) {
         divisor = 0;
         for (i = _i = 0, _ref = adjust.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           divisor += adjust[i];
@@ -678,7 +621,7 @@
         name: name,
         adjust: adjust,
         divisor: divisor,
-        bias: bias || 0
+        bias: bias
       });
       return this;
     };
@@ -781,12 +724,6 @@
 
   })();
 
-  /*
-  Inform CamanJS that the DOM has been updated, and that it
-  should re-scan for CamanJS instances in the document.
-  */
-
-
   Caman.DOMUpdated = function() {
     var img, imgs, parser, _i, _len, _results;
 
@@ -815,33 +752,15 @@
     })();
   }
 
-  /*
-  Parses Caman instructions embedded in the HTML data-caman attribute.
-  */
-
-
   CamanParser = (function() {
     var INST_REGEX;
 
     INST_REGEX = "(\\w+)\\((.*?)\\)";
 
-    /*
-    Creates a new parser instance
-    
-    @param [DOMObject] ele DOM object to be instantiated with CamanJS
-    @param [Function] ready Callback function to pass to CamanJS
-    */
-
-
     function CamanParser(ele, ready) {
       this.dataStr = ele.getAttribute('data-caman');
       this.caman = Caman(ele, ready.bind(this));
     }
-
-    /*
-    Parse the DOM object and call the parsed filter functions on the Caman object.
-    */
-
 
     CamanParser.prototype.parse = function() {
       var args, e, filter, func, inst, instFunc, m, r, unparsedInstructions, _i, _len, _ref, _results;
@@ -868,11 +787,6 @@
       }
       return _results;
     };
-
-    /*
-    Execute {Caman#render} on this Caman instance
-    */
-
 
     CamanParser.prototype.execute = function() {
       var ele;

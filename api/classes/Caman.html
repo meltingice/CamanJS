@@ -181,7 +181,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Checks to ensure the DOM is loaded.
     </span>
   </li>
   <li>
@@ -191,7 +191,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      All possible combinations: <strong>1 argument</strong> - Image selector - Image object - Canvas selector - Canvas object <strong>2 arguments</strong> - Image selector + callback - Image object + callback - Canvas selector + URL - Canvas object + URL <strong>3 arguments</strong> - Canvas selector + URL + callback - Canvas object + URL + callback <strong>NodeJS</strong> - file path - file object - file path + callback - file object + callback
+      Parses the arguments given to the Caman function, and sets the appropriate properties on this instance.
     </span>
   </li>
   <li>
@@ -201,7 +201,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Sets the initialization object for this instance.
     </span>
   </li>
   <li>
@@ -211,7 +211,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Begins the setup process, which differs depending on whether we&#39;re in NodeJS, or if an image or canvas object was provided.
     </span>
   </li>
   <li>
@@ -221,7 +221,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Initialization function for NodeJS.
     </span>
   </li>
   <li>
@@ -231,7 +231,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Initialization function for the browser and image objects.
     </span>
   </li>
   <li>
@@ -241,7 +241,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Initialization function for the browser and canvas objects.
     </span>
   </li>
   <li>
@@ -251,7 +251,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Automatically check for a HiDPI capable screen and swap out the image if possible.
     </span>
   </li>
   <li>
@@ -261,33 +261,33 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Utility function that fires <a href='../classes/Caman.html#imageLoaded-instance'>Caman#imageLoaded</a> once the image is finished loading.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#isImageLoaded-instance'>
-        - (void) <strong>isImageLoaded</strong>()
+        - (Boolean) <strong>isImageLoaded</strong>()
       </a>
     </span>
     <span class='desc'>
-      
+      Checks if the given image is finished loading.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#imageWidth-instance'>
-        - (void) <strong>imageWidth</strong>()
+        - (Number) <strong>imageWidth</strong>()
       </a>
     </span>
     <span class='desc'>
-      Internet Explorer has issues figuring out image dimensions when they aren&#39;t explicitly defined apparently.
+      Internet Explorer has issues figuring out image dimensions when they aren&#39;t explicitly defined, apparently.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#imageHeight-instance'>
-        - (void) <strong>imageHeight</strong>()
+        - (Number) <strong>imageHeight</strong>()
       </a>
     </span>
     <span class='desc'>
@@ -301,7 +301,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Function that is called once the initialization image is finished loading.
     </span>
   </li>
   <li>
@@ -311,7 +311,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Final step of initialization.
     </span>
   </li>
   <li>
@@ -331,17 +331,17 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Reset the canvas pixels to the original state at initialization.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#hasId-instance'>
-        - (void) <strong>hasId</strong>()
+        - (Boolean) <strong>hasId</strong>()
       </a>
     </span>
     <span class='desc'>
-      
+      Does this instance have an ID assigned?
     </span>
   </li>
   <li>
@@ -351,17 +351,17 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Assign a unique ID to this instance.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#hiDPIDisabled-instance'>
-        - (void) <strong>hiDPIDisabled</strong>()
+        - (Boolean) <strong>hiDPIDisabled</strong>()
       </a>
     </span>
     <span class='desc'>
-      
+      Is HiDPI support disabled via the HTML data attribute?
     </span>
   </li>
   <li>
@@ -371,47 +371,47 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Perform HiDPI adjustments to the canvas.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#hiDPIRatio-instance'>
-        - (void) <strong>hiDPIRatio</strong>()
+        - (Number) <strong>hiDPIRatio</strong>()
       </a>
     </span>
     <span class='desc'>
-      
+      Calculate the HiDPI ratio of this display based on the backing store and the pixel ratio.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#hiDPICapable-instance'>
-        - (void) <strong>hiDPICapable</strong>()
+        - (Boolean) <strong>hiDPICapable</strong>()
       </a>
     </span>
     <span class='desc'>
-      
+      Is this display HiDPI capable?
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#needsHiDPISwap-instance'>
-        - (void) <strong>needsHiDPISwap</strong>()
+        - (Boolean) <strong>needsHiDPISwap</strong>()
       </a>
     </span>
     <span class='desc'>
-      
+      Do we need to perform an image swap with a HiDPI image?
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#hiDPIReplacement-instance'>
-        - (void) <strong>hiDPIReplacement</strong>()
+        - (String) <strong>hiDPIReplacement</strong>()
       </a>
     </span>
     <span class='desc'>
-      
+      Gets the HiDPI replacement for the initialization image.
     </span>
   </li>
   <li>
@@ -421,7 +421,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      
+      Replaces the current canvas with a new one, and properly updates all of the applicable references for this instance.
     </span>
   </li>
   <li>
@@ -431,7 +431,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      Begins the rendering process
+      Begins the rendering process.
     </span>
   </li>
   <li>
@@ -457,7 +457,7 @@ image element, load the image, then continue with initialization.</p><p>The main
   <li>
     <span class='signature'>
       <a href='#originalVisiblePixels-instance'>
-        - (void) <strong>originalVisiblePixels</strong>()
+        - (Array) <strong>originalVisiblePixels</strong>()
       </a>
     </span>
     <span class='desc'>
@@ -467,41 +467,41 @@ image element, load the image, then continue with initialization.</p><p>The main
   <li>
     <span class='signature'>
       <a href='#process-instance'>
-        - (void) <strong>process</strong>(name, processFn)
+        - (Caman) <strong>process</strong>(name, processFn)
       </a>
     </span>
     <span class='desc'>
-      Pushes the filter callback that modifies the RGBA object into the render queue
+      Pushes the filter callback that modifies the RGBA object into the render queue.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#processKernel-instance'>
-        - (void) <strong>processKernel</strong>(name, adjust, divisor, bias)
+        - (Caman) <strong>processKernel</strong>(name, adjust, divisor = null, bias = 0)
       </a>
     </span>
     <span class='desc'>
-      Pushes the kernel into the render queue
+      Pushes the kernel into the render queue.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#processPlugin-instance'>
-        - (void) <strong>processPlugin</strong>(plugin, args)
+        - (Caman) <strong>processPlugin</strong>(plugin, args)
       </a>
     </span>
     <span class='desc'>
-      Adds a standalone plugin into the render queue
+      Adds a standalone plugin into the render queue.
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#newLayer-instance'>
-        - (void) <strong>newLayer</strong>(callback)
+        - (Caman) <strong>newLayer</strong>(callback)
       </a>
     </span>
     <span class='desc'>
-      Pushes a new layer operation into the render queue and calls the layer callback
+      Pushes a new layer operation into the render queue and calls the layer callback.
     </span>
   </li>
   <li>
@@ -511,7 +511,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      Pushes the layer context and moves to the next operation
+      Pushes the layer context and moves to the next operation.
     </span>
   </li>
   <li>
@@ -521,7 +521,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      Set all of the relevant data to the new layer
+      Set all of the relevant data to the new layer.
     </span>
   </li>
   <li>
@@ -531,7 +531,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      Restore the previous layer context
+      Restore the previous layer context.
     </span>
   </li>
   <li>
@@ -541,7 +541,7 @@ image element, load the image, then continue with initialization.</p><p>The main
       </a>
     </span>
     <span class='desc'>
-      Applies the current layer to its parent layer
+      Applies the current layer to its parent layer.
     </span>
   </li>
 </ul>
@@ -782,7 +782,23 @@ the <code>new</code> keyword. Caman will figure it out.</p>
     <p class='signature' id='domIsLoaded-instance'>
       - (void) <strong>domIsLoaded</strong>(cb)
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Checks to ensure the DOM is loaded. Ensures the callback is always fired, even
+if the DOM is already loaded before it&#39;s invoked. The callback is also always
+called asynchronously.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>cb</span>
+      <span class='type'>
+        (<tt>Function</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The callback function to fire when the DOM is ready.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
@@ -790,7 +806,8 @@ the <code>new</code> keyword. Caman will figure it out.</p>
       - (void) <strong>parseArguments</strong>(args)
     </p>
     <div class='docstring'>
-  <p>All possible combinations:</p><p><strong>1 argument</strong> - Image selector - Image object - Canvas selector - Canvas object</p><p><strong>2 arguments</strong> - Image selector + callback - Image object + callback - Canvas selector + URL - Canvas object + URL</p><p><strong>3 arguments</strong> - Canvas selector + URL + callback - Canvas object + URL + callback</p><p><strong>NodeJS</strong> - file path - file object - file path + callback - file object + callback</p>
+  <p>Parses the arguments given to the Caman function, and sets the appropriate
+properties on this instance.</p><p>@params [Array] args Array of arguments passed to Caman.</p>
 </div>
 <div class='tags'>
 </div>
@@ -799,89 +816,168 @@ the <code>new</code> keyword. Caman will figure it out.</p>
     <p class='signature' id='setInitObject-instance'>
       - (void) <strong>setInitObject</strong>(obj)
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Sets the initialization object for this instance.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>obj</span>
+      <span class='type'>
+        (<tt>Object, String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The initialization argument.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='setup-instance'>
       - (void) <strong>setup</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Begins the setup process, which differs depending on whether we&#39;re in NodeJS,
+or if an image or canvas object was provided.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='initNode-instance'>
       - (void) <strong>initNode</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Initialization function for NodeJS.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='initImage-instance'>
       - (void) <strong>initImage</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Initialization function for the browser and image objects.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='initCanvas-instance'>
       - (void) <strong>initCanvas</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Initialization function for the browser and canvas objects.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='imageAdjustments-instance'>
       - (void) <strong>imageAdjustments</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Automatically check for a HiDPI capable screen and swap out the image if possible.
+Also checks the image URL to see if it&#39;s a cross-domain request, and attempt to
+proxy the image. If a cross-origin type is configured, the proxy will be ignored.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='waitForImageLoaded-instance'>
       - (void) <strong>waitForImageLoaded</strong>()
     </p>
-    <div class='tags'>
-</div>
-  </div>
-  <div class='method_details'>
-    <p class='signature' id='isImageLoaded-instance'>
-      - (void) <strong>isImageLoaded</strong>()
-    </p>
-    <div class='tags'>
-</div>
-  </div>
-  <div class='method_details'>
-    <p class='signature' id='imageWidth-instance'>
-      - (void) <strong>imageWidth</strong>()
-    </p>
     <div class='docstring'>
-  <p>Internet Explorer has issues figuring out image dimensions when they aren&#39;t
-explicitly defined apparently. We check the normal width/height properties first,
-but fall back to natural sizes if they are 0.</p>
+  <p>Utility function that fires <a href='../classes/Caman.html#imageLoaded-instance'>Caman#imageLoaded</a> once the image is finished loading.</p>
 </div>
 <div class='tags'>
 </div>
   </div>
   <div class='method_details'>
+    <p class='signature' id='isImageLoaded-instance'>
+      - (Boolean) <strong>isImageLoaded</strong>()
+    </p>
+    <div class='docstring'>
+  <p>Checks if the given image is finished loading.</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Boolean</tt>)
+      &mdash;
+      <span class='desc'>Is the image loaded?</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='imageWidth-instance'>
+      - (Number) <strong>imageWidth</strong>()
+    </p>
+    <div class='docstring'>
+  <p>Internet Explorer has issues figuring out image dimensions when they aren&#39;t
+explicitly defined, apparently. We check the normal width/height properties first,
+but fall back to natural sizes if they are 0.</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Number</tt>)
+      &mdash;
+      <span class='desc'>Width of the initialization image.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
     <p class='signature' id='imageHeight-instance'>
-      - (void) <strong>imageHeight</strong>()
+      - (Number) <strong>imageHeight</strong>()
     </p>
     <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Number</tt>)
+      &mdash;
+      <span class='desc'>Height of the initialization image.</span>
+    </li>
+  </ul>
+  <h3>See also:</h3>
+  <ul class='see'>
+    <li>
+      <a href='../classes/Caman.html#imageWidth-instance'>Caman#imageWidth</a>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='imageLoaded-instance'>
       - (void) <strong>imageLoaded</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Function that is called once the initialization image is finished loading.
+We make sure that the canvas dimensions are properly set here.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='finishInit-instance'>
       - (void) <strong>finishInit</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Final step of initialization. We finish setting up our canvas element, and we
+draw the image to the canvas (if applicable).</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
@@ -900,70 +996,156 @@ this function to update our context reference to include those changes.</p>
     <p class='signature' id='resetOriginalPixelData-instance'>
       - (void) <strong>resetOriginalPixelData</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Reset the canvas pixels to the original state at initialization.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='hasId-instance'>
-      - (void) <strong>hasId</strong>()
+      - (Boolean) <strong>hasId</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Does this instance have an ID assigned?</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Boolean</tt>)
+      &mdash;
+      <span class='desc'>Existance of an ID.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='assignId-instance'>
       - (void) <strong>assignId</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Assign a unique ID to this instance.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='hiDPIDisabled-instance'>
-      - (void) <strong>hiDPIDisabled</strong>()
+      - (Boolean) <strong>hiDPIDisabled</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Is HiDPI support disabled via the HTML data attribute?</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span><tt>Boolean</tt></li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='hiDPIAdjustments-instance'>
       - (void) <strong>hiDPIAdjustments</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Perform HiDPI adjustments to the canvas. This consists of changing the
+scaling and the dimensions to match that of the display.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='hiDPIRatio-instance'>
-      - (void) <strong>hiDPIRatio</strong>()
+      - (Number) <strong>hiDPIRatio</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Calculate the HiDPI ratio of this display based on the backing store
+and the pixel ratio.</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Number</tt>)
+      &mdash;
+      <span class='desc'>The HiDPI pixel ratio.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='hiDPICapable-instance'>
-      - (void) <strong>hiDPICapable</strong>()
+      - (Boolean) <strong>hiDPICapable</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Is this display HiDPI capable?</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span><tt>Boolean</tt></li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='needsHiDPISwap-instance'>
-      - (void) <strong>needsHiDPISwap</strong>()
+      - (Boolean) <strong>needsHiDPISwap</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Do we need to perform an image swap with a HiDPI image?</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span><tt>Boolean</tt></li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='hiDPIReplacement-instance'>
-      - (void) <strong>hiDPIReplacement</strong>()
+      - (String) <strong>hiDPIReplacement</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Gets the HiDPI replacement for the initialization image.</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>String</tt>)
+      &mdash;
+      <span class='desc'>URL to the HiDPI version.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='replaceCanvas-instance'>
       - (void) <strong>replaceCanvas</strong>(newCanvas)
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Replaces the current canvas with a new one, and properly updates all of the
+applicable references for this instance.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>newCanvas</span>
+      <span class='type'>
+        (<tt>DOMObject</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The canvas to swap into this instance.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
@@ -971,9 +1153,21 @@ this function to update our context reference to include those changes.</p>
       - (void) <strong>render</strong>(callback = function() {})
     </p>
     <div class='docstring'>
-  <p>Begins the rendering process</p>
+  <p>Begins the rendering process. This will execute all of the filter functions
+called either since initialization or the previous render.</p>
 </div>
 <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>callback</span>
+      <span class='type'>
+        (<tt>Function</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Function to call when rendering is finished.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
@@ -1000,55 +1194,169 @@ Any size adjustments will also be reset.</p>
   </div>
   <div class='method_details'>
     <p class='signature' id='originalVisiblePixels-instance'>
-      - (void) <strong>originalVisiblePixels</strong>()
+      - (Array) <strong>originalVisiblePixels</strong>()
     </p>
     <div class='docstring'>
   <p>Returns the original pixel data while maintaining any
-cropping or resizing that may have occured.</p>
+cropping or resizing that may have occured.
+<strong>Warning</strong>: this is currently in beta status.</p>
 </div>
 <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>Original pixel values still visible after cropping or resizing.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='process-instance'>
-      - (void) <strong>process</strong>(name, processFn)
+      - (Caman) <strong>process</strong>(name, processFn)
     </p>
     <div class='docstring'>
   <p>Pushes the filter callback that modifies the RGBA object into the
-render queue</p>
+render queue.</p>
 </div>
 <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>name</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Name of the filter function.</span>
+    </li>
+    <li>
+      <span class='name'>processFn</span>
+      <span class='type'>
+        (<tt>Function</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The Filter function.</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span><tt><a href='../classes/Caman.html'>Caman</a></tt></li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='processKernel-instance'>
-      - (void) <strong>processKernel</strong>(name, adjust, divisor, bias)
+      - (Caman) <strong>processKernel</strong>(name, adjust, divisor = null, bias = 0)
     </p>
     <div class='docstring'>
-  <p>Pushes the kernel into the render queue</p>
+  <p>Pushes the kernel into the render queue.</p>
 </div>
 <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>name</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The name of the kernel.</span>
+    </li>
+    <li>
+      <span class='name'>adjust</span>
+      <span class='type'>
+        (<tt>Array</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The convolution kernel represented as a 1D array.</span>
+    </li>
+    <li>
+      <span class='name'>divisor</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The divisor for the convolution.</span>
+    </li>
+    <li>
+      <span class='name'>bias</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The bias for the convolution.</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span><tt><a href='../classes/Caman.html'>Caman</a></tt></li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='processPlugin-instance'>
-      - (void) <strong>processPlugin</strong>(plugin, args)
+      - (Caman) <strong>processPlugin</strong>(plugin, args)
     </p>
     <div class='docstring'>
-  <p>Adds a standalone plugin into the render queue</p>
+  <p>Adds a standalone plugin into the render queue.</p>
 </div>
 <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>plugin</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Name of the plugin.</span>
+    </li>
+    <li>
+      <span class='name'>args</span>
+      <span class='type'>
+        (<tt>Array</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Array of arguments to pass to the plugin.</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span><tt><a href='../classes/Caman.html'>Caman</a></tt></li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='newLayer-instance'>
-      - (void) <strong>newLayer</strong>(callback)
+      - (Caman) <strong>newLayer</strong>(callback)
     </p>
     <div class='docstring'>
   <p>Pushes a new layer operation into the render queue and calls the layer
-callback</p>
+callback.</p>
 </div>
 <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>callback</span>
+      <span class='type'>
+        (<tt>Function</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Function that is executed within the context of the layer. All filter and adjustment functions for the layer will be executed inside of this function.</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span><tt><a href='../classes/Caman.html'>Caman</a></tt></li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
@@ -1056,9 +1364,20 @@ callback</p>
       - (void) <strong>executeLayer</strong>(layer)
     </p>
     <div class='docstring'>
-  <p>Pushes the layer context and moves to the next operation</p>
+  <p>Pushes the layer context and moves to the next operation.</p>
 </div>
 <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>layer</span>
+      <span class='type'>
+        (<tt><a href='../classes/Layer.html'>Layer</a></tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The layer to execute.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
@@ -1066,9 +1385,20 @@ callback</p>
       - (void) <strong>pushContext</strong>(layer)
     </p>
     <div class='docstring'>
-  <p>Set all of the relevant data to the new layer</p>
+  <p>Set all of the relevant data to the new layer.</p>
 </div>
 <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>layer</span>
+      <span class='type'>
+        (<tt><a href='../classes/Layer.html'>Layer</a></tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The layer whose context we want to switch to.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
@@ -1076,7 +1406,7 @@ callback</p>
       - (void) <strong>popContext</strong>()
     </p>
     <div class='docstring'>
-  <p>Restore the previous layer context</p>
+  <p>Restore the previous layer context.</p>
 </div>
 <div class='tags'>
 </div>
@@ -1086,7 +1416,7 @@ callback</p>
       - (void) <strong>applyCurrentLayer</strong>()
     </p>
     <div class='docstring'>
-  <p>Applies the current layer to its parent layer</p>
+  <p>Applies the current layer to its parent layer.</p>
 </div>
 <div class='tags'>
 </div>
@@ -1095,7 +1425,7 @@ callback</p>
     </div>
     <div id='footer'>
   Generated on
-  Mon Jun 10 2013 00:52:17 GMT-0400 (EDT)
+  Mon Jun 10 2013 01:33:56 GMT-0400 (EDT)
   by
   <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
   v1.7.0

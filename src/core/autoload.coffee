@@ -1,7 +1,5 @@
-###
-Inform CamanJS that the DOM has been updated, and that it
-should re-scan for CamanJS instances in the document.
-###
+# Inform CamanJS that the DOM has been updated, and that it
+# should re-scan for CamanJS instances in the document.
 Caman.DOMUpdated = ->
   imgs = document.querySelectorAll("img[data-caman]")
   return unless imgs.length > 0
@@ -20,26 +18,21 @@ if Caman.autoload then do ->
   else
     document.addEventListener "DOMContentLoaded", Caman.DOMUpdated, false
 
-###
-Parses Caman instructions embedded in the HTML data-caman attribute.
-###
+# Parses Caman instructions embedded in the HTML data-caman attribute.
 class CamanParser
   # Regex used for parsing options out of the data-caman attribute.
   INST_REGEX = "(\\w+)\\((.*?)\\)"
 
-  ###
-  Creates a new parser instance
   
-  @param [DOMObject] ele DOM object to be instantiated with CamanJS
-  @param [Function] ready Callback function to pass to CamanJS
-  ###
+  # Creates a new parser instance.
+  #
+  # @param [DOMObject] ele DOM object to be instantiated with CamanJS
+  # @param [Function] ready Callback function to pass to CamanJS
   constructor: (ele, ready) ->
     @dataStr = ele.getAttribute('data-caman')
     @caman = Caman ele, ready.bind(@)
 
-  ###
-  Parse the DOM object and call the parsed filter functions on the Caman object.
-  ###
+  # Parse the DOM object and call the parsed filter functions on the Caman object.
   parse: ->
     @ele = @caman.canvas
 
@@ -68,9 +61,7 @@ class CamanParser
       catch e
         Log.debug e
 
-  ###
-  Execute {Caman#render} on this Caman instance
-  ###
+  # Execute {Caman#render} on this Caman instance.
   execute: ->
     ele = @ele
     @caman.render ->
