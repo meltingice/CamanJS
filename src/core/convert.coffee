@@ -1,12 +1,10 @@
-# Tons of color conversion functions
+# Tons of color conversion utility functions.
 class Convert
   # Converts the hex representation of a color to RGB values.
   # Hex value can optionally start with the hash (#).
   #
-  # <pre>
-  # @param   String  hex   The colors hex value
-  # @return  Array         The RGB representation
-  # </pre>
+  # @param  [String] hex  The colors hex value
+  # @return [Array]       The RGB representation
   @hexToRGB: (hex) ->
     hex = hex.substr(1) if hex.charAt(0) is "#"
     r = parseInt hex.substr(0, 2), 16
@@ -19,12 +17,18 @@ class Convert
   # Assumes r, g, and b are in the set [0, 255] and
   # returns h, s, and l in the set [0, 1].
   #
-  # <pre>
-  # @param   Number  r   Red channel
-  # @param   Number  g   Green channel
-  # @param   Number  b   Blue channel
-  # @return              The HSL representation
-  # </pre>
+  # @overload rgbToHSL(r, g, b)
+  #   @param   [Number]  r   Red channel
+  #   @param   [Number]  g   Green channel
+  #   @param   [Number]  b   Blue channel
+  #
+  # @overload rgbToHSL(rgb)
+  #   @param [Object] rgb The RGB object.
+  #   @option rgb [Number] r The red channel.
+  #   @option rgb [Number] g The green channel.
+  #   @option rgb [Number] b The blue channel.
+  #
+  # @return  [Array]       The HSL representation
   @rgbToHSL: (r, g, b) ->
     if typeof r is "object"
       g = r.g
@@ -58,12 +62,18 @@ class Convert
   # Assumes h, s, and l are contained in the set [0, 1] and
   # returns r, g, and b in the set [0, 255].
   #
-  # <pre>
-  # @param   Number  h       The hue
-  # @param   Number  s       The saturation
-  # @param   Number  l       The lightness
-  # @return  Array           The RGB representation
-  # </pre>
+  # @overload hslToRGB(h, s, l)
+  #   @param   [Number]  h       The hue
+  #   @param   [Number]  s       The saturation
+  #   @param   [Number]  l       The lightness
+  #
+  # @overload hslToRGB(hsl)
+  #   @param [Object] hsl The HSL object.
+  #   @option hsl [Number] h The hue.
+  #   @option hsl [Number] s The saturation.
+  #   @option hsl [Number] l The lightness.
+  #
+  # @return  [Array]           The RGB representation
   @hslToRGB: (h, s, l) ->
     if typeof h is "object"
       s = h.s
@@ -82,7 +92,12 @@ class Convert
 
     r: r * 255, g: g * 255, b: b * 255
 
-  # Converts from the hue color space back to RGB
+  # Converts from the hue color space back to RGB.
+  #
+  # @param [Number] p
+  # @param [Number] q
+  # @param [Number] t
+  # @return [Number] RGB value
   @hueToRGB: (p, q, t) ->
     if t < 0 then t += 1
     if t > 1 then t -= 1
@@ -92,16 +107,14 @@ class Convert
     return p
 
   # Converts an RGB color value to HSV. Conversion formula
-  # adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+  # adapted from {http://en.wikipedia.org/wiki/HSV_color_space}.
   # Assumes r, g, and b are contained in the set [0, 255] and
   # returns h, s, and v in the set [0, 1].
   #
-  # <pre>
-  # @param   Number  r       The red color value
-  # @param   Number  g       The green color value
-  # @param   Number  b       The blue color value
-  # @return  Array           The HSV representation
-  # </pre>
+  # @param   [Number]  r       The red color value
+  # @param   [Number]  g       The green color value
+  # @param   [Number]  b       The blue color value
+  # @return  [Array]           The HSV representation
   @rgbToHSV: (r, g, b) ->
     r /= 255
     g /= 255
@@ -131,12 +144,10 @@ class Convert
   # Assumes h, s, and v are contained in the set [0, 1] and
   # returns r, g, and b in the set [0, 255].
   #
-  # <pre>
-  # @param   Number  h       The hue
-  # @param   Number  s       The saturation
-  # @param   Number  v       The value
-  # @return  Array           The RGB representation
-  # </pre>
+  # @param   [Number]  h       The hue
+  # @param   [Number]  s       The saturation
+  # @param   [Number]  v       The value
+  # @return  [Array]           The RGB representation
   @hsvToRGB: (h, s, v) ->
     i = Math.floor h * 6
     f = h * 6 - i
@@ -145,30 +156,12 @@ class Convert
     t = v * (1 - (1 - f) * s)
 
     switch i % 6
-      when 0
-        r = v
-        g = t
-        b = p
-      when 1
-        r = q
-        g = v
-        b = p
-      when 2
-        r = p
-        g = v
-        b = t
-      when 3
-        r = p
-        g = q
-        b = v
-      when 4
-        r = t
-        g = p
-        b = v
-      when 5
-        r = v
-        g = p
-        b = q
+      when 0 then r = v; g = t; b = p
+      when 1 then r = q; g = v; b = p
+      when 2 then r = p; g = v; b = t
+      when 3 then r = p; g = q; b = v
+      when 4 then r = t; g = p; b = v
+      when 5 then r = v; g = p; b = q
 
     r: r * 255, g: g * 255, b: b * 255
 
@@ -179,12 +172,10 @@ class Convert
   # Assumes r, g, and b are contained in the set [0, 255] and
   # returns x, y, and z.
   #
-  # <pre>
-  # @param   Number  r       The red color value
-  # @param   Number  g       The green color value
-  # @param   Number  b       The blue color value
-  # @return  Array           The XYZ representation
-  # </pre>
+  # @param   [Number]  r       The red color value
+  # @param   [Number]  g       The green color value
+  # @param   [Number]  b       The blue color value
+  # @return  [Array]           The XYZ representation
   @rgbToXYZ: (r, g, b) ->
     r /= 255
     g /= 255
@@ -217,12 +208,10 @@ class Convert
   # Assumes x, y and z values are whatever they are and returns
   # r, g and b in the set [0, 255].
   #
-  # <pre>
-  # @param   Number  x       The X value
-  # @param   Number  y       The Y value
-  # @param   Number  z       The Z value
-  # @return  Array           The RGB representation
-  # </pre>
+  # @param   [Number]  x       The X value
+  # @param   [Number]  y       The Y value
+  # @param   [Number]  z       The Z value
+  # @return  [Array]           The RGB representation
   @xyzToRGB: (x, y, z) ->
     x /= 100
     y /= 100
@@ -255,12 +244,18 @@ class Convert
   # Assumes x, y and z values are whatever they are and returns
   # L*, a* and b* values
   #
-  # <pre>
-  # @param   Number  x       The X value
-  # @param   Number  y       The Y value
-  # @param   Number  z       The Z value
-  # @return  Array           The Lab representation
-  # </pre>
+  # @overload xyzToLab(x, y, z)
+  #   @param   [Number]  x       The X value
+  #   @param   [Number]  y       The Y value
+  #   @param   [Number]  z       The Z value
+  #
+  # @overload xyzToLab(xyz)
+  #   @param [Object] xyz The XYZ object.
+  #   @option xyz [Number] x The X value.
+  #   @option xyz [Number] y The Y value.
+  #   @option xyz [Number] z The z value.
+  #
+  # @return [Array] The Lab representation
   @xyzToLab: (x, y, z) ->
     if typeof x is "object"
       y = x.y
@@ -304,12 +299,18 @@ class Convert
   # Assumes L*, a* and b* values are whatever they are and returns
   # x, y and z values.
   #
-  # <pre>
-  # @param   Number  l       The L* value
-  # @param   Number  a       The a* value
-  # @param   Number  b       The b* value
-  # @return  Array           The XYZ representation
-  # </pre>
+  # @overload labToXYZ(l, a, b)
+  #   @param   [Number]  l       The L* value
+  #   @param   [Number]  a       The a* value
+  #   @param   [Number]  b       The b* value
+  #
+  # @overload labToXYZ(lab)
+  #   @param [Object] lab The LAB values
+  #   @option lab [Number] l The L* value.
+  #   @option lab [Number] a The a* value.
+  #   @option lab [Number] b The b* value.
+  #
+  # @return  [Array]           The XYZ representation
   @labToXYZ: (l, a, b) ->
     if typeof l is "object"
       a = l.a
@@ -338,6 +339,10 @@ class Convert
     # D65 reference white point
     x: x * 95.047, y: y * 100.0, z: z * 108.883
 
+  # Converts L*, a*, b* back to RGB values.
+  #
+  # @see Convert.rgbToXYZ
+  # @see Convert.xyzToLab
   @rgbToLab: (r, g, b) ->
     if typeof r is "object"
       g = r.g

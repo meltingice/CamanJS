@@ -178,7 +178,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>Tons of color conversion functions</p>
+              <p>Tons of color conversion utility functions.</p>
 
             </div>
             
@@ -195,10 +195,8 @@
               </div>
               <p>Converts the hex representation of a color to RGB values.
 Hex value can optionally start with the hash (#).</p>
-<pre>
-@param   String  hex   The colors hex value
-@return  Array         The RGB representation
-</pre>
+<p>@param  [String] hex  The colors hex value
+@return [Array]       The RGB representation</p>
 
             </div>
             
@@ -222,12 +220,16 @@ Hex value can optionally start with the hash (#).</p>
               <p>Converts an RGB color to HSL.
 Assumes r, g, and b are in the set [0, 255] and
 returns h, s, and l in the set [0, 1].</p>
-<pre>
-@param   Number  r   Red channel
-@param   Number  g   Green channel
-@param   Number  b   Blue channel
-@return              The HSL representation
-</pre>
+<p>@overload rgbToHSL(r, g, b)
+  @param   [Number]  r   Red channel
+  @param   [Number]  g   Green channel
+  @param   [Number]  b   Blue channel</p>
+<p>@overload rgbToHSL(rgb)
+  @param [Object] rgb The RGB object.
+  @option rgb [Number] r The red channel.
+  @option rgb [Number] g The green channel.
+  @option rgb [Number] b The blue channel.</p>
+<p>@return  [Array]       The HSL representation</p>
 
             </div>
             
@@ -272,12 +274,16 @@ returns h, s, and l in the set [0, 1].</p>
 adapted from <a href="http://en.wikipedia.org/wiki/HSL_color_space">http://en.wikipedia.org/wiki/HSL_color_space</a>.
 Assumes h, s, and l are contained in the set [0, 1] and
 returns r, g, and b in the set [0, 255].</p>
-<pre>
-@param   Number  h       The hue
-@param   Number  s       The saturation
-@param   Number  l       The lightness
-@return  Array           The RGB representation
-</pre>
+<p>@overload hslToRGB(h, s, l)
+  @param   [Number]  h       The hue
+  @param   [Number]  s       The saturation
+  @param   [Number]  l       The lightness</p>
+<p>@overload hslToRGB(hsl)
+  @param [Object] hsl The HSL object.
+  @option hsl [Number] h The hue.
+  @option hsl [Number] s The saturation.
+  @option hsl [Number] l The lightness.</p>
+<p>@return  [Array]           The RGB representation</p>
 
             </div>
             
@@ -308,7 +314,11 @@ returns r, g, and b in the set [0, 255].</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Converts from the hue color space back to RGB</p>
+              <p>Converts from the hue color space back to RGB.</p>
+<p>@param [Number] p
+@param [Number] q
+@param [Number] t
+@return [Number] RGB value</p>
 
             </div>
             
@@ -330,15 +340,13 @@ returns r, g, and b in the set [0, 255].</p>
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>Converts an RGB color value to HSV. Conversion formula
-adapted from <a href="http://en.wikipedia.org/wiki/HSV_color_space">http://en.wikipedia.org/wiki/HSV_color_space</a>.
+adapted from {<a href="http://en.wikipedia.org/wiki/HSV_color_space}">http://en.wikipedia.org/wiki/HSV_color_space}</a>.
 Assumes r, g, and b are contained in the set [0, 255] and
 returns h, s, and v in the set [0, 1].</p>
-<pre>
-@param   Number  r       The red color value
-@param   Number  g       The green color value
-@param   Number  b       The blue color value
-@return  Array           The HSV representation
-</pre>
+<p>@param   [Number]  r       The red color value
+@param   [Number]  g       The green color value
+@param   [Number]  b       The blue color value
+@return  [Array]           The HSV representation</p>
 
             </div>
             
@@ -379,12 +387,10 @@ returns h, s, and v in the set [0, 1].</p>
 adapted from <a href="http://en.wikipedia.org/wiki/HSV_color_space">http://en.wikipedia.org/wiki/HSV_color_space</a>.
 Assumes h, s, and v are contained in the set [0, 1] and
 returns r, g, and b in the set [0, 255].</p>
-<pre>
-@param   Number  h       The hue
-@param   Number  s       The saturation
-@param   Number  v       The value
-@return  Array           The RGB representation
-</pre>
+<p>@param   [Number]  h       The hue
+@param   [Number]  s       The saturation
+@param   [Number]  v       The value
+@return  [Array]           The RGB representation</p>
 
             </div>
             
@@ -396,30 +402,12 @@ returns r, g, and b in the set [0, 255].</p>
     t = v * (<span class="number">1</span> - (<span class="number">1</span> - f) * s)
 
     <span class="keyword">switch</span> i % <span class="number">6</span>
-      <span class="keyword">when</span> <span class="number">0</span>
-        r = v
-        g = t
-        b = p
-      <span class="keyword">when</span> <span class="number">1</span>
-        r = q
-        g = v
-        b = p
-      <span class="keyword">when</span> <span class="number">2</span>
-        r = p
-        g = v
-        b = t
-      <span class="keyword">when</span> <span class="number">3</span>
-        r = p
-        g = q
-        b = v
-      <span class="keyword">when</span> <span class="number">4</span>
-        r = t
-        g = p
-        b = v
-      <span class="keyword">when</span> <span class="number">5</span>
-        r = v
-        g = p
-        b = q
+      <span class="keyword">when</span> <span class="number">0</span> <span class="keyword">then</span> r = v; g = t; b = p
+      <span class="keyword">when</span> <span class="number">1</span> <span class="keyword">then</span> r = q; g = v; b = p
+      <span class="keyword">when</span> <span class="number">2</span> <span class="keyword">then</span> r = p; g = v; b = t
+      <span class="keyword">when</span> <span class="number">3</span> <span class="keyword">then</span> r = p; g = q; b = v
+      <span class="keyword">when</span> <span class="number">4</span> <span class="keyword">then</span> r = t; g = p; b = v
+      <span class="keyword">when</span> <span class="number">5</span> <span class="keyword">then</span> r = v; g = p; b = q
 
     r: r * <span class="number">255</span>, g: g * <span class="number">255</span>, b: b * <span class="number">255</span></pre></div></div>
             
@@ -437,12 +425,10 @@ are based on <a href="http://en.wikipedia.org/wiki/SRGB">http://en.wikipedia.org
 RGB values are sRGB.</p>
 <p>Assumes r, g, and b are contained in the set [0, 255] and
 returns x, y, and z.</p>
-<pre>
-@param   Number  r       The red color value
-@param   Number  g       The green color value
-@param   Number  b       The blue color value
-@return  Array           The XYZ representation
-</pre>
+<p>@param   [Number]  r       The red color value
+@param   [Number]  g       The green color value
+@param   [Number]  b       The blue color value
+@return  [Array]           The XYZ representation</p>
 
             </div>
             
@@ -486,12 +472,10 @@ are based on <a href="http://en.wikipedia.org/wiki/SRGB">http://en.wikipedia.org
 RGB value will be in the sRGB color space.
 Assumes x, y and z values are whatever they are and returns
 r, g and b in the set [0, 255].</p>
-<pre>
-@param   Number  x       The X value
-@param   Number  y       The Y value
-@param   Number  z       The Z value
-@return  Array           The RGB representation
-</pre>
+<p>@param   [Number]  x       The X value
+@param   [Number]  y       The Y value
+@param   [Number]  z       The Z value
+@return  [Array]           The RGB representation</p>
 
             </div>
             
@@ -535,12 +519,16 @@ are based on <a href="http://en.wikipedia.org/wiki/Lab_color_space">http://en.wi
 The reference white point used in the conversion is D65.
 Assumes x, y and z values are whatever they are and returns
 L<em>, a</em> and b* values</p>
-<pre>
-@param   Number  x       The X value
-@param   Number  y       The Y value
-@param   Number  z       The Z value
-@return  Array           The Lab representation
-</pre>
+<p>@overload xyzToLab(x, y, z)
+  @param   [Number]  x       The X value
+  @param   [Number]  y       The Y value
+  @param   [Number]  z       The Z value</p>
+<p>@overload xyzToLab(xyz)
+  @param [Object] xyz The XYZ object.
+  @option xyz [Number] x The X value.
+  @option xyz [Number] y The Y value.
+  @option xyz [Number] z The z value.</p>
+<p>@return [Array] The Lab representation</p>
 
             </div>
             
@@ -594,12 +582,16 @@ to the XYZ color space. Formulas are based on
 <p>The reference white point used in the conversion is D65.
 Assumes L<em>, a</em> and b* values are whatever they are and returns
 x, y and z values.</p>
-<pre>
-@param   Number  l       The L* value
-@param   Number  a       The a* value
-@param   Number  b       The b* value
-@return  Array           The XYZ representation
-</pre>
+<p>@overload labToXYZ(l, a, b)
+  @param   [Number]  l       The L<em> value
+  @param   [Number]  a       The a</em> value
+  @param   [Number]  b       The b* value</p>
+<p>@overload labToXYZ(lab)
+  @param [Object] lab The LAB values
+  @option lab [Number] l The L<em> value.
+  @option lab [Number] a The a</em> value.
+  @option lab [Number] b The b* value.</p>
+<p>@return  [Array]           The XYZ representation</p>
 
             </div>
             
@@ -641,9 +633,24 @@ x, y and z values.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    x: x * <span class="number">95.047</span>, y: y * <span class="number">100.0</span>, z: z * <span class="number">108.883</span>
+            <div class="content"><div class='highlight'><pre>    x: x * <span class="number">95.047</span>, y: y * <span class="number">100.0</span>, z: z * <span class="number">108.883</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Converts L<em>, a</em>, b* back to RGB values.</p>
+<p>@see Convert.rgbToXYZ
+@see Convert.xyzToLab</p>
 
-  <span class="property">@rgbToLab</span>: (r, g, b) -&gt;
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@rgbToLab</span>: (r, g, b) -&gt;
     <span class="keyword">if</span> <span class="keyword">typeof</span> r <span class="keyword">is</span> <span class="string">"object"</span>
       g = r.g
       b = r.b
