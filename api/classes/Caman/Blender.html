@@ -15,9 +15,9 @@
     &raquo;
     <a href='../../class_index.html' title='Index'>Index</a>
     &raquo;
-    <span class='title'>core</span>
+    <a href='../../classes/Caman.html' title='Caman'>Caman</a>
     &raquo;
-    <span class='title'>autoload.coffee</span>
+    <span class='title'>Blender</span>
     <nav>
       <ul>
         <li class='noframes'>
@@ -107,39 +107,120 @@
 </div>
     <div id='content'>
       <h1>
-        File:
-        autoload.coffee
+        Class:
+        Caman.Blender
       </h1>
       <table class='box'>
         <tr>
           <td>Defined in:</td>
-          <td>core</td>
+          <td>src&#47;core&#47;blender.coffee</td>
         </tr>
       </table>
-      <h2>Method Summary</h2>
+      <h2>Overview</h2>
+      <div class='docstring'>
+  <p>Built-in layer blenders. Many of these mimic Photoshop blend modes.</p>
+</div>
+<div class='tags'>
+</div>
+      <h2>Class Method Summary</h2>
       <ul class='summary'>
   <li>
     <span class='signature'>
-      <a href='#Caman.DOMUpdated-file'>
-        ? (void) <strong>Caman.DOMUpdated</strong>()
+      <a href='#register-class'>
+        + (void) <strong>register</strong>(name, func)
       </a>
     </span>
     <span class='desc'>
-      Inform CamanJS that the DOM has been updated, and that it should re-scan for CamanJS instances in the document.
+      Registers a blender.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#execute-class'>
+        + (Object) <strong>execute</strong>(name, rgbaLayer, rgbaParent)
+      </a>
+    </span>
+    <span class='desc'>
+      Executes a blender to combine a layer with its parent.
     </span>
   </li>
 </ul>
-      <h2>Method Details</h2>
+      <h2>Class Method Details</h2>
       <div class='methods'>
   <div class='method_details'>
-    <p class='signature' id='Caman.DOMUpdated-file'>
-      ? (void) <strong>Caman.DOMUpdated</strong>()
+    <p class='signature' id='register-class'>
+      + (void) <strong>register</strong>(name, func)
     </p>
     <div class='docstring'>
-  <p>Inform CamanJS that the DOM has been updated, and that it
-should re-scan for CamanJS instances in the document.</p>
+  <p>Registers a blender. Can be used to add your own blenders outside of
+the core library, if needed.</p>
 </div>
 <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>name</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Name of the blender.</span>
+    </li>
+    <li>
+      <span class='name'>func</span>
+      <span class='type'>
+        (<tt>Function</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The blender function.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='execute-class'>
+      + (Object) <strong>execute</strong>(name, rgbaLayer, rgbaParent)
+    </p>
+    <div class='docstring'>
+  <p>Executes a blender to combine a layer with its parent.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>name</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Name of the blending function to invoke.</span>
+    </li>
+    <li>
+      <span class='name'>rgbaLayer</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>RGBA object of the current pixel from the layer.</span>
+    </li>
+    <li>
+      <span class='name'>rgbaParent</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>RGBA object of the corresponding pixel in the parent layer.</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Object</tt>)
+      &mdash;
+      <span class='desc'>RGBA object representing the blended pixel.</span>
+    </li>
+  </ul>
 </div>
   </div>
 </div>

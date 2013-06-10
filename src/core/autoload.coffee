@@ -24,11 +24,12 @@ if Caman.autoload then do ->
 Parses Caman instructions embedded in the HTML data-caman attribute.
 ###
 class CamanParser
-
+  # Regex used for parsing options out of the data-caman attribute.
   INST_REGEX = "(\\w+)\\((.*?)\\)"
 
   ###
   Creates a new parser instance
+  
   @param [DOMObject] ele DOM object to be instantiated with CamanJS
   @param [Function] ready Callback function to pass to CamanJS
   ###

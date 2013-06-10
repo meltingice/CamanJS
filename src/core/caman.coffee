@@ -10,54 +10,61 @@ if exports?
 else
   Root = window
 
-###*
-# Here it begins. Caman is defined.
-# There are many different initialization for Caman, which are described on the 
-# [Basic Usage](http://camanjs.com/guides) page.
-#
-# Initialization is tricky because we need to make sure everything we need is actually fully 
-# loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
-# image is done loading before converting it to a canvas element and writing the pixel data. If we 
-# do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
-# we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
-# image element, load the image, then continue with initialization.
-#
-# The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
-#
-# @class Caman
-# @constructor
 ###
-Root.Caman = class Caman
+Here it begins. Caman is defined.
+There are many different initialization for Caman, which are described on the 
+[Guides](http://camanjs.com/guides).
+
+Initialization is tricky because we need to make sure everything we need is actually fully 
+loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
+image is done loading before converting it to a canvas element and writing the pixel data. If we 
+do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
+we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
+image element, load the image, then continue with initialization.
+
+The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
+###
+class Caman
+  # The current version.
   @version:
     release: "4.1.1"
     date: "4/8/2013"
 
-  # Debug mode enables console logging
+  # @property [Boolean] Debug mode enables console logging.
   @DEBUG: false
 
-  # Are we in a NodeJS environment?
-  @NodeJS: exports?
-
-  # Should we check the DOM for images with Caman instructions?
-  @autoload: not Caman.NodeJS
-
-  # Allow reverting the canvas?
-  # If your JS process is running out of memory, disabling
-  # this could help drastically.
+  # @property [Boolean] Allow reverting the canvas?
+  #   If your JS process is running out of memory, disabling
+  #   this could help drastically.
   @allowRevert: true
 
-  # Default cross-origin policy
+  # @property [String] Default cross-origin policy.
   @crossOrigin: "anonymous"
 
+  # @property [String] Set the URL of the image proxy script.
+  @remoteProxy: ""
+
+  # @proparty [String] The GET param used with the proxy script.
+  @proxyParam: "camanProxyUrl"
+
+  # @property [Boolean] Are we in a NodeJS environment?
+  @NodeJS: exports?
+
+  # @property [Boolean] Should we check the DOM for images with Caman instructions?
+  @autoload: not Caman.NodeJS
+
+  ###
+  Custom toString()
+  @return [String] Version and release information.
+  ###
   @toString: ->
     "Version " + Caman.version.release + ", Released " + Caman.version.date;
 
-  # Set the URL of the image proxy script
-  @remoteProxy: ""
-
-  # Change the GET param used with the proxy script if needed
-  @proxyParam: "camanProxyUrl"
-
+  ###
+  Get the ID assigned to this canvas by Caman.
+  @param [DOMObject] canvas The canvas to inspect.
+  @return [String] The Caman ID associated with this canvas.
+  ###
   @getAttrId: (canvas) ->
     return true if Caman.NodeJS
 
@@ -67,6 +74,38 @@ Root.Caman = class Caman
     return null unless canvas? and canvas.getAttribute?
     canvas.getAttribute 'data-caman-id'
 
+  ###
+  The Caman function. While technically a constructor, it was made to be called without
+  the `new` keyword. Caman will figure it out.
+
+  @param [DOMObject, String] initializer The DOM selector or DOM object to initialize.
+  @overload Caman(initializer)
+    Initialize Caman without a callback.
+
+  @overload Caman(initializer, callback)
+    Initialize Caman with a callback.
+    @param [Function] callback Function to call once initialization completes.
+
+  @overload Caman(initializer, url)
+    Initialize Caman with a URL to an image and no callback.
+    @param [String] url URl to an image to draw to the canvas.
+
+  @overload Caman(initializer, url, callback)
+    Initialize Caman with a canvas, URL to an image, and a callback.
+    @param [String] url URl to an image to draw to the canvas.
+    @param [Function] callback Function to call once initialization completes.
+
+  @overload Caman(file)
+    **NodeJS**: Initialize Caman with a path to an image file and no callback.
+    @param [String, File] file File object or path to image to read.
+
+  @overload Caman(file, callback)
+    **NodeJS**: Initialize Caman with a file and a callback.
+    @param [String, File] file File object or path to image to read.
+    @param [Function] callback Function to call once initialization completes.
+
+  @return [Caman] Initialized Caman instance.
+  ###
   constructor: ->
     throw "Invalid arguments" if arguments.length is 0
 
@@ -549,3 +588,5 @@ Root.Caman = class Caman
 
   # Applies the current layer to its parent layer
   applyCurrentLayer: -> @currentLayer.applyToParent()
+
+Root.Caman = Caman

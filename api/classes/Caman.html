@@ -114,19 +114,28 @@
           <td>src&#47;core&#47;caman.coffee</td>
         </tr>
       </table>
-      <h2>Constant Summary</h2>
-      <dl class='constants'>
-        <dt id='DEBUG-constant'>
-          DEBUG
-          =
-          <div class='docstring'>
-  <p>Debug mode enables console logging</p>
+      <h2>Overview</h2>
+      <div class='docstring'>
+  <p>Here it begins. Caman is defined.
+There are many different initialization for Caman, which are described on the 
+<a href="http://camanjs.com/guides">Guides</a>.</p><p>Initialization is tricky because we need to make sure everything we need is actually fully 
+loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
+image is done loading before converting it to a canvas element and writing the pixel data. If we 
+do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
+we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
+image element, load the image, then continue with initialization.</p><p>The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. </p>
 </div>
 <div class='tags'>
 </div>
+      <h2>Property Summary</h2>
+      <dl class='properties'>
+        <dt id='DEBUG-property'>
+          <span class='signature'>
+            (Boolean) <strong>DEBUG</strong>
+          </span>
         </dt>
-        <dd>
-          <pre><code class='coffee'>false</code></pre>
+        <dd class='desc'>
+          <p>Debug mode enables console logging.</p>
         </dd>
       </dl>
       <h2>Class Method Summary</h2>
@@ -134,21 +143,21 @@
   <li>
     <span class='signature'>
       <a href='#toString-class'>
-        + (void) <strong>toString</strong>()
+        + (String) <strong>toString</strong>()
       </a>
     </span>
     <span class='desc'>
-      
+      Custom toString()
     </span>
   </li>
   <li>
     <span class='signature'>
       <a href='#getAttrId-class'>
-        + (void) <strong>getAttrId</strong>(canvas)
+        + (String) <strong>getAttrId</strong>(canvas)
       </a>
     </span>
     <span class='desc'>
-      
+      Get the ID assigned to this canvas by Caman.
     </span>
   </li>
 </ul>
@@ -157,12 +166,12 @@
   <li>
     <span class='signature'>
       <a href='#constructor-instance'>
-        - (void) <strong>constructor</strong>()
+        - (Caman) <strong>constructor</strong>()
       </a>
     </span>
     <span class='constructor note title'>Constructor</span>
     <span class='desc'>
-      
+      The Caman function.
     </span>
   </li>
   <li>
@@ -540,16 +549,51 @@
       <div class='methods'>
   <div class='method_details'>
     <p class='signature' id='toString-class'>
-      + (void) <strong>toString</strong>()
+      + (String) <strong>toString</strong>()
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Custom toString()</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>String</tt>)
+      &mdash;
+      <span class='desc'>Version and release information.</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
     <p class='signature' id='getAttrId-class'>
-      + (void) <strong>getAttrId</strong>(canvas)
+      + (String) <strong>getAttrId</strong>(canvas)
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>Get the ID assigned to this canvas by Caman.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>canvas</span>
+      <span class='type'>
+        (<tt>DOMObject</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The canvas to inspect.</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>String</tt>)
+      &mdash;
+      <span class='desc'>The Caman ID associated with this canvas.</span>
+    </li>
+  </ul>
 </div>
   </div>
 </div>
@@ -557,9 +601,178 @@
       <div class='methods'>
   <div class='method_details'>
     <p class='signature' id='constructor-instance'>
-      - (void) <strong>constructor</strong>()
+      - (Caman) <strong>Caman</strong>(initializer)
+      <br>
+      - (Caman) <strong>Caman</strong>(initializer, callback)
+      <br>
+      - (Caman) <strong>Caman</strong>(initializer, url)
+      <br>
+      - (Caman) <strong>Caman</strong>(initializer, url, callback)
+      <br>
+      - (Caman) <strong>Caman</strong>(file)
+      <br>
+      - (Caman) <strong>Caman</strong>(file, callback)
+      <br>
     </p>
-    <div class='tags'>
+    <div class='docstring'>
+  <p>The Caman function. While technically a constructor, it was made to be called without
+the <code>new</code> keyword. Caman will figure it out.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>initializer</span>
+      <span class='type'>
+        (<tt>DOMObject, String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The DOM selector or DOM object to initialize.</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt><a href='../classes/Caman.html'>Caman</a></tt>)
+      &mdash;
+      <span class='desc'>Initialized Caman instance.</span>
+    </li>
+  </ul>
+  <div class='overloads'>
+    <h3>Overloads:</h3>
+    <div class='overload'>
+      <p class='signature'>
+        - (Caman) <strong>Caman</strong>(initializer)
+      </p>
+      <div class='docstring'>
+  <p>Initialize Caman without a callback.</p>
+</div>
+<div class='tags'>
+</div>
+    </div>
+    <div class='overload'>
+      <p class='signature'>
+        - (Caman) <strong>Caman</strong>(initializer, callback)
+      </p>
+      <div class='docstring'>
+  <p>Initialize Caman with a callback.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>callback</span>
+      <span class='type'>
+        (<tt>Function</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Function to call once initialization completes.</span>
+    </li>
+  </ul>
+</div>
+    </div>
+    <div class='overload'>
+      <p class='signature'>
+        - (Caman) <strong>Caman</strong>(initializer, url)
+      </p>
+      <div class='docstring'>
+  <p>Initialize Caman with a URL to an image and no callback.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>url</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>URl to an image to draw to the canvas.</span>
+    </li>
+  </ul>
+</div>
+    </div>
+    <div class='overload'>
+      <p class='signature'>
+        - (Caman) <strong>Caman</strong>(initializer, url, callback)
+      </p>
+      <div class='docstring'>
+  <p>Initialize Caman with a canvas, URL to an image, and a callback.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>url</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>URl to an image to draw to the canvas.</span>
+    </li>
+    <li>
+      <span class='name'>callback</span>
+      <span class='type'>
+        (<tt>Function</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Function to call once initialization completes.</span>
+    </li>
+  </ul>
+</div>
+    </div>
+    <div class='overload'>
+      <p class='signature'>
+        - (Caman) <strong>Caman</strong>(file)
+      </p>
+      <div class='docstring'>
+  <p><strong>NodeJS</strong>: Initialize Caman with a path to an image file and no callback.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>file</span>
+      <span class='type'>
+        (<tt>String, File</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>File object or path to image to read.</span>
+    </li>
+  </ul>
+</div>
+    </div>
+    <div class='overload'>
+      <p class='signature'>
+        - (Caman) <strong>Caman</strong>(file, callback)
+      </p>
+      <div class='docstring'>
+  <p><strong>NodeJS</strong>: Initialize Caman with a file and a callback.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>file</span>
+      <span class='type'>
+        (<tt>String, File</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>File object or path to image to read.</span>
+    </li>
+    <li>
+      <span class='name'>callback</span>
+      <span class='type'>
+        (<tt>Function</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Function to call once initialization completes.</span>
+    </li>
+  </ul>
+</div>
+    </div>
+  </div>
 </div>
   </div>
 </div>
@@ -882,7 +1095,7 @@ callback</p>
     </div>
     <div id='footer'>
   Generated on
-  Sun Jun 09 2013 23:51:31 GMT-0400 (EDT)
+  Mon Jun 10 2013 00:52:17 GMT-0400 (EDT)
   by
   <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
   v1.7.0

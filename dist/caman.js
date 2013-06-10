@@ -99,26 +99,23 @@
     Root = window;
   }
 
-  /**
-  # Here it begins. Caman is defined.
-  # There are many different initialization for Caman, which are described on the 
-  # [Basic Usage](http://camanjs.com/guides) page.
-  #
-  # Initialization is tricky because we need to make sure everything we need is actually fully 
-  # loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
-  # image is done loading before converting it to a canvas element and writing the pixel data. If we 
-  # do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
-  # we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
-  # image element, load the image, then continue with initialization.
-  #
-  # The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
-  #
-  # @class Caman
-  # @constructor
+  /*
+  Here it begins. Caman is defined.
+  There are many different initialization for Caman, which are described on the 
+  [Guides](http://camanjs.com/guides).
+  
+  Initialization is tricky because we need to make sure everything we need is actually fully 
+  loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
+  image is done loading before converting it to a canvas element and writing the pixel data. If we 
+  do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
+  we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
+  image element, load the image, then continue with initialization.
+  
+  The main goal for Caman was simplicity, so all of this is handled transparently to the end-user.
   */
 
 
-  Root.Caman = Caman = (function() {
+  Caman = (function() {
     Caman.version = {
       release: "4.1.1",
       date: "4/8/2013"
@@ -126,21 +123,34 @@
 
     Caman.DEBUG = false;
 
+    Caman.allowRevert = true;
+
+    Caman.crossOrigin = "anonymous";
+
+    Caman.remoteProxy = "";
+
+    Caman.proxyParam = "camanProxyUrl";
+
     Caman.NodeJS = typeof exports !== "undefined" && exports !== null;
 
     Caman.autoload = !Caman.NodeJS;
 
-    Caman.allowRevert = true;
+    /*
+    Custom toString()
+    @return [String] Version and release information.
+    */
 
-    Caman.crossOrigin = "anonymous";
 
     Caman.toString = function() {
       return "Version " + Caman.version.release + ", Released " + Caman.version.date;
     };
 
-    Caman.remoteProxy = "";
+    /*
+    Get the ID assigned to this canvas by Caman.
+    @param [DOMObject] canvas The canvas to inspect.
+    @return [String] The Caman ID associated with this canvas.
+    */
 
-    Caman.proxyParam = "camanProxyUrl";
 
     Caman.getAttrId = function(canvas) {
       if (Caman.NodeJS) {
@@ -154,6 +164,40 @@
       }
       return canvas.getAttribute('data-caman-id');
     };
+
+    /*
+    The Caman function. While technically a constructor, it was made to be called without
+    the `new` keyword. Caman will figure it out.
+    
+    @param [DOMObject, String] initializer The DOM selector or DOM object to initialize.
+    @overload Caman(initializer)
+      Initialize Caman without a callback.
+    
+    @overload Caman(initializer, callback)
+      Initialize Caman with a callback.
+      @param [Function] callback Function to call once initialization completes.
+    
+    @overload Caman(initializer, url)
+      Initialize Caman with a URL to an image and no callback.
+      @param [String] url URl to an image to draw to the canvas.
+    
+    @overload Caman(initializer, url, callback)
+      Initialize Caman with a canvas, URL to an image, and a callback.
+      @param [String] url URl to an image to draw to the canvas.
+      @param [Function] callback Function to call once initialization completes.
+    
+    @overload Caman(file)
+      **NodeJS**: Initialize Caman with a path to an image file and no callback.
+      @param [String, File] file File object or path to image to read.
+    
+    @overload Caman(file, callback)
+      **NodeJS**: Initialize Caman with a file and a callback.
+      @param [String, File] file File object or path to image to read.
+      @param [Function] callback Function to call once initialization completes.
+    
+    @return [Caman] Initialized Caman instance.
+    */
+
 
     function Caman() {
       var args, callback, id,
@@ -687,6 +731,8 @@
 
   })();
 
+  Root.Caman = Caman;
+
   /*
   Various image analysis methods
   */
@@ -699,6 +745,7 @@
 
     /*
     Calculates the number of occurances of each color value throughout the image.
+    
     @return {Object} Hash of RGB channels and the occurance of each value
     */
 
@@ -780,6 +827,7 @@
 
     /*
     Creates a new parser instance
+    
     @param [DOMObject] ele DOM object to be instantiated with CamanJS
     @param [Function] ready Callback function to pass to CamanJS
     */
@@ -839,14 +887,38 @@
 
   })();
 
-  Caman.Blender = Blender = (function() {
+  /*
+  Built-in layer blenders. Many of these mimic Photoshop blend modes.
+  */
+
+
+  Caman.Blender = (function() {
     function Blender() {}
 
     Blender.blenders = {};
 
+    /*
+    Registers a blender. Can be used to add your own blenders outside of
+    the core library, if needed.
+    
+    @param [String] name Name of the blender.
+    @param [Function] func The blender function.
+    */
+
+
     Blender.register = function(name, func) {
       return this.blenders[name] = func;
     };
+
+    /*
+    Executes a blender to combine a layer with its parent.
+    
+    @param [String] name Name of the blending function to invoke.
+    @param [Object] rgbaLayer RGBA object of the current pixel from the layer.
+    @param [Object] rgbaParent RGBA object of the corresponding pixel in the parent layer.
+    @return [Object] RGBA object representing the blended pixel.
+    */
+
 
     Blender.execute = function(name, rgbaLayer, rgbaParent) {
       return this.blenders[name](rgbaLayer, rgbaParent);
@@ -856,12 +928,41 @@
 
   })();
 
-  Caman.Calculate = Calculate = (function() {
+  Blender = Caman.Blender;
+
+  /*
+  Various math-heavy helpers that are used throughout CamanJS.
+  */
+
+
+  Caman.Calculate = (function() {
     function Calculate() {}
+
+    /*
+    Calculates the distance between two points.
+    
+    @param [Number] x1 1st point x-coordinate.
+    @param [Number] y1 1st point y-coordinate.
+    @param [Number] x2 2nd point x-coordinate.
+    @param [Number] y2 2nd point y-coordinate.
+    @return [Number] The distance between the two points.
+    */
+
 
     Calculate.distance = function(x1, y1, x2, y2) {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     };
+
+    /*
+    Generates a pseudorandom number that lies within the max - mix range. The number can be either 
+    an integer or a float depending on what the user specifies.
+    
+    @param [Number] min The lower bound (inclusive).
+    @param [Number] max The upper bound (inclusive).
+    @param [Boolean] getFloat Return a Float or a rounded Integer?
+    @return [Number] The pseudorandom number, either as a float or integer.
+    */
+
 
     Calculate.randomRange = function(min, max, getFloat) {
       var rand;
@@ -877,9 +978,40 @@
       }
     };
 
+    /*
+    Calculates the luminance of a single pixel using a special weighted sum.
+    @param [Object] rgba RGBA object describing a single pixel.
+    @return [Number] The luminance value of the pixel.
+    */
+
+
     Calculate.luminance = function(rgba) {
       return (0.299 * rgba.r) + (0.587 * rgba.g) + (0.114 * rgba.b);
     };
+
+    /*
+    Generates a bezier curve given a start and end point, with two control points in between.
+    Can also optionally bound the y values between a low and high bound.
+    
+    This is different than most bezier curve functions because it attempts to construct it in such 
+    a way that we can use it more like a simple input -> output system, or a one-to-one function. 
+    In other words we can provide an input color value, and immediately receive an output modified 
+    color value.
+    
+    Note that, by design, this does not force X values to be in the range [0..255]. This is to
+    generalize the function a bit more. If you give it a starting X value that isn't 0, and/or a
+    ending X value that isn't 255, you may run into problems with your filter!
+    
+    @param [Array] start 2-item array describing the x, y coordinate of the start point.
+    @param [Array] ctrl1 2-item array describing the x, y coordinate of the first control point.
+    @param [Array] ctrl2 2-item array decribing the x, y coordinate of the second control point.
+    @param [Array] end 2-item array describing the x, y coordinate of the end point.
+    @param [Number] lowBound (optional) Minimum possible value for any y-value in the curve.
+    @param [Number] highBound (optional) Maximum posisble value for any y-value in the curve.
+    @return [Array] Array whose index represents every x-value between start and end, and value
+      represents the corresponding y-value.
+    */
+
 
     Calculate.bezier = function(start, ctrl1, ctrl2, end, lowBound, highBound) {
       var Ax, Ay, Bx, By, Cx, Cy, bezier, curveX, curveY, i, j, leftCoord, rightCoord, t, x0, x1, x2, x3, y0, y1, y2, y3, _i, _j, _k, _ref, _ref1;
@@ -933,6 +1065,8 @@
     return Calculate;
 
   })();
+
+  Calculate = Caman.Calculate;
 
   Convert = (function() {
     function Convert() {}

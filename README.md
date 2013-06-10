@@ -121,14 +121,14 @@ npm install -g karma
 karma start test/karma.conf.js
 ```
 
-# Project Contributors
+## Project Contributors
 
 * [Ryan LeFevre](http://twitter.com/meltingice) - Project Creator, Maintainer, and Lead Developer
 * [Rick Waldron](http://twitter.com/rwaldron) - Plugin Architect and Developer
 * [Cezar Sá Espinola](http://twitter.com/cezarsa) - Developer
 * [Jarques Pretorius](http://twitter.com/jarques) - Logo Designer
 
-# Plugin Contributors
+## Plugin Contributors
 
 * [Hosselaer](https://github.com/Hosselaer)
 * [Mario Klingemann](http://www.quasimondo.com)

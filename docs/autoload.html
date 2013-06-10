@@ -250,9 +250,7 @@ data attributes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">CamanParser</span></span>
-
-  INST_REGEX = <span class="string">"(\\w+)\\((.*?)\\)"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">CamanParser</span></span></pre></div></div>
             
         </li>
         
@@ -260,16 +258,14 @@ data attributes.</p>
         <li id="section-6">
             <div class="annotation">
               
-              <div class="pilwrap for-h1">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <h1>#</h1>
+              <p>Regex used for parsing options out of the data-caman attribute.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  Creates a <span class="keyword">new</span> parser instance
-  <span class="property">@param</span> [DOMObject] ele DOM object to be instantiated <span class="reserved">with</span> CamanJS
-  <span class="property">@param</span> [Function] ready Callback <span class="reserved">function</span> to pass to CamanJS</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  INST_REGEX = <span class="string">"(\\w+)\\((.*?)\\)"</span></pre></div></div>
             
         </li>
         
@@ -284,9 +280,10 @@ data attributes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  constructor: (ele, ready) -&gt;
-    <span class="property">@dataStr</span> = ele.getAttribute(<span class="string">'data-caman'</span>)
-    <span class="property">@caman</span> = Caman ele, ready.bind(@)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Creates a <span class="keyword">new</span> parser instance
+  
+  <span class="property">@param</span> [DOMObject] ele DOM object to be instantiated <span class="reserved">with</span> CamanJS
+  <span class="property">@param</span> [Function] ready Callback <span class="reserved">function</span> to pass to CamanJS</pre></div></div>
             
         </li>
         
@@ -301,7 +298,9 @@ data attributes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  Parse the DOM object <span class="keyword">and</span> call the parsed filter functions <span class="literal">on</span> the Caman object.</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  constructor: (ele, ready) -&gt;
+    <span class="property">@dataStr</span> = ele.getAttribute(<span class="string">'data-caman'</span>)
+    <span class="property">@caman</span> = Caman ele, ready.bind(@)</pre></div></div>
             
         </li>
         
@@ -316,8 +315,7 @@ data attributes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  parse: -&gt;
-    <span class="property">@ele</span> = <span class="property">@caman</span>.canvas</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Parse the DOM object <span class="keyword">and</span> call the parsed filter functions <span class="literal">on</span> the Caman object.</pre></div></div>
             
         </li>
         
@@ -325,8 +323,24 @@ data attributes.</p>
         <li id="section-10">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  parse: -&gt;
+    <span class="property">@ele</span> = <span class="property">@caman</span>.canvas</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>First we find each instruction as a whole using a global
 regex search.</p>
@@ -340,11 +354,11 @@ regex search.</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Once we gather all the instructions, we go through each one
 and parse out the filter name + it&#39;s parameters.</p>
@@ -358,11 +372,11 @@ and parse out the filter name + it&#39;s parameters.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Create a factory function so we can catch any errors that
 are produced when running the filters. This also makes it very
@@ -383,11 +397,11 @@ simple to support multiple/complex filter arguments.</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <h1>#</h1>
 
@@ -398,11 +412,11 @@ simple to support multiple/complex filter arguments.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <h1>#</h1>
 

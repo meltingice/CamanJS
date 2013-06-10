@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>calculate.coffee</title>
+  <title>#</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -164,25 +164,19 @@
     
     <ul class="sections">
         
-          <li id="title">
-              <div class="annotation">
-                  <h1>calculate.coffee</h1>
-              </div>
-          </li>
-        
         
         
         <li id="section-1">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>Various math-heavy helpers</p>
+              <h1>#</h1>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Caman.Calculate = <span class="class"><span class="keyword">class</span> <span class="title">Calculate</span></span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Various math-heavy helpers that are used throughout CamanJS.</pre></div></div>
             
         </li>
         
@@ -190,10 +184,46 @@
         <li id="section-2">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Calculates the distance between two points</p>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span>.<span class="title">Calculate</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Calculates the distance between two points.
+
+  <span class="property">@param</span> [Number] x1 <span class="number">1</span>st point x-coordinate.
+  <span class="property">@param</span> [Number] y1 <span class="number">1</span>st point y-coordinate.
+  <span class="property">@param</span> [Number] x2 <span class="number">2</span>nd point x-coordinate.
+  <span class="property">@param</span> [Number] y2 <span class="number">2</span>nd point y-coordinate.
+  <span class="property">@return</span> [Number] The distance between the two points.</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h1>#</h1>
 
             </div>
             
@@ -203,14 +233,34 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-5">
             <div class="annotation">
               
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Generates a pseudorandom number that lies within the max - mix range. The number can be either 
-an integer or a float depending on what the user specifies.</p>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Generates a pseudorandom number that lies within the max - mix range. The number can be either 
+  an integer <span class="keyword">or</span> a float depending <span class="literal">on</span> what the user specifies.
+
+  <span class="property">@param</span> [Number] min The lower bound (inclusive).
+  <span class="property">@param</span> [Number] max The upper bound (inclusive).
+  <span class="property">@param</span> [Boolean] getFloat Return a Float <span class="keyword">or</span> a rounded Integer?
+  <span class="property">@return</span> [Number] The pseudorandom number, either as a float <span class="keyword">or</span> integer.</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h1>#</h1>
 
             </div>
             
@@ -221,13 +271,30 @@ an integer or a float depending on what the user specifies.</p>
         </li>
         
         
-        <li id="section-4">
+        <li id="section-7">
             <div class="annotation">
               
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Calculates the luminance of a single pixel using a special weighted sum</p>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Calculates the luminance <span class="keyword">of</span> a single pixel using a special weighted sum.
+  <span class="property">@param</span> [Object] rgba RGBA object describing a single pixel.
+  <span class="property">@return</span> [Number] The luminance value <span class="keyword">of</span> the pixel.</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h1>#</h1>
 
             </div>
             
@@ -236,21 +303,47 @@ an integer or a float depending on what the user specifies.</p>
         </li>
         
         
-        <li id="section-5">
+        <li id="section-9">
             <div class="annotation">
               
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Generates a bezier curve given a start and end point, with two control points in between.
-Can also optionally bound the y values between a low and high bound.</p>
-<p>This is different than most bezier curve functions because it attempts to construct it in such 
-a way that we can use it more like a simple input -&gt; output system, or a one-to-one function. 
-In other words we can provide an input color value, and immediately receive an output modified 
-color value.</p>
-<p>Note that, by design, this does not force X values to be in the range [0..255]. This is to
-generalize the function a bit more. If you give it a starting X value that isn&#39;t 0, and/or a
-ending X value that isn&#39;t 255, you may run into problems with your filter!</p>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Generates a bezier curve given a start and end point, with two control points in between.
+  Can also optionally bound the y values between a low and high bound.
+  
+  This is different than most bezier curve functions because it attempts to construct it in such 
+  a way that we can use it more like a simple input -&gt; output system, or a one-to-one function. 
+  In other words we can provide an input color value, and immediately receive an output modified 
+  color value.
+  
+  Note that, by design, this does not force X values to be in the range [0..255]. This is to
+  generalize the function a bit more. If you give it a starting X value that isn't 0, and/or a
+  ending X value that isn't 255, you may run into problems with your filter!
+
+  @param [Array] start 2-item array describing the x, y coordinate of the start point.
+  @param [Array] ctrl1 2-item array describing the x, y coordinate of the first control point.
+  @param [Array] ctrl2 2-item array decribing the x, y coordinate of the second control point.
+  @param [Array] end 2-item array describing the x, y coordinate of the end point.
+  @param [Number] lowBound (optional) Minimum possible value for any y-value in the curve.
+  @param [Number] highBound (optional) Maximum posisble value for any y-value in the curve.
+  @return [Array] Array whose index represents every x-value between start and end, and value
+    represents the corresponding y-value.</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h1>#</h1>
 
             </div>
             
@@ -268,11 +361,11 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
         </li>
         
         
-        <li id="section-6">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Calculate our X/Y coefficients</p>
 
@@ -289,11 +382,11 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
         </li>
         
         
-        <li id="section-7">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>1000 is actually arbitrary. We need to make sure we do enough
 calculations between 0 and 255 that, in even the more extreme
@@ -319,11 +412,11 @@ interpolation.</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Do a search for missing values in the bezier array and use linear
 interpolation to approximate their values</p>
@@ -338,11 +431,11 @@ interpolation to approximate their values</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Find the first value to the right. Ideally this loop will break
 very quickly.</p>
@@ -361,11 +454,11 @@ very quickly.</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Edge case</p>
 
@@ -373,7 +466,9 @@ very quickly.</p>
             
             <div class="content"><div class='highlight'><pre>    bezier[end[<span class="number">0</span>]] = bezier[end[<span class="number">0</span>] - <span class="number">1</span>] <span class="keyword">if</span> <span class="keyword">not</span> bezier[end[<span class="number">0</span>]]?
     
-    <span class="keyword">return</span> bezier</pre></div></div>
+    <span class="keyword">return</span> bezier
+      
+Calculate = Caman.Calculate</pre></div></div>
             
         </li>
         

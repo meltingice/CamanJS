@@ -1,29 +1,61 @@
-# Various math-heavy helpers
-Caman.Calculate = class Calculate
-  # Calculates the distance between two points
+###
+Various math-heavy helpers that are used throughout CamanJS.
+###
+class Caman.Calculate
+  ###
+  Calculates the distance between two points.
+
+  @param [Number] x1 1st point x-coordinate.
+  @param [Number] y1 1st point y-coordinate.
+  @param [Number] x2 2nd point x-coordinate.
+  @param [Number] y2 2nd point y-coordinate.
+  @return [Number] The distance between the two points.
+  ###
   @distance: (x1, y1, x2, y2) ->
     Math.sqrt Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
 
-  # Generates a pseudorandom number that lies within the max - mix range. The number can be either 
-  # an integer or a float depending on what the user specifies.
+  ###
+  Generates a pseudorandom number that lies within the max - mix range. The number can be either 
+  an integer or a float depending on what the user specifies.
+
+  @param [Number] min The lower bound (inclusive).
+  @param [Number] max The upper bound (inclusive).
+  @param [Boolean] getFloat Return a Float or a rounded Integer?
+  @return [Number] The pseudorandom number, either as a float or integer.
+  ###
   @randomRange: (min, max, getFloat = false) ->
     rand = min + (Math.random() * (max - min))
     return if getFloat then rand.toFixed(getFloat) else Math.round(rand)
 
-  # Calculates the luminance of a single pixel using a special weighted sum
+  ###
+  Calculates the luminance of a single pixel using a special weighted sum.
+  @param [Object] rgba RGBA object describing a single pixel.
+  @return [Number] The luminance value of the pixel.
+  ###
   @luminance: (rgba) -> (0.299 * rgba.r) + (0.587 * rgba.g) + (0.114 * rgba.b)
 
-  # Generates a bezier curve given a start and end point, with two control points in between.
-  # Can also optionally bound the y values between a low and high bound.
-  #
-  # This is different than most bezier curve functions because it attempts to construct it in such 
-  # a way that we can use it more like a simple input -> output system, or a one-to-one function. 
-  # In other words we can provide an input color value, and immediately receive an output modified 
-  # color value.
-  #
-  # Note that, by design, this does not force X values to be in the range [0..255]. This is to
-  # generalize the function a bit more. If you give it a starting X value that isn't 0, and/or a
-  # ending X value that isn't 255, you may run into problems with your filter!
+  ###
+  Generates a bezier curve given a start and end point, with two control points in between.
+  Can also optionally bound the y values between a low and high bound.
+  
+  This is different than most bezier curve functions because it attempts to construct it in such 
+  a way that we can use it more like a simple input -> output system, or a one-to-one function. 
+  In other words we can provide an input color value, and immediately receive an output modified 
+  color value.
+  
+  Note that, by design, this does not force X values to be in the range [0..255]. This is to
+  generalize the function a bit more. If you give it a starting X value that isn't 0, and/or a
+  ending X value that isn't 255, you may run into problems with your filter!
+
+  @param [Array] start 2-item array describing the x, y coordinate of the start point.
+  @param [Array] ctrl1 2-item array describing the x, y coordinate of the first control point.
+  @param [Array] ctrl2 2-item array decribing the x, y coordinate of the second control point.
+  @param [Array] end 2-item array describing the x, y coordinate of the end point.
+  @param [Number] lowBound (optional) Minimum possible value for any y-value in the curve.
+  @param [Number] highBound (optional) Maximum posisble value for any y-value in the curve.
+  @return [Array] Array whose index represents every x-value between start and end, and value
+    represents the corresponding y-value.
+  ###
   @bezier: (start, ctrl1, ctrl2, end, lowBound, highBound) ->
     x0 = start[0]
     y0 = start[1]
@@ -85,3 +117,4 @@ Caman.Calculate = class Calculate
     
     return bezier
       
+Calculate = Caman.Calculate

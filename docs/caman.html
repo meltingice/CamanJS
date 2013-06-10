@@ -199,30 +199,25 @@
         <li id="section-2">
             <div class="annotation">
               
-              <div class="pilwrap for-h2">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2>*</h2>
-<p>Here it begins. Caman is defined.
-There are many different initialization for Caman, which are described on the 
-<a href="http://camanjs.com/guides">Basic Usage</a> page.</p>
-<p>Initialization is tricky because we need to make sure everything we need is actually fully 
-loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
-image is done loading before converting it to a canvas element and writing the pixel data. If we 
-do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
-we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
-image element, load the image, then continue with initialization.</p>
-<p>The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. </p>
-<p>@class Caman
-@constructor</p>
-<h1>#</h1>
+              <h1>#</h1>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Root.Caman = <span class="class"><span class="keyword">class</span> <span class="title">Caman</span></span>
-  <span class="property">@version</span>:
-    release: <span class="string">"4.1.1"</span>
-    date: <span class="string">"4/8/2013"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Here it begins. Caman <span class="keyword">is</span> defined.
+There are many different initialization <span class="keyword">for</span> Caman, which are described <span class="literal">on</span> the 
+[Guides](http:<span class="regexp">//</span>camanjs.com/guides).
+
+Initialization <span class="keyword">is</span> tricky because we need to make sure everything we need <span class="keyword">is</span> actually fully 
+loaded <span class="keyword">in</span> the DOM before proceeding. When initialized <span class="literal">on</span> an image, we need to make sure that the 
+image <span class="keyword">is</span> done loading before converting it to a canvas element <span class="keyword">and</span> writing the pixel data. If we 
+<span class="keyword">do</span> <span class="keyword">this</span> prematurely, the browser will <span class="keyword">throw</span> a DOM Error, <span class="keyword">and</span> chaos will ensue. In the event that 
+we initialize Caman <span class="literal">on</span> a canvas element <span class="keyword">while</span> specifying an image URL, we need to create a <span class="keyword">new</span> 
+image element, load the image, <span class="keyword">then</span> <span class="keyword">continue</span> <span class="reserved">with</span> initialization.
+
+The main goal <span class="keyword">for</span> Caman was simplicity, so all <span class="keyword">of</span> <span class="keyword">this</span> <span class="keyword">is</span> handled transparently to the end-user.</pre></div></div>
             
         </li>
         
@@ -230,14 +225,14 @@ image element, load the image, then continue with initialization.</p>
         <li id="section-3">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Debug mode enables console logging</p>
+              <h1>#</h1>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@DEBUG</span>: <span class="literal">false</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span></span></pre></div></div>
             
         </li>
         
@@ -248,11 +243,13 @@ image element, load the image, then continue with initialization.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Are we in a NodeJS environment?</p>
+              <p>The current version.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@NodeJS</span>: exports?</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@version</span>:
+    release: <span class="string">"4.1.1"</span>
+    date: <span class="string">"4/8/2013"</span></pre></div></div>
             
         </li>
         
@@ -263,11 +260,11 @@ image element, load the image, then continue with initialization.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Should we check the DOM for images with Caman instructions?</p>
+              <p>@property [Boolean] Debug mode enables console logging.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@autoload</span>: <span class="keyword">not</span> Caman.NodeJS</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@DEBUG</span>: <span class="literal">false</span></pre></div></div>
             
         </li>
         
@@ -278,9 +275,9 @@ image element, load the image, then continue with initialization.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Allow reverting the canvas?
-If your JS process is running out of memory, disabling
-this could help drastically.</p>
+              <p>@property [Boolean] Allow reverting the canvas?
+  If your JS process is running out of memory, disabling
+  this could help drastically.</p>
 
             </div>
             
@@ -295,14 +292,11 @@ this could help drastically.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Default cross-origin policy</p>
+              <p>@property [String] Default cross-origin policy.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@crossOrigin</span>: <span class="string">"anonymous"</span>
-
-  <span class="property">@toString</span>: -&gt;
-    <span class="string">"Version "</span> + Caman.version.release + <span class="string">", Released "</span> + Caman.version.date;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@crossOrigin</span>: <span class="string">"anonymous"</span></pre></div></div>
             
         </li>
         
@@ -313,7 +307,7 @@ this could help drastically.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Set the URL of the image proxy script</p>
+              <p>@property [String] Set the URL of the image proxy script.</p>
 
             </div>
             
@@ -328,25 +322,11 @@ this could help drastically.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Change the GET param used with the proxy script if needed</p>
+              <p>@proparty [String] The GET param used with the proxy script.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@proxyParam</span>: <span class="string">"camanProxyUrl"</span>
-
-  <span class="property">@getAttrId</span>: (canvas) -&gt;
-    <span class="keyword">return</span> <span class="literal">true</span> <span class="keyword">if</span> Caman.NodeJS
-
-    <span class="keyword">if</span> <span class="keyword">typeof</span> canvas <span class="keyword">is</span> <span class="string">"string"</span>
-      canvas = $(canvas)
-
-    <span class="keyword">return</span> <span class="literal">null</span> <span class="keyword">unless</span> canvas? <span class="keyword">and</span> canvas.getAttribute?
-    canvas.getAttribute <span class="string">'data-caman-id'</span>
-
-  constructor: -&gt;
-    <span class="keyword">throw</span> <span class="string">"Invalid arguments"</span> <span class="keyword">if</span> arguments.length <span class="keyword">is</span> <span class="number">0</span>
-
-    <span class="keyword">if</span> @ <span class="keyword">instanceof</span> Caman</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@proxyParam</span>: <span class="string">"camanProxyUrl"</span></pre></div></div>
             
         </li>
         
@@ -356,6 +336,169 @@ this could help drastically.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>@property [Boolean] Are we in a NodeJS environment?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@NodeJS</span>: exports?</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>@property [Boolean] Should we check the DOM for images with Caman instructions?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@autoload</span>: <span class="keyword">not</span> Caman.NodeJS</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Custom toString()
+  <span class="property">@return</span> [String] Version <span class="keyword">and</span> release information.</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@toString</span>: -&gt;
+    <span class="string">"Version "</span> + Caman.version.release + <span class="string">", Released "</span> + Caman.version.date;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Get the ID assigned to <span class="keyword">this</span> canvas <span class="keyword">by</span> Caman.
+  <span class="property">@param</span> [DOMObject] canvas The canvas to inspect.
+  <span class="property">@return</span> [String] The Caman ID associated <span class="reserved">with</span> <span class="keyword">this</span> canvas.</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@getAttrId</span>: (canvas) -&gt;
+    <span class="keyword">return</span> <span class="literal">true</span> <span class="keyword">if</span> Caman.NodeJS
+
+    <span class="keyword">if</span> <span class="keyword">typeof</span> canvas <span class="keyword">is</span> <span class="string">"string"</span>
+      canvas = $(canvas)
+
+    <span class="keyword">return</span> <span class="literal">null</span> <span class="keyword">unless</span> canvas? <span class="keyword">and</span> canvas.getAttribute?
+    canvas.getAttribute <span class="string">'data-caman-id'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  The Caman <span class="reserved">function</span>. While technically a constructor, it was made to be called without
+  the `<span class="javascript"><span class="keyword">new</span></span>` keyword. Caman will figure it out.
+
+  <span class="property">@param</span> [DOMObject, String] initializer The DOM selector <span class="keyword">or</span> DOM object to initialize.
+  <span class="property">@overload</span> Caman(initializer)
+    Initialize Caman without a callback.
+
+  <span class="property">@overload</span> Caman(initializer, callback)
+    Initialize Caman <span class="reserved">with</span> a callback.
+    <span class="property">@param</span> [Function] callback Function to call once initialization completes.
+
+  <span class="property">@overload</span> Caman(initializer, url)
+    Initialize Caman <span class="reserved">with</span> a URL to an image <span class="keyword">and</span> <span class="literal">no</span> callback.
+    <span class="property">@param</span> [String] url URl to an image to draw to the canvas.
+
+  <span class="property">@overload</span> Caman(initializer, url, callback)
+    Initialize Caman <span class="reserved">with</span> a canvas, URL to an image, <span class="keyword">and</span> a callback.
+    <span class="property">@param</span> [String] url URl to an image to draw to the canvas.
+    <span class="property">@param</span> [Function] callback Function to call once initialization completes.
+
+  <span class="property">@overload</span> Caman(file)
+    **NodeJS**: Initialize Caman <span class="reserved">with</span> a path to an image file <span class="keyword">and</span> <span class="literal">no</span> callback.
+    <span class="property">@param</span> [String, File] file File object <span class="keyword">or</span> path to image to read.
+
+  <span class="property">@overload</span> Caman(file, callback)
+    **NodeJS**: Initialize Caman <span class="reserved">with</span> a file <span class="keyword">and</span> a callback.
+    <span class="property">@param</span> [String, File] file File object <span class="keyword">or</span> path to image to read.
+    <span class="property">@param</span> [Function] callback Function to call once initialization completes.
+
+  <span class="property">@return</span> [Caman] Initialized Caman instance.</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  constructor: -&gt;
+    <span class="keyword">throw</span> <span class="string">"Invalid arguments"</span> <span class="keyword">if</span> arguments.length <span class="keyword">is</span> <span class="number">0</span>
+
+    <span class="keyword">if</span> @ <span class="keyword">instanceof</span> Caman</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>We have to do this to avoid polluting the global scope
 because of how Coffeescript binds functions specified 
@@ -384,11 +527,11 @@ a function and as a &#39;new&#39; object.</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
 same instance.</p>
@@ -441,11 +584,11 @@ same instance.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>All possible combinations:</p>
 <p><strong>1 argument</strong>
@@ -475,11 +618,11 @@ same instance.</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Defaults</p>
 
@@ -493,11 +636,11 @@ same instance.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>First argument is always our canvas/image</p>
 
@@ -599,11 +742,11 @@ same instance.</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Internet Explorer has issues figuring out image dimensions when they aren&#39;t
 explicitly defined apparently. We check the normal width/height properties first,
@@ -664,11 +807,11 @@ but fall back to natural sizes if they are 0.</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Reset the callback so re-initialization doesn&#39;t
 trigger it again.</p>
@@ -680,11 +823,11 @@ trigger it again.</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>If you have a separate context reference to this canvas outside of CamanJS
 and you make a change to the canvas outside of CamanJS, you will have to call
@@ -772,11 +915,11 @@ this function to update our context reference to include those changes.</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Begins the rendering process</p>
 
@@ -792,11 +935,11 @@ this function to update our context reference to include those changes.</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Reverts the canvas back to it&#39;s original state while
 maintaining any cropped or resized dimensions.</p>
@@ -812,11 +955,11 @@ maintaining any cropped or resized dimensions.</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Completely resets the canvas back to it&#39;s original state.
 Any size adjustments will also be reset.</p>
@@ -846,11 +989,11 @@ Any size adjustments will also be reset.</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Returns the original pixel data while maintaining any
 cropping or resizing that may have occured.</p>
@@ -906,11 +1049,11 @@ cropping or resizing that may have occured.</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Pushes the filter callback that modifies the RGBA object into the
 render queue</p>
@@ -928,11 +1071,11 @@ render queue</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Pushes the kernel into the render queue</p>
 
@@ -955,11 +1098,11 @@ render queue</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>Adds a standalone plugin into the render queue</p>
 
@@ -976,11 +1119,11 @@ render queue</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>Pushes a new layer operation into the render queue and calls the layer
 callback</p>
@@ -1000,11 +1143,11 @@ callback</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Pushes the layer context and moves to the next operation</p>
 
@@ -1015,11 +1158,11 @@ callback</p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Set all of the relevant data to the new layer</p>
 
@@ -1034,11 +1177,11 @@ callback</p>
         </li>
         
         
-        <li id="section-28">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Restore the previous layer context</p>
 
@@ -1051,17 +1194,19 @@ callback</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Applies the current layer to its parent layer</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  applyCurrentLayer: -&gt; <span class="property">@currentLayer</span>.applyToParent()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  applyCurrentLayer: -&gt; <span class="property">@currentLayer</span>.applyToParent()
+
+Root.Caman = Caman</pre></div></div>
             
         </li>
         

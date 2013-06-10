@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>blender.coffee</title>
+  <title>#</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -164,26 +164,19 @@
     
     <ul class="sections">
         
-          <li id="title">
-              <div class="annotation">
-                  <h1>blender.coffee</h1>
-              </div>
-          </li>
-        
         
         
         <li id="section-1">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>Built-in layer blenders. Many of these mimic Photoshop blend modes.</p>
+              <h1>#</h1>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Caman.Blender = <span class="class"><span class="keyword">class</span> <span class="title">Blender</span></span>
-  <span class="property">@blenders</span> = {}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>Built-<span class="keyword">in</span> layer blenders. Many <span class="keyword">of</span> these mimic Photoshop blend modes.</pre></div></div>
             
         </li>
         
@@ -191,11 +184,45 @@
         <li id="section-2">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Registers a blender. Can be used to add your own blenders outside of
-the core library, if needed.</p>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span>.<span class="title">Blender</span></span>
+  <span class="property">@blenders</span> = {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Registers a blender. Can be used to add your own blenders outside <span class="keyword">of</span>
+  the core library, <span class="keyword">if</span> needed.
+
+  <span class="property">@param</span> [String] name Name <span class="keyword">of</span> the blender.
+  <span class="property">@param</span> [Function] func The blender <span class="reserved">function</span>.</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h1>#</h1>
 
             </div>
             
@@ -204,18 +231,40 @@ the core library, if needed.</p>
         </li>
         
         
-        <li id="section-3">
+        <li id="section-5">
             <div class="annotation">
               
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Executes a blender to combine a layer with its parent.</p>
+              <h1>#</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Executes a blender to combine a layer <span class="reserved">with</span> its parent.
+  
+  <span class="property">@param</span> [String] name Name <span class="keyword">of</span> the blending <span class="reserved">function</span> to invoke.
+  <span class="property">@param</span> [Object] rgbaLayer RGBA object <span class="keyword">of</span> the current pixel from the layer.
+  <span class="property">@param</span> [Object] rgbaParent RGBA object <span class="keyword">of</span> the corresponding pixel <span class="keyword">in</span> the parent layer.
+  <span class="property">@return</span> [Object] RGBA object representing the blended pixel.</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h1>#</h1>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="property">@execute</span>: (name, rgbaLayer, rgbaParent) -&gt;
-    <span class="property">@blenders</span>[name](rgbaLayer, rgbaParent)</pre></div></div>
+    <span class="property">@blenders</span>[name](rgbaLayer, rgbaParent)
+
+Blender = Caman.Blender</pre></div></div>
             
         </li>
         
