@@ -1313,7 +1313,7 @@
 
   })();
 
-  Event = (function() {
+  Caman.Event = (function() {
     function Event() {}
 
     Event.events = {};
@@ -1323,6 +1323,9 @@
     Event.trigger = function(target, type, data) {
       var event, _i, _len, _ref, _results;
 
+      if (data == null) {
+        data = null;
+      }
       if (this.events[type] && this.events[type].length) {
         _ref = this.events[type];
         _results = [];
@@ -1365,7 +1368,7 @@
 
   })();
 
-  Caman.Event = Event;
+  Event = Caman.Event;
 
   Caman.Filter = Filter = (function() {
     function Filter() {}

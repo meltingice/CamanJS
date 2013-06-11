@@ -183,7 +183,7 @@ during certain times in the render process.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Event</span></span>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span>.<span class="title">Event</span></span>
   <span class="property">@events</span> = {}</pre></div></div>
             
         </li>
@@ -217,11 +217,14 @@ during certain times in the render process.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Trigger an event</p>
+              <p>Trigger an event.
+@param [Caman] target Instance of Caman emitting the event.
+@param [String] type The event type.
+@param [Object] data Extra data to send with the event.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@trigger</span>: (target, type, data) -&gt;
+            <div class="content"><div class='highlight'><pre>  <span class="property">@trigger</span>: (target, type, data = <span class="literal">null</span>) -&gt;
     <span class="keyword">if</span> <span class="property">@events</span>[type] <span class="keyword">and</span> <span class="property">@events</span>[type].length
       <span class="keyword">for</span> event <span class="keyword">in</span> <span class="property">@events</span>[type]
         <span class="keyword">if</span> event.target <span class="keyword">is</span> <span class="literal">null</span> <span class="keyword">or</span> target.id <span class="keyword">is</span> event.target.id
@@ -236,8 +239,17 @@ during certain times in the render process.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Listen for an event. Optionally bind the listen to a single CamanInstance
-or all CamanInstances.</p>
+              <p>Listen for an event. Optionally bind the listen to a single instance
+or all instances.</p>
+<p>@overload listen(target, type, fn)
+  Listen for events emitted from a particular Caman instance.
+  @param [Caman] target The instance to listen to.
+  @param [String] type The type of event to listen for.
+  @param [Function] fn The function to call when the event occurs.</p>
+<p>@overload listen(type, fn)
+  Listen for an event from all Caman instances.
+  @param [String] type The type of event to listen for.
+  @param [Function] fn The function to call when the event occurs.</p>
 
             </div>
             
@@ -284,7 +296,7 @@ or all CamanInstances.</p>
 
     <span class="keyword">return</span> <span class="literal">true</span>
 
-Caman.Event = Event</pre></div></div>
+Event = Caman.Event</pre></div></div>
             
         </li>
         
