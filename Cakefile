@@ -30,6 +30,7 @@ coffeeFullOpts    = "-j #{targetName}.full.js -o #{csTargetDir}"
 
 # All source files listed in include order
 coffeeFiles   = [
+  "core/module"
   "core/util"
   
   # Core library

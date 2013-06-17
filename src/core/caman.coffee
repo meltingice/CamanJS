@@ -22,7 +22,10 @@ else
 # image element, load the image, then continue with initialization.
 # 
 # The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
-class Caman
+class Caman extends Module
+  @extends IO::ClassMethods
+  @includes IO::InstanceMethods
+
   # The current version.
   @version:
     release: "4.1.1"

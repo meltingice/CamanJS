@@ -182,8 +182,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Caman.IO = <span class="class"><span class="keyword">class</span> <span class="title">IO</span></span>
-  <span class="property">@domainRegex</span> = <span class="regexp">/(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span>.<span class="title">IO</span></span></pre></div></div>
             
         </li>
         
@@ -194,39 +193,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Is the given URL remote?
-If a cross-origin setting is set, we assume you have CORS
-properly configured.</p>
+              <p>Used for parsing image URLs for domain names.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@isRemote</span>: (img) -&gt;
-    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">unless</span> img?
-    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> <span class="property">@corsEnabled</span>(img)
-    <span class="keyword">return</span> <span class="property">@isURLRemote</span> img.src
-
-  <span class="property">@corsEnabled</span>: (img) -&gt;
-    img.crossOrigin? <span class="keyword">and</span> img.crossOrigin.toLowerCase() <span class="keyword">in</span> [<span class="string">'anonymous'</span>, <span class="string">'use-credentials'</span>]
-
-  <span class="property">@isURLRemote</span>: (url) -&gt;
-    matches = url.match <span class="property">@domainRegex</span>
-    <span class="keyword">return</span> <span class="keyword">if</span> matches <span class="keyword">then</span> matches[<span class="number">1</span>] <span class="keyword">isnt</span> document.domain <span class="keyword">else</span> <span class="literal">false</span>
-
-  <span class="property">@remoteCheck</span>: (src) -&gt;
-    <span class="keyword">if</span> <span class="property">@isURLRemote</span> src
-      <span class="keyword">if</span> <span class="keyword">not</span> Caman.remoteProxy.length
-        Log.info <span class="string">"Attempting to load a remote image without a configured proxy. URL: <span class="subst">#{src}</span>"</span>
-        <span class="keyword">return</span>
-      <span class="keyword">else</span>
-        <span class="keyword">if</span> Caman.isURLRemote Caman.remoteProxy
-          Log.info <span class="string">"Cannot use a remote proxy for loading images."</span>
-          <span class="keyword">return</span>
-          
-        <span class="string">"<span class="subst">#{Caman.remoteProxy}</span>?camanProxyUrl=<span class="subst">#{encodeURIComponent(src)}</span>"</span>
-
-
-  <span class="property">@proxyUrl</span>: (src) -&gt;
-    <span class="string">"<span class="subst">#{Caman.remoteProxy}</span>?<span class="subst">#{Caman.proxyParam}</span>=<span class="subst">#{encodeURIComponent(src)}</span>"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@domainRegex</span> = <span class="regexp">/(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/</span></pre></div></div>
             
         </li>
         
@@ -237,7 +208,114 @@ properly configured.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Shortcut for using one of the bundled proxies.</p>
+              <p>Is the given URL remote?
+If a cross-origin setting is set, we assume you have CORS
+properly configured.</p>
+<p>@param [DOMObject] img The image to check.
+@return [Boolean]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@isRemote</span>: (img) -&gt;
+    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">unless</span> img?
+    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> <span class="property">@corsEnabled</span>(img)
+    <span class="keyword">return</span> <span class="property">@isURLRemote</span> img.src</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Given an image, we check to see if a CORS policy has been defined.
+@param [DOMObject] img The image to check.
+@return [Boolean]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@corsEnabled</span>: (img) -&gt;
+    img.crossOrigin? <span class="keyword">and</span> img.crossOrigin.toLowerCase() <span class="keyword">in</span> [<span class="string">'anonymous'</span>, <span class="string">'use-credentials'</span>]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Does the given URL exist on a different domain than the current one?
+This is done by comparing the URL to <code>document.domain</code>.
+@param [String] url The URL to check.
+@return [Boolean]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@isURLRemote</span>: (url) -&gt;
+    matches = url.match <span class="property">@domainRegex</span>
+    <span class="keyword">return</span> <span class="keyword">if</span> matches <span class="keyword">then</span> matches[<span class="number">1</span>] <span class="keyword">isnt</span> document.domain <span class="keyword">else</span> <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Checks to see if the URL is remote, and if there is a proxy defined, it
+@param [String] src The URL to check.
+@return [String] The proxy URL if the image is remote. Nothing otherwise.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@remoteCheck</span>: (src) -&gt;
+    <span class="keyword">if</span> <span class="property">@isURLRemote</span> src
+      <span class="keyword">if</span> <span class="keyword">not</span> Caman.remoteProxy.length
+        Log.info <span class="string">"Attempting to load a remote image without a configured proxy. URL: <span class="subst">#{src}</span>"</span>
+        <span class="keyword">return</span>
+      <span class="keyword">else</span>
+        <span class="keyword">if</span> Caman.isURLRemote Caman.remoteProxy
+          Log.info <span class="string">"Cannot use a remote proxy for loading images."</span>
+          <span class="keyword">return</span>
+          
+        <span class="keyword">return</span> <span class="property">@proxyUrl</span>(src)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Given a URL, get the proxy URL for it.
+@param [String] src The URL to proxy.
+@return [String] The proxy URL.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@proxyUrl</span>: (src) -&gt;
+    <span class="string">"<span class="subst">#{Caman.remoteProxy}</span>?<span class="subst">#{Caman.proxyParam}</span>=<span class="subst">#{encodeURIComponent(src)}</span>"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Shortcut for using one of the bundled proxies.
+@param [String] lang String identifier for the proxy script language.
+@return [String] A proxy URL.</p>
 
             </div>
             
@@ -255,11 +333,11 @@ properly configured.</p>
         </li>
         
         
-        <li id="section-4">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Grabs the canvas data, encodes it to Base64, then sets the browser location to 
 the encoded data so that the user will be prompted to download it.</p>
@@ -278,11 +356,11 @@ Caman::<span class="function"><span class="title">browserSave</span></span> = (t
         </li>
         
         
-        <li id="section-5">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Force download (its a bit hackish)</p>
 
@@ -304,11 +382,11 @@ Caman::<span class="function"><span class="title">nodeSave</span></span> = (file
         </li>
         
         
-        <li id="section-6">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Takes the current canvas data, converts it to Base64, then sets it as the source 
 of a new Image object and returns it.</p>
@@ -330,11 +408,11 @@ of a new Image object and returns it.</p>
         </li>
         
         
-        <li id="section-7">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Base64 encodes the current canvas</p>
 
@@ -342,7 +420,9 @@ of a new Image object and returns it.</p>
             
             <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">toBase64</span></span> = (type = <span class="string">"png"</span>) -&gt;
   type = type.toLowerCase()
-  <span class="keyword">return</span> <span class="property">@canvas</span>.toDataURL <span class="string">"image/<span class="subst">#{type}</span>"</span></pre></div></div>
+  <span class="keyword">return</span> <span class="property">@canvas</span>.toDataURL <span class="string">"image/<span class="subst">#{type}</span>"</span>
+
+IO = Caman.IO</pre></div></div>
             
         </li>
         

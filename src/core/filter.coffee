@@ -1,4 +1,4 @@
-# Responsible for storing all of the filters
+# Responsible for registering and storing all of the filters.
 Caman.Filter = class Filter
   # All of the different render operatives
   @Type =
@@ -9,5 +9,7 @@ Caman.Filter = class Filter
     LoadOverlay: 5
     Plugin: 6
 
-  # Registers a filter function
+  # Registers a filter function.
+  # @param [String] name The name of the filter.
+  # @param [Function] filterFunc The filter function.
   @register: (name, filterFunc) -> Caman::[name] = filterFunc
