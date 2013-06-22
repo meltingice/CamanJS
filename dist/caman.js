@@ -97,7 +97,7 @@
     return root.querySelector(sel);
   };
 
-  Caman.Util = (function() {
+  Util = (function() {
     function Util() {}
 
     Util.uniqid = (function() {
@@ -167,8 +167,6 @@
     return Util;
 
   })();
-
-  Util = Caman.Util;
 
   if (typeof exports !== "undefined" && exports !== null) {
     Root = exports;
