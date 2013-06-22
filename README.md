@@ -87,10 +87,15 @@ npm install caman
 
 To save your modified image in NodeJS, simply call the save() function **after** rendering is finished by passing a callback function to `render()`. Trying to save before rendering is finished will cause issues.
 
-``` coffeescript
-Caman "./path/to/file.jpg", ->
-  @brightness 40
-  @render -> @save "./output.jpg"
+``` javascript
+Caman = require('caman').Caman;
+
+Caman("./path/to/file.jpg", function () {
+  this.brightness(40);
+  this.render(function () {
+    this.save("./output.png");
+  });
+});
 ```
 
 ## Testing
