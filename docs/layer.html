@@ -197,7 +197,7 @@ if you want to add textures to an image.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Layer</span></span>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span>.<span class="title">Layer</span></span>
   constructor: (<span class="property">@c</span>) -&gt;</pre></div></div>
             
         </li>
@@ -420,7 +420,9 @@ should never be called explicitly by the user.</p>
       )
       parentData[i+<span class="number">2</span>] = rgbaParent.b - (
         (rgbaParent.b - result.b) * (<span class="property">@options</span>.opacity * (result.a / <span class="number">255</span>))
-      )</pre></div></div>
+      )
+
+Layer = Caman.Layer</pre></div></div>
             
         </li>
         

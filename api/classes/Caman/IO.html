@@ -185,6 +185,59 @@
     </span>
   </li>
 </ul>
+      <h2>Instance Method Summary</h2>
+      <ul class='summary'>
+  <li>
+    <span class='signature'>
+      <a href='#save-instance'>
+        - (void) <strong>save</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      Grabs the canvas data, encodes it to Base64, then sets the browser location to the encoded data so that the user will be prompted to download it.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#browserSave-instance'>
+        - (void) <strong>browserSave</strong>(type = "png")
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#nodeSave-instance'>
+        - (void) <strong>nodeSave</strong>(file, overwrite = true)
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#toImage-instance'>
+        - (void) <strong>toImage</strong>(type)
+      </a>
+    </span>
+    <span class='desc'>
+      Takes the current canvas data, converts it to Base64, then sets it as the source of a new Image object and returns it.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#toBase64-instance'>
+        - (void) <strong>toBase64</strong>(type = "png")
+      </a>
+    </span>
+    <span class='desc'>
+      Base64 encodes the current canvas
+    </span>
+  </li>
+</ul>
       <h2>Class Method Details</h2>
       <div class='methods'>
   <div class='method_details'>
@@ -359,10 +412,66 @@ This is done by comparing the URL to <code>document.domain</code>.</p>
 </div>
   </div>
 </div>
+      <h2>Instance Method Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='save-instance'>
+      - (void) <strong>save</strong>()
+    </p>
+    <div class='docstring'>
+  <p>Grabs the canvas data, encodes it to Base64, then sets the browser location to 
+the encoded data so that the user will be prompted to download it.
+If we&#39;re in NodeJS, then we can save the image to disk.</p>
+</div>
+<div class='tags'>
+  <h3>See also:</h3>
+  <ul class='see'>
+    <li>
+      <a href='../../classes/Caman.html'>Caman</a>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='browserSave-instance'>
+      - (void) <strong>browserSave</strong>(type = "png")
+    </p>
+    <div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='nodeSave-instance'>
+      - (void) <strong>nodeSave</strong>(file, overwrite = true)
+    </p>
+    <div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='toImage-instance'>
+      - (void) <strong>toImage</strong>(type)
+    </p>
+    <div class='docstring'>
+  <p>Takes the current canvas data, converts it to Base64, then sets it as the source 
+of a new Image object and returns it.</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='toBase64-instance'>
+      - (void) <strong>toBase64</strong>(type = "png")
+    </p>
+    <div class='docstring'>
+  <p>Base64 encodes the current canvas</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+</div>
     </div>
     <div id='footer'>
   Generated on
-  Tue Jun 11 2013 00:33:25 GMT-0400 (EDT)
+  Fri Jun 21 2013 21:39:38 GMT-0400 (EDT)
   by
   <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
   v1.7.0

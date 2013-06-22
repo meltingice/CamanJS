@@ -7,7 +7,7 @@ $ = (sel, root = document) ->
   return sel if typeof sel is "object" or exports?
   root.querySelector sel
 
-class Util
+class Caman.Util
   # Unique value utility
   @uniqid = do ->
     id = 0
@@ -40,3 +40,5 @@ class Util
   @dataArray: (length = 0) ->
     return new Uint8Array(length) if Caman.NodeJS or window.Uint8Array?
     return new Array(length)
+
+Util = Caman.Util

@@ -188,7 +188,7 @@ already initialized element, it returns that object instead of re-initializing.<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Caman.Store = <span class="class"><span class="keyword">class</span> <span class="title">Store</span></span>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span>.<span class="title">Store</span></span>
   <span class="property">@items</span> = {}
   
   <span class="property">@has</span>: (search) -&gt; <span class="property">@items</span>[search]?
@@ -202,7 +202,9 @@ already initialized element, it returns that object instead of re-initializing.<
     <span class="keyword">return</span> <span class="property">@get</span>(search)
     
   <span class="property">@flush</span>: (name = <span class="literal">false</span>) -&gt;
-    <span class="keyword">if</span> name <span class="keyword">then</span> <span class="keyword">delete</span> <span class="property">@items</span>[name] <span class="keyword">else</span> <span class="property">@items</span> = {}</pre></div></div>
+    <span class="keyword">if</span> name <span class="keyword">then</span> <span class="keyword">delete</span> <span class="property">@items</span>[name] <span class="keyword">else</span> <span class="property">@items</span> = {}
+
+Store = Caman.Store</pre></div></div>
             
         </li>
         

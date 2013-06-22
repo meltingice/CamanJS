@@ -1,5 +1,5 @@
 # Responsible for registering and storing all of the filters.
-Caman.Filter = class Filter
+class Caman.Filter
   # All of the different render operatives
   @Type =
     Single: 1
@@ -13,3 +13,5 @@ Caman.Filter = class Filter
   # @param [String] name The name of the filter.
   # @param [Function] filterFunc The filter function.
   @register: (name, filterFunc) -> Caman::[name] = filterFunc
+
+Filter = Caman.Filter

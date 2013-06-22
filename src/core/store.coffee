@@ -1,6 +1,6 @@
 # Used for storing instances of CamanInstance objects such that, when Caman() is called on an 
 # already initialized element, it returns that object instead of re-initializing.
-Caman.Store = class Store
+class Caman.Store
   @items = {}
   
   @has: (search) -> @items[search]?
@@ -15,3 +15,5 @@ Caman.Store = class Store
     
   @flush: (name = false) ->
     if name then delete @items[name] else @items = {}
+
+Store = Caman.Store

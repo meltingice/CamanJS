@@ -1,14 +1,9 @@
-###
-Various image analysis methods
-###
-class Analyze
+# Various image analysis methods
+class Caman.Analyze
   constructor: (@c) ->
 
-  ###
-  Calculates the number of occurances of each color value throughout the image.
-  
-  @return {Object} Hash of RGB channels and the occurance of each value
-  ###
+  # Calculates the number of occurances of each color value throughout the image.
+  # @return {Object} Hash of RGB channels and the occurance of each value
   calculateLevels: ->
     levels =
       r: {}
@@ -37,3 +32,5 @@ class Analyze
       levels.b[i] /= numPixels
 
     levels
+
+Analyze = Caman.Analyze

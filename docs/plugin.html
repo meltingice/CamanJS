@@ -187,13 +187,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Plugin</span></span>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span>.<span class="title">Plugin</span></span>
   <span class="property">@plugins</span> = {}
 
   <span class="property">@register</span>: (name, plugin) -&gt; <span class="property">@plugins</span>[name] = plugin
   <span class="property">@execute</span>: (context, name, args) -&gt; <span class="property">@plugins</span>[name].apply context, args
 
-Caman.Plugin = Plugin</pre></div></div>
+Plugin = Caman.Plugin</pre></div></div>
             
         </li>
         

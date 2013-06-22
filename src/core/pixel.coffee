@@ -1,5 +1,5 @@
 # Represents a single Pixel in an image.
-class Pixel
+class Caman.Pixel
   @coordinatesToLocation: (x, y, width) ->
     (y * width + x) * 4
 
@@ -92,4 +92,4 @@ class Pixel
 
     if includeAlpha then hex + @a.toString(16) else hex
 
-Caman.Pixel = Pixel
+Pixel = Caman.Pixel

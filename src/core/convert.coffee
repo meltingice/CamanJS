@@ -1,5 +1,5 @@
 # Tons of color conversion utility functions.
-class Convert
+class Caman.Convert
   # Converts the hex representation of a color to RGB values.
   # Hex value can optionally start with the hash (#).
   #
@@ -354,3 +354,4 @@ class Convert
 
   @labToRGB: (l, a, b) ->
     
+Convert = Caman.Convert

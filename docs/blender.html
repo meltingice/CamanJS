@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>#</title>
+  <title>blender.coffee</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -169,30 +169,21 @@
     
     <ul class="sections">
         
+          <li id="title">
+              <div class="annotation">
+                  <h1>blender.coffee</h1>
+              </div>
+          </li>
+        
         
         
         <li id="section-1">
             <div class="annotation">
               
-              <div class="pilwrap for-h1">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h1>#</h1>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>Built-<span class="keyword">in</span> layer blenders. Many <span class="keyword">of</span> these mimic Photoshop blend modes.</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <h1>#</h1>
+              <p>Built-in layer blenders. Many of these mimic Photoshop blend modes.</p>
 
             </div>
             
@@ -202,32 +193,16 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-2">
             <div class="annotation">
               
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h1>#</h1>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  Registers a blender. Can be used to add your own blenders outside <span class="keyword">of</span>
-  the core library, <span class="keyword">if</span> needed.
-
-  <span class="property">@param</span> [String] name Name <span class="keyword">of</span> the blender.
-  <span class="property">@param</span> [Function] func The blender <span class="reserved">function</span>.</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <h1>#</h1>
+              <p>Registers a blender. Can be used to add your own blenders outside of
+the core library, if needed.</p>
+<p>@param [String] name Name of the blender.
+@param [Function] func The blender function.</p>
 
             </div>
             
@@ -236,33 +211,29 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-3">
             <div class="annotation">
               
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h1>#</h1>
+              <p>Executes a blender to combine a layer with its parent.</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  Executes a blender to combine a layer <span class="reserved">with</span> its parent.
-  
-  <span class="property">@param</span> [String] name Name <span class="keyword">of</span> the blending <span class="reserved">function</span> to invoke.
-  <span class="property">@param</span> [Object] rgbaLayer RGBA object <span class="keyword">of</span> the current pixel from the layer.
-  <span class="property">@param</span> [Object] rgbaParent RGBA object <span class="keyword">of</span> the corresponding pixel <span class="keyword">in</span> the parent layer.
-  <span class="property">@return</span> [Object] RGBA object representing the blended pixel.</pre></div></div>
             
         </li>
         
         
-        <li id="section-6">
+        <li id="section-4">
             <div class="annotation">
               
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h1>#</h1>
+              <p>@param [String] name Name of the blending function to invoke.
+@param [Object] rgbaLayer RGBA object of the current pixel from the layer.
+@param [Object] rgbaParent RGBA object of the corresponding pixel in the parent layer.
+@return [Object] RGBA object representing the blended pixel.</p>
 
             </div>
             

@@ -1,5 +1,5 @@
 # Various I/O based operations
-class IO
+class Caman.IO
   # Used for parsing image URLs for domain names.
   @domainRegex: /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/
 
@@ -109,4 +109,4 @@ class IO
     type = type.toLowerCase()
     return @canvas.toDataURL "image/#{type}"
 
-Caman.IO = IO
+IO = Caman.IO
