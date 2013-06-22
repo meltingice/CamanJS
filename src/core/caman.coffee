@@ -548,7 +548,7 @@ class Caman extends Module
       width = @originalWidth
 
     for i in [0...pixelData.length] by 4
-      coord = PixelInfo.locationToCoordinates(i, width)
+      coord = Pixel.locationToCoordinates(i, width)
       if (startX <= coord.x < endX) and (startY <= coord.y < endY)
         pixels.push pixelData[i], 
           pixelData[i+1],
