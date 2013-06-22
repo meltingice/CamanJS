@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>#</title>
+  <title>module.coffee</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -169,19 +169,46 @@
     
     <ul class="sections">
         
+          <li id="title">
+              <div class="annotation">
+                  <h1>module.coffee</h1>
+              </div>
+          </li>
+        
         
         
         <li id="section-1">
             <div class="annotation">
               
-              <div class="pilwrap for-h1">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h1>#</h1>
+              <p>For the parts of this code adapted from <a href="http://arcturo.github.com/library/coffeescript/03_classes.html">http://arcturo.github.com/library/coffeescript/03_classes.html</a>
+below is the required copyright notice.</p>
+<p>Copyright (c) 2011 Alexander MacCaw (info@eribium.org)
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+&quot;Software&quot;), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Various image analysis methods</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  
+moduleKeywords = [<span class="string">'extended'</span>, <span class="string">'included'</span>]
+
+<span class="class"><span class="keyword">class</span> <span class="title">Module</span></span></pre></div></div>
             
         </li>
         
@@ -189,15 +216,19 @@
         <li id="section-2">
             <div class="annotation">
               
-              <div class="pilwrap for-h1">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h1>#</h1>
+              <p>Extend the base object itself like a static method</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Analyze</span></span>
-  constructor: (<span class="property">@c</span>) -&gt;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@extends</span>: (obj) -&gt;
+    <span class="keyword">for</span> key, value <span class="keyword">of</span> obj <span class="keyword">when</span> key <span class="keyword">not</span> <span class="keyword">in</span> moduleKeywords
+      @[key] = value
+
+    obj.extended?.apply(@)
+    @</pre></div></div>
             
         </li>
         
@@ -205,16 +236,15 @@
         <li id="section-3">
             <div class="annotation">
               
-              <div class="pilwrap for-h1">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h1>#</h1>
+              <p>Include methods on the object prototype</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  Calculates the number <span class="keyword">of</span> occurances <span class="keyword">of</span> each color value throughout the image.
-  
-  <span class="property">@return</span> {Object} Hash <span class="keyword">of</span> RGB channels <span class="keyword">and</span> the occurance <span class="keyword">of</span> each value</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@includes</span>: (obj) -&gt;
+    <span class="keyword">for</span> key, value <span class="keyword">of</span> obj <span class="keyword">when</span> key <span class="keyword">not</span> <span class="keyword">in</span> moduleKeywords</pre></div></div>
             
         </li>
         
@@ -222,18 +252,17 @@
         <li id="section-4">
             <div class="annotation">
               
-              <div class="pilwrap for-h1">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h1>#</h1>
+              <p>Assign properties to the prototype</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  calculateLevels: -&gt;
-    levels =
-      r: {}
-      g: {}
-      b: {}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      @::[key] = value
+
+    obj.included?.apply(@)
+    @</pre></div></div>
             
         </li>
         
@@ -244,14 +273,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Initialize all values to 0 first so there are no data gaps</p>
+              <p>Add methods on this prototype that point to another method
+on another object&#39;s prototype.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span><span class="number">.255</span>]
-      levels.r[i] = <span class="number">0</span>
-      levels.g[i] = <span class="number">0</span>
-      levels.b[i] = <span class="number">0</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@delegate</span>: (args...) -&gt;
+    target = args.pop()
+    @::[source] = target::[source] <span class="keyword">for</span> source <span class="keyword">in</span> args</pre></div></div>
             
         </li>
         
@@ -262,14 +291,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Iterate through each pixel block and increment the level counters</p>
+              <p>Create an alias for a function</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>..<span class="property">@c</span>.pixelData.length] <span class="keyword">by</span> <span class="number">4</span>
-      levels.r[<span class="property">@c</span>.pixelData[i]]++
-      levels.g[<span class="property">@c</span>.pixelData[i+<span class="number">1</span>]]++
-      levels.b[<span class="property">@c</span>.pixelData[i+<span class="number">2</span>]]++</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@aliasFunction</span>: (to, from) -&gt;
+    @::[to] = (args...) =&gt; @::[from].apply @, args</pre></div></div>
             
         </li>
         
@@ -280,19 +307,30 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Normalize all of the numbers by converting them to percentages between
-0 and 1.0</p>
+              <p>Create an alias for a property</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    numPixels = <span class="property">@c</span>.pixelData.length / <span class="number">4</span>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@aliasProperty</span>: (to, from) -&gt;
+    Object.defineProperty @::, to,
+      get: -&gt; @[from]
+      set: (val) -&gt; @[from] = val</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Execute a function in the context of the object, and pass
+a reference to the object&#39;s prototype.</p>
 
-    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span><span class="number">.255</span>]
-      levels.r[i] /= numPixels
-      levels.g[i] /= numPixels
-      levels.b[i] /= numPixels
-
-    levels</pre></div></div>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@included</span>: (func) -&gt; func.call @, @::</pre></div></div>
             
         </li>
         

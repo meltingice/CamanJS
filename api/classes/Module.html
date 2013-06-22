@@ -15,7 +15,7 @@
     &raquo;
     <a href='../class_index.html' title='Index'>Index</a>
     &raquo;
-    <span class='title'>Filter</span>
+    <span class='title'>Module</span>
     <nav>
       <ul>
         <li class='noframes'>
@@ -106,56 +106,143 @@
     <div id='content'>
       <h1>
         Class:
-        Filter
+        Module
       </h1>
       <table class='box'>
         <tr>
           <td>Defined in:</td>
-          <td>src&#47;core&#47;filter.coffee</td>
+          <td>src&#47;core&#47;module.coffee</td>
         </tr>
       </table>
+      <h2>Direct Known Subclasses</h2>
+      <p class='children'>
+        <a href='../classes/Caman.html'>Caman</a>
+      </p>
       <h2>Class Method Summary</h2>
       <ul class='summary'>
   <li>
     <span class='signature'>
-      <a href='#register-class'>
-        + (void) <strong>register</strong>(name, filterFunc)
+      <a href='#extends-class'>
+        + (void) <strong>extends</strong>(obj)
       </a>
     </span>
     <span class='desc'>
-      Registers a filter function.
+      Extend the base object itself like a static method
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#includes-class'>
+        + (void) <strong>includes</strong>(obj)
+      </a>
+    </span>
+    <span class='desc'>
+      Include methods on the object prototype
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#delegate-class'>
+        + (void) <strong>delegate</strong>(args...)
+      </a>
+    </span>
+    <span class='desc'>
+      Add methods on this prototype that point to another method on another object&#39;s prototype.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#aliasFunction-class'>
+        + (void) <strong>aliasFunction</strong>(to, from)
+      </a>
+    </span>
+    <span class='desc'>
+      Create an alias for a function
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#aliasProperty-class'>
+        + (void) <strong>aliasProperty</strong>(to, from)
+      </a>
+    </span>
+    <span class='desc'>
+      Create an alias for a property
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#included-class'>
+        + (void) <strong>included</strong>(func)
+      </a>
+    </span>
+    <span class='desc'>
+      Execute a function in the context of the object, and pass a reference to the object&#39;s prototype.
     </span>
   </li>
 </ul>
       <h2>Class Method Details</h2>
       <div class='methods'>
   <div class='method_details'>
-    <p class='signature' id='register-class'>
-      + (void) <strong>register</strong>(name, filterFunc)
+    <p class='signature' id='extends-class'>
+      + (void) <strong>extends</strong>(obj)
     </p>
     <div class='docstring'>
-  <p>Registers a filter function.</p>
+  <p>Extend the base object itself like a static method</p>
 </div>
 <div class='tags'>
-  <h3>Parameters:</h3>
-  <ul class='param'>
-    <li>
-      <span class='name'>name</span>
-      <span class='type'>
-        (<tt>String</tt>)
-      </span>
-      &mdash;
-      <span class='desc'>The name of the filter.</span>
-    </li>
-    <li>
-      <span class='name'>filterFunc</span>
-      <span class='type'>
-        (<tt>Function</tt>)
-      </span>
-      &mdash;
-      <span class='desc'>The filter function.</span>
-    </li>
-  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='includes-class'>
+      + (void) <strong>includes</strong>(obj)
+    </p>
+    <div class='docstring'>
+  <p>Include methods on the object prototype</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='delegate-class'>
+      + (void) <strong>delegate</strong>(args...)
+    </p>
+    <div class='docstring'>
+  <p>Add methods on this prototype that point to another method
+on another object&#39;s prototype.</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='aliasFunction-class'>
+      + (void) <strong>aliasFunction</strong>(to, from)
+    </p>
+    <div class='docstring'>
+  <p>Create an alias for a function</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='aliasProperty-class'>
+      + (void) <strong>aliasProperty</strong>(to, from)
+    </p>
+    <div class='docstring'>
+  <p>Create an alias for a property</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='included-class'>
+      + (void) <strong>included</strong>(func)
+    </p>
+    <div class='docstring'>
+  <p>Execute a function in the context of the object, and pass
+a reference to the object&#39;s prototype.</p>
+</div>
+<div class='tags'>
 </div>
   </div>
 </div>

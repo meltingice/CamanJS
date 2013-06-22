@@ -74,8 +74,13 @@
               </a>
             
               
-              <a class="source" href="pixelinfo.html">
-                pixelinfo.coffee
+              <a class="source" href="module.html">
+                module.coffee
+              </a>
+            
+              
+              <a class="source" href="pixel.html">
+                pixel.coffee
               </a>
             
               
@@ -367,24 +372,23 @@ are finished rendering in order to be as fast as possible.</p>
       startPixel: start
       endPixel: end
 
-    data = r: <span class="number">0</span>, g: <span class="number">0</span>, b: <span class="number">0</span>, a: <span class="number">0</span>
-    pixelInfo = <span class="keyword">new</span> PixelInfo <span class="property">@c</span>
+    pixel = <span class="keyword">new</span> Pixel()
+    pixel.setContext <span class="property">@c</span>
 
     <span class="keyword">for</span> i <span class="keyword">in</span> [start...end] <span class="keyword">by</span> <span class="number">4</span>
-      pixelInfo.loc = i
+      pixel.loc = i
 
-      data.r = <span class="property">@c</span>.pixelData[i]
-      data.g = <span class="property">@c</span>.pixelData[i+<span class="number">1</span>]
-      data.b = <span class="property">@c</span>.pixelData[i+<span class="number">2</span>]
-      data.a = <span class="property">@c</span>.pixelData[i+<span class="number">3</span>]
+      pixel.r = <span class="property">@c</span>.pixelData[i]
+      pixel.g = <span class="property">@c</span>.pixelData[i+<span class="number">1</span>]
+      pixel.b = <span class="property">@c</span>.pixelData[i+<span class="number">2</span>]
+      pixel.a = <span class="property">@c</span>.pixelData[i+<span class="number">3</span>]
 
-      res = <span class="property">@currentJob</span>.processFn.call pixelInfo, data
-      res.a = data.a <span class="keyword">if</span> <span class="keyword">not</span> res.a?
+      <span class="property">@currentJob</span>.processFn.call pixel, pixel
 
-      <span class="property">@c</span>.pixelData[i]   = Util.clampRGB res.r
-      <span class="property">@c</span>.pixelData[i+<span class="number">1</span>] = Util.clampRGB res.g
-      <span class="property">@c</span>.pixelData[i+<span class="number">2</span>] = Util.clampRGB res.b
-      <span class="property">@c</span>.pixelData[i+<span class="number">3</span>] = Util.clampRGB res.a
+      <span class="property">@c</span>.pixelData[i]   = Util.clampRGB pixel.r
+      <span class="property">@c</span>.pixelData[i+<span class="number">1</span>] = Util.clampRGB pixel.g
+      <span class="property">@c</span>.pixelData[i+<span class="number">2</span>] = Util.clampRGB pixel.b
+      <span class="property">@c</span>.pixelData[i+<span class="number">3</span>] = Util.clampRGB pixel.a
 
     <span class="keyword">if</span> Caman.NodeJS
       Fiber.yield(bnum)
@@ -422,18 +426,19 @@ are finished rendering in order to be as fast as possible.</p>
 
     builder = (adjustSize - <span class="number">1</span>) / <span class="number">2</span>
 
-    pixelInfo = <span class="keyword">new</span> PixelInfo <span class="property">@c</span>
+    pixel = <span class="keyword">new</span> Pixel()
+    pixel.setContext(<span class="property">@c</span>)
 
     <span class="keyword">for</span> i <span class="keyword">in</span> [start...end] <span class="keyword">by</span> <span class="number">4</span>
-      pixelInfo.loc = i
+      pixel.loc = i
       builderIndex = <span class="number">0</span>
 
       <span class="keyword">for</span> j <span class="keyword">in</span> [-builder..builder]
         <span class="keyword">for</span> k <span class="keyword">in</span> [builder..-builder]
-          pixel = pixelInfo.getPixelRelative j, k
-          kernel[builderIndex * <span class="number">3</span>]     = pixel.r
-          kernel[builderIndex * <span class="number">3</span> + <span class="number">1</span>] = pixel.g
-          kernel[builderIndex * <span class="number">3</span> + <span class="number">2</span>] = pixel.b
+          p = pixel.getPixelRelative j, k
+          kernel[builderIndex * <span class="number">3</span>]     = p.r
+          kernel[builderIndex * <span class="number">3</span> + <span class="number">1</span>] = p.g
+          kernel[builderIndex * <span class="number">3</span> + <span class="number">2</span>] = p.b
 
           builderIndex++
 

@@ -181,10 +181,6 @@
   Caman = (function(_super) {
     __extends(Caman, _super);
 
-    Caman["extends"](IO.prototype.ClassMethods);
-
-    Caman.includes(IO.prototype.InstanceMethods);
-
     Caman.version = {
       release: "4.1.1",
       date: "4/8/2013"
@@ -1478,127 +1474,135 @@
   IO = (function() {
     function IO() {}
 
-    IO.prototype.ClassMethods = {
-      domainRegex: /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/,
-      isRemote: function(img) {
-        if (img == null) {
-          return false;
-        }
-        if (this.corsEnabled(img)) {
-          return false;
-        }
-        return this.isURLRemote(img.src);
-      },
-      corsEnabled: function(img) {
-        var _ref;
+    IO.domainRegex = /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/;
 
-        return (img.crossOrigin != null) && ((_ref = img.crossOrigin.toLowerCase()) === 'anonymous' || _ref === 'use-credentials');
-      },
-      isURLRemote: function(url) {
-        var matches;
+    IO.isRemote = function(img) {
+      if (img == null) {
+        return false;
+      }
+      if (this.corsEnabled(img)) {
+        return false;
+      }
+      return this.isURLRemote(img.src);
+    };
 
-        matches = url.match(this.domainRegex);
-        if (matches) {
-          return matches[1] !== document.domain;
-        } else {
-          return false;
-        }
-      },
-      remoteCheck: function(src) {
-        if (this.isURLRemote(src)) {
-          if (!Caman.remoteProxy.length) {
-            Log.info("Attempting to load a remote image without a configured proxy. URL: " + src);
-          } else {
-            if (Caman.isURLRemote(Caman.remoteProxy)) {
-              Log.info("Cannot use a remote proxy for loading images.");
-              return;
-            }
-            return this.proxyUrl(src);
-          }
-        }
-      },
-      proxyUrl: function(src) {
-        return "" + Caman.remoteProxy + "?" + Caman.proxyParam + "=" + (encodeURIComponent(src));
-      },
-      useProxy: function(lang) {
-        var langToExt;
+    IO.corsEnabled = function(img) {
+      var _ref;
 
-        langToExt = {
-          ruby: 'rb',
-          python: 'py',
-          perl: 'pl',
-          javascript: 'js'
-        };
-        lang = lang.toLowerCase();
-        if (langToExt[lang] != null) {
-          lang = langToExt[lang];
-        }
-        return "proxies/caman_proxy." + lang;
+      return (img.crossOrigin != null) && ((_ref = img.crossOrigin.toLowerCase()) === 'anonymous' || _ref === 'use-credentials');
+    };
+
+    IO.isURLRemote = function(url) {
+      var matches;
+
+      matches = url.match(this.domainRegex);
+      if (matches) {
+        return matches[1] !== document.domain;
+      } else {
+        return false;
       }
     };
 
-    IO.prototype.InstanceMethods = {
-      save: function() {
-        if (typeof exports !== "undefined" && exports !== null) {
-          return this.nodeSave.apply(this, arguments);
+    IO.remoteCheck = function(src) {
+      if (this.isURLRemote(src)) {
+        if (!Caman.remoteProxy.length) {
+          Log.info("Attempting to load a remote image without a configured proxy. URL: " + src);
         } else {
-          return this.browserSave.apply(this, arguments);
-        }
-      },
-      browserSave: function(type) {
-        var image;
-
-        if (type == null) {
-          type = "png";
-        }
-        type = type.toLowerCase();
-        image = this.toBase64(type).replace("image/" + type, "image/octet-stream");
-        return document.location.href = image;
-      },
-      nodeSave: function(file, overwrite) {
-        var e, stats;
-
-        if (overwrite == null) {
-          overwrite = true;
-        }
-        try {
-          stats = fs.statSync(file);
-          if (stats.isFile() && !overwrite) {
-            return false;
+          if (Caman.isURLRemote(Caman.remoteProxy)) {
+            Log.info("Cannot use a remote proxy for loading images.");
+            return;
           }
-        } catch (_error) {
-          e = _error;
-          Log.debug("Creating output file " + file);
+          return this.proxyUrl(src);
         }
-        return fs.writeFile(file, this.canvas.toBuffer(), function() {
-          return Log.debug("Finished writing to " + file);
-        });
-      },
-      toImage: function(type) {
-        var img;
-
-        img = document.createElement('img');
-        img.src = this.toBase64(type);
-        img.width = this.dimensions.width;
-        img.height = this.dimensions.height;
-        if (window.devicePixelRatio) {
-          img.width /= window.devicePixelRatio;
-          img.height /= window.devicePixelRatio;
-        }
-        return img;
-      },
-      toBase64: function(type) {
-        if (type == null) {
-          type = "png";
-        }
-        type = type.toLowerCase();
-        return this.canvas.toDataURL("image/" + type);
       }
+    };
+
+    IO.proxyUrl = function(src) {
+      return "" + Caman.remoteProxy + "?" + Caman.proxyParam + "=" + (encodeURIComponent(src));
+    };
+
+    IO.useProxy = function(lang) {
+      var langToExt;
+
+      langToExt = {
+        ruby: 'rb',
+        python: 'py',
+        perl: 'pl',
+        javascript: 'js'
+      };
+      lang = lang.toLowerCase();
+      if (langToExt[lang] != null) {
+        lang = langToExt[lang];
+      }
+      return "proxies/caman_proxy." + lang;
+    };
+
+    IO.prototype.save = function() {
+      if (typeof exports !== "undefined" && exports !== null) {
+        return this.nodeSave.apply(this, arguments);
+      } else {
+        return this.browserSave.apply(this, arguments);
+      }
+    };
+
+    IO.prototype.browserSave = function(type) {
+      var image;
+
+      if (type == null) {
+        type = "png";
+      }
+      type = type.toLowerCase();
+      image = this.toBase64(type).replace("image/" + type, "image/octet-stream");
+      return document.location.href = image;
+    };
+
+    IO.prototype.nodeSave = function(file, overwrite) {
+      var e, stats;
+
+      if (overwrite == null) {
+        overwrite = true;
+      }
+      try {
+        stats = fs.statSync(file);
+        if (stats.isFile() && !overwrite) {
+          return false;
+        }
+      } catch (_error) {
+        e = _error;
+        Log.debug("Creating output file " + file);
+      }
+      return fs.writeFile(file, this.canvas.toBuffer(), function() {
+        return Log.debug("Finished writing to " + file);
+      });
+    };
+
+    IO.prototype.toImage = function(type) {
+      var img;
+
+      img = document.createElement('img');
+      img.src = this.toBase64(type);
+      img.width = this.dimensions.width;
+      img.height = this.dimensions.height;
+      if (window.devicePixelRatio) {
+        img.width /= window.devicePixelRatio;
+        img.height /= window.devicePixelRatio;
+      }
+      return img;
+    };
+
+    IO.prototype.toBase64 = function(type) {
+      if (type == null) {
+        type = "png";
+      }
+      type = type.toLowerCase();
+      return this.canvas.toDataURL("image/" + type);
     };
 
     return IO;
 
   })();
+
+  Caman.IO = IO;
 
   Layer = (function() {
     function Layer(c) {

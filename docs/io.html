@@ -74,8 +74,13 @@
               </a>
             
               
-              <a class="source" href="pixelinfo.html">
-                pixelinfo.coffee
+              <a class="source" href="module.html">
+                module.coffee
+              </a>
+            
+              
+              <a class="source" href="pixel.html">
+                pixel.coffee
               </a>
             
               
@@ -182,7 +187,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span>.<span class="title">IO</span></span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">IO</span></span></pre></div></div>
             
         </li>
         
@@ -197,7 +202,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@domainRegex</span> = <span class="regexp">/(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@domainRegex</span>: <span class="regexp">/(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/</span></pre></div></div>
             
         </li>
         
@@ -340,18 +345,20 @@ This is done by comparing the URL to <code>document.domain</code>.
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Grabs the canvas data, encodes it to Base64, then sets the browser location to 
-the encoded data so that the user will be prompted to download it.</p>
+the encoded data so that the user will be prompted to download it.
+If we&#39;re in NodeJS, then we can save the image to disk.
+@see Caman</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">save</span></span> = -&gt;
-  <span class="keyword">if</span> exports?
-    <span class="property">@nodeSave</span>.apply @, arguments
-  <span class="keyword">else</span>
-    <span class="property">@browserSave</span>.apply @, arguments
+            <div class="content"><div class='highlight'><pre>  save: -&gt;
+    <span class="keyword">if</span> exports?
+      <span class="property">@nodeSave</span>.apply @, arguments
+    <span class="keyword">else</span>
+      <span class="property">@browserSave</span>.apply @, arguments
 
-Caman::<span class="function"><span class="title">browserSave</span></span> = (type = <span class="string">"png"</span>) -&gt;
-  type = type.toLowerCase()</pre></div></div>
+  browserSave: (type = <span class="string">"png"</span>) -&gt;
+    type = type.toLowerCase()</pre></div></div>
             
         </li>
         
@@ -366,18 +373,18 @@ Caman::<span class="function"><span class="title">browserSave</span></span> = (t
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  image = <span class="property">@toBase64</span>(type).replace <span class="string">"image/<span class="subst">#{type}</span>"</span>, <span class="string">"image/octet-stream"</span>
-  document.location.href = image
+            <div class="content"><div class='highlight'><pre>    image = <span class="property">@toBase64</span>(type).replace <span class="string">"image/<span class="subst">#{type}</span>"</span>, <span class="string">"image/octet-stream"</span>
+    document.location.href = image
 
-Caman::<span class="function"><span class="title">nodeSave</span></span> = (file, overwrite = <span class="literal">true</span>) -&gt;
-  <span class="keyword">try</span>
-    stats = fs.statSync file
-    <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> stats.isFile() <span class="keyword">and</span> <span class="keyword">not</span> overwrite
-  <span class="keyword">catch</span> e
-    Log.debug <span class="string">"Creating output file <span class="subst">#{file}</span>"</span>
+  nodeSave: (file, overwrite = <span class="literal">true</span>) -&gt;
+    <span class="keyword">try</span>
+      stats = fs.statSync file
+      <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> stats.isFile() <span class="keyword">and</span> <span class="keyword">not</span> overwrite
+    <span class="keyword">catch</span> e
+      Log.debug <span class="string">"Creating output file <span class="subst">#{file}</span>"</span>
 
-  fs.writeFile file, <span class="property">@canvas</span>.toBuffer(), -&gt;
-    Log.debug <span class="string">"Finished writing to <span class="subst">#{file}</span>"</span></pre></div></div>
+    fs.writeFile file, <span class="property">@canvas</span>.toBuffer(), -&gt;
+      Log.debug <span class="string">"Finished writing to <span class="subst">#{file}</span>"</span></pre></div></div>
             
         </li>
         
@@ -393,17 +400,17 @@ of a new Image object and returns it.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">toImage</span></span> = (type) -&gt;
-  img = document.createElement <span class="string">'img'</span>
-  img.src = <span class="property">@toBase64</span> type
-  img.width = <span class="property">@dimensions</span>.width
-  img.height = <span class="property">@dimensions</span>.height
+            <div class="content"><div class='highlight'><pre>  toImage: (type) -&gt;
+    img = document.createElement <span class="string">'img'</span>
+    img.src = <span class="property">@toBase64</span> type
+    img.width = <span class="property">@dimensions</span>.width
+    img.height = <span class="property">@dimensions</span>.height
 
-  <span class="keyword">if</span> window.devicePixelRatio
-    img.width /= window.devicePixelRatio
-    img.height /= window.devicePixelRatio
+    <span class="keyword">if</span> window.devicePixelRatio
+      img.width /= window.devicePixelRatio
+      img.height /= window.devicePixelRatio
 
-  <span class="keyword">return</span> img</pre></div></div>
+    <span class="keyword">return</span> img</pre></div></div>
             
         </li>
         
@@ -418,11 +425,11 @@ of a new Image object and returns it.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">toBase64</span></span> = (type = <span class="string">"png"</span>) -&gt;
-  type = type.toLowerCase()
-  <span class="keyword">return</span> <span class="property">@canvas</span>.toDataURL <span class="string">"image/<span class="subst">#{type}</span>"</span>
+            <div class="content"><div class='highlight'><pre>  toBase64: (type = <span class="string">"png"</span>) -&gt;
+    type = type.toLowerCase()
+    <span class="keyword">return</span> <span class="property">@canvas</span>.toDataURL <span class="string">"image/<span class="subst">#{type}</span>"</span>
 
-IO = Caman.IO</pre></div></div>
+Caman.IO = IO</pre></div></div>
             
         </li>
         
