@@ -106,15 +106,3 @@ The NodeJS tests use mocha as the test runner. The simplest way to run the test 
 The browser tests are run by Karma. It will start up Chrome, Firefox, and Safari (if running OSX) in the background. You can minimize each of these browsers if desired. It will automatically run tests after CamanJS is recompiled by the Cakefile as well.
 
 You can run Karma by running `karma start`, or you can do a single run with the NodeJS tests by running `npm test`.
-
-## Project Contributors
-
-* [Ryan LeFevre](http://twitter.com/meltingice) - Project Creator, Maintainer, and Lead Developer
-* [Rick Waldron](http://twitter.com/rwaldron) - Plugin Architect and Developer
-* [Cezar Sá Espinola](http://twitter.com/cezarsa) - Developer
-* [Jarques Pretorius](http://twitter.com/jarques) - Logo Designer
-
-## Plugin Contributors
-
-* [Hosselaer](https://github.com/Hosselaer)
-* [Mario Klingemann](http://www.quasimondo.com)
