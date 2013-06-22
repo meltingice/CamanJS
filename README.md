@@ -99,27 +99,13 @@ Tests for CamanJS run both in NodeJS and the browser.
 
 ### NodeJS
 
-The NodeJS tests use mocha as the test runner. The simplest way to run the test suite is:
-
-```
-npm test
-```
+The NodeJS tests use mocha as the test runner. The simplest way to run the test suite is by running `npm test`.
 
 ### Browser
 
-The browser tests are run by Karma. It will start up Chrome, Firefox, and Safari in the background. If you're running Windows, you will want to remove Safari by editing `test/karma.conf.js`. You can minimize each of these browsers if desired. It will automatically run tests after CamanJS is recompiled by the Cakefile as well. 
+The browser tests are run by Karma. It will start up Chrome, Firefox, and Safari (if running OSX) in the background. You can minimize each of these browsers if desired. It will automatically run tests after CamanJS is recompiled by the Cakefile as well.
 
-**Because it prefers to be installed globally, Karma is a soft dependency.**
-
-**Install**
-```
-npm install -g karma
-```
-
-**Run**
-```
-karma start test/karma.conf.js
-```
+You can run Karma by running `karma start`, or you can do a single run with the NodeJS tests by running `npm test`.
 
 ## Project Contributors
 

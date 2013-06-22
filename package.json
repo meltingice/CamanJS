@@ -53,10 +53,11 @@
     "chai": "*",
     "servedir": "*",
     "cli": "*",
-    "cli-table": "*"
+    "cli-table": "*",
+    "karma": "*"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee",
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/.bin/karma start --single-run",
     "examples": "./node_modules/servedir/bin/servedir",
     "docs": "codo",
     "docs-server": "codo --server"

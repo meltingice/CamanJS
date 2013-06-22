@@ -7,7 +7,7 @@
 
 
 // base path, that will be used to resolve files and exclude
-basePath = '..';
+basePath = '.';
 
 frameworks = ['jasmine'];
 
@@ -60,7 +60,15 @@ autoWatch = true;
 // - PhantomJS
 // - IE (only Windows)
 // CLI --browsers Chrome,Firefox,Safari
-browsers = ['Chrome', 'Firefox', 'Safari'];
+browsers = ['Firefox'];
+
+if (!process.env.TRAVISCI) {
+  browsers.push('Chrome')
+
+  if (require('os').platform() === 'darwin') {
+    browsers.push('Safari')
+  }
+}
 
 // If browser does not capture in given timeout [ms], kill it
 // CLI --capture-timeout 5000
