@@ -551,7 +551,7 @@
       oldCanvas = this.canvas;
       this.canvas = newCanvas;
       this.context = this.canvas.getContext('2d');
-      if (Caman.NodeJS) {
+      if (!Caman.NodeJS) {
         oldCanvas.parentNode.replaceChild(this.canvas, oldCanvas);
       }
       this.width = this.canvas.width;
