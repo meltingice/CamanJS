@@ -451,8 +451,9 @@ class Caman extends Module
     @canvas = newCanvas
     @context = @canvas.getContext '2d'
 
-    oldCanvas.parentNode.replaceChild @canvas, oldCanvas
 
+    oldCanvas.parentNode.replaceChild @canvas, oldCanvas if !Caman.NodeJS
+    
     @width  = @canvas.width
     @height = @canvas.height
 
