@@ -443,7 +443,7 @@ image element, load the image, then continue with initialization.</p><p>The main
   <li>
     <span class='signature'>
       <a href='#revert-instance'>
-        - (void) <strong>revert</strong>()
+        - (void) <strong>revert</strong>(updateContext = true)
       </a>
     </span>
     <span class='desc'>
@@ -1193,13 +1193,24 @@ called either since initialization or the previous render.</p>
   </div>
   <div class='method_details'>
     <p class='signature' id='revert-instance'>
-      - (void) <strong>revert</strong>()
+      - (void) <strong>revert</strong>(updateContext = true)
     </p>
     <div class='docstring'>
   <p>Reverts the canvas back to it&#39;s original state while
 maintaining any cropped or resized dimensions.</p>
 </div>
 <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>updateContext</span>
+      <span class='type'>
+        (<tt>Boolean</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Should we apply the reverted pixel data to the canvas context thus triggering a re-render by the browser?</span>
+    </li>
+  </ul>
 </div>
   </div>
   <div class='method_details'>
@@ -1446,7 +1457,7 @@ callback.</p>
     </div>
     <div id='footer'>
   Generated on
-  Wed Jul 17 2013 21:24:37 GMT-0400 (EDT)
+  Wed Jul 17 2013 21:33:52 GMT-0400 (EDT)
   by
   <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
   v1.7.0

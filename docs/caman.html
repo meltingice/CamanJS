@@ -1189,14 +1189,16 @@ called either since initialization or the previous render.</p>
               </div>
               <p>Reverts the canvas back to it&#39;s original state while
 maintaining any cropped or resized dimensions.</p>
+<p>@param [Boolean] updateContext Should we apply the reverted pixel data to the
+  canvas context thus triggering a re-render by the browser?</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  revert: -&gt;
+            <div class="content"><div class='highlight'><pre>  revert: (updateContext = <span class="literal">true</span>) -&gt;
     <span class="keyword">throw</span> <span class="string">"Revert disabled"</span> <span class="keyword">unless</span> Caman.allowRevert
 
     <span class="property">@pixelData</span>[i] = pixel <span class="keyword">for</span> pixel, i <span class="keyword">in</span> <span class="property">@originalVisiblePixels</span>()
-    <span class="property">@context</span>.putImageData <span class="property">@imageData</span>, <span class="number">0</span>, <span class="number">0</span></pre></div></div>
+    <span class="property">@context</span>.putImageData <span class="property">@imageData</span>, <span class="number">0</span>, <span class="number">0</span> <span class="keyword">if</span> updateContext</pre></div></div>
             
         </li>
         

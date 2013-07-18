@@ -594,9 +594,12 @@
       });
     };
 
-    Caman.prototype.revert = function() {
+    Caman.prototype.revert = function(updateContext) {
       var i, pixel, _i, _len, _ref;
 
+      if (updateContext == null) {
+        updateContext = true;
+      }
       if (!Caman.allowRevert) {
         throw "Revert disabled";
       }
@@ -605,7 +608,9 @@
         pixel = _ref[i];
         this.pixelData[i] = pixel;
       }
-      return this.context.putImageData(this.imageData, 0, 0);
+      if (updateContext) {
+        return this.context.putImageData(this.imageData, 0, 0);
+      }
     };
 
     Caman.prototype.reset = function() {

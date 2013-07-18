@@ -476,11 +476,14 @@ class Caman extends Module
 
   # Reverts the canvas back to it's original state while
   # maintaining any cropped or resized dimensions.
-  revert: ->
+  #
+  # @param [Boolean] updateContext Should we apply the reverted pixel data to the
+  #   canvas context thus triggering a re-render by the browser?
+  revert: (updateContext = true) ->
     throw "Revert disabled" unless Caman.allowRevert
 
     @pixelData[i] = pixel for pixel, i in @originalVisiblePixels()
-    @context.putImageData @imageData, 0, 0
+    @context.putImageData @imageData, 0, 0 if updateContext
 
   # Completely resets the canvas back to it's original state.
   # Any size adjustments will also be reset.
