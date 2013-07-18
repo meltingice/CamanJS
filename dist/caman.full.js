@@ -127,14 +127,13 @@
     };
 
     Util.clampRGB = function(val) {
-      switch (val >> 8) {
-        case 0:
-          return val;
-        case -1:
-          return 0;
-        case 1:
-          return 255;
+      if (val < 0) {
+        return 0;
       }
+      if (val > 255) {
+        return 255;
+      }
+      return val;
     };
 
     Util.copyAttributes = function(from, to, opts) {

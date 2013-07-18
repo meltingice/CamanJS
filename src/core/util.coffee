@@ -26,10 +26,9 @@ class Util
   # In order to stay true to the latest spec, RGB values must be clamped between
   # 0 and 255. If we don't do this, weird things happen.
   @clampRGB = (val) ->
-    switch val >> 8
-      when 0 then val
-      when -1 then 0
-      when 1 then 255
+    return 0 if val < 0
+    return 255 if val > 255
+    return val
 
   @copyAttributes: (from, to, opts={}) ->
     for attr in from.attributes

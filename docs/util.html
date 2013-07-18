@@ -263,10 +263,9 @@ NodeJS compatible</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="property">@clampRGB</span> = (val) -&gt;
-    <span class="keyword">switch</span> val &gt;&gt; <span class="number">8</span>
-      <span class="keyword">when</span> <span class="number">0</span> <span class="keyword">then</span> val
-      <span class="keyword">when</span> -<span class="number">1</span> <span class="keyword">then</span> <span class="number">0</span>
-      <span class="keyword">when</span> <span class="number">1</span> <span class="keyword">then</span> <span class="number">255</span>
+    <span class="keyword">return</span> <span class="number">0</span> <span class="keyword">if</span> val &lt; <span class="number">0</span>
+    <span class="keyword">return</span> <span class="number">255</span> <span class="keyword">if</span> val &gt; <span class="number">255</span>
+    <span class="keyword">return</span> val
 
   <span class="property">@copyAttributes</span>: (from, to, opts={}) -&gt;
     <span class="keyword">for</span> attr <span class="keyword">in</span> from.attributes
