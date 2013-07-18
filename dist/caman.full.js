@@ -1152,9 +1152,9 @@
           b = q;
       }
       return {
-        r: r * 255,
-        g: g * 255,
-        b: b * 255
+        r: Math.floor(r * 255),
+        g: Math.floor(g * 255),
+        b: Math.floor(b * 255)
       };
     };
 
@@ -2279,7 +2279,7 @@
 
   Filter.register("hue", function(adjust) {
     return this.process("hue", function(rgba) {
-      var h, hsv, rgb;
+      var b, g, h, hsv, r, _ref;
 
       hsv = Convert.rgbToHSV(rgba.r, rgba.g, rgba.b);
       h = hsv.h * 100;
@@ -2287,9 +2287,11 @@
       h = h % 100;
       h /= 100;
       hsv.h = h;
-      rgb = Convert.hsvToRGB(hsv.h, hsv.s, hsv.v);
-      rgb.a = rgba.a;
-      return rgb;
+      _ref = Convert.hsvToRGB(hsv.h, hsv.s, hsv.v), r = _ref.r, g = _ref.g, b = _ref.b;
+      rgba.r = r;
+      rgba.g = g;
+      rgba.b = b;
+      return rgba;
     });
   });
 

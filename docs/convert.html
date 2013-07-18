@@ -414,7 +414,9 @@ returns r, g, and b in the set [0, 255].</p>
       <span class="keyword">when</span> <span class="number">4</span> <span class="keyword">then</span> r = t; g = p; b = v
       <span class="keyword">when</span> <span class="number">5</span> <span class="keyword">then</span> r = v; g = p; b = q
 
-    r: r * <span class="number">255</span>, g: g * <span class="number">255</span>, b: b * <span class="number">255</span></pre></div></div>
+    r: Math.floor(r * <span class="number">255</span>)
+    g: Math.floor(g * <span class="number">255</span>)
+    b: Math.floor(b * <span class="number">255</span>)</pre></div></div>
             
         </li>
         

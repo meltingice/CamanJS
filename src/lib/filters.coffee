@@ -150,9 +150,9 @@ Filter.register "hue", (adjust) ->
     h /= 100
     hsv.h = h
 
-    rgb = Convert.hsvToRGB hsv.h, hsv.s, hsv.v
-    rgb.a = rgba.a
-    rgb
+    {r, g, b} = Convert.hsvToRGB hsv.h, hsv.s, hsv.v
+    rgba.r = r; rgba.g = g; rgba.b = b
+    rgba
 
 # ## Colorize
 # Uniformly shifts the colors in an image towards the given color. The adjustment range is from 0 

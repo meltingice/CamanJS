@@ -163,7 +163,9 @@ class Caman.Convert
       when 4 then r = t; g = p; b = v
       when 5 then r = v; g = p; b = q
 
-    r: r * 255, g: g * 255, b: b * 255
+    r: Math.floor(r * 255)
+    g: Math.floor(g * 255)
+    b: Math.floor(b * 255)
 
   # Converts a RGB color value to the XYZ color space. Formulas
   # are based on http://en.wikipedia.org/wiki/SRGB assuming that

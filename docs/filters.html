@@ -452,9 +452,9 @@ think of 0 to 100 representing the percentage of Hue shift in the 0 to 360 range
     h /= <span class="number">100</span>
     hsv.h = h
 
-    rgb = Convert.hsvToRGB hsv.h, hsv.s, hsv.v
-    rgb.a = rgba.a
-    rgb</pre></div></div>
+    {r, g, b} = Convert.hsvToRGB hsv.h, hsv.s, hsv.v
+    rgba.r = r; rgba.g = g; rgba.b = b
+    rgba</pre></div></div>
             
         </li>
         
