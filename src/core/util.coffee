@@ -14,9 +14,8 @@ class Util
     get: -> id++
 
   # Helper function that extends one object with all the properies of other objects
-  @extend = (obj) ->
+  @extend = (obj, src...) ->
     dest = obj
-    src = slice.call arguments, 1
 
     for copy in src
       for own prop of copy

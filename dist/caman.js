@@ -111,11 +111,11 @@
       };
     })();
 
-    Util.extend = function(obj) {
-      var copy, dest, prop, src, _i, _len;
+    Util.extend = function() {
+      var copy, dest, obj, prop, src, _i, _len;
 
+      obj = arguments[0], src = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
       dest = obj;
-      src = slice.call(arguments, 1);
       for (_i = 0, _len = src.length; _i < _len; _i++) {
         copy = src[_i];
         for (prop in copy) {

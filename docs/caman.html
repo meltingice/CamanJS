@@ -1144,8 +1144,9 @@ applicable references for this instance.</p>
     <span class="property">@canvas</span> = newCanvas
     <span class="property">@context</span> = <span class="property">@canvas</span>.getContext <span class="string">'2d'</span>
 
-    oldCanvas.parentNode.replaceChild <span class="property">@canvas</span>, oldCanvas
 
+    oldCanvas.parentNode.replaceChild <span class="property">@canvas</span>, oldCanvas <span class="keyword">if</span> !Caman.NodeJS
+    
     <span class="property">@width</span>  = <span class="property">@canvas</span>.width
     <span class="property">@height</span> = <span class="property">@canvas</span>.height
 

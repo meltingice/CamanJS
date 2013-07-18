@@ -219,7 +219,7 @@ Filter.register <span class="string">"vignette"</span>, (size, strength = <span 
   bezier = Calculate.bezier [<span class="number">0</span>, <span class="number">1</span>], [<span class="number">30</span>, <span class="number">30</span>], [<span class="number">70</span>, <span class="number">60</span>], [<span class="number">100</span>, <span class="number">80</span>]
 
   <span class="property">@process</span> <span class="string">"vignette"</span>, (rgba) -&gt;
-    loc = <span class="property">@locationXY</span>()
+    loc = rgba.locationXY()
     dist = Calculate.distance loc.x, loc.y, center[<span class="number">0</span>], center[<span class="number">1</span>]
 
     <span class="keyword">if</span> dist &gt; end
@@ -303,7 +303,7 @@ Filter.register <span class="string">"rectangularVignette"</span>, (opts) -&gt;
   opts.maxDist = Calculate.distance(<span class="number">0</span>, <span class="number">0</span>, opts.corners[<span class="number">3</span>].x, opts.corners[<span class="number">3</span>].y) - opts.cornerRadius
 
   <span class="property">@process</span> <span class="string">"rectangularVignette"</span>, (rgba) -&gt;
-    loc = <span class="property">@locationXY</span>()</pre></div></div>
+    loc = rgba.locationXY()</pre></div></div>
             
         </li>
         

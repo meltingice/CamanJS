@@ -239,9 +239,8 @@ NodeJS compatible</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@extend</span> = (obj) -&gt;
+            <div class="content"><div class='highlight'><pre>  <span class="property">@extend</span> = (obj, src...) -&gt;
     dest = obj
-    src = slice.call arguments, <span class="number">1</span>
 
     <span class="keyword">for</span> copy <span class="keyword">in</span> src
       <span class="keyword">for</span> own prop <span class="keyword">of</span> copy
@@ -264,9 +263,10 @@ NodeJS compatible</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="property">@clampRGB</span> = (val) -&gt;
-    <span class="keyword">return</span> <span class="number">0</span> <span class="keyword">if</span> val &lt; <span class="number">0</span>
-    <span class="keyword">return</span> <span class="number">255</span> <span class="keyword">if</span> val &gt; <span class="number">255</span>
-    val
+    <span class="keyword">switch</span> val &gt;&gt; <span class="number">8</span>
+      <span class="keyword">when</span> <span class="number">0</span> <span class="keyword">then</span> val
+      <span class="keyword">when</span> -<span class="number">1</span> <span class="keyword">then</span> <span class="number">0</span>
+      <span class="keyword">when</span> <span class="number">1</span> <span class="keyword">then</span> <span class="number">255</span>
 
   <span class="property">@copyAttributes</span>: (from, to, opts={}) -&gt;
     <span class="keyword">for</span> attr <span class="keyword">in</span> from.attributes

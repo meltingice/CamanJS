@@ -383,7 +383,7 @@ are finished rendering in order to be as fast as possible.</p>
       pixel.b = <span class="property">@c</span>.pixelData[i+<span class="number">2</span>]
       pixel.a = <span class="property">@c</span>.pixelData[i+<span class="number">3</span>]
 
-      <span class="property">@currentJob</span>.processFn.call pixel, pixel
+      <span class="property">@currentJob</span>.processFn pixel
 
       <span class="property">@c</span>.pixelData[i]   = Util.clampRGB pixel.r
       <span class="property">@c</span>.pixelData[i+<span class="number">1</span>] = Util.clampRGB pixel.g

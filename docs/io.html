@@ -351,13 +351,13 @@ If we&#39;re in NodeJS, then we can save the image to disk.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  save: -&gt;
+            <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">save</span></span> = -&gt;
     <span class="keyword">if</span> exports?
       <span class="property">@nodeSave</span>.apply @, arguments
     <span class="keyword">else</span>
       <span class="property">@browserSave</span>.apply @, arguments
 
-  browserSave: (type = <span class="string">"png"</span>) -&gt;
+Caman::<span class="function"><span class="title">browserSave</span></span> = (type = <span class="string">"png"</span>) -&gt;
     type = type.toLowerCase()</pre></div></div>
             
         </li>
@@ -376,7 +376,7 @@ If we&#39;re in NodeJS, then we can save the image to disk.
             <div class="content"><div class='highlight'><pre>    image = <span class="property">@toBase64</span>(type).replace <span class="string">"image/<span class="subst">#{type}</span>"</span>, <span class="string">"image/octet-stream"</span>
     document.location.href = image
 
-  nodeSave: (file, overwrite = <span class="literal">true</span>) -&gt;
+Caman::<span class="function"><span class="title">nodeSave</span></span> = (file, overwrite = <span class="literal">true</span>) -&gt;
     <span class="keyword">try</span>
       stats = fs.statSync file
       <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">if</span> stats.isFile() <span class="keyword">and</span> <span class="keyword">not</span> overwrite
@@ -400,7 +400,7 @@ of a new Image object and returns it.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  toImage: (type) -&gt;
+            <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">toImage</span></span> = (type) -&gt;
     img = document.createElement <span class="string">'img'</span>
     img.src = <span class="property">@toBase64</span> type
     img.width = <span class="property">@dimensions</span>.width
@@ -425,7 +425,7 @@ of a new Image object and returns it.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  toBase64: (type = <span class="string">"png"</span>) -&gt;
+            <div class="content"><div class='highlight'><pre>Caman::<span class="function"><span class="title">toBase64</span></span> = (type = <span class="string">"png"</span>) -&gt;
     type = type.toLowerCase()
     <span class="keyword">return</span> <span class="property">@canvas</span>.toDataURL <span class="string">"image/<span class="subst">#{type}</span>"</span>
 
