@@ -109,7 +109,7 @@ class Caman.Renderer
       pixel.b = @c.pixelData[i+2]
       pixel.a = @c.pixelData[i+3]
 
-      @currentJob.processFn.call pixel, pixel
+      @currentJob.processFn pixel
 
       @c.pixelData[i]   = Util.clampRGB pixel.r
       @c.pixelData[i+1] = Util.clampRGB pixel.g

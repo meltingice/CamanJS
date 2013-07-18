@@ -67,20 +67,20 @@ class Caman.IO
   # the encoded data so that the user will be prompted to download it.
   # If we're in NodeJS, then we can save the image to disk.
   # @see Caman
-  save: ->
+Caman::save = ->
     if exports?
       @nodeSave.apply @, arguments
     else
       @browserSave.apply @, arguments
 
-  browserSave: (type = "png") ->
+Caman::browserSave = (type = "png") ->
     type = type.toLowerCase()
 
     # Force download (its a bit hackish)
     image = @toBase64(type).replace "image/#{type}", "image/octet-stream"
     document.location.href = image
 
-  nodeSave: (file, overwrite = true) ->
+Caman::nodeSave = (file, overwrite = true) ->
     try
       stats = fs.statSync file
       return false if stats.isFile() and not overwrite
@@ -92,7 +92,7 @@ class Caman.IO
 
   # Takes the current canvas data, converts it to Base64, then sets it as the source 
   # of a new Image object and returns it.
-  toImage: (type) ->
+Caman::toImage = (type) ->
     img = document.createElement 'img'
     img.src = @toBase64 type
     img.width = @dimensions.width
@@ -105,7 +105,7 @@ class Caman.IO
     return img
 
   # Base64 encodes the current canvas
-  toBase64: (type = "png") ->
+Caman::toBase64 = (type = "png") ->
     type = type.toLowerCase()
     return @canvas.toDataURL "image/#{type}"
 
