@@ -3,7 +3,7 @@ var greyPixel = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAMAAAAoyzS7AAAACXBIWXMAAAsTAAA
 
 if (typeof exports !== "undefined" && exports !== null) {
   Root = module.exports;
-  Root.greyPath = __dirname + "/grey.png";
+  Root.greyPath = "test/ext/grey.png";
   Root.greyPixel = greyPixel;
   Root.greyImage = new Buffer(Root.greyPixel, 'base64');
 } else {

@@ -231,15 +231,20 @@ class Caman extends Module
   initNode: ->
     Log.debug "Initializing for NodeJS"
 
-    fs.readFile @initObj, (err, data) =>
-      throw err if err
+    if typeof @initObj is "string"
+      fs.readFile @initObj, @nodeFileReady
+    else
+      @nodeFileReady null, @initObj
 
-      @image = new Image()
-      @image.src = data
+  nodeFileReady: (err, data) =>
+    throw err if err
 
-      Log.debug "Image loaded. Width = #{@imageWidth()}, Height = #{@imageHeight()}"
-      @canvas = new Canvas @imageWidth(), @imageHeight()
-      @finishInit()
+    @image = new Image()
+    @image.src = data
+
+    Log.debug "Image loaded. Width = #{@imageWidth()}, Height = #{@imageHeight()}"
+    @canvas = new Canvas @imageWidth(), @imageHeight()
+    @finishInit()
 
   # Initialization function for the browser and image objects.
   initImage: ->

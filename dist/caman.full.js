@@ -4,8 +4,8 @@
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   moduleKeywords = ['extended', 'included'];
 
@@ -218,6 +218,7 @@
     };
 
     function Caman() {
+      this.nodeFileReady = __bind(this.nodeFileReady, this);
       var args, callback, id,
         _this = this;
 
@@ -352,19 +353,23 @@
     };
 
     Caman.prototype.initNode = function() {
-      var _this = this;
-
       Log.debug("Initializing for NodeJS");
-      return fs.readFile(this.initObj, function(err, data) {
-        if (err) {
-          throw err;
-        }
-        _this.image = new Image();
-        _this.image.src = data;
-        Log.debug("Image loaded. Width = " + (_this.imageWidth()) + ", Height = " + (_this.imageHeight()));
-        _this.canvas = new Canvas(_this.imageWidth(), _this.imageHeight());
-        return _this.finishInit();
-      });
+      if (typeof this.initObj === "string") {
+        return fs.readFile(this.initObj, this.nodeFileReady);
+      } else {
+        return this.nodeFileReady(null, this.initObj);
+      }
+    };
+
+    Caman.prototype.nodeFileReady = function(err, data) {
+      if (err) {
+        throw err;
+      }
+      this.image = new Image();
+      this.image.src = data;
+      Log.debug("Image loaded. Width = " + (this.imageWidth()) + ", Height = " + (this.imageHeight()));
+      this.canvas = new Canvas(this.imageWidth(), this.imageHeight());
+      return this.finishInit();
     };
 
     Caman.prototype.initImage = function() {
