@@ -353,7 +353,7 @@ class Caman extends Module
       width: @canvas.width
       height: @canvas.height
 
-    Store.put @id, @
+    Store.put @id, @ unless Caman.NodeJS
 
     @callback.call @,@
 

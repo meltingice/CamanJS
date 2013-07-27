@@ -473,7 +473,9 @@
         width: this.canvas.width,
         height: this.canvas.height
       };
-      Store.put(this.id, this);
+      if (!Caman.NodeJS) {
+        Store.put(this.id, this);
+      }
       this.callback.call(this, this);
       return this.callback = function() {};
     };
