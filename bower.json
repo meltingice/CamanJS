@@ -1,6 +1,6 @@
 {
   "name": "caman",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "main": ["./dist/caman.min.js", "./dist/caman.full.min.js"],
   "ignore": [
     "adapters/",

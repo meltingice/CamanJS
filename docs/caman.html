@@ -236,8 +236,8 @@ image element, load the image, then continue with initialization.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="property">@version</span>:
-    release: <span class="string">"4.1.1"</span>
-    date: <span class="string">"4/8/2013"</span></pre></div></div>
+    release: <span class="string">"4.1.2"</span>
+    date: <span class="string">"7/27/2013"</span></pre></div></div>
             
         </li>
         
@@ -661,14 +661,20 @@ or if an image or canvas object was provided.</p>
             <div class="content"><div class='highlight'><pre>  initNode: -&gt;
     Log.debug <span class="string">"Initializing for NodeJS"</span>
 
-    <span class="property">@image</span> = <span class="keyword">new</span> Image()
-    <span class="property">@image</span>.<span class="function"><span class="title">onload</span></span> = =&gt;
-      Log.debug <span class="string">"Image loaded. Width = <span class="subst">#{@imageWidth()}</span>, Height = <span class="subst">#{@imageHeight()}</span>"</span>
-      <span class="property">@canvas</span> = <span class="keyword">new</span> Canvas <span class="property">@imageWidth</span>(), <span class="property">@imageHeight</span>()
-      <span class="property">@finishInit</span>()
+    <span class="keyword">if</span> <span class="keyword">typeof</span> <span class="property">@initObj</span> <span class="keyword">is</span> <span class="string">"string"</span>
+      fs.readFile <span class="property">@initObj</span>, <span class="property">@nodeFileReady</span>
+    <span class="keyword">else</span>
+      <span class="property">@nodeFileReady</span> <span class="literal">null</span>, <span class="property">@initObj</span>
 
-    <span class="property">@image</span>.<span class="function"><span class="title">onerror</span></span> = (err) -&gt; <span class="keyword">throw</span> err
-    <span class="property">@image</span>.src = <span class="property">@initObj</span></pre></div></div>
+  nodeFileReady: (err, data) =&gt;
+    <span class="keyword">throw</span> err <span class="keyword">if</span> err
+
+    <span class="property">@image</span> = <span class="keyword">new</span> Image()
+    <span class="property">@image</span>.src = data
+
+    Log.debug <span class="string">"Image loaded. Width = <span class="subst">#{@imageWidth()}</span>, Height = <span class="subst">#{@imageHeight()}</span>"</span>
+    <span class="property">@canvas</span> = <span class="keyword">new</span> Canvas <span class="property">@imageWidth</span>(), <span class="property">@imageHeight</span>()
+    <span class="property">@finishInit</span>()</pre></div></div>
             
         </li>
         
@@ -903,7 +909,7 @@ draw the image to the canvas (if applicable).</p>
       width: <span class="property">@canvas</span>.width
       height: <span class="property">@canvas</span>.height
 
-    Store.put <span class="property">@id</span>, @
+    Store.put <span class="property">@id</span>, @ <span class="keyword">unless</span> Caman.NodeJS
 
     <span class="property">@callback</span>.call @,@</pre></div></div>
             
