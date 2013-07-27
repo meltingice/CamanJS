@@ -355,16 +355,16 @@
       var _this = this;
 
       Log.debug("Initializing for NodeJS");
-      this.image = new Image();
-      this.image.onload = function() {
+      return fs.readFile(this.initObj, function(err, data) {
+        if (err) {
+          throw err;
+        }
+        _this.image = new Image();
+        _this.image.src = data;
         Log.debug("Image loaded. Width = " + (_this.imageWidth()) + ", Height = " + (_this.imageHeight()));
         _this.canvas = new Canvas(_this.imageWidth(), _this.imageHeight());
         return _this.finishInit();
-      };
-      this.image.onerror = function(err) {
-        throw err;
-      };
-      return this.image.src = this.initObj;
+      });
     };
 
     Caman.prototype.initImage = function() {
