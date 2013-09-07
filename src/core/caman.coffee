@@ -253,7 +253,9 @@ class Caman extends Module
     @context = @canvas.getContext '2d'
     Util.copyAttributes @image, @canvas, except: ['src']
 
-    @image.parentNode.replaceChild @canvas, @image
+    # Swap out the image with the canvas element if the image exists
+    # in the DOM.
+    @image.parentNode.replaceChild @canvas, @image if @image.parentNode?
 
     @imageAdjustments()
     @waitForImageLoaded()

@@ -379,7 +379,9 @@
       Util.copyAttributes(this.image, this.canvas, {
         except: ['src']
       });
-      this.image.parentNode.replaceChild(this.canvas, this.image);
+      if (this.image.parentNode != null) {
+        this.image.parentNode.replaceChild(this.canvas, this.image);
+      }
       this.imageAdjustments();
       return this.waitForImageLoaded();
     };

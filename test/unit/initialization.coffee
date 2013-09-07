@@ -44,8 +44,21 @@ describe "Initialization", ->
 
       done()
 
-  it "accepts DOM node objects", (done) ->
+  it "accepts canvas objects detached from DOM", (done) ->
     return done() unless document?
     canvas = document.createElement('canvas')
     canvas.width = 1
     canvas.height = 1
+
+    Caman canvas, -> 
+      assert.equal @width, 1
+      assert.equal @height, 1
+      done()
+
+  it "accepts image objects detached from DOM", (done) ->
+    return done() unless document?
+
+    Caman greyImage, ->
+      assert.equal @width, 1
+      assert.equal @height, 1
+      done()
