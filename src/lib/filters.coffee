@@ -339,7 +339,7 @@ Filter.register "curves", (chans, cps...) ->
   end = cps[cps.length - 1]
 
   # Generate a bezier curve
-  bezier = Calculate.bezier start, ctrl1, ctrl2, end, 0, 255
+  bezier = Calculate.bezier [start, ctrl1, ctrl2, end], 0, 255
 
   # If the curve starts after x = 0, initialize it with a flat line
   # until the curve begins.
