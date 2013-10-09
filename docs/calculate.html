@@ -267,10 +267,7 @@ color value.</p>
 <p>Note that, by design, this does not force X values to be in the range [0..255]. This is to
 generalize the function a bit more. If you give it a starting X value that isn&#39;t 0, and/or a
 ending X value that isn&#39;t 255, you may run into problems with your filter!</p>
-<p>@param [Array] start 2-item array describing the x, y coordinate of the start point.
-@param [Array] ctrl1 2-item array describing the x, y coordinate of the first control point.
-@param [Array] ctrl2 2-item array decribing the x, y coordinate of the second control point.
-@param [Array] end 2-item array describing the x, y coordinate of the end point.
+<p>@param [Array] 2-item arrays describing the x, y coordinates of the control points. Minimum three.
 @param [Number] lowBound (optional) Minimum possible value for any y-value in the curve.
 @param [Number] highBound (optional) Maximum posisble value for any y-value in the curve.
 @return [Array] Array whose index represents every x-value between start and end, and value
@@ -278,16 +275,32 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@bezier</span>: (start, ctrl1, ctrl2, end, lowBound, highBound) -&gt;
-    x0 = start[<span class="number">0</span>]
-    y0 = start[<span class="number">1</span>]
-    x1 = ctrl1[<span class="number">0</span>]
-    y1 = ctrl1[<span class="number">1</span>]
-    x2 = ctrl2[<span class="number">0</span>]
-    y2 = ctrl2[<span class="number">1</span>]
-    x3 = end[<span class="number">0</span>]
-    y3 = end[<span class="number">1</span>]
-    bezier = {}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@bezier</span>: (controlPoints, lowBound, highBound) -&gt;
+    <span class="keyword">if</span> controlPoints.length &lt; <span class="number">2</span>
+        <span class="keyword">throw</span> <span class="string">"Invalid number of arguments to bezier"</span>
+
+    bezier = {}
+    <span class="function"><span class="title">lerp</span></span> = (a, b, t) -&gt; <span class="keyword">return</span> a * (<span class="number">1</span> - t) + b * t
+    <span class="function"><span class="title">clamp</span></span> = (a, min, max) -&gt; <span class="keyword">return</span> Math.min(Math.max(a, min), max)
+
+    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>.<span class="number">.1000</span>]
+        t = i / <span class="number">1000</span>
+        prev = controlPoints
+
+        <span class="keyword">while</span> prev.length &gt; <span class="number">1</span>
+            next = []
+
+            <span class="keyword">for</span> j <span class="keyword">in</span> [<span class="number">0.</span>.(prev.length - <span class="number">2</span>)]
+                next.push([
+                    lerp(prev[j][<span class="number">0</span>], prev[j + <span class="number">1</span>][<span class="number">0</span>], t),
+                    lerp(prev[j][<span class="number">1</span>], prev[j + <span class="number">1</span>][<span class="number">1</span>], t)
+                ])
+
+            prev = next
+
+        bezier[Math.round(prev[<span class="number">0</span>][<span class="number">0</span>])] = Math.round(clamp(prev[<span class="number">0</span>][<span class="number">1</span>], lowBound, highBound))
+
+    end = controlPoints[controlPoints.length - <span class="number">1</span>]</pre></div></div>
             
         </li>
         
@@ -297,57 +310,6 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>Calculate our X/Y coefficients</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    Cx = parseInt(<span class="number">3</span> * (x1 - x0), <span class="number">10</span>)
-    Bx = <span class="number">3</span> * (x2 - x1) - Cx
-    Ax = x3 - x0 - Cx - Bx
-
-    Cy = <span class="number">3</span> * (y1 - y0)
-    By = <span class="number">3</span> * (y2 - y1) - Cy
-    Ay = y3 - y0 - Cy - By</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>1000 is actually arbitrary. We need to make sure we do enough
-calculations between 0 and 255 that, in even the more extreme
-circumstances, we calculate as many values as possible. In the event
-that an X value is skipped, it will be found later on using linear
-interpolation.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>.<span class="number">.1000</span>]
-      t = i / <span class="number">1000</span>
-
-      curveX = Math.round (Ax * Math.pow(t, <span class="number">3</span>)) + (Bx * Math.pow(t, <span class="number">2</span>)) + (Cx * t) + x0
-      curveY = Math.round (Ay * Math.pow(t, <span class="number">3</span>)) + (By * Math.pow(t, <span class="number">2</span>)) + (Cy * t) + y0
-
-      <span class="keyword">if</span> lowBound <span class="keyword">and</span> curveY &lt; lowBound
-        curveY = lowBound
-      <span class="keyword">else</span> <span class="keyword">if</span> highBound <span class="keyword">and</span> curveY &gt; highBound
-        curveY = highBound
-
-      bezier[curveX] = curveY</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Do a search for missing values in the bezier array and use linear
 interpolation to approximate their values</p>
@@ -362,11 +324,11 @@ interpolation to approximate their values</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>Find the first value to the right. Ideally this loop will break
 very quickly.</p>
@@ -378,27 +340,27 @@ very quickly.</p>
               rightCoord = [j, bezier[j]]
               <span class="keyword">break</span>
 
-          bezier[i] = leftCoord[<span class="number">1</span>] + 
-            ((rightCoord[<span class="number">1</span>] - leftCoord[<span class="number">1</span>]) / (rightCoord[<span class="number">0</span>] - leftCoord[<span class="number">0</span>])) * 
+          bezier[i] = leftCoord[<span class="number">1</span>] +
+            ((rightCoord[<span class="number">1</span>] - leftCoord[<span class="number">1</span>]) / (rightCoord[<span class="number">0</span>] - leftCoord[<span class="number">0</span>])) *
             (i - leftCoord[<span class="number">0</span>])</pre></div></div>
             
         </li>
         
         
-        <li id="section-10">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Edge case</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    bezier[end[<span class="number">0</span>]] = bezier[end[<span class="number">0</span>] - <span class="number">1</span>] <span class="keyword">if</span> <span class="keyword">not</span> bezier[end[<span class="number">0</span>]]?
-    
+
     <span class="keyword">return</span> bezier
-      
+
 Calculate = Caman.Calculate</pre></div></div>
             
         </li>
