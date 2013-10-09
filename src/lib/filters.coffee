@@ -311,10 +311,7 @@ Filter.register "channels", (options) ->
 # ### Arguments.
 # <pre>
 #   chan - [r, g, b, rgb]
-#   start - [x, y] (start of curve; 0 - 255)
-#   ctrl1 - [x, y] (control point 1; 0 - 255)
-#   ctrl2 - [x, y] (control point 2; 0 - 255)
-#   end   - [x, y] (end of curve; 0 - 255)
+#   cps - [x, y]* (curve control points, min. 2; 0 - 255)
 # </pre>
 #
 # The first argument represents the channels you wish to modify with the filter. It can be an 
