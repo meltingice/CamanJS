@@ -157,7 +157,7 @@
   <li>
     <span class='signature'>
       <a href='#bezier-class'>
-        + (Array) <strong>bezier</strong>(start, ctrl1, ctrl2, end, lowBound, highBound)
+        + (Array) <strong>bezier</strong>(controlPoints, lowBound, highBound)
       </a>
     </span>
     <span class='desc'>
@@ -293,7 +293,7 @@
   </div>
   <div class='method_details'>
     <p class='signature' id='bezier-class'>
-      + (Array) <strong>bezier</strong>(start, ctrl1, ctrl2, end, lowBound, highBound)
+      + (Array) <strong>bezier</strong>(controlPoints, lowBound, highBound)
     </p>
     <div class='docstring'>
   <p>Generates a bezier curve given a start and end point, with two control points in between.
@@ -308,36 +308,12 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>start</span>
+      <span class='name'>2-item</span>
       <span class='type'>
         (<tt>Array</tt>)
       </span>
       &mdash;
-      <span class='desc'>2-item array describing the x, y coordinate of the start point.</span>
-    </li>
-    <li>
-      <span class='name'>ctrl1</span>
-      <span class='type'>
-        (<tt>Array</tt>)
-      </span>
-      &mdash;
-      <span class='desc'>2-item array describing the x, y coordinate of the first control point.</span>
-    </li>
-    <li>
-      <span class='name'>ctrl2</span>
-      <span class='type'>
-        (<tt>Array</tt>)
-      </span>
-      &mdash;
-      <span class='desc'>2-item array decribing the x, y coordinate of the second control point.</span>
-    </li>
-    <li>
-      <span class='name'>end</span>
-      <span class='type'>
-        (<tt>Array</tt>)
-      </span>
-      &mdash;
-      <span class='desc'>2-item array describing the x, y coordinate of the end point.</span>
+      <span class='desc'>arrays describing the x, y coordinates of the control points. Minimum three.</span>
     </li>
     <li>
       <span class='name'>lowBound</span>
@@ -371,11 +347,11 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
     </div>
     <div id='footer'>
   Generated on
-  Sat Jul 27 2013 13:55:54 GMT-0400 (EDT)
+  Wed Oct 09 2013 14:22:06 GMT+0300 (EEST)
   by
   <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
-  v1.7.0
-  (Node.js v0.10.8).
+  v1.9.0
+  (Node.js v0.10.20).
   &#10034;
   Press Ctrl-h to see the keyboard shortcuts
   &#10034;

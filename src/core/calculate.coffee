@@ -38,52 +38,46 @@ class Caman.Calculate
   # generalize the function a bit more. If you give it a starting X value that isn't 0, and/or a
   # ending X value that isn't 255, you may run into problems with your filter!
   #
-  # @param [Array] start 2-item array describing the x, y coordinate of the start point.
-  # @param [Array] ctrl1 2-item array describing the x, y coordinate of the first control point.
-  # @param [Array] ctrl2 2-item array decribing the x, y coordinate of the second control point.
-  # @param [Array] end 2-item array describing the x, y coordinate of the end point.
+  # @param [Array] 2-item arrays describing the x, y coordinates of the control points. Minimum three.
   # @param [Number] lowBound (optional) Minimum possible value for any y-value in the curve.
   # @param [Number] highBound (optional) Maximum posisble value for any y-value in the curve.
   # @return [Array] Array whose index represents every x-value between start and end, and value
   #   represents the corresponding y-value.
   @bezier: (start, ctrl1, ctrl2, end, lowBound, highBound) ->
-    x0 = start[0]
-    y0 = start[1]
-    x1 = ctrl1[0]
-    y1 = ctrl1[1]
-    x2 = ctrl2[0]
-    y2 = ctrl2[1]
-    x3 = end[0]
-    y3 = end[1]
+    #(controlPoints, lowBound, highBound) ->
+    # 4.0 shim - change declaration to (controlPoints, lowBound, highBound) at 5.0
+    if start[0] instanceof Array
+        controlPoints = start
+        lowBound = ctrl1
+        highBound = ctrl2
+    else
+        controlPoints = [start, ctrl1, ctrl2, end]
+
+    if controlPoints.length < 2
+        throw "Invalid number of arguments to bezier"
+
     bezier = {}
+    lerp = (a, b, t) -> return a * (1 - t) + b * t
+    clamp = (a, min, max) -> return Math.min(Math.max(a, min), max)
 
-    # Calculate our X/Y coefficients
-    Cx = parseInt(3 * (x1 - x0), 10)
-    Bx = 3 * (x2 - x1) - Cx
-    Ax = x3 - x0 - Cx - Bx
-
-    Cy = 3 * (y1 - y0)
-    By = 3 * (y2 - y1) - Cy
-    Ay = y3 - y0 - Cy - By
-
-    # 1000 is actually arbitrary. We need to make sure we do enough
-    # calculations between 0 and 255 that, in even the more extreme
-    # circumstances, we calculate as many values as possible. In the event
-    # that an X value is skipped, it will be found later on using linear
-    # interpolation.
     for i in [0...1000]
-      t = i / 1000
+        t = i / 1000
+        prev = controlPoints
 
-      curveX = Math.round (Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0
-      curveY = Math.round (Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0
+        while prev.length > 1
+            next = []
 
-      if lowBound and curveY < lowBound
-        curveY = lowBound
-      else if highBound and curveY > highBound
-        curveY = highBound
+            for j in [0..(prev.length - 2)]
+                next.push([
+                    lerp(prev[j][0], prev[j + 1][0], t),
+                    lerp(prev[j][1], prev[j + 1][1], t)
+                ])
 
-      bezier[curveX] = curveY
+            prev = next
 
+        bezier[Math.round(prev[0][0])] = Math.round(clamp(prev[0][1], lowBound, highBound))
+
+    end = controlPoints[controlPoints.length - 1]
     # Do a search for missing values in the bezier array and use linear
     # interpolation to approximate their values
     if bezier.length < end[0] + 1
@@ -98,13 +92,13 @@ class Caman.Calculate
               rightCoord = [j, bezier[j]]
               break
 
-          bezier[i] = leftCoord[1] + 
-            ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * 
+          bezier[i] = leftCoord[1] +
+            ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) *
             (i - leftCoord[0])
 
     # Edge case
     bezier[end[0]] = bezier[end[0] - 1] if not bezier[end[0]]?
-    
+
     return bezier
-      
+
 Calculate = Caman.Calculate

@@ -693,12 +693,7 @@ or if an image or canvas object was provided.</p>
     <span class="property">@image</span> = <span class="property">@initObj</span>
     <span class="property">@canvas</span> = document.createElement <span class="string">'canvas'</span>
     <span class="property">@context</span> = <span class="property">@canvas</span>.getContext <span class="string">'2d'</span>
-    Util.copyAttributes <span class="property">@image</span>, <span class="property">@canvas</span>, except: [<span class="string">'src'</span>]
-
-    <span class="property">@image</span>.parentNode.replaceChild <span class="property">@canvas</span>, <span class="property">@image</span>
-
-    <span class="property">@imageAdjustments</span>()
-    <span class="property">@waitForImageLoaded</span>()</pre></div></div>
+    Util.copyAttributes <span class="property">@image</span>, <span class="property">@canvas</span>, except: [<span class="string">'src'</span>]</pre></div></div>
             
         </li>
         
@@ -708,6 +703,25 @@ or if an image or canvas object was provided.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Swap out the image with the canvas element if the image exists
+in the DOM.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="property">@image</span>.parentNode.replaceChild <span class="property">@canvas</span>, <span class="property">@image</span> <span class="keyword">if</span> <span class="property">@image</span>.parentNode?
+
+    <span class="property">@imageAdjustments</span>()
+    <span class="property">@waitForImageLoaded</span>()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Initialization function for the browser and canvas objects.</p>
 
@@ -729,11 +743,11 @@ or if an image or canvas object was provided.</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Automatically check for a HiDPI capable screen and swap out the image if possible.
 Also checks the image URL to see if it&#39;s a cross-domain request, and attempt to
@@ -755,11 +769,11 @@ proxy the image. If a cross-origin type is configured, the proxy will be ignored
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Utility function that fires {Caman#imageLoaded} once the image is finished loading.</p>
 
@@ -774,11 +788,11 @@ proxy the image. If a cross-origin type is configured, the proxy will be ignored
         </li>
         
         
-        <li id="section-27">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Checks if the given image is finished loading.
 @return [Boolean] Is the image loaded?</p>
@@ -791,11 +805,11 @@ proxy the image. If a cross-origin type is configured, the proxy will be ignored
         </li>
         
         
-        <li id="section-28">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Internet Explorer is weird.</p>
 
@@ -807,11 +821,11 @@ proxy the image. If a cross-origin type is configured, the proxy will be ignored
         </li>
         
         
-        <li id="section-29">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Internet Explorer has issues figuring out image dimensions when they aren&#39;t
 explicitly defined, apparently. We check the normal width/height properties first,
@@ -825,11 +839,11 @@ but fall back to natural sizes if they are 0.
         </li>
         
         
-        <li id="section-30">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>@see Caman#imageWidth
 @return [Number] Height of the initialization image.</p>
@@ -841,11 +855,11 @@ but fall back to natural sizes if they are 0.
         </li>
         
         
-        <li id="section-31">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>Function that is called once the initialization image is finished loading.
 We make sure that the canvas dimensions are properly set here.</p>
@@ -867,11 +881,11 @@ We make sure that the canvas dimensions are properly set here.</p>
         </li>
         
         
-        <li id="section-32">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>Final step of initialization. We finish setting up our canvas element, and we
 draw the image to the canvas (if applicable).</p>
@@ -916,11 +930,11 @@ draw the image to the canvas (if applicable).</p>
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Reset the callback so re-initialization doesn&#39;t
 trigger it again.</p>
@@ -932,11 +946,11 @@ trigger it again.</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>If you have a separate context reference to this canvas outside of CamanJS
 and you make a change to the canvas outside of CamanJS, you will have to call
@@ -951,11 +965,11 @@ this function to update our context reference to include those changes.</p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Reset the canvas pixels to the original state at initialization.</p>
 
@@ -970,11 +984,11 @@ this function to update our context reference to include those changes.</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Does this instance have an ID assigned?
 @return [Boolean] Existance of an ID.</p>
@@ -986,11 +1000,11 @@ this function to update our context reference to include those changes.</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Assign a unique ID to this instance.</p>
 
@@ -1003,11 +1017,11 @@ this function to update our context reference to include those changes.</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>Is HiDPI support disabled via the HTML data attribute?
 @return [Boolean]</p>
@@ -1020,11 +1034,11 @@ this function to update our context reference to include those changes.</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>Perform HiDPI adjustments to the canvas. This consists of changing the
 scaling and the dimensions to match that of the display.</p>
@@ -1056,11 +1070,11 @@ scaling and the dimensions to match that of the display.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Calculate the HiDPI ratio of this display based on the backing store
 and the pixel ratio.
@@ -1081,11 +1095,11 @@ and the pixel ratio.
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Is this display HiDPI capable?
 @return [Boolean]</p>
@@ -1097,11 +1111,11 @@ and the pixel ratio.
         </li>
         
         
-        <li id="section-42">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>Do we need to perform an image swap with a HiDPI image?
 @return [Boolean]</p>
@@ -1115,11 +1129,11 @@ and the pixel ratio.
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>Gets the HiDPI replacement for the initialization image.
 @return [String] URL to the HiDPI version.</p>
@@ -1133,11 +1147,11 @@ and the pixel ratio.
         </li>
         
         
-        <li id="section-44">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>Replaces the current canvas with a new one, and properly updates all of the
 applicable references for this instance.</p>
@@ -1165,11 +1179,11 @@ applicable references for this instance.</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>Begins the rendering process. This will execute all of the filter functions
 called either since initialization or the previous render.</p>
@@ -1187,11 +1201,11 @@ called either since initialization or the previous render.</p>
         </li>
         
         
-        <li id="section-46">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p>Reverts the canvas back to it&#39;s original state while
 maintaining any cropped or resized dimensions.</p>
@@ -1209,11 +1223,11 @@ maintaining any cropped or resized dimensions.</p>
         </li>
         
         
-        <li id="section-47">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>Completely resets the canvas back to it&#39;s original state.
 Any size adjustments will also be reset.</p>
@@ -1243,11 +1257,11 @@ Any size adjustments will also be reset.</p>
         </li>
         
         
-        <li id="section-48">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p>Returns the original pixel data while maintaining any
 cropping or resizing that may have occured.
@@ -1305,11 +1319,11 @@ cropping or resizing that may have occured.
         </li>
         
         
-        <li id="section-49">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>Pushes the filter callback that modifies the RGBA object into the
 render queue.</p>
@@ -1330,11 +1344,11 @@ render queue.</p>
         </li>
         
         
-        <li id="section-50">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>Pushes the kernel into the render queue.</p>
 <p>@param [String] name The name of the kernel.
@@ -1362,11 +1376,11 @@ render queue.</p>
         </li>
         
         
-        <li id="section-51">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>Adds a standalone plugin into the render queue.</p>
 <p>@param [String] plugin Name of the plugin.
@@ -1386,11 +1400,11 @@ render queue.</p>
         </li>
         
         
-        <li id="section-52">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>Pushes a new layer operation into the render queue and calls the layer
 callback.</p>
@@ -1413,11 +1427,11 @@ callback.</p>
         </li>
         
         
-        <li id="section-53">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>Pushes the layer context and moves to the next operation.
 @param [Layer] layer The layer to execute.</p>
@@ -1429,11 +1443,11 @@ callback.</p>
         </li>
         
         
-        <li id="section-54">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>Set all of the relevant data to the new layer.
 @param [Layer] layer The layer whose context we want to switch to.</p>
@@ -1449,11 +1463,11 @@ callback.</p>
         </li>
         
         
-        <li id="section-55">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p>Restore the previous layer context.</p>
 
@@ -1466,11 +1480,11 @@ callback.</p>
         </li>
         
         
-        <li id="section-56">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p>Applies the current layer to its parent layer.</p>
 
