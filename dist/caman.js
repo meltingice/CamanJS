@@ -906,7 +906,7 @@
     };
 
     Calculate.bezier = function(controlPoints, lowBound, highBound) {
-      var bezier, clamp, i, isect, j, lerp, next, prev, t, _i, _j, _ref;
+      var bezier, clamp, i, j, lerp, next, prev, t, _i, _j, _ref;
       if (controlPoints.length < 3) {
         console.warn('Not enough control points!');
         return;
@@ -920,20 +920,15 @@
       };
       for (i = _i = 0; _i < 1000; i = ++_i) {
         t = i / 1000;
-        isect = [];
         prev = controlPoints;
-        next = [];
-        while (isect.length < controlPoints.length) {
+        while (prev.length > 1) {
           next = [];
           for (j = _j = 0, _ref = prev.length - 2; 0 <= _ref ? _j <= _ref : _j >= _ref; j = 0 <= _ref ? ++_j : --_j) {
             next.push([lerp(prev[j][0], prev[j + 1][0], t), lerp(prev[j][1], prev[j + 1][1], t)]);
           }
           prev = next;
-          if (prev.length === 1) {
-            break;
-          }
         }
-        bezier[next[0][0]] = clamp(next[0][1], lowBound, highBound);
+        bezier[prev[0][0]] = clamp(prev[0][1], lowBound, highBound);
       }
       return bezier;
     };

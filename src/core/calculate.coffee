@@ -48,19 +48,15 @@ class Caman.Calculate
         console.warn 'Not enough control points!'
         return
 
-    # TODO: check against old api? in that case lowBound/highBound are arrays
-
     bezier = {}
     lerp = (a, b, t) -> return a * (1 - t) + b * t
     clamp = (a, min, max) -> return Math.min(Math.max(a, min), max)
 
     for i in [0...1000]
         t = i / 1000
-        isect = []
         prev = controlPoints
-        next = []
 
-        while isect.length < controlPoints.length
+        while prev.length > 1
             next = []
 
             for j in [0..(prev.length - 2)]
@@ -71,10 +67,7 @@ class Caman.Calculate
 
             prev = next
 
-            if prev.length == 1
-                break
-
-        bezier[next[0][0]] = clamp(next[0][1], lowBound, highBound)
+        bezier[prev[0][0]] = clamp(prev[0][1], lowBound, highBound)
 
     return bezier
 
