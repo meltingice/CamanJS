@@ -905,8 +905,15 @@
       return (0.299 * rgba.r) + (0.587 * rgba.g) + (0.114 * rgba.b);
     };
 
-    Calculate.bezier = function(controlPoints, lowBound, highBound) {
-      var bezier, clamp, end, i, j, leftCoord, lerp, next, prev, rightCoord, t, _i, _j, _k, _l, _ref, _ref1, _ref2;
+    Calculate.bezier = function(start, ctrl1, ctrl2, end, lowBound, highBound) {
+      var bezier, clamp, controlPoints, i, j, leftCoord, lerp, next, prev, rightCoord, t, _i, _j, _k, _l, _ref, _ref1, _ref2;
+      if (start[0] instanceof Array) {
+        controlPoints = start;
+        lowBound = ctrl1;
+        highBound = ctrl2;
+      } else {
+        controlPoints = [start, ctrl1, ctrl2, end];
+      }
       if (controlPoints.length < 2) {
         throw "Invalid number of arguments to bezier";
       }

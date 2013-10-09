@@ -43,7 +43,16 @@ class Caman.Calculate
   # @param [Number] highBound (optional) Maximum posisble value for any y-value in the curve.
   # @return [Array] Array whose index represents every x-value between start and end, and value
   #   represents the corresponding y-value.
-  @bezier: (controlPoints, lowBound, highBound) ->
+  @bezier: (start, ctrl1, ctrl2, end, lowBound, highBound) ->
+    #(controlPoints, lowBound, highBound) ->
+    # 4.0 shim - change declaration to (controlPoints, lowBound, highBound) at 5.0
+    if start[0] instanceof Array
+        controlPoints = start
+        lowBound = ctrl1
+        highBound = ctrl2
+    else
+        controlPoints = [start, ctrl1, ctrl2, end]
+
     if controlPoints.length < 2
         throw "Invalid number of arguments to bezier"
 
