@@ -44,9 +44,8 @@ class Caman.Calculate
   # @return [Array] Array whose index represents every x-value between start and end, and value
   #   represents the corresponding y-value.
   @bezier: (controlPoints, lowBound, highBound) ->
-    if controlPoints.length < 3
-        console.warn 'Not enough control points!'
-        return
+    if controlPoints.length < 2
+        throw "Invalid number of arguments to bezier"
 
     bezier = {}
     lerp = (a, b, t) -> return a * (1 - t) + b * t
@@ -67,7 +66,29 @@ class Caman.Calculate
 
             prev = next
 
-        bezier[prev[0][0]] = clamp(prev[0][1], lowBound, highBound)
+        bezier[Math.round(prev[0][0])] = Math.round(clamp(prev[0][1], lowBound, highBound))
+
+    end = controlPoints[controlPoints.length - 1]
+    # Do a search for missing values in the bezier array and use linear
+    # interpolation to approximate their values
+    if bezier.length < end[0] + 1
+      for i in [0..end[0]]
+        if not bezier[i]?
+          leftCoord = [i-1, bezier[i-1]]
+
+          # Find the first value to the right. Ideally this loop will break
+          # very quickly.
+          for j in [i..end[0]]
+            if bezier[j]?
+              rightCoord = [j, bezier[j]]
+              break
+
+          bezier[i] = leftCoord[1] +
+            ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) *
+            (i - leftCoord[0])
+
+    # Edge case
+    bezier[end[0]] = bezier[end[0] - 1] if not bezier[end[0]]?
 
     return bezier
 

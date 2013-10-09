@@ -906,10 +906,9 @@
     };
 
     Calculate.bezier = function(controlPoints, lowBound, highBound) {
-      var bezier, clamp, i, j, lerp, next, prev, t, _i, _j, _ref;
-      if (controlPoints.length < 3) {
-        console.warn('Not enough control points!');
-        return;
+      var bezier, clamp, end, i, j, leftCoord, lerp, next, prev, rightCoord, t, _i, _j, _k, _l, _ref, _ref1, _ref2;
+      if (controlPoints.length < 2) {
+        throw "Invalid number of arguments to bezier";
       }
       bezier = {};
       lerp = function(a, b, t) {
@@ -928,7 +927,25 @@
           }
           prev = next;
         }
-        bezier[prev[0][0]] = clamp(prev[0][1], lowBound, highBound);
+        bezier[Math.round(prev[0][0])] = Math.round(clamp(prev[0][1], lowBound, highBound));
+      }
+      end = controlPoints[controlPoints.length - 1];
+      if (bezier.length < end[0] + 1) {
+        for (i = _k = 0, _ref1 = end[0]; 0 <= _ref1 ? _k <= _ref1 : _k >= _ref1; i = 0 <= _ref1 ? ++_k : --_k) {
+          if (bezier[i] == null) {
+            leftCoord = [i - 1, bezier[i - 1]];
+            for (j = _l = i, _ref2 = end[0]; i <= _ref2 ? _l <= _ref2 : _l >= _ref2; j = i <= _ref2 ? ++_l : --_l) {
+              if (bezier[j] != null) {
+                rightCoord = [j, bezier[j]];
+                break;
+              }
+            }
+            bezier[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
+          }
+        }
+      }
+      if (bezier[end[0]] == null) {
+        bezier[end[0]] = bezier[end[0] - 1];
       }
       return bezier;
     };
@@ -2341,7 +2358,7 @@
   });
 
   Filter.register("curves", function() {
-    var bezier, chans, cps, ctrl1, ctrl2, end, i, start, _i, _j, _ref, _ref1;
+    var bezier, chans, cps, end, i, start, _i, _j, _ref, _ref1;
     chans = arguments[0], cps = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     if (typeof chans === "string") {
       chans = chans.split("");
@@ -2349,19 +2366,17 @@
     if (chans[0] === "v") {
       chans = ['r', 'g', 'b'];
     }
-    if (cps.length < 3 || cps.length > 4) {
+    if (cps.length < 2) {
       throw "Invalid number of arguments to curves filter";
     }
+    bezier = Calculate.bezier(cps, 0, 255);
     start = cps[0];
-    ctrl1 = cps[1];
-    ctrl2 = cps.length === 4 ? cps[2] : cps[1];
-    end = cps[cps.length - 1];
-    bezier = Calculate.bezier([start, ctrl1, ctrl2, end], 0, 255);
     if (start[0] > 0) {
       for (i = _i = 0, _ref = start[0]; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         bezier[i] = start[1];
       }
     }
+    end = cps[cps.length - 1];
     if (end[0] < 255) {
       for (i = _j = _ref1 = end[0]; _ref1 <= 255 ? _j <= 255 : _j >= 255; i = _ref1 <= 255 ? ++_j : --_j) {
         bezier[i] = end[1];

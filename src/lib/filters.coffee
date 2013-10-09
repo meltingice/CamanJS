@@ -329,23 +329,20 @@ Filter.register "curves", (chans, cps...) ->
   chans = chans.split("") if typeof chans is "string"
   chans = ['r', 'g', 'b'] if chans[0] == "v"
 
-  if cps.length < 3 or cps.length > 4
+  if cps.length < 2
     # might want to give a warning now
     throw "Invalid number of arguments to curves filter"
 
-  start = cps[0]
-  ctrl1 = cps[1]
-  ctrl2 = if cps.length == 4 then cps[2] else cps[1]
-  end = cps[cps.length - 1]
-
   # Generate a bezier curve
-  bezier = Calculate.bezier [start, ctrl1, ctrl2, end], 0, 255
+  bezier = Calculate.bezier cps, 0, 255
 
   # If the curve starts after x = 0, initialize it with a flat line
   # until the curve begins.
+  start = cps[0]
   bezier[i] = start[1] for i in [0...start[0]] if start[0] > 0
 
   # ... and the same with the end point
+  end = cps[cps.length - 1]
   bezier[i] = end[1] for i in [end[0]..255] if end[0] < 255
 
   @process "curves", (rgba) ->
