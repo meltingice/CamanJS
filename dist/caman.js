@@ -906,7 +906,7 @@
     };
 
     Calculate.bezier = function(start, ctrl1, ctrl2, end, lowBound, highBound) {
-      var bezier, clamp, controlPoints, i, j, leftCoord, lerp, next, prev, rightCoord, t, _i, _j, _k, _l, _ref, _ref1, _ref2;
+      var bezier, clamp, controlPoints, endX, i, j, lerp, next, prev, t, _i, _j, _ref;
       if (start[0] instanceof Array) {
         controlPoints = start;
         lowBound = ctrl1;
@@ -936,25 +936,86 @@
         }
         bezier[Math.round(prev[0][0])] = Math.round(clamp(prev[0][1], lowBound, highBound));
       }
-      end = controlPoints[controlPoints.length - 1];
-      if (bezier.length < end[0] + 1) {
-        for (i = _k = 0, _ref1 = end[0]; 0 <= _ref1 ? _k <= _ref1 : _k >= _ref1; i = 0 <= _ref1 ? ++_k : --_k) {
-          if (bezier[i] == null) {
-            leftCoord = [i - 1, bezier[i - 1]];
-            for (j = _l = i, _ref2 = end[0]; i <= _ref2 ? _l <= _ref2 : _l >= _ref2; j = i <= _ref2 ? ++_l : --_l) {
-              if (bezier[j] != null) {
-                rightCoord = [j, bezier[j]];
+      endX = controlPoints[controlPoints.length - 1][0];
+      bezier = Caman.Calculate.missingValues(bezier, endX);
+      if (bezier[endX] == null) {
+        bezier[endX] = bezier[endX - 1];
+      }
+      return bezier;
+    };
+
+    Calculate.hermite = function(controlPoints, lowBound, highBound) {
+      var add, clamp, count, endX, fac0, fac1, fac2, fac3, i, j, lerp, m0, m1, mul, p, p0, p1, pointsPerSegment, pointsPerStep, pos, ret, sub, t, _i, _j, _ref,
+        _this = this;
+      if (controlPoints.length < 2) {
+        throw "Invalid number of arguments to hermite";
+      }
+      ret = {};
+      lerp = function(a, b, t) {
+        return a * (1 - t) + b * t;
+      };
+      add = function(a, b, c, d) {
+        return [a[0] + b[0] + c[0] + d[0], a[1] + b[1] + c[1] + d[1]];
+      };
+      mul = function(a, b) {
+        return [a[0] * b[0], a[1] * b[1]];
+      };
+      sub = function(a, b) {
+        return [a[0] - b[0], a[1] - b[1]];
+      };
+      clamp = function(a, min, max) {
+        return Math.min(Math.max(a, min), max);
+      };
+      count = 0;
+      for (i = _i = 0, _ref = controlPoints.length - 2; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+        p0 = controlPoints[i];
+        p1 = controlPoints[i + 1];
+        pointsPerSegment = p1[0] - p0[0];
+        pointsPerStep = 1 / pointsPerSegment;
+        if (i === controlPoints.length - 2) {
+          pointsPerStep = 1 / (pointsPerSegment - 1);
+        }
+        p = i > 0 ? controlPoints[i - 1] : p0;
+        m0 = mul(sub(p1, p), [0.5, 0.5]);
+        p = i < controlPoints.length - 2 ? controlPoints[i + 2] : p1;
+        m1 = mul(sub(p, p0), [0.5, 0.5]);
+        for (j = _j = 0; 0 <= pointsPerSegment ? _j <= pointsPerSegment : _j >= pointsPerSegment; j = 0 <= pointsPerSegment ? ++_j : --_j) {
+          t = j * pointsPerStep;
+          fac0 = 2.0 * t * t * t - 3.0 * t * t + 1.0;
+          fac1 = t * t * t - 2.0 * t * t + t;
+          fac2 = -2.0 * t * t * t + 3.0 * t * t;
+          fac3 = t * t * t - t * t;
+          pos = add(mul(p0, [fac0, fac0]), mul(m0, [fac1, fac1]), mul(p1, [fac2, fac2]), mul(m1, [fac3, fac3]));
+          ret[Math.round(pos[0])] = Math.round(clamp(pos[1], lowBound, highBound));
+          count += 1;
+        }
+      }
+      endX = controlPoints[controlPoints.length - 1][0];
+      ret = Caman.Calculate.missingValues(ret, endX);
+      return ret;
+    };
+
+    Calculate.missingValues = function(values, endX) {
+      var i, j, leftCoord, ret, rightCoord, _i, _j;
+      if (Object.keys(values).length < endX + 1) {
+        ret = {};
+        for (i = _i = 0; 0 <= endX ? _i <= endX : _i >= endX; i = 0 <= endX ? ++_i : --_i) {
+          if (values[i] != null) {
+            ret[i] = values[i];
+          } else {
+            leftCoord = [i - 1, ret[i - 1]];
+            for (j = _j = i; i <= endX ? _j <= endX : _j >= endX; j = i <= endX ? ++_j : --_j) {
+              if (values[j] != null) {
+                rightCoord = [j, values[j]];
                 break;
               }
             }
-            bezier[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
+            ret[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
           }
         }
+        return ret;
       }
-      if (bezier[end[0]] == null) {
-        bezier[end[0]] = bezier[end[0] - 1];
-      }
-      return bezier;
+      return values;
     };
 
     return Calculate;
@@ -2365,8 +2426,15 @@
   });
 
   Filter.register("curves", function() {
-    var bezier, chans, cps, end, i, start, _i, _j, _ref, _ref1;
+    var algo, bezier, chans, cps, end, i, last, start, _i, _j, _ref, _ref1;
     chans = arguments[0], cps = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    last = cps[cps.length - 1];
+    if (typeof last === "function") {
+      algo = last;
+      cps.pop();
+    } else {
+      algo = Calculate.bezier;
+    }
     if (typeof chans === "string") {
       chans = chans.split("");
     }
@@ -2376,7 +2444,7 @@
     if (cps.length < 2) {
       throw "Invalid number of arguments to curves filter";
     }
-    bezier = Calculate.bezier(cps, 0, 255);
+    bezier = algo(cps, 0, 255);
     start = cps[0];
     if (start[0] > 0) {
       for (i = _i = 0, _ref = start[0]; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {

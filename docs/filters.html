@@ -714,18 +714,28 @@ functionality in Photoshop, this works in a very similar fashion.</p>
 <pre>
   chan - [r, g, b, rgb]
   cps - [x, y]* (curve control points, min. 2; 0 - 255)
+  algo - function (optional)
 </pre>
 
 <p>The first argument represents the channels you wish to modify with the filter. It can be an 
 array of channels or a string (for a single channel). The rest of the arguments are 2-element 
 arrays that represent point coordinates. They are specified in the same order as shown in this 
 image to the right. The coordinates are in the range of 0 to 255 for both X and Y values.</p>
+<p>It is possible to pass the function an optional function describing which curve algorithm to use.
+It defaults to bezier.</p>
 <p>The x-axis represents the input value for a single channel, while the y-axis represents the 
 output value.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"curves"</span>, (chans, cps...) -&gt;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>Filter.register <span class="string">"curves"</span>, (chans, cps...) -&gt;
+  last = cps[cps.length - <span class="number">1</span>]
+
+  <span class="keyword">if</span> <span class="keyword">typeof</span> last <span class="keyword">is</span> <span class="string">"function"</span>
+    algo = last
+    cps.pop()
+  <span class="keyword">else</span>
+    algo = Calculate.bezier</pre></div></div>
             
         </li>
         
@@ -769,11 +779,11 @@ output value.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Generate a bezier curve</p>
+              <p>Generate a curve</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  bezier = Calculate.bezier cps, <span class="number">0</span>, <span class="number">255</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  bezier = algo cps, <span class="number">0</span>, <span class="number">255</span></pre></div></div>
             
         </li>
         
