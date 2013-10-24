@@ -161,7 +161,27 @@
       </a>
     </span>
     <span class='desc'>
-      Generates a bezier curve given a start and end point, with two control points in between.
+      Generates a bezier curve given a start and end point, with control points in between.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#hermite-class'>
+        + (Array) <strong>hermite</strong>(controlPoints, lowBound, highBound)
+      </a>
+    </span>
+    <span class='desc'>
+      Generates a hermite curve given a start and end point, with control points in between.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#missingValues-class'>
+        + (Array) <strong>missingValues</strong>(values, endX)
+      </a>
+    </span>
+    <span class='desc'>
+      Calculates possible missing values from a given value array.
     </span>
   </li>
 </ul>
@@ -296,7 +316,7 @@
       + (Array) <strong>bezier</strong>(start, ctrl1, ctrl2, end, lowBound, highBound)
     </p>
     <div class='docstring'>
-  <p>Generates a bezier curve given a start and end point, with two control points in between.
+  <p>Generates a bezier curve given a start and end point, with control points in between.
 Can also optionally bound the y values between a low and high bound.</p><p>This is different than most bezier curve functions because it attempts to construct it in such 
 a way that we can use it more like a simple input -&gt; output system, or a one-to-one function. 
 In other words we can provide an input color value, and immediately receive an output modified 
@@ -308,36 +328,12 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
   <h3>Parameters:</h3>
   <ul class='param'>
     <li>
-      <span class='name'>start</span>
+      <span class='name'>2-item</span>
       <span class='type'>
         (<tt>Array</tt>)
       </span>
       &mdash;
-      <span class='desc'>2-item array describing the x, y coordinate of the start point.</span>
-    </li>
-    <li>
-      <span class='name'>ctrl1</span>
-      <span class='type'>
-        (<tt>Array</tt>)
-      </span>
-      &mdash;
-      <span class='desc'>2-item array describing the x, y coordinate of the first control point.</span>
-    </li>
-    <li>
-      <span class='name'>ctrl2</span>
-      <span class='type'>
-        (<tt>Array</tt>)
-      </span>
-      &mdash;
-      <span class='desc'>2-item array decribing the x, y coordinate of the second control point.</span>
-    </li>
-    <li>
-      <span class='name'>end</span>
-      <span class='type'>
-        (<tt>Array</tt>)
-      </span>
-      &mdash;
-      <span class='desc'>2-item array describing the x, y coordinate of the end point.</span>
+      <span class='desc'>arrays describing the x, y coordinates of the control points. Minimum two.</span>
     </li>
     <li>
       <span class='name'>lowBound</span>
@@ -367,15 +363,107 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
   </ul>
 </div>
   </div>
+  <div class='method_details'>
+    <p class='signature' id='hermite-class'>
+      + (Array) <strong>hermite</strong>(controlPoints, lowBound, highBound)
+    </p>
+    <div class='docstring'>
+  <p>Generates a hermite curve given a start and end point, with control points in between.
+Can also optionally bound the y values between a low and high bound.</p><p>This is different than most hermite curve functions because it attempts to construct it in such 
+a way that we can use it more like a simple input -&gt; output system, or a one-to-one function. 
+In other words we can provide an input color value, and immediately receive an output modified 
+color value.</p><p>Note that, by design, this does not force X values to be in the range [0..255]. This is to
+generalize the function a bit more. If you give it a starting X value that isn&#39;t 0, and/or a
+ending X value that isn&#39;t 255, you may run into problems with your filter!</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>2-item</span>
+      <span class='type'>
+        (<tt>Array</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>arrays describing the x, y coordinates of the control points. Minimum two.</span>
+    </li>
+    <li>
+      <span class='name'>lowBound</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>(optional) Minimum possible value for any y-value in the curve.</span>
+    </li>
+    <li>
+      <span class='name'>highBound</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>(optional) Maximum possible value for any y-value in the curve.</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>Array whose index represents every x-value between start and end, and value represents the corresponding y-value.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='missingValues-class'>
+      + (Array) <strong>missingValues</strong>(values, endX)
+    </p>
+    <div class='docstring'>
+  <p>Calculates possible missing values from a given value array. Note that this returns a copy
+and does not mutate the original. In case no values are missing the original array is
+returned as that is convenient.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>2-item</span>
+      <span class='type'>
+        (<tt>Array</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>arrays describing the x, y coordinates of the control points.</span>
+    </li>
+    <li>
+      <span class='name'>end</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>x value of the array (maximum)</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>Array whose index represents every x-value between start and end, and value represents the corresponding y-value.</span>
+    </li>
+  </ul>
+</div>
+  </div>
 </div>
     </div>
     <div id='footer'>
   Generated on
-  Sat Jul 27 2013 13:55:54 GMT-0400 (EDT)
+  Thu Oct 24 2013 21:32:51 GMT+0300 (EEST)
   by
   <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
-  v1.7.0
-  (Node.js v0.10.8).
+  v1.9.0
+  (Node.js v0.10.20).
   &#10034;
   Press Ctrl-h to see the keyboard shortcuts
   &#10034;

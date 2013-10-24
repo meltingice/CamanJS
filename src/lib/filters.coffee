@@ -311,10 +311,8 @@ Filter.register "channels", (options) ->
 # ### Arguments.
 # <pre>
 #   chan - [r, g, b, rgb]
-#   start - [x, y] (start of curve; 0 - 255)
-#   ctrl1 - [x, y] (control point 1; 0 - 255)
-#   ctrl2 - [x, y] (control point 2; 0 - 255)
-#   end   - [x, y] (end of curve; 0 - 255)
+#   cps - [x, y]* (curve control points, min. 2; 0 - 255)
+#   algo - function (optional)
 # </pre>
 #
 # The first argument represents the channels you wish to modify with the filter. It can be an 
@@ -322,30 +320,38 @@ Filter.register "channels", (options) ->
 # arrays that represent point coordinates. They are specified in the same order as shown in this 
 # image to the right. The coordinates are in the range of 0 to 255 for both X and Y values.
 #
+# It is possible to pass the function an optional function describing which curve algorithm to use.
+# It defaults to bezier.
+#
 # The x-axis represents the input value for a single channel, while the y-axis represents the 
 # output value.
 Filter.register "curves", (chans, cps...) ->
+  last = cps[cps.length - 1]
+
+  if typeof last is "function"
+    algo = last
+    cps.pop()
+  else
+    algo = Calculate.bezier
+
   # If channels are in a string, split to an array
   chans = chans.split("") if typeof chans is "string"
   chans = ['r', 'g', 'b'] if chans[0] == "v"
 
-  if cps.length < 3 or cps.length > 4
+  if cps.length < 2
     # might want to give a warning now
     throw "Invalid number of arguments to curves filter"
 
-  start = cps[0]
-  ctrl1 = cps[1]
-  ctrl2 = if cps.length == 4 then cps[2] else cps[1]
-  end = cps[cps.length - 1]
-
-  # Generate a bezier curve
-  bezier = Calculate.bezier start, ctrl1, ctrl2, end, 0, 255
+  # Generate a curve
+  bezier = algo cps, 0, 255
 
   # If the curve starts after x = 0, initialize it with a flat line
   # until the curve begins.
+  start = cps[0]
   bezier[i] = start[1] for i in [0...start[0]] if start[0] > 0
 
   # ... and the same with the end point
+  end = cps[cps.length - 1]
   bezier[i] = end[1] for i in [end[0]..255] if end[0] < 255
 
   @process "curves", (rgba) ->
