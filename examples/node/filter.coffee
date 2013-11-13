@@ -3,7 +3,7 @@ Caman.DEBUG = true
 Caman.allowRevert = false
 
 Caman __dirname + "/../images/test1_1280.jpg", ->
-  @hemingway()
+  @lomo()
 
   start = (new Date()).getTime()
   @render ->

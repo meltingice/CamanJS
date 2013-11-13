@@ -927,6 +927,12 @@
 
     Calculate.bezier = function(start, ctrl1, ctrl2, end, lowBound, highBound) {
       var bezier, clamp, controlPoints, endX, i, j, lerp, next, prev, t, _i, _j, _ref;
+      if (lowBound == null) {
+        lowBound = 0;
+      }
+      if (highBound == null) {
+        highBound = 255;
+      }
       if (start[0] instanceof Array) {
         controlPoints = start;
         lowBound = ctrl1;
