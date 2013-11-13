@@ -322,12 +322,8 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
 
       bezier[Math.round(prev[<span class="number">0</span>][<span class="number">0</span>])] = Math.round(clamp(prev[<span class="number">0</span>][<span class="number">1</span>], lowBound, highBound))
 
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-    end = controlPoints[controlPoints.length - <span class="number">1</span>]
-    
-=======
     endX = controlPoints[controlPoints.length - <span class="number">1</span>][<span class="number">0</span>]
-    bezier =Caman.Calculate.missingValues(bezier, endX)</pre></div></div>
+    bezier = Caman.Calculate.missingValues(bezier, endX)</pre></div></div>
             
         </li>
         
@@ -465,8 +461,7 @@ returned as that is convenient.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@missingValues</span>: (values, endX) -&gt;
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; ccfb7a0222938868fbd5f6b67c40353271386db2</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@missingValues</span>: (values, endX) -&gt;</pre></div></div>
             
         </li>
         
