@@ -2452,6 +2452,9 @@
     if (typeof last === "function") {
       algo = last;
       cps.pop();
+    } else if (typeof last === "string") {
+      algo = Calculate[last];
+      cps.pop();
     } else {
       algo = Calculate.bezier;
     }

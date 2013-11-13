@@ -331,6 +331,9 @@ Filter.register "curves", (chans, cps...) ->
   if typeof last is "function"
     algo = last
     cps.pop()
+  else if typeof last is "string"
+    algo = Calculate[last]
+    cps.pop()
   else
     algo = Calculate.bezier
 
