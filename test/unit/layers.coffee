@@ -1,7 +1,7 @@
 if exports?
   {Caman}   = require "../../dist/caman.full"
   {assert}  = require 'chai'
-  {greyPath, rgbData}   = require '../ext/grey'
+  {greyImage, greyPath, rgbData} = require '../ext/grey'
 
 describe "Layers", ->
   it "can be created", (done) ->
