@@ -7,6 +7,7 @@ if exports?
   Fiber = require 'fibers'
 
   fs = require 'fs'
+  http = require 'http'
 else
   Root = window
 
@@ -231,10 +232,24 @@ class Caman extends Module
   initNode: ->
     Log.debug "Initializing for NodeJS"
 
-    if typeof @initObj is "string"
+    if typeof @initObj is "string" and @initObj.match(/^https?:\/\//)
+      @readFromHttp @initObj, @nodeFileReady
+    else if typeof @initObj is "string"
       fs.readFile @initObj, @nodeFileReady
     else
       @nodeFileReady null, @initObj
+
+  readFromHttp: (url, callback) ->
+    Log.debug "Fetching image from #{url}"
+
+    req = http.get url, (res) ->
+      buf = ''
+      res.setEncoding('binary')
+      res.on 'data', (chunk) ->
+        buf += chunk
+      res.on 'end', ->
+        callback null, new Buffer(buf, 'binary');
+    req.on 'error', callback
 
   nodeFileReady: (err, data) =>
     throw err if err
