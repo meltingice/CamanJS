@@ -312,6 +312,7 @@ Filter.register "channels", (options) ->
 # <pre>
 #   chan - [r, g, b, rgb]
 #   cps - [x, y]* (curve control points, min. 2; 0 - 255)
+#   algo - function (optional)
 # </pre>
 #
 # The first argument represents the channels you wish to modify with the filter. It can be an 
@@ -319,9 +320,20 @@ Filter.register "channels", (options) ->
 # arrays that represent point coordinates. They are specified in the same order as shown in this 
 # image to the right. The coordinates are in the range of 0 to 255 for both X and Y values.
 #
+# It is possible to pass the function an optional function describing which curve algorithm to use.
+# It defaults to bezier.
+#
 # The x-axis represents the input value for a single channel, while the y-axis represents the 
 # output value.
 Filter.register "curves", (chans, cps...) ->
+  last = cps[cps.length - 1]
+
+  if typeof last is "function"
+    algo = last
+    cps.pop()
+  else
+    algo = Calculate.bezier
+
   # If channels are in a string, split to an array
   chans = chans.split("") if typeof chans is "string"
   chans = ['r', 'g', 'b'] if chans[0] == "v"
@@ -330,8 +342,8 @@ Filter.register "curves", (chans, cps...) ->
     # might want to give a warning now
     throw "Invalid number of arguments to curves filter"
 
-  # Generate a bezier curve
-  bezier = Calculate.bezier cps, 0, 255
+  # Generate a curve
+  bezier = algo cps, 0, 255
 
   # If the curve starts after x = 0, initialize it with a flat line
   # until the curve begins.

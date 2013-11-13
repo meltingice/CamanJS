@@ -14,6 +14,9 @@
       <td>
        <img id="test" src="../images/test1_640.jpg" />
       </td>
+      <td>
+       <img id="hermite_test" src="../images/squirrel.jpg" />
+      </td>
     </tr>
   </table>
 
@@ -22,6 +25,12 @@
   var test = Caman("#test", function () {
       this.curves('v', [0, 0], [100, 30], [180, 240], [255, 255]);
       this.curves('r', [0, 0], [40, 200], [255, 255])
+
+      this.render();
+  });
+
+  var hermiteTest = Caman("#hermite_test", function () {
+      this.curves('rgb', [0, 0], [55, 43], [94, 226], [255, 255], Caman.Calculate.hermite);
 
       this.render();
   });
