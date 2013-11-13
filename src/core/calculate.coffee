@@ -47,37 +47,38 @@ class Caman.Calculate
     #(controlPoints, lowBound, highBound) ->
     # 4.0 shim - change declaration to (controlPoints, lowBound, highBound) at 5.0
     if start[0] instanceof Array
-        controlPoints = start
-        lowBound = ctrl1
-        highBound = ctrl2
+      controlPoints = start
+      lowBound = ctrl1
+      highBound = ctrl2
     else
-        controlPoints = [start, ctrl1, ctrl2, end]
+      controlPoints = [start, ctrl1, ctrl2, end]
 
     if controlPoints.length < 2
-        throw "Invalid number of arguments to bezier"
+      throw "Invalid number of arguments to bezier"
 
     bezier = {}
     lerp = (a, b, t) -> return a * (1 - t) + b * t
     clamp = (a, min, max) -> return Math.min(Math.max(a, min), max)
 
     for i in [0...1000]
-        t = i / 1000
-        prev = controlPoints
+      t = i / 1000
+      prev = controlPoints
 
-        while prev.length > 1
-            next = []
+      while prev.length > 1
+        next = []
 
-            for j in [0..(prev.length - 2)]
-                next.push([
-                    lerp(prev[j][0], prev[j + 1][0], t),
-                    lerp(prev[j][1], prev[j + 1][1], t)
-                ])
+        for j in [0..(prev.length - 2)]
+          next.push([
+            lerp(prev[j][0], prev[j + 1][0], t),
+            lerp(prev[j][1], prev[j + 1][1], t)
+          ])
 
-            prev = next
+        prev = next
 
-        bezier[Math.round(prev[0][0])] = Math.round(clamp(prev[0][1], lowBound, highBound))
+      bezier[Math.round(prev[0][0])] = Math.round(clamp(prev[0][1], lowBound, highBound))
 
     end = controlPoints[controlPoints.length - 1]
+    
     # Do a search for missing values in the bezier array and use linear
     # interpolation to approximate their values
     if bezier.length < end[0] + 1

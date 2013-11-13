@@ -195,6 +195,7 @@
   Fiber = require <span class="string">'fibers'</span>
 
   fs = require <span class="string">'fs'</span>
+  http = require <span class="string">'http'</span>
 <span class="keyword">else</span>
   Root = window</pre></div></div>
             
@@ -661,10 +662,24 @@ or if an image or canvas object was provided.</p>
             <div class="content"><div class='highlight'><pre>  initNode: -&gt;
     Log.debug <span class="string">"Initializing for NodeJS"</span>
 
-    <span class="keyword">if</span> <span class="keyword">typeof</span> <span class="property">@initObj</span> <span class="keyword">is</span> <span class="string">"string"</span>
+    <span class="keyword">if</span> <span class="keyword">typeof</span> <span class="property">@initObj</span> <span class="keyword">is</span> <span class="string">"string"</span> <span class="keyword">and</span> <span class="property">@initObj</span>.match(<span class="regexp">/^https?:\/\//</span>)
+      <span class="property">@readFromHttp</span> <span class="property">@initObj</span>, <span class="property">@nodeFileReady</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">typeof</span> <span class="property">@initObj</span> <span class="keyword">is</span> <span class="string">"string"</span>
       fs.readFile <span class="property">@initObj</span>, <span class="property">@nodeFileReady</span>
     <span class="keyword">else</span>
       <span class="property">@nodeFileReady</span> <span class="literal">null</span>, <span class="property">@initObj</span>
+
+  readFromHttp: (url, callback) -&gt;
+    Log.debug <span class="string">"Fetching image from <span class="subst">#{url}</span>"</span>
+
+    req = http.get url, (res) -&gt;
+      buf = <span class="string">''</span>
+      res.setEncoding(<span class="string">'binary'</span>)
+      res.<span class="literal">on</span> <span class="string">'data'</span>, (chunk) -&gt;
+        buf += chunk
+      res.<span class="literal">on</span> <span class="string">'end'</span>, -&gt;
+        callback <span class="literal">null</span>, <span class="keyword">new</span> Buffer(buf, <span class="string">'binary'</span>);
+    req.<span class="literal">on</span> <span class="string">'error'</span>, callback
 
   nodeFileReady: (err, data) =&gt;
     <span class="keyword">throw</span> err <span class="keyword">if</span> err

@@ -275,32 +275,7 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="property">@bezier</span>: (controlPoints, lowBound, highBound) -&gt;
-    <span class="keyword">if</span> controlPoints.length &lt; <span class="number">2</span>
-        <span class="keyword">throw</span> <span class="string">"Invalid number of arguments to bezier"</span>
-
-    bezier = {}
-    <span class="function"><span class="title">lerp</span></span> = (a, b, t) -&gt; <span class="keyword">return</span> a * (<span class="number">1</span> - t) + b * t
-    <span class="function"><span class="title">clamp</span></span> = (a, min, max) -&gt; <span class="keyword">return</span> Math.min(Math.max(a, min), max)
-
-    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>.<span class="number">.1000</span>]
-        t = i / <span class="number">1000</span>
-        prev = controlPoints
-
-        <span class="keyword">while</span> prev.length &gt; <span class="number">1</span>
-            next = []
-
-            <span class="keyword">for</span> j <span class="keyword">in</span> [<span class="number">0.</span>.(prev.length - <span class="number">2</span>)]
-                next.push([
-                    lerp(prev[j][<span class="number">0</span>], prev[j + <span class="number">1</span>][<span class="number">0</span>], t),
-                    lerp(prev[j][<span class="number">1</span>], prev[j + <span class="number">1</span>][<span class="number">1</span>], t)
-                ])
-
-            prev = next
-
-        bezier[Math.round(prev[<span class="number">0</span>][<span class="number">0</span>])] = Math.round(clamp(prev[<span class="number">0</span>][<span class="number">1</span>], lowBound, highBound))
-
-    end = controlPoints[controlPoints.length - <span class="number">1</span>]</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@bezier</span>: (start, ctrl1, ctrl2, end, lowBound, highBound) -&gt;</pre></div></div>
             
         </li>
         
@@ -310,6 +285,53 @@ ending X value that isn&#39;t 255, you may run into problems with your filter!</
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>(controlPoints, lowBound, highBound) -&gt;
+4.0 shim - change declaration to (controlPoints, lowBound, highBound) at 5.0</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> start[<span class="number">0</span>] <span class="keyword">instanceof</span> Array
+      controlPoints = start
+      lowBound = ctrl1
+      highBound = ctrl2
+    <span class="keyword">else</span>
+      controlPoints = [start, ctrl1, ctrl2, end]
+
+    <span class="keyword">if</span> controlPoints.length &lt; <span class="number">2</span>
+      <span class="keyword">throw</span> <span class="string">"Invalid number of arguments to bezier"</span>
+
+    bezier = {}
+    <span class="function"><span class="title">lerp</span></span> = (a, b, t) -&gt; <span class="keyword">return</span> a * (<span class="number">1</span> - t) + b * t
+    <span class="function"><span class="title">clamp</span></span> = (a, min, max) -&gt; <span class="keyword">return</span> Math.min(Math.max(a, min), max)
+
+    <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>.<span class="number">.1000</span>]
+      t = i / <span class="number">1000</span>
+      prev = controlPoints
+
+      <span class="keyword">while</span> prev.length &gt; <span class="number">1</span>
+        next = []
+
+        <span class="keyword">for</span> j <span class="keyword">in</span> [<span class="number">0.</span>.(prev.length - <span class="number">2</span>)]
+          next.push([
+            lerp(prev[j][<span class="number">0</span>], prev[j + <span class="number">1</span>][<span class="number">0</span>], t),
+            lerp(prev[j][<span class="number">1</span>], prev[j + <span class="number">1</span>][<span class="number">1</span>], t)
+          ])
+
+        prev = next
+
+      bezier[Math.round(prev[<span class="number">0</span>][<span class="number">0</span>])] = Math.round(clamp(prev[<span class="number">0</span>][<span class="number">1</span>], lowBound, highBound))
+
+    end = controlPoints[controlPoints.length - <span class="number">1</span>]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>Do a search for missing values in the bezier array and use linear
 interpolation to approximate their values</p>
@@ -324,11 +346,11 @@ interpolation to approximate their values</p>
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Find the first value to the right. Ideally this loop will break
 very quickly.</p>
@@ -347,11 +369,11 @@ very quickly.</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Edge case</p>
 
