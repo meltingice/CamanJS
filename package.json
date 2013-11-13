@@ -64,7 +64,7 @@
     "karma-mocha": "*"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/.bin/karma start --single-run",
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/.bin/karma start --single-run --browsers Firefox",
     "examples": "./node_modules/servedir/bin/servedir",
     "docs": "codo",
     "docs-server": "codo --server"
