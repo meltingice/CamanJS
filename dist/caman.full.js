@@ -355,7 +355,7 @@
 
     Caman.prototype.readFromHttp = function(url, callback) {
       var req;
-      Log.debug("Fetching via http: " + url);
+      Log.debug("Fetching image from " + url);
       req = http.get(url, function(res) {
         var buf;
         buf = '';
