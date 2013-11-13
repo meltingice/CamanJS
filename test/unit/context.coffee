@@ -7,7 +7,7 @@ if exports?
 
 describe "Context", ->
   it "can be updated after external changes", (done) ->
-    caman = Caman greyPath, ->
+    caman = Caman greyImage, ->
       canvas = caman.canvas
       context = canvas.getContext('2d')
       context.fillStyle = "rgba(255, 0, 0, 1)"

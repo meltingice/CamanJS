@@ -8,6 +8,7 @@ if (typeof exports !== "undefined" && exports !== null) {
   Root.greyImage = new Buffer(Root.greyPixel, 'base64');
 } else {
   Root = window;
+  Root.greyPath = "/base/test/ext/grey.png";
   Root.greyPixel = "data:image/png;base64," + greyPixel;
   Root.greyImage = document.createElement('img');
   Root.greyImage.src = Root.greyPixel;

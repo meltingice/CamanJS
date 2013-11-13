@@ -9,13 +9,14 @@ describe "Initialization", ->
 
   describe "with a single argument", ->
     it "accepts a file path as a string", ->
+      return unless exports?
       assert.doesNotThrow -> Caman(greyPath)
 
-    it "accepts a file/buffer object", ->
+    it "accepts a file/buffer/image object", ->
       assert.doesNotThrow -> Caman(greyImage)
       
     it "returns a Caman object", ->
-      caman = Caman(greyPath)
+      caman = Caman(greyImage)
       assert.isObject caman
       assert.isFunction caman.render
       assert.instanceOf caman, Caman
@@ -23,17 +24,17 @@ describe "Initialization", ->
   describe "with two arguments", ->
     it "accepts a file path and a callback", ->
       assert.doesNotThrow ->
-        Caman greyPath, ->
+        Caman greyImage, ->
 
     it "accepts a file/buffer object and a callback", ->
       assert.doesNotThrow ->
         Caman greyImage, ->
 
     it "fires the callback when ready", (done) ->
-      Caman greyPath, -> done()
+      Caman greyImage, -> done()
         
   it "correctly reads the image data", (done) ->
-    Caman greyPath, ->
+    Caman greyImage, ->
       assert.lengthOf @pixelData, 4
       
       [r, g, b, a] = @pixelData

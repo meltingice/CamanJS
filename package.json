@@ -2,7 +2,14 @@
   "name": "caman",
   "version": "4.1.2",
   "description": "Javascript (Ca)nvas (Man)ipulation for NodeJS and the browser",
-  "keywords": ["canvas", "image", "manipulate", "filter", "image manipulation", "editing"],
+  "keywords": [
+    "canvas",
+    "image",
+    "manipulate",
+    "filter",
+    "image manipulation",
+    "editing"
+  ],
   "homepage": "http://camanjs.com",
   "author": {
     "name": "Ryan LeFevre",
@@ -49,12 +56,12 @@
     "codo": "*",
     "jsmin": "*",
     "packer": "*",
-    "mocha": "*",
     "chai": "*",
     "servedir": "*",
     "cli": "*",
     "cli-table": "*",
-    "karma": "*"
+    "karma": "*",
+    "karma-mocha": "*"
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/.bin/karma start --single-run",

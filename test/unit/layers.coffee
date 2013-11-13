@@ -5,7 +5,7 @@ if exports?
 
 describe "Layers", ->
   it "can be created", (done) ->
-    Caman greyPath, ->
+    Caman greyImage, ->
       @newLayer ->
         assert.isObject @c
         assert.isObject @options
@@ -16,7 +16,7 @@ describe "Layers", ->
         done()
 
   it "have the correct defaults", (done) ->
-    Caman greyPath, ->
+    Caman greyImage, ->
       @newLayer ->
         assert.deepEqual @options,
           blendingMode: 'normal'
@@ -31,7 +31,7 @@ describe "Layers", ->
         done()
 
   it "properly applies to the parent layer", (done) ->
-    Caman greyPath, ->
+    Caman greyImage, ->
       @newLayer ->
         @setBlendingMode 'normal'
         @opacity 100
