@@ -713,10 +713,7 @@ functionality in Photoshop, this works in a very similar fashion.</p>
 <h3>Arguments.</h3>
 <pre>
   chan - [r, g, b, rgb]
-  start - [x, y] (start of curve; 0 - 255)
-  ctrl1 - [x, y] (control point 1; 0 - 255)
-  ctrl2 - [x, y] (control point 2; 0 - 255)
-  end   - [x, y] (end of curve; 0 - 255)
+  cps - [x, y]* (curve control points, min. 2; 0 - 255)
 </pre>
 
 <p>The first argument represents the channels you wish to modify with the filter. It can be an 
@@ -746,7 +743,7 @@ output value.</p>
             <div class="content"><div class='highlight'><pre>  chans = chans.split(<span class="string">""</span>) <span class="keyword">if</span> <span class="keyword">typeof</span> chans <span class="keyword">is</span> <span class="string">"string"</span>
   chans = [<span class="string">'r'</span>, <span class="string">'g'</span>, <span class="string">'b'</span>] <span class="keyword">if</span> chans[<span class="number">0</span>] == <span class="string">"v"</span>
 
-  <span class="keyword">if</span> cps.length &lt; <span class="number">3</span> <span class="keyword">or</span> cps.length &gt; <span class="number">4</span></pre></div></div>
+  <span class="keyword">if</span> cps.length &lt; <span class="number">2</span></pre></div></div>
             
         </li>
         
@@ -761,12 +758,7 @@ output value.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">throw</span> <span class="string">"Invalid number of arguments to curves filter"</span>
-
-  start = cps[<span class="number">0</span>]
-  ctrl1 = cps[<span class="number">1</span>]
-  ctrl2 = <span class="keyword">if</span> cps.length == <span class="number">4</span> <span class="keyword">then</span> cps[<span class="number">2</span>] <span class="keyword">else</span> cps[<span class="number">1</span>]
-  end = cps[cps.length - <span class="number">1</span>]</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">throw</span> <span class="string">"Invalid number of arguments to curves filter"</span></pre></div></div>
             
         </li>
         
@@ -781,7 +773,7 @@ output value.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  bezier = Calculate.bezier start, ctrl1, ctrl2, end, <span class="number">0</span>, <span class="number">255</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  bezier = Calculate.bezier cps, <span class="number">0</span>, <span class="number">255</span></pre></div></div>
             
         </li>
         
@@ -797,7 +789,8 @@ until the curve begins.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  bezier[i] = start[<span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>..start[<span class="number">0</span>]] <span class="keyword">if</span> start[<span class="number">0</span>] &gt; <span class="number">0</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  start = cps[<span class="number">0</span>]
+  bezier[i] = start[<span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>..start[<span class="number">0</span>]] <span class="keyword">if</span> start[<span class="number">0</span>] &gt; <span class="number">0</span></pre></div></div>
             
         </li>
         
@@ -812,7 +805,8 @@ until the curve begins.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  bezier[i] = end[<span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> [end[<span class="number">0</span>].<span class="number">.255</span>] <span class="keyword">if</span> end[<span class="number">0</span>] &lt; <span class="number">255</span>
+            <div class="content"><div class='highlight'><pre>  end = cps[cps.length - <span class="number">1</span>]
+  bezier[i] = end[<span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> [end[<span class="number">0</span>].<span class="number">.255</span>] <span class="keyword">if</span> end[<span class="number">0</span>] &lt; <span class="number">255</span>
 
   <span class="property">@process</span> <span class="string">"curves"</span>, (rgba) -&gt;</pre></div></div>
             

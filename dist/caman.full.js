@@ -926,38 +926,42 @@
     };
 
     Calculate.bezier = function(start, ctrl1, ctrl2, end, lowBound, highBound) {
-      var Ax, Ay, Bx, By, Cx, Cy, bezier, curveX, curveY, i, j, leftCoord, rightCoord, t, x0, x1, x2, x3, y0, y1, y2, y3, _i, _j, _k, _ref, _ref1;
-      x0 = start[0];
-      y0 = start[1];
-      x1 = ctrl1[0];
-      y1 = ctrl1[1];
-      x2 = ctrl2[0];
-      y2 = ctrl2[1];
-      x3 = end[0];
-      y3 = end[1];
+      var bezier, clamp, controlPoints, i, j, leftCoord, lerp, next, prev, rightCoord, t, _i, _j, _k, _l, _ref, _ref1, _ref2;
+      if (start[0] instanceof Array) {
+        controlPoints = start;
+        lowBound = ctrl1;
+        highBound = ctrl2;
+      } else {
+        controlPoints = [start, ctrl1, ctrl2, end];
+      }
+      if (controlPoints.length < 2) {
+        throw "Invalid number of arguments to bezier";
+      }
       bezier = {};
-      Cx = parseInt(3 * (x1 - x0), 10);
-      Bx = 3 * (x2 - x1) - Cx;
-      Ax = x3 - x0 - Cx - Bx;
-      Cy = 3 * (y1 - y0);
-      By = 3 * (y2 - y1) - Cy;
-      Ay = y3 - y0 - Cy - By;
+      lerp = function(a, b, t) {
+        return a * (1 - t) + b * t;
+      };
+      clamp = function(a, min, max) {
+        return Math.min(Math.max(a, min), max);
+      };
       for (i = _i = 0; _i < 1000; i = ++_i) {
         t = i / 1000;
-        curveX = Math.round((Ax * Math.pow(t, 3)) + (Bx * Math.pow(t, 2)) + (Cx * t) + x0);
-        curveY = Math.round((Ay * Math.pow(t, 3)) + (By * Math.pow(t, 2)) + (Cy * t) + y0);
-        if (lowBound && curveY < lowBound) {
-          curveY = lowBound;
-        } else if (highBound && curveY > highBound) {
-          curveY = highBound;
+        prev = controlPoints;
+        while (prev.length > 1) {
+          next = [];
+          for (j = _j = 0, _ref = prev.length - 2; 0 <= _ref ? _j <= _ref : _j >= _ref; j = 0 <= _ref ? ++_j : --_j) {
+            next.push([lerp(prev[j][0], prev[j + 1][0], t), lerp(prev[j][1], prev[j + 1][1], t)]);
+          }
+          prev = next;
         }
-        bezier[curveX] = curveY;
+        bezier[Math.round(prev[0][0])] = Math.round(clamp(prev[0][1], lowBound, highBound));
       }
+      end = controlPoints[controlPoints.length - 1];
       if (bezier.length < end[0] + 1) {
-        for (i = _j = 0, _ref = end[0]; 0 <= _ref ? _j <= _ref : _j >= _ref; i = 0 <= _ref ? ++_j : --_j) {
+        for (i = _k = 0, _ref1 = end[0]; 0 <= _ref1 ? _k <= _ref1 : _k >= _ref1; i = 0 <= _ref1 ? ++_k : --_k) {
           if (bezier[i] == null) {
             leftCoord = [i - 1, bezier[i - 1]];
-            for (j = _k = i, _ref1 = end[0]; i <= _ref1 ? _k <= _ref1 : _k >= _ref1; j = i <= _ref1 ? ++_k : --_k) {
+            for (j = _l = i, _ref2 = end[0]; i <= _ref2 ? _l <= _ref2 : _l >= _ref2; j = i <= _ref2 ? ++_l : --_l) {
               if (bezier[j] != null) {
                 rightCoord = [j, bezier[j]];
                 break;
@@ -2381,7 +2385,7 @@
   });
 
   Filter.register("curves", function() {
-    var bezier, chans, cps, ctrl1, ctrl2, end, i, start, _i, _j, _ref, _ref1;
+    var bezier, chans, cps, end, i, start, _i, _j, _ref, _ref1;
     chans = arguments[0], cps = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     if (typeof chans === "string") {
       chans = chans.split("");
@@ -2389,19 +2393,17 @@
     if (chans[0] === "v") {
       chans = ['r', 'g', 'b'];
     }
-    if (cps.length < 3 || cps.length > 4) {
+    if (cps.length < 2) {
       throw "Invalid number of arguments to curves filter";
     }
+    bezier = Calculate.bezier(cps, 0, 255);
     start = cps[0];
-    ctrl1 = cps[1];
-    ctrl2 = cps.length === 4 ? cps[2] : cps[1];
-    end = cps[cps.length - 1];
-    bezier = Calculate.bezier(start, ctrl1, ctrl2, end, 0, 255);
     if (start[0] > 0) {
       for (i = _i = 0, _ref = start[0]; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         bezier[i] = start[1];
       }
     }
+    end = cps[cps.length - 1];
     if (end[0] < 255) {
       for (i = _j = _ref1 = end[0]; _ref1 <= 255 ? _j <= 255 : _j >= 255; i = _ref1 <= 255 ? ++_j : --_j) {
         bezier[i] = end[1];
