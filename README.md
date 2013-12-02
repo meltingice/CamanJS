@@ -10,6 +10,8 @@ For more information, I highly recommend taking a look at the [official website]
 
 CamanJS is written in [Coffeescript](http://coffeescript.org) as of version 3.0. **It works both in-browser and in NodeJS.**
 
+CamanJS is a project that I work on in purely my own spare time. If you would like to pitch in a beer or donate to say thanks, my Bitcoin address is: 1EVNQ7FiWDaqpfYXRLCtgMe5RBcz3kEuAG
+
 ## Usage
 
 Include one of the versions in the `dist/` folder, then you can run:
