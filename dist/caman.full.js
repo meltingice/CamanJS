@@ -1535,10 +1535,13 @@
     return document.location.href = image;
   };
 
-  Caman.prototype.nodeSave = function(file, overwrite) {
+  Caman.prototype.nodeSave = function(file, overwrite, callback) {
     var e, stats;
     if (overwrite == null) {
       overwrite = true;
+    }
+    if (callback == null) {
+      callback = null;
     }
     try {
       stats = fs.statSync(file);
@@ -1549,14 +1552,17 @@
       e = _error;
       Log.debug("Creating output file " + file);
     }
-    return fs.writeFile(file, this.canvas.toBuffer(), function() {
-      return Log.debug("Finished writing to " + file);
+    return fs.writeFile(file, this.canvas.toBuffer(), function(err) {
+      Log.debug("Finished writing to " + file);
+      if (callback) {
+        return callback.call(this, err);
+      }
     });
   };
 
   Caman.prototype.toImage = function(type) {
     var img;
-    img = document.createElement('img');
+    img = new Image();
     img.src = this.toBase64(type);
     img.width = this.dimensions.width;
     img.height = this.dimensions.height;
@@ -2062,7 +2068,7 @@
     Renderer.prototype.loadOverlay = function(layer, src) {
       var img, proxyUrl,
         _this = this;
-      img = document.createElement('img');
+      img = new Image();
       img.onload = function() {
         layer.context.drawImage(img, 0, 0, _this.c.dimensions.width, _this.c.dimensions.height);
         layer.imageData = layer.context.getImageData(0, 0, _this.c.dimensions.width, _this.c.dimensions.height);

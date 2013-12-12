@@ -80,20 +80,21 @@ Caman::browserSave = (type = "png") ->
     image = @toBase64(type).replace "image/#{type}", "image/octet-stream"
     document.location.href = image
 
-Caman::nodeSave = (file, overwrite = true) ->
+Caman::nodeSave = (file, overwrite = true, callback = null) ->
     try
       stats = fs.statSync file
       return false if stats.isFile() and not overwrite
     catch e
       Log.debug "Creating output file #{file}"
 
-    fs.writeFile file, @canvas.toBuffer(), ->
+    fs.writeFile file, @canvas.toBuffer(), (err) ->
       Log.debug "Finished writing to #{file}"
+      callback.call this, err if callback
 
   # Takes the current canvas data, converts it to Base64, then sets it as the source 
   # of a new Image object and returns it.
 Caman::toImage = (type) ->
-    img = document.createElement 'img'
+    img = new Image()
     img.src = @toBase64 type
     img.width = @dimensions.width
     img.height = @dimensions.height

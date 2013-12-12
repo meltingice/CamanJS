@@ -205,7 +205,7 @@ class Caman.Renderer
 
   # Loads an image onto the current canvas
   loadOverlay: (layer, src) ->
-    img = document.createElement 'img'
+    img = new Image()
     img.onload = =>
       layer.context.drawImage img, 0, 0, @c.dimensions.width, @c.dimensions.height
       layer.imageData = layer.context.getImageData 0, 0, @c.dimensions.width, @c.dimensions.height
