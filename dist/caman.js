@@ -293,6 +293,7 @@
       }
       switch (typeof args[1]) {
         case "string":
+        case "object":
           this.imageUrl = args[1];
           break;
         case "function":
@@ -349,7 +350,7 @@
       } else if (typeof this.initObj === "string") {
         return fs.readFile(this.initObj, this.nodeFileReady);
       } else {
-        return this.nodeFileReady(null, this.initObj);
+        return this.nodeFileReady(null, this.initObj.src);
       }
     };
 
