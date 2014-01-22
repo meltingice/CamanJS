@@ -192,7 +192,7 @@ class Caman extends Module
     return if args.length is 1
     
     switch typeof args[1]
-      when "string" then @imageUrl = args[1]
+      when "string", "object" then @imageUrl = args[1]
       when "function" then @callback = args[1]
       
     return if args.length is 2
@@ -237,7 +237,7 @@ class Caman extends Module
     else if typeof @initObj is "string"
       fs.readFile @initObj, @nodeFileReady
     else
-      @nodeFileReady null, @initObj
+      @nodeFileReady null, @initObj.src
 
   readFromHttp: (url, callback) ->
     Log.debug "Fetching image from #{url}"
