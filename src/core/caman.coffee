@@ -109,6 +109,7 @@ class Caman extends Module
       # a function and as a 'new' object.
       @finishInit = @finishInit.bind(@)
       @imageLoaded = @imageLoaded.bind(@)
+      @nodeFileReady = @nodeFileReady.bind(@)
 
       args = arguments[0]
 
@@ -251,7 +252,7 @@ class Caman extends Module
         callback null, new Buffer(buf, 'binary');
     req.on 'error', callback
 
-  nodeFileReady: (err, data) =>
+  nodeFileReady: (err, data) ->
     throw err if err
 
     @image = new Image()

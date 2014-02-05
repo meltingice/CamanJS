@@ -4,8 +4,8 @@
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   moduleKeywords = ['extended', 'included'];
 
@@ -211,7 +211,6 @@
     };
 
     function Caman() {
-      this.nodeFileReady = __bind(this.nodeFileReady, this);
       var args, callback, id,
         _this = this;
       if (arguments.length === 0) {
@@ -220,6 +219,7 @@
       if (this instanceof Caman) {
         this.finishInit = this.finishInit.bind(this);
         this.imageLoaded = this.imageLoaded.bind(this);
+        this.nodeFileReady = this.nodeFileReady.bind(this);
         args = arguments[0];
         if (!Caman.NodeJS) {
           id = parseInt(Caman.getAttrId(args[0]), 10);
