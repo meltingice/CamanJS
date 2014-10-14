@@ -8580,7 +8580,7 @@ module.exports = function(Caman) {
       return this.a = 255;
     });
   });
-  return Caman.Renderer.register('saturation', function(adjust) {
+  Caman.Renderer.register('saturation', function(adjust) {
     adjust *= -0.01;
     return new Caman.Filter(function() {
       var max;
@@ -8596,11 +8596,48 @@ module.exports = function(Caman) {
       }
     });
   });
+  Caman.Renderer.register('vibrance', function(adjust) {
+    adjust *= -1;
+    return new Caman.Filter(function() {
+      var amt, avg, max;
+      max = Math.max(this.r, this.g, this.b);
+      avg = (this.r + this.g + this.b) / 3;
+      amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
+      if (this.r !== max) {
+        this.r += (max - this.r) * amt;
+      }
+      if (this.g !== max) {
+        this.g += (max - this.g) * amt;
+      }
+      if (this.b !== max) {
+        return this.b += (max - this.b) * amt;
+      }
+    });
+  });
+  Caman.Renderer.register('greyscale', function(adjust) {
+    return new Caman.Filter(function() {
+      return this.r = this.g = this.b = Caman.Calculate.luminance(this.r, this.g, this.b);
+    });
+  });
+  Caman.Renderer.register('contrast', function(adjust) {
+    adjust = Math.pow((adjust + 100) / 100, 2);
+    return new Caman.Filter(function() {
+      this.r = ((((this.r / 255) - 0.5) * adjust) + 0.5) * 255;
+      this.g = ((((this.g / 255) - 0.5) * adjust) + 0.5) * 255;
+      return this.b = ((((this.b / 255) - 0.5) * adjust) + 0.5) * 255;
+    });
+  });
+  return Caman.Renderer.register('hue', function(adjust) {
+    return new Caman.Filter(function() {
+      var h, s, v, _ref, _ref1;
+      _ref = Caman.Color.rgbToHSV(this.r, this.g, this.b), h = _ref[0], s = _ref[1], v = _ref[2];
+      h = (((h * 100) + Math.abs(adjust)) % 100) / 100;
+      return _ref1 = Caman.Color.hsvToRGB(h, s, v), this.r = _ref1[0], this.g = _ref1[1], this.b = _ref1[2], _ref1;
+    });
+  });
 };
 
 
-},{}],"caman":[function(require,module,exports){
-module.exports=require('065tJr');
 },{}],"065tJr":[function(require,module,exports){
 var Caman, Context, Module, RSVP, _,
   __hasProp = {}.hasOwnProperty,
@@ -8623,6 +8660,8 @@ module.exports = Caman = (function(_super) {
   Caman.Renderer = require('./caman/renderer.coffee');
 
   Caman.Filter = require('./caman/filter.coffee');
+
+  Caman.Calculate = require('./caman/calculate.coffee');
 
   Caman.Color = require('./caman/color.coffee');
 
@@ -8676,7 +8715,17 @@ module.exports = Caman = (function(_super) {
 require('./caman-lib.coffee')(Caman);
 
 
-},{"./caman-lib.coffee":6,"./caman/color.coffee":10,"./caman/context.coffee":11,"./caman/filter.coffee":12,"./caman/init.coffee":13,"./caman/renderer.coffee":14,"coffeescript-module":2,"lodash":4,"rsvp":5}],10:[function(require,module,exports){
+},{"./caman-lib.coffee":6,"./caman/calculate.coffee":10,"./caman/color.coffee":11,"./caman/context.coffee":12,"./caman/filter.coffee":13,"./caman/init.coffee":14,"./caman/renderer.coffee":15,"coffeescript-module":2,"lodash":4,"rsvp":5}],"caman":[function(require,module,exports){
+module.exports=require('065tJr');
+},{}],10:[function(require,module,exports){
+module.exports = {
+  luminance: function(r, g, b) {
+    return (0.299 * r) + (0.587 * g) + (0.114 * b);
+  }
+};
+
+
+},{}],11:[function(require,module,exports){
 module.exports = {
   hexToRGB: function(hex) {
     var b, g, r;
@@ -8687,11 +8736,78 @@ module.exports = {
     g = parseInt(hex.substr(2, 2), 16);
     b = parseInt(hex.substr(4, 2), 16);
     return [r, g, b];
+  },
+  rgbToHSV: function(r, g, b) {
+    var d, h, max, min, s, v;
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    max = Math.max(r, g, b);
+    min = Math.min(r, g, b);
+    v = max;
+    d = max - min;
+    s = max === 0 ? 0 : d / max;
+    if (max === min) {
+      h = 0;
+    } else {
+      h = (function() {
+        switch (max) {
+          case r:
+            return (g - b) / d + (g < b ? 6 : 0);
+          case g:
+            return (b - r) / d + 2;
+          case b:
+            return (r - g) / d + 4;
+        }
+      })();
+      h /= 6;
+    }
+    return [h, s, v];
+  },
+  hsvToRGB: function(h, s, v) {
+    var b, f, g, i, p, q, r, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+      case 0:
+        r = v;
+        g = t;
+        b = p;
+        break;
+      case 1:
+        r = q;
+        g = v;
+        b = p;
+        break;
+      case 2:
+        r = p;
+        g = v;
+        b = t;
+        break;
+      case 3:
+        r = p;
+        g = q;
+        b = v;
+        break;
+      case 4:
+        r = t;
+        g = p;
+        b = v;
+        break;
+      case 5:
+        r = v;
+        g = p;
+        b = q;
+    }
+    return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
   }
 };
 
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var Context, Module, Renderer,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -8728,7 +8844,7 @@ module.exports = Context = (function(_super) {
 })(Module);
 
 
-},{"./renderer.coffee":14,"coffeescript-module":2}],12:[function(require,module,exports){
+},{"./renderer.coffee":15,"coffeescript-module":2}],13:[function(require,module,exports){
 var Filter;
 
 module.exports = Filter = (function() {
@@ -8754,7 +8870,7 @@ module.exports = Filter = (function() {
 })();
 
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var RSVP;
 
 RSVP = require('rsvp');
@@ -8809,7 +8925,7 @@ module.exports = {
 };
 
 
-},{"rsvp":5}],14:[function(require,module,exports){
+},{"rsvp":5}],15:[function(require,module,exports){
 var RSVP, Renderer,
   __slice = [].slice;
 

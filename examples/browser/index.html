@@ -5,7 +5,7 @@
   <script type="text/javascript" src="../../dist/caman.js"></script>
 
   <script type="text/javascript">
-  Caman = require('caman');
+  var Caman = require('caman');
 
   Caman.fromURL("../images/test1_640.jpg").then(function (caman) {
     caman.attach("#test-canvas");
@@ -13,7 +13,7 @@
     var start = new Date();
     caman.pipeline(function () {
       this.brightness(20);
-      this.saturation(-100);
+      this.contrast(40);
     }).then(function () {
       console.log("Rendered!");
       console.log((new Date()) - start + "ms")
