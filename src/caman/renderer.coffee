@@ -1,7 +1,7 @@
 RSVP = require 'rsvp'
 
 module.exports = class Renderer
-  @filter: (processName, processFunc) ->
+  @register: (processName, processFunc) ->
     @::[processName] = (args...) ->
       @enqueue processFunc.apply(@, args)
 

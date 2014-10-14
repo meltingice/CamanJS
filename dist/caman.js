@@ -8554,13 +8554,46 @@ module.exports = function(Caman) {
 
 
 },{"./caman-lib/filters.coffee":7}],7:[function(require,module,exports){
+var __slice = [].slice;
+
 module.exports = function(Caman) {
-  return Caman.Renderer.filter('brightness', function(adjust) {
+  Caman.Renderer.register('brightness', function(adjust) {
     adjust = Math.floor(255 * (adjust / 100));
     return new Caman.Filter(function() {
       this.r += adjust;
       this.g += adjust;
       return this.b += adjust;
+    });
+  });
+  Caman.Renderer.register('fillColor', function() {
+    var args, color;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    if (args.length === 1) {
+      color = Caman.Color.hexToRGB(args[0]);
+    } else {
+      color = args;
+    }
+    return new Caman.Filter(function() {
+      this.r = color[0];
+      this.g = color[1];
+      this.b = color[2];
+      return this.a = 255;
+    });
+  });
+  return Caman.Renderer.register('saturation', function(adjust) {
+    adjust *= -0.01;
+    return new Caman.Filter(function() {
+      var max;
+      max = Math.max(this.r, this.g, this.b);
+      if (this.r !== max) {
+        this.r += (max - this.r) * adjust;
+      }
+      if (this.g !== max) {
+        this.g += (max - this.g) * adjust;
+      }
+      if (this.b !== max) {
+        return this.b += (max - this.b) * adjust;
+      }
     });
   });
 };
@@ -8590,6 +8623,8 @@ module.exports = Caman = (function(_super) {
   Caman.Renderer = require('./caman/renderer.coffee');
 
   Caman.Filter = require('./caman/filter.coffee');
+
+  Caman.Color = require('./caman/color.coffee');
 
   Caman["extends"](require('./caman/init.coffee'));
 
@@ -8641,7 +8676,22 @@ module.exports = Caman = (function(_super) {
 require('./caman-lib.coffee')(Caman);
 
 
-},{"./caman-lib.coffee":6,"./caman/context.coffee":10,"./caman/filter.coffee":11,"./caman/init.coffee":12,"./caman/renderer.coffee":13,"coffeescript-module":2,"lodash":4,"rsvp":5}],10:[function(require,module,exports){
+},{"./caman-lib.coffee":6,"./caman/color.coffee":10,"./caman/context.coffee":11,"./caman/filter.coffee":12,"./caman/init.coffee":13,"./caman/renderer.coffee":14,"coffeescript-module":2,"lodash":4,"rsvp":5}],10:[function(require,module,exports){
+module.exports = {
+  hexToRGB: function(hex) {
+    var b, g, r;
+    if (hex.charAt(0) === "#") {
+      hex = hex.substr(1);
+    }
+    r = parseInt(hex.substr(0, 2), 16);
+    g = parseInt(hex.substr(2, 2), 16);
+    b = parseInt(hex.substr(4, 2), 16);
+    return [r, g, b];
+  }
+};
+
+
+},{}],11:[function(require,module,exports){
 var Context, Module, Renderer,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -8678,7 +8728,7 @@ module.exports = Context = (function(_super) {
 })(Module);
 
 
-},{"./renderer.coffee":13,"coffeescript-module":2}],11:[function(require,module,exports){
+},{"./renderer.coffee":14,"coffeescript-module":2}],12:[function(require,module,exports){
 var Filter;
 
 module.exports = Filter = (function() {
@@ -8704,7 +8754,7 @@ module.exports = Filter = (function() {
 })();
 
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var RSVP;
 
 RSVP = require('rsvp');
@@ -8759,14 +8809,14 @@ module.exports = {
 };
 
 
-},{"rsvp":5}],13:[function(require,module,exports){
+},{"rsvp":5}],14:[function(require,module,exports){
 var RSVP, Renderer,
   __slice = [].slice;
 
 RSVP = require('rsvp');
 
 module.exports = Renderer = (function() {
-  Renderer.filter = function(processName, processFunc) {
+  Renderer.register = function(processName, processFunc) {
     return this.prototype[processName] = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];

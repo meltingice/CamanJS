@@ -7,6 +7,8 @@ Context = require './caman/context.coffee'
 module.exports = class Caman extends Module
   @Renderer: require('./caman/renderer.coffee')
   @Filter: require('./caman/filter.coffee')
+  @Color: require('./caman/color.coffee')
+
   @extends require('./caman/init.coffee')
 
   DEFAULT_PIPELINE_OPTS =
