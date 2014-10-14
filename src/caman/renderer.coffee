@@ -4,6 +4,7 @@ module.exports = class Renderer
   @register: (processName, processFunc) ->
     @::[processName] = (args...) ->
       @enqueue processFunc.apply(@, args)
+      return @
 
   constructor: (@context) ->
     @renderQueue = []

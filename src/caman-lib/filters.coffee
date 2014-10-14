@@ -81,3 +81,66 @@ module.exports = (Caman) ->
       @g = Math.min(255, (@r * (0.349 * adjust)) + (@g * (1 - (0.314 * adjust))) + (@b * (0.168 * adjust)))
       @b = Math.min(255, (@r * (0.272 * adjust)) + (@g * (0.534 * adjust)) + (@b * (1- (0.869 * adjust))))
 
+  Caman.Renderer.register 'gamma', (adjust) ->
+    new Caman.Filter ->
+      @r = Math.pow(@r / 255, adjust) * 255
+      @g = Math.pow(@g / 255, adjust) * 255
+      @b = Math.pow(@b / 255, adjust) * 255
+
+  Caman.Renderer.register 'noise', (adjust) ->
+    max = Math.abs(adjust) * 2.55
+    min = max * -1
+    new Caman.Filter ->
+      rand = Caman.Calculate.randomRange(min, max)
+      @r += rand
+      @g += rand
+      @b += rand
+
+  Caman.Renderer.register 'clip', (adjust) ->
+    adjust = Math.abs(adjust) * 2.55
+    max = 255 - adjust
+    min = adjust
+    new Caman.Filter ->
+      if @r > max
+        @r = 255
+      else if @r < min
+        @r = 0
+
+      if @g > max
+        @g = 255
+      else if @g < min
+        @g = 0
+
+      if @b > max
+        @b = 255
+      else if @b < min
+        @b = 0
+
+  Caman.Renderer.register 'channels', (options) ->
+    for own chan, value of options
+      if value is 0
+        delete options[chan]
+        continue
+
+      options[chan] /= 100
+
+    return if Object.keys(options).length is 0
+
+    new Caman.Filter ->
+      if options.red?
+        if options.red > 0
+          @r += (255 - @r) * options.red
+        else
+          @r -= @r * Math.abs(options.red)
+
+      if options.green?
+        if options.green > 0
+          @g += (255 - @g) * options.green
+        else
+          @g -= @g * Math.abs(options.green)
+
+      if options.blue?
+        if options.blue > 0
+          @b += (255 - @b) * options.blue
+        else
+          @b -= @b * Math.abs(options.blue)

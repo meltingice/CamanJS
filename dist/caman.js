@@ -8554,7 +8554,8 @@ module.exports = function(Caman) {
 
 
 },{"./caman-lib/filters.coffee":7}],7:[function(require,module,exports){
-var __slice = [].slice;
+var __slice = [].slice,
+  __hasProp = {}.hasOwnProperty;
 
 module.exports = function(Caman) {
   Caman.Renderer.register('brightness', function(adjust) {
@@ -8658,12 +8659,92 @@ module.exports = function(Caman) {
       return this.b = 255 - this.b;
     });
   });
-  return Caman.Renderer.register('sepia', function(adjust) {
+  Caman.Renderer.register('sepia', function(adjust) {
     adjust /= 100;
     return new Caman.Filter(function() {
       this.r = Math.min(255, (this.r * (1 - (0.607 * adjust))) + (this.g * (0.769 * adjust)) + (this.b * (0.189 * adjust)));
       this.g = Math.min(255, (this.r * (0.349 * adjust)) + (this.g * (1 - (0.314 * adjust))) + (this.b * (0.168 * adjust)));
       return this.b = Math.min(255, (this.r * (0.272 * adjust)) + (this.g * (0.534 * adjust)) + (this.b * (1 - (0.869 * adjust))));
+    });
+  });
+  Caman.Renderer.register('gamma', function(adjust) {
+    return new Caman.Filter(function() {
+      this.r = Math.pow(this.r / 255, adjust) * 255;
+      this.g = Math.pow(this.g / 255, adjust) * 255;
+      return this.b = Math.pow(this.b / 255, adjust) * 255;
+    });
+  });
+  Caman.Renderer.register('noise', function(adjust) {
+    var max, min;
+    max = Math.abs(adjust) * 2.55;
+    min = max * -1;
+    return new Caman.Filter(function() {
+      var rand;
+      rand = Caman.Calculate.randomRange(min, max);
+      this.r += rand;
+      this.g += rand;
+      return this.b += rand;
+    });
+  });
+  Caman.Renderer.register('clip', function(adjust) {
+    var max, min;
+    adjust = Math.abs(adjust) * 2.55;
+    max = 255 - adjust;
+    min = adjust;
+    return new Caman.Filter(function() {
+      if (this.r > max) {
+        this.r = 255;
+      } else if (this.r < min) {
+        this.r = 0;
+      }
+      if (this.g > max) {
+        this.g = 255;
+      } else if (this.g < min) {
+        this.g = 0;
+      }
+      if (this.b > max) {
+        return this.b = 255;
+      } else if (this.b < min) {
+        return this.b = 0;
+      }
+    });
+  });
+  return Caman.Renderer.register('channels', function(options) {
+    var chan, value;
+    for (chan in options) {
+      if (!__hasProp.call(options, chan)) continue;
+      value = options[chan];
+      if (value === 0) {
+        delete options[chan];
+        continue;
+      }
+      options[chan] /= 100;
+    }
+    if (Object.keys(options).length === 0) {
+      return;
+    }
+    return new Caman.Filter(function() {
+      if (options.red != null) {
+        if (options.red > 0) {
+          this.r += (255 - this.r) * options.red;
+        } else {
+          this.r -= this.r * Math.abs(options.red);
+        }
+      }
+      if (options.green != null) {
+        if (options.green > 0) {
+          this.g += (255 - this.g) * options.green;
+        } else {
+          this.g -= this.g * Math.abs(options.green);
+        }
+      }
+      if (options.blue != null) {
+        if (options.blue > 0) {
+          return this.b += (255 - this.b) * options.blue;
+        } else {
+          return this.b -= this.b * Math.abs(options.blue);
+        }
+      }
     });
   });
 };
@@ -8752,6 +8833,18 @@ module.exports=require('065tJr');
 module.exports = {
   luminance: function(r, g, b) {
     return (0.299 * r) + (0.587 * g) + (0.114 * b);
+  },
+  randomRange: function(min, max, getFloat) {
+    var rand;
+    if (getFloat == null) {
+      getFloat = false;
+    }
+    rand = min + (Math.random() * (max - min));
+    if (getFloat) {
+      return rand.toFixed(getFloat);
+    } else {
+      return Math.round(rand);
+    }
   }
 };
 
@@ -8967,7 +9060,8 @@ module.exports = Renderer = (function() {
     return this.prototype[processName] = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      return this.enqueue(processFunc.apply(this, args));
+      this.enqueue(processFunc.apply(this, args));
+      return this;
     };
   };
 
