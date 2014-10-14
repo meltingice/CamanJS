@@ -2,19 +2,17 @@
 <html lang="en">
 <head>
   <title>CamanJS Examples</title>
-  <script type="text/javascript" src="../../dist/caman.full.js"></script>
+  <script type="text/javascript" src="../../dist/caman.js"></script>
 
   <script type="text/javascript">
-  Caman.DEBUG = ('console' in window);
-  Caman("#test-image", function() {
-    this.sunrise();
-    this.render();
-  });
+  Caman = require('caman');
 
-  // Caman("#test-canvas", "../images/test1_640.jpg", function () {
-  //   this.sunrise();
-  //   this.render();
-  // });
+  Caman.fromURL("../images/test1_640.jpg").then(function (caman) {
+    caman.attach("#test-canvas");
+    caman.pipeline(function () {
+      this.brightness(5);
+    });
+  });
   </script>
 </head>
 <body>
@@ -24,7 +22,6 @@
   <table>
     <tr>
       <td>
-       	<img id="test-image" src="../images/test1_640.jpg" />
         <canvas id="test-canvas"></canvas>
       </td>
     </tr>

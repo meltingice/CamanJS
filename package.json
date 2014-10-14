@@ -48,10 +48,15 @@
   },
   "dependencies": {
     "canvas": "*",
-    "fibers": "*"
+    "fibers": "*",
+    "coffeescript-module": "~ 0.2.1",
+    "lodash": "~ 2.4",
+    "rsvp": "~ 3.0"
   },
   "devDependencies": {
-    "coffee-script": ">= 1.6.1",
+    "browserify": "~ 3.46",
+    "coffeeify": "~ 0.6.0",
+    "coffee-script": "~ 1.7",
     "docco": "0.6.2",
     "codo": "*",
     "jsmin": "*",
