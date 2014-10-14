@@ -8547,7 +8547,26 @@ exports.Module = Module = (function() {
     }
 }).call(this);
 }).call(this,require("FWaASH"))
-},{"FWaASH":1}],"caman":[function(require,module,exports){
+},{"FWaASH":1}],6:[function(require,module,exports){
+module.exports = function(Caman) {
+  return require('./caman-lib/filters.coffee')(Caman);
+};
+
+
+},{"./caman-lib/filters.coffee":7}],7:[function(require,module,exports){
+module.exports = function(Caman) {
+  return Caman.Renderer.filter('brightness', function(adjust) {
+    adjust = Math.floor(255 * (adjust / 100));
+    return new Caman.Filter(function() {
+      this.r += adjust;
+      this.g += adjust;
+      return this.b += adjust;
+    });
+  });
+};
+
+
+},{}],"caman":[function(require,module,exports){
 module.exports=require('065tJr');
 },{}],"065tJr":[function(require,module,exports){
 var Caman, Context, Module, RSVP, _,
@@ -8619,17 +8638,10 @@ module.exports = Caman = (function(_super) {
 
 })(Module);
 
-Caman.Renderer.filter('brightness', function(adjust) {
-  adjust = Math.floor(255 * (adjust / 100));
-  return new Caman.Filter(function() {
-    this.r += adjust;
-    this.g += adjust;
-    return this.b += adjust;
-  });
-});
+require('./caman-lib.coffee')(Caman);
 
 
-},{"./caman/context.coffee":8,"./caman/filter.coffee":9,"./caman/init.coffee":10,"./caman/renderer.coffee":11,"coffeescript-module":2,"lodash":4,"rsvp":5}],8:[function(require,module,exports){
+},{"./caman-lib.coffee":6,"./caman/context.coffee":10,"./caman/filter.coffee":11,"./caman/init.coffee":12,"./caman/renderer.coffee":13,"coffeescript-module":2,"lodash":4,"rsvp":5}],10:[function(require,module,exports){
 var Context, Module, Renderer,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -8666,7 +8678,7 @@ module.exports = Context = (function(_super) {
 })(Module);
 
 
-},{"./renderer.coffee":11,"coffeescript-module":2}],9:[function(require,module,exports){
+},{"./renderer.coffee":13,"coffeescript-module":2}],11:[function(require,module,exports){
 var Filter;
 
 module.exports = Filter = (function() {
@@ -8692,7 +8704,7 @@ module.exports = Filter = (function() {
 })();
 
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var RSVP;
 
 RSVP = require('rsvp');
@@ -8747,7 +8759,7 @@ module.exports = {
 };
 
 
-},{"rsvp":5}],11:[function(require,module,exports){
+},{"rsvp":5}],13:[function(require,module,exports){
 var RSVP, Renderer,
   __slice = [].slice;
 

@@ -36,11 +36,4 @@ module.exports = class Caman extends Module
 
   render: -> @context.renderer.render()
 
-# Temporary
-Caman.Renderer.filter 'brightness', (adjust) ->
-  adjust = Math.floor 255 * (adjust / 100)
-
-  new Caman.Filter ->
-    @r += adjust
-    @g += adjust
-    @b += adjust
+require('./caman-lib.coffee')(Caman)
