@@ -8,10 +8,13 @@ module.exports = class Context extends Module
     @context = @canvas.getContext '2d'
     @width = @canvas.width
     @height = @canvas.height
-    @renderer = new Renderer(@)
-
     @load()
+    
+    @renderer = new Renderer(@)
 
   load: ->
     @imageData = @context.getImageData 0, 0, @width, @height
     @pixelData = @imageData.data
+
+  update: ->
+    @context.putImageData @imageData, 0, 0

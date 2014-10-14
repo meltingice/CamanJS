@@ -10,7 +10,9 @@
   Caman.fromURL("../images/test1_640.jpg").then(function (caman) {
     caman.attach("#test-canvas");
     caman.pipeline(function () {
-      this.brightness(5);
+      this.brightness(50);
+    }).then(function () {
+      console.log("Rendered!");
     });
   });
   </script>

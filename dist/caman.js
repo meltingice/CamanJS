@@ -8648,13 +8648,17 @@ module.exports = Context = (function(_super) {
     this.context = this.canvas.getContext('2d');
     this.width = this.canvas.width;
     this.height = this.canvas.height;
-    this.renderer = new Renderer(this);
     this.load();
+    this.renderer = new Renderer(this);
   }
 
   Context.prototype.load = function() {
     this.imageData = this.context.getImageData(0, 0, this.width, this.height);
     return this.pixelData = this.imageData.data;
+  };
+
+  Context.prototype.update = function() {
+    return this.context.putImageData(this.imageData, 0, 0);
   };
 
   return Context;
@@ -8668,6 +8672,8 @@ var Filter;
 module.exports = Filter = (function() {
   function Filter(processFunc) {
     this.processFunc = processFunc;
+    this.r = this.g = this.b = 0;
+    this.a = 255;
   }
 
   Filter.prototype.setPixel = function(r, g, b, a) {
@@ -8742,8 +8748,10 @@ module.exports = {
 
 
 },{"rsvp":5}],11:[function(require,module,exports){
-var Renderer,
+var RSVP, Renderer,
   __slice = [].slice;
+
+RSVP = require('rsvp');
 
 module.exports = Renderer = (function() {
   Renderer.filter = function(processName, processFunc) {
@@ -8757,6 +8765,7 @@ module.exports = Renderer = (function() {
   function Renderer(context) {
     this.context = context;
     this.renderQueue = [];
+    this.pixelData = this.context.pixelData;
   }
 
   Renderer.prototype.enqueue = function(item) {
@@ -8764,7 +8773,28 @@ module.exports = Renderer = (function() {
   };
 
   Renderer.prototype.render = function() {
-    return console.log(this.renderQueue);
+    return new RSVP.Promise((function(_this) {
+      return function(resolve, reject) {
+        while (_this.renderQueue.length !== 0) {
+          _this.processJob(_this.renderQueue.shift());
+        }
+        _this.context.update();
+        return resolve(_this);
+      };
+    })(this));
+  };
+
+  Renderer.prototype.processJob = function(job) {
+    var i, _i, _ref;
+    for (i = _i = 0, _ref = this.pixelData.length; _i < _ref; i = _i += 4) {
+      job.setPixel(this.pixelData[i], this.pixelData[i + 1], this.pixelData[i + 2], this.pixelData[i + 3]);
+      job.execute();
+      this.pixelData[i] = job.r;
+      this.pixelData[i + 1] = job.g;
+      this.pixelData[i + 2] = job.b;
+      this.pixelData[i + 3] = job.a;
+    }
+    return true;
   };
 
   return Renderer;
@@ -8772,4 +8802,4 @@ module.exports = Renderer = (function() {
 })();
 
 
-},{}]},{},[])
+},{"rsvp":5}]},{},[])
