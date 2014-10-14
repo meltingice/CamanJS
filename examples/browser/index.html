@@ -12,8 +12,9 @@
     
     var start = new Date();
     caman.pipeline(function () {
-      this.brightness(20);
+      this.brightness(10);
       this.contrast(40);
+      this.colorize('#e58711', 50);
     }).then(function () {
       console.log("Rendered!");
       console.log((new Date()) - start + "ms")

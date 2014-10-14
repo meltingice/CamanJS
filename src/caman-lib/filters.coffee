@@ -55,3 +55,16 @@ module.exports = (Caman) ->
       h = (((h * 100) + Math.abs(adjust)) % 100) / 100
       [@r, @g, @b] = Caman.Color.hsvToRGB(h, s, v)
 
+  Caman.Renderer.register 'colorize', (args...) ->
+    if args.length is 2
+      rgb = Caman.Color.hexToRGB(args[0])
+      level = args[1] / 100
+    else
+      rgb = args[0..2]
+      level = args[3] / 100
+
+    new Caman.Filter ->
+      @r -= (@r - rgb[0]) * level
+      @g -= (@g - rgb[1]) * level
+      @b -= (@b - rgb[2]) * level
+

@@ -8627,12 +8627,28 @@ module.exports = function(Caman) {
       return this.b = ((((this.b / 255) - 0.5) * adjust) + 0.5) * 255;
     });
   });
-  return Caman.Renderer.register('hue', function(adjust) {
+  Caman.Renderer.register('hue', function(adjust) {
     return new Caman.Filter(function() {
       var h, s, v, _ref, _ref1;
       _ref = Caman.Color.rgbToHSV(this.r, this.g, this.b), h = _ref[0], s = _ref[1], v = _ref[2];
       h = (((h * 100) + Math.abs(adjust)) % 100) / 100;
       return _ref1 = Caman.Color.hsvToRGB(h, s, v), this.r = _ref1[0], this.g = _ref1[1], this.b = _ref1[2], _ref1;
+    });
+  });
+  return Caman.Renderer.register('colorize', function() {
+    var args, level, rgb;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    if (args.length === 2) {
+      rgb = Caman.Color.hexToRGB(args[0]);
+      level = args[1] / 100;
+    } else {
+      rgb = args.slice(0, 3);
+      level = args[3] / 100;
+    }
+    return new Caman.Filter(function() {
+      this.r -= (this.r - rgb[0]) * level;
+      this.g -= (this.g - rgb[1]) * level;
+      return this.b -= (this.b - rgb[2]) * level;
     });
   });
 };
