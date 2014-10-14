@@ -68,3 +68,16 @@ module.exports = (Caman) ->
       @g -= (@g - rgb[1]) * level
       @b -= (@b - rgb[2]) * level
 
+  Caman.Renderer.register 'invert', ->
+    new Caman.Filter ->
+      @r = 255 - @r
+      @g = 255 - @g
+      @b = 255 - @b
+
+  Caman.Renderer.register 'sepia', (adjust) ->
+    adjust /= 100
+    new Caman.Filter ->
+      @r = Math.min(255, (@r * (1 - (0.607 * adjust))) + (@g * (0.769 * adjust)) + (@b * (0.189 * adjust)))
+      @g = Math.min(255, (@r * (0.349 * adjust)) + (@g * (1 - (0.314 * adjust))) + (@b * (0.168 * adjust)))
+      @b = Math.min(255, (@r * (0.272 * adjust)) + (@g * (0.534 * adjust)) + (@b * (1- (0.869 * adjust))))
+

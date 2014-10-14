@@ -8635,7 +8635,7 @@ module.exports = function(Caman) {
       return _ref1 = Caman.Color.hsvToRGB(h, s, v), this.r = _ref1[0], this.g = _ref1[1], this.b = _ref1[2], _ref1;
     });
   });
-  return Caman.Renderer.register('colorize', function() {
+  Caman.Renderer.register('colorize', function() {
     var args, level, rgb;
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     if (args.length === 2) {
@@ -8649,6 +8649,21 @@ module.exports = function(Caman) {
       this.r -= (this.r - rgb[0]) * level;
       this.g -= (this.g - rgb[1]) * level;
       return this.b -= (this.b - rgb[2]) * level;
+    });
+  });
+  Caman.Renderer.register('invert', function() {
+    return new Caman.Filter(function() {
+      this.r = 255 - this.r;
+      this.g = 255 - this.g;
+      return this.b = 255 - this.b;
+    });
+  });
+  return Caman.Renderer.register('sepia', function(adjust) {
+    adjust /= 100;
+    return new Caman.Filter(function() {
+      this.r = Math.min(255, (this.r * (1 - (0.607 * adjust))) + (this.g * (0.769 * adjust)) + (this.b * (0.189 * adjust)));
+      this.g = Math.min(255, (this.r * (0.349 * adjust)) + (this.g * (1 - (0.314 * adjust))) + (this.b * (0.168 * adjust)));
+      return this.b = Math.min(255, (this.r * (0.272 * adjust)) + (this.g * (0.534 * adjust)) + (this.b * (1 - (0.869 * adjust))));
     });
   });
 };
