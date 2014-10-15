@@ -4,6 +4,9 @@ RSVP = require 'rsvp'
 
 Context = require './caman/context.coffee'
 
+RSVP.on 'error', (reason) ->
+  console.assert(false, reason.stack)
+
 module.exports = class Caman extends Module
   @Renderer: require('./caman/renderer.coffee')
   @Filter: require('./caman/filter.coffee')

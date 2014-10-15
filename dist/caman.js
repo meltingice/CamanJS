@@ -8809,7 +8809,9 @@ module.exports = function(Caman) {
 };
 
 
-},{"lodash":4}],"065tJr":[function(require,module,exports){
+},{"lodash":4}],"caman":[function(require,module,exports){
+module.exports=require('065tJr');
+},{}],"065tJr":[function(require,module,exports){
 var Caman, Context, Module, RSVP, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -8822,6 +8824,10 @@ RSVP = require('rsvp');
 Module = require('coffeescript-module').Module;
 
 Context = require('./caman/context.coffee');
+
+RSVP.on('error', function(reason) {
+  return console.assert(false, reason.stack);
+});
 
 module.exports = Caman = (function(_super) {
   var DEFAULT_PIPELINE_OPTS;
@@ -8886,9 +8892,7 @@ module.exports = Caman = (function(_super) {
 require('./caman-lib.coffee')(Caman);
 
 
-},{"./caman-lib.coffee":6,"./caman/calculate.coffee":10,"./caman/color.coffee":11,"./caman/context.coffee":12,"./caman/filter.coffee":13,"./caman/init.coffee":14,"./caman/renderer.coffee":15,"coffeescript-module":2,"lodash":4,"rsvp":5}],"caman":[function(require,module,exports){
-module.exports=require('065tJr');
-},{}],10:[function(require,module,exports){
+},{"./caman-lib.coffee":6,"./caman/calculate.coffee":10,"./caman/color.coffee":11,"./caman/context.coffee":12,"./caman/filter.coffee":13,"./caman/init.coffee":14,"./caman/renderer.coffee":16,"coffeescript-module":2,"lodash":4,"rsvp":5}],10:[function(require,module,exports){
 var Calculate;
 
 module.exports = Calculate = (function() {
@@ -9152,7 +9156,7 @@ module.exports = Context = (function(_super) {
 })(Module);
 
 
-},{"./renderer.coffee":15,"coffeescript-module":2}],13:[function(require,module,exports){
+},{"./renderer.coffee":16,"coffeescript-module":2}],13:[function(require,module,exports){
 var Filter;
 
 module.exports = Filter = (function() {
@@ -9234,10 +9238,52 @@ module.exports = {
 
 
 },{"rsvp":5}],15:[function(require,module,exports){
-var RSVP, Renderer,
+var RSVP, RenderWorker;
+
+RSVP = require('rsvp');
+
+module.exports = RenderWorker = (function() {
+  function RenderWorker(context, id, start, end) {
+    this.context = context;
+    this.id = id;
+    this.start = start;
+    this.end = end;
+    this.pixelData = this.context.pixelData;
+  }
+
+  RenderWorker.prototype.process = function(job) {
+    console.log("Worker " + this.id + " - rendering " + job.name);
+    return new RSVP.Promise((function(_this) {
+      return function(resolve, reject) {
+        return setTimeout(function() {
+          var i, processor, _i, _ref, _ref1;
+          processor = job.item;
+          for (i = _i = _ref = _this.start, _ref1 = _this.end; _i < _ref1; i = _i += 4) {
+            processor.setPixel(_this.pixelData[i], _this.pixelData[i + 1], _this.pixelData[i + 2], _this.pixelData[i + 3]);
+            processor.execute();
+            _this.pixelData[i] = processor.r;
+            _this.pixelData[i + 1] = processor.g;
+            _this.pixelData[i + 2] = processor.b;
+            _this.pixelData[i + 3] = processor.a;
+          }
+          return resolve(_this.id);
+        }, 0);
+      };
+    })(this));
+  };
+
+  return RenderWorker;
+
+})();
+
+
+},{"rsvp":5}],16:[function(require,module,exports){
+var RSVP, RenderWorker, Renderer,
   __slice = [].slice;
 
 RSVP = require('rsvp');
+
+RenderWorker = require('./render_worker.coffee');
 
 module.exports = Renderer = (function() {
   Renderer.register = function(processName, processFunc) {
@@ -9257,11 +9303,30 @@ module.exports = Renderer = (function() {
     };
   };
 
+  Renderer.Blocks = 1;
+
   function Renderer(context) {
     this.context = context;
     this.renderQueue = [];
     this.pixelData = this.context.pixelData;
+    this.workers = [];
+    this.createWorkers();
   }
+
+  Renderer.prototype.createWorkers = function() {
+    var blockN, blockPixelLength, end, i, lastBlockN, n, start, _i, _ref, _results;
+    n = this.pixelData.length;
+    blockPixelLength = Math.floor((n / 4) / Renderer.Blocks);
+    blockN = blockPixelLength * 4;
+    lastBlockN = blockN + ((n / 4) % Renderer.Blocks) * 4;
+    _results = [];
+    for (i = _i = 0, _ref = Renderer.Blocks; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+      start = i * blockN;
+      end = start + (i === Renderer.Blocks - 1 ? lastBlockN : blockN);
+      _results.push(this.workers.push(new RenderWorker(this.context, i, start, end)));
+    }
+    return _results;
+  };
 
   Renderer.prototype.enqueue = function(name, item) {
     return this.renderQueue.push({
@@ -9271,30 +9336,26 @@ module.exports = Renderer = (function() {
   };
 
   Renderer.prototype.render = function() {
-    return new RSVP.Promise((function(_this) {
-      return function(resolve, reject) {
-        var job;
-        while (_this.renderQueue.length !== 0) {
-          job = _this.renderQueue.shift();
-          _this.processJob(job.item);
-        }
-        _this.context.update();
-        return resolve(_this);
+    return this.processNext().then((function(_this) {
+      return function() {
+        return _this.context.update();
       };
     })(this));
   };
 
-  Renderer.prototype.processJob = function(job) {
-    var i, _i, _ref;
-    for (i = _i = 0, _ref = this.pixelData.length; _i < _ref; i = _i += 4) {
-      job.setPixel(this.pixelData[i], this.pixelData[i + 1], this.pixelData[i + 2], this.pixelData[i + 3]);
-      job.execute();
-      this.pixelData[i] = job.r;
-      this.pixelData[i + 1] = job.g;
-      this.pixelData[i + 2] = job.b;
-      this.pixelData[i + 3] = job.a;
+  Renderer.prototype.processNext = function() {
+    var job;
+    if (this.renderQueue.length === 0) {
+      return;
     }
-    return true;
+    job = this.renderQueue.shift();
+    return RSVP.all(this.workers.map(function(w) {
+      return w.process(job);
+    })).then((function(_this) {
+      return function() {
+        return _this.processNext();
+      };
+    })(this));
   };
 
   return Renderer;
@@ -9302,4 +9363,4 @@ module.exports = Renderer = (function() {
 })();
 
 
-},{"rsvp":5}]},{},[])
+},{"./render_worker.coffee":15,"rsvp":5}]},{},[])
