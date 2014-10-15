@@ -183,3 +183,15 @@ module.exports = (Caman) ->
       # Now that we have the bezier curve, we do a basic hashmap lookup
       # to find and replace color values.
       @[chan] = bezier[@[chan]] for chan in chans
+
+  Caman.Renderer.registerAlias 'exposure', (adjust) ->
+    p = Math.abs(adjust) / 100
+
+    ctrl1 = [0, 255 * p]
+    ctrl2 = [255 - (255 * p), 255]
+
+    if adjust < 0
+      ctrl1 = ctrl1.reverse()
+      ctrl2 = ctrl2.reverse()
+
+    @curves 'rgb', [0, 0], ctrl1, ctrl2, [255, 255]

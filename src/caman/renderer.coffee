@@ -3,20 +3,27 @@ RSVP = require 'rsvp'
 module.exports = class Renderer
   @register: (processName, processFunc) ->
     @::[processName] = (args...) ->
-      @enqueue processFunc.apply(@, args)
+      @enqueue processName, processFunc.apply(@, args)
       return @
+
+  # Use this if your filter finishes by enqueuing a different filter
+  @registerAlias: (processName, processFunc) ->
+    @::[processName] = (args...) ->
+      processFunc.apply(@, args)
 
   constructor: (@context) ->
     @renderQueue = []
     @pixelData = @context.pixelData
 
-  enqueue: (item) ->
-    @renderQueue.push item
+  enqueue: (name, item) ->
+    @renderQueue.push {name: name, item: item}
 
   render: ->
     new RSVP.Promise (resolve, reject) =>
       until @renderQueue.length is 0
-        @processJob @renderQueue.shift()
+        job = @renderQueue.shift()
+        # console.log "Applying #{job.name}"
+        @processJob job.item
 
       @context.update()
 

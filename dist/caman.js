@@ -8750,7 +8750,7 @@ module.exports = function(Caman) {
       }
     });
   });
-  return Caman.Renderer.register('curves', function() {
+  Caman.Renderer.register('curves', function() {
     var algo, bezier, chans, cps, end, i, last, start, _i, _j, _ref, _ref1;
     chans = arguments[0], cps = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     last = _.last(cps);
@@ -8794,6 +8794,17 @@ module.exports = function(Caman) {
       }
       return _results;
     });
+  });
+  return Caman.Renderer.registerAlias('exposure', function(adjust) {
+    var ctrl1, ctrl2, p;
+    p = Math.abs(adjust) / 100;
+    ctrl1 = [0, 255 * p];
+    ctrl2 = [255 - (255 * p), 255];
+    if (adjust < 0) {
+      ctrl1 = ctrl1.reverse();
+      ctrl2 = ctrl2.reverse();
+    }
+    return this.curves('rgb', [0, 0], ctrl1, ctrl2, [255, 255]);
   });
 };
 
@@ -9233,8 +9244,16 @@ module.exports = Renderer = (function() {
     return this.prototype[processName] = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      this.enqueue(processFunc.apply(this, args));
+      this.enqueue(processName, processFunc.apply(this, args));
       return this;
+    };
+  };
+
+  Renderer.registerAlias = function(processName, processFunc) {
+    return this.prototype[processName] = function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return processFunc.apply(this, args);
     };
   };
 
@@ -9244,15 +9263,20 @@ module.exports = Renderer = (function() {
     this.pixelData = this.context.pixelData;
   }
 
-  Renderer.prototype.enqueue = function(item) {
-    return this.renderQueue.push(item);
+  Renderer.prototype.enqueue = function(name, item) {
+    return this.renderQueue.push({
+      name: name,
+      item: item
+    });
   };
 
   Renderer.prototype.render = function() {
     return new RSVP.Promise((function(_this) {
       return function(resolve, reject) {
+        var job;
         while (_this.renderQueue.length !== 0) {
-          _this.processJob(_this.renderQueue.shift());
+          job = _this.renderQueue.shift();
+          _this.processJob(job.item);
         }
         _this.context.update();
         return resolve(_this);
