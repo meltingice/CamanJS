@@ -8554,8 +8554,11 @@ module.exports = function(Caman) {
 
 
 },{"./caman-lib/filters.coffee":7}],7:[function(require,module,exports){
-var __slice = [].slice,
+var _,
+  __slice = [].slice,
   __hasProp = {}.hasOwnProperty;
+
+_ = require('lodash');
 
 module.exports = function(Caman) {
   Caman.Renderer.register('brightness', function(adjust) {
@@ -8709,7 +8712,7 @@ module.exports = function(Caman) {
       }
     });
   });
-  return Caman.Renderer.register('channels', function(options) {
+  Caman.Renderer.register('channels', function(options) {
     var chan, value;
     for (chan in options) {
       if (!__hasProp.call(options, chan)) continue;
@@ -8747,10 +8750,55 @@ module.exports = function(Caman) {
       }
     });
   });
+  return Caman.Renderer.register('curves', function() {
+    var algo, bezier, chans, cps, end, i, last, start, _i, _j, _ref, _ref1;
+    chans = arguments[0], cps = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    last = _.last(cps);
+    if (typeof last === "function") {
+      algo = last;
+      cps.pop();
+    } else if (typeof last === "string") {
+      algo = Caman.Calculate[last];
+      cps.pop();
+    } else {
+      algo = Caman.Calculate.bezier;
+    }
+    if (typeof chans === "string") {
+      chans = chans.split("");
+    }
+    if (chans[0] === "v") {
+      chans = ['r', 'g', 'b'];
+    }
+    if (cps.length < 2) {
+      throw "Invalid number of arguments to curves filter";
+    }
+    bezier = algo(cps, 0, 255);
+    start = cps[0];
+    if (start[0] > 0) {
+      for (i = _i = 0, _ref = start[0]; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        bezier[i] = start[1];
+      }
+    }
+    end = cps[cps.length - 1];
+    if (end[0] < 255) {
+      for (i = _j = _ref1 = end[0]; _ref1 <= 255 ? _j <= 255 : _j >= 255; i = _ref1 <= 255 ? ++_j : --_j) {
+        bezier[i] = end[1];
+      }
+    }
+    return new Caman.Filter(function() {
+      var chan, _k, _len, _results;
+      _results = [];
+      for (_k = 0, _len = chans.length; _k < _len; _k++) {
+        chan = chans[_k];
+        _results.push(this[chan] = bezier[this[chan]]);
+      }
+      return _results;
+    });
+  });
 };
 
 
-},{}],"065tJr":[function(require,module,exports){
+},{"lodash":4}],"065tJr":[function(require,module,exports){
 var Caman, Context, Module, RSVP, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -8830,11 +8878,16 @@ require('./caman-lib.coffee')(Caman);
 },{"./caman-lib.coffee":6,"./caman/calculate.coffee":10,"./caman/color.coffee":11,"./caman/context.coffee":12,"./caman/filter.coffee":13,"./caman/init.coffee":14,"./caman/renderer.coffee":15,"coffeescript-module":2,"lodash":4,"rsvp":5}],"caman":[function(require,module,exports){
 module.exports=require('065tJr');
 },{}],10:[function(require,module,exports){
-module.exports = {
-  luminance: function(r, g, b) {
+var Calculate;
+
+module.exports = Calculate = (function() {
+  function Calculate() {}
+
+  Calculate.luminance = function(r, g, b) {
     return (0.299 * r) + (0.587 * g) + (0.114 * b);
-  },
-  randomRange: function(min, max, getFloat) {
+  };
+
+  Calculate.randomRange = function(min, max, getFloat) {
     var rand;
     if (getFloat == null) {
       getFloat = false;
@@ -8845,8 +8898,128 @@ module.exports = {
     } else {
       return Math.round(rand);
     }
-  }
-};
+  };
+
+  Calculate.bezier = function(controlPoints, lowBound, highBound) {
+    var bezier, clamp, endX, i, j, lerp, next, prev, t, _i, _j, _ref;
+    if (lowBound == null) {
+      lowBound = 0;
+    }
+    if (highBound == null) {
+      highBound = 255;
+    }
+    if (controlPoints.length < 2) {
+      throw "Invalid number of arguments to bezier";
+    }
+    bezier = {};
+    lerp = function(a, b, t) {
+      return a * (1 - t) + b * t;
+    };
+    clamp = function(a, min, max) {
+      return Math.min(Math.max(a, min), max);
+    };
+    for (i = _i = 0; _i < 1000; i = ++_i) {
+      t = i / 1000;
+      prev = controlPoints;
+      while (prev.length > 1) {
+        next = [];
+        for (j = _j = 0, _ref = prev.length - 2; 0 <= _ref ? _j <= _ref : _j >= _ref; j = 0 <= _ref ? ++_j : --_j) {
+          next.push([lerp(prev[j][0], prev[j + 1][0], t), lerp(prev[j][1], prev[j + 1][1], t)]);
+        }
+        prev = next;
+      }
+      bezier[Math.round(prev[0][0])] = Math.round(clamp(prev[0][1], lowBound, highBound));
+    }
+    endX = controlPoints[controlPoints.length - 1][0];
+    bezier = Calculate.missingValues(bezier, endX);
+    if (bezier[endX] == null) {
+      bezier[endX] = bezier[endX - 1];
+    }
+    return bezier;
+  };
+
+  Calculate.hermite = function(controlPoints, lowBound, highBound) {
+    var add, clamp, count, endX, fac0, fac1, fac2, fac3, i, j, lerp, m0, m1, mul, p, p0, p1, pointsPerSegment, pointsPerStep, pos, ret, sub, t, _i, _j, _ref;
+    if (controlPoints.length < 2) {
+      throw "Invalid number of arguments to hermite";
+    }
+    ret = {};
+    lerp = function(a, b, t) {
+      return a * (1 - t) + b * t;
+    };
+    add = (function(_this) {
+      return function(a, b, c, d) {
+        return [a[0] + b[0] + c[0] + d[0], a[1] + b[1] + c[1] + d[1]];
+      };
+    })(this);
+    mul = (function(_this) {
+      return function(a, b) {
+        return [a[0] * b[0], a[1] * b[1]];
+      };
+    })(this);
+    sub = (function(_this) {
+      return function(a, b) {
+        return [a[0] - b[0], a[1] - b[1]];
+      };
+    })(this);
+    clamp = function(a, min, max) {
+      return Math.min(Math.max(a, min), max);
+    };
+    count = 0;
+    for (i = _i = 0, _ref = controlPoints.length - 2; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+      p0 = controlPoints[i];
+      p1 = controlPoints[i + 1];
+      pointsPerSegment = p1[0] - p0[0];
+      pointsPerStep = 1 / pointsPerSegment;
+      if (i === controlPoints.length - 2) {
+        pointsPerStep = 1 / (pointsPerSegment - 1);
+      }
+      p = i > 0 ? controlPoints[i - 1] : p0;
+      m0 = mul(sub(p1, p), [0.5, 0.5]);
+      p = i < controlPoints.length - 2 ? controlPoints[i + 2] : p1;
+      m1 = mul(sub(p, p0), [0.5, 0.5]);
+      for (j = _j = 0; 0 <= pointsPerSegment ? _j <= pointsPerSegment : _j >= pointsPerSegment; j = 0 <= pointsPerSegment ? ++_j : --_j) {
+        t = j * pointsPerStep;
+        fac0 = 2.0 * t * t * t - 3.0 * t * t + 1.0;
+        fac1 = t * t * t - 2.0 * t * t + t;
+        fac2 = -2.0 * t * t * t + 3.0 * t * t;
+        fac3 = t * t * t - t * t;
+        pos = add(mul(p0, [fac0, fac0]), mul(m0, [fac1, fac1]), mul(p1, [fac2, fac2]), mul(m1, [fac3, fac3]));
+        ret[Math.round(pos[0])] = Math.round(clamp(pos[1], lowBound, highBound));
+        count += 1;
+      }
+    }
+    endX = controlPoints[controlPoints.length - 1][0];
+    ret = Calculate.missingValues(ret, endX);
+    return ret;
+  };
+
+  Calculate.missingValues = function(values, endX) {
+    var i, j, leftCoord, ret, rightCoord, _i, _j;
+    if (Object.keys(values).length < endX + 1) {
+      ret = {};
+      for (i = _i = 0; 0 <= endX ? _i <= endX : _i >= endX; i = 0 <= endX ? ++_i : --_i) {
+        if (values[i] != null) {
+          ret[i] = values[i];
+        } else {
+          leftCoord = [i - 1, ret[i - 1]];
+          for (j = _j = i; i <= endX ? _j <= endX : _j >= endX; j = i <= endX ? ++_j : --_j) {
+            if (values[j] != null) {
+              rightCoord = [j, values[j]];
+              break;
+            }
+          }
+          ret[i] = leftCoord[1] + ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) * (i - leftCoord[0]);
+        }
+      }
+      return ret;
+    }
+    return values;
+  };
+
+  return Calculate;
+
+})();
 
 
 },{}],11:[function(require,module,exports){

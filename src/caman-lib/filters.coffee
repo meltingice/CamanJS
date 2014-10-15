@@ -1,3 +1,5 @@
+_ = require 'lodash'
+
 module.exports = (Caman) ->
   Caman.Renderer.register 'brightness', (adjust) ->
     adjust = Math.floor 255 * (adjust / 100)
@@ -144,3 +146,40 @@ module.exports = (Caman) ->
           @b += (255 - @b) * options.blue
         else
           @b -= @b * Math.abs(options.blue)
+
+  Caman.Renderer.register 'curves', (chans, cps...) ->
+    last = _.last cps
+
+    if typeof last is "function"
+      algo = last
+      cps.pop()
+    else if typeof last is "string"
+      algo = Caman.Calculate[last]
+      cps.pop()
+    else
+      algo = Caman.Calculate.bezier
+
+    # If channels are in a string, split to an array
+    chans = chans.split("") if typeof chans is "string"
+    chans = ['r', 'g', 'b'] if chans[0] == "v"
+
+    if cps.length < 2
+      # might want to give a warning now
+      throw "Invalid number of arguments to curves filter"
+
+    # Generate a curve
+    bezier = algo cps, 0, 255
+
+    # If the curve starts after x = 0, initialize it with a flat line
+    # until the curve begins.
+    start = cps[0]
+    bezier[i] = start[1] for i in [0...start[0]] if start[0] > 0
+
+    # ... and the same with the end point
+    end = cps[cps.length - 1]
+    bezier[i] = end[1] for i in [end[0]..255] if end[0] < 255
+
+    new Caman.Filter ->
+      # Now that we have the bezier curve, we do a basic hashmap lookup
+      # to find and replace color values.
+      @[chan] = bezier[@[chan]] for chan in chans
