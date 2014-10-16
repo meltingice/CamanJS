@@ -41,11 +41,12 @@ module.exports = class KernelFilter extends Filter
     true
   
   processKernel: ->
+    r = g = b = 0
     for i in [0...@userKernel.length]
-      @r += @userKernel[i] * @currentKernel[i * 3]
-      @g += @userKernel[i] * @currentKernel[i * 3 + 1]
-      @b += @userKernel[i] * @currentKernel[i * 3 + 2]
+      r += @userKernel[i] * @currentKernel[i * 3]
+      g += @userKernel[i] * @currentKernel[i * 3 + 1]
+      b += @userKernel[i] * @currentKernel[i * 3 + 2]
 
-    @r = (@r / @divisor) + @bias
-    @g = (@g / @divisor) + @bias
-    @b = (@b / @divisor) + @bias
+    @r = (r / @divisor) + @bias
+    @g = (g / @divisor) + @bias
+    @b = (b / @divisor) + @bias

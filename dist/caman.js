@@ -8556,8 +8556,34 @@ module.exports = function(Caman) {
 
 },{"./caman-lib/convolution.coffee":7,"./caman-lib/filters.coffee":8}],7:[function(require,module,exports){
 module.exports = function(Caman) {
-  return Caman.Renderer.register('boxBlur', function() {
+  Caman.Renderer.register('boxBlur', function() {
     return new Caman.KernelFilter([1, 1, 1, 1, 1, 1, 1, 1, 1]);
+  });
+  Caman.Renderer.register('heavyRadialBlur', function() {
+    return new Caman.KernelFilter([0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0]);
+  });
+  Caman.Renderer.register('gaussianBlur', function() {
+    return new Caman.KernelFilter([1, 4, 6, 4, 1, 4, 16, 24, 16, 4, 6, 24, 36, 24, 6, 4, 16, 24, 16, 4, 1, 4, 6, 4, 1]);
+  });
+  Caman.Renderer.register('motionBlur', function(degrees) {
+    var kernel;
+    if (degrees === 0 || degrees === 180) {
+      kernel = [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0];
+    } else if ((degrees > 0 && degrees < 90) || (degrees > 180 && degrees < 270)) {
+      kernel = [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0];
+    } else if (degrees === 90 || degrees === 270) {
+      kernel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    } else {
+      kernel = [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1];
+    }
+    return new Caman.KernelFilter(kernel);
+  });
+  return Caman.Renderer.register('sharpen', function(amt) {
+    if (amt == null) {
+      amt = 100;
+    }
+    amt /= 100;
+    return new Caman.KernelFilter([0, -amt, 0, -amt, 4 * amt + 1, -amt, 0, -amt, 0]);
   });
 };
 
@@ -9384,15 +9410,16 @@ module.exports = KernelFilter = (function(_super) {
   };
 
   KernelFilter.prototype.processKernel = function() {
-    var i, _i, _ref;
+    var b, g, i, r, _i, _ref;
+    r = g = b = 0;
     for (i = _i = 0, _ref = this.userKernel.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-      this.r += this.userKernel[i] * this.currentKernel[i * 3];
-      this.g += this.userKernel[i] * this.currentKernel[i * 3 + 1];
-      this.b += this.userKernel[i] * this.currentKernel[i * 3 + 2];
+      r += this.userKernel[i] * this.currentKernel[i * 3];
+      g += this.userKernel[i] * this.currentKernel[i * 3 + 1];
+      b += this.userKernel[i] * this.currentKernel[i * 3 + 2];
     }
-    this.r = (this.r / this.divisor) + this.bias;
-    this.g = (this.g / this.divisor) + this.bias;
-    return this.b = (this.b / this.divisor) + this.bias;
+    this.r = (r / this.divisor) + this.bias;
+    this.g = (g / this.divisor) + this.bias;
+    return this.b = (b / this.divisor) + this.bias;
   };
 
   return KernelFilter;
