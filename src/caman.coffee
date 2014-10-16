@@ -21,10 +21,7 @@ module.exports = class Caman extends Module
 
   constructor: (canvas) ->
     @context = new Context(canvas)
-    
-    Object.defineProperty @, 'canvas',
-      enumerable: true
-      get: => @context.canvas
+    @canvas = @context.canvas
 
   attach: (dest) ->
     dest = if typeof dest is "object" then dest else document.querySelector(dest)

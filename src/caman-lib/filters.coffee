@@ -1,13 +1,6 @@
 _ = require 'lodash'
 
 module.exports = (Caman) ->
-  Caman.Renderer.register 'boxBlur', ->
-    new Caman.KernelFilter [
-      1, 1, 1,
-      1, 1, 1,
-      1, 1, 1
-    ]
-
   Caman.Renderer.register 'brightness', (adjust) ->
     adjust = Math.floor 255 * (adjust / 100)
 
