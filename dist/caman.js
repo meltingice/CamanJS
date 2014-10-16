@@ -9254,24 +9254,18 @@ module.exports = RenderWorker = (function() {
   }
 
   RenderWorker.prototype.process = function(job) {
-    console.log("Worker " + this.id + " - rendering " + job.name);
-    return new RSVP.Promise((function(_this) {
-      return function(resolve, reject) {
-        return setTimeout(function() {
-          var i, processor, _i, _ref, _ref1;
-          processor = job.item;
-          for (i = _i = _ref = _this.start, _ref1 = _this.end; _i < _ref1; i = _i += 4) {
-            processor.setPixel(i, _this.pixelData[i], _this.pixelData[i + 1], _this.pixelData[i + 2], _this.pixelData[i + 3]);
-            processor.execute();
-            _this.pixelData[i] = processor.r;
-            _this.pixelData[i + 1] = processor.g;
-            _this.pixelData[i + 2] = processor.b;
-            _this.pixelData[i + 3] = processor.a;
-          }
-          return resolve(_this.id);
-        }, 0);
-      };
-    })(this));
+    var i, processor, _i, _ref, _ref1, _results;
+    processor = job.item;
+    _results = [];
+    for (i = _i = _ref = this.start, _ref1 = this.end; _i < _ref1; i = _i += 4) {
+      processor.setPixel(i, this.pixelData[i], this.pixelData[i + 1], this.pixelData[i + 2], this.pixelData[i + 3]);
+      processor.execute();
+      this.pixelData[i] = processor.r;
+      this.pixelData[i + 1] = processor.g;
+      this.pixelData[i + 2] = processor.b;
+      _results.push(this.pixelData[i + 3] = processor.a);
+    }
+    return _results;
   };
 
   return RenderWorker;
@@ -9338,26 +9332,29 @@ module.exports = Renderer = (function() {
   };
 
   Renderer.prototype.render = function() {
-    return this.processNext().then((function(_this) {
-      return function() {
-        return _this.context.update();
+    return new RSVP.Promise((function(_this) {
+      return function(resolve, reject) {
+        return setTimeout(function() {
+          while (_this.renderQueue.length !== 0) {
+            _this.processNext();
+          }
+          _this.context.update();
+          return resolve();
+        }, 0);
       };
     })(this));
   };
 
   Renderer.prototype.processNext = function() {
-    var job;
-    if (this.renderQueue.length === 0) {
-      return;
-    }
+    var job, worker, _i, _len, _ref, _results;
     job = this.renderQueue.shift();
-    return RSVP.all(this.workers.map(function(w) {
-      return w.process(job);
-    })).then((function(_this) {
-      return function() {
-        return _this.processNext();
-      };
-    })(this));
+    _ref = this.workers;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      worker = _ref[_i];
+      _results.push(worker.process(job));
+    }
+    return _results;
   };
 
   return Renderer;

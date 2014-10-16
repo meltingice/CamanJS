@@ -37,14 +37,14 @@ module.exports = class Renderer
     @renderQueue.push name: name, item: item
 
   render: ->
-    @processNext().then => @context.update()
+    new RSVP.Promise (resolve, reject) =>
+      setTimeout =>
+        @processNext() until @renderQueue.length is 0
+        @context.update()
+        resolve()
+      , 0
 
   processNext: ->
-    return if @renderQueue.length is 0
-
     job = @renderQueue.shift()
-    
-    RSVP.all(@workers.map (w) ->
-      w.process(job)
-    ).then => @processNext()
+    worker.process(job) for worker in @workers
 
