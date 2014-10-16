@@ -9162,11 +9162,13 @@ var Filter;
 module.exports = Filter = (function() {
   function Filter(processFunc) {
     this.processFunc = processFunc;
+    this.loc = 0;
     this.r = this.g = this.b = 0;
     this.a = 255;
   }
 
-  Filter.prototype.setPixel = function(r, g, b, a) {
+  Filter.prototype.setPixel = function(loc, r, g, b, a) {
+    this.loc = loc;
     this.r = r;
     this.g = g;
     this.b = b;
@@ -9259,7 +9261,7 @@ module.exports = RenderWorker = (function() {
           var i, processor, _i, _ref, _ref1;
           processor = job.item;
           for (i = _i = _ref = _this.start, _ref1 = _this.end; _i < _ref1; i = _i += 4) {
-            processor.setPixel(_this.pixelData[i], _this.pixelData[i + 1], _this.pixelData[i + 2], _this.pixelData[i + 3]);
+            processor.setPixel(i, _this.pixelData[i], _this.pixelData[i + 1], _this.pixelData[i + 2], _this.pixelData[i + 3]);
             processor.execute();
             _this.pixelData[i] = processor.r;
             _this.pixelData[i + 1] = processor.g;

@@ -11,7 +11,7 @@ module.exports = class RenderWorker
         processor = job.item
         
         for i in [@start...@end] by 4
-          processor.setPixel @pixelData[i],
+          processor.setPixel i, @pixelData[i],
             @pixelData[i+1],
             @pixelData[i+2],
             @pixelData[i+3]
