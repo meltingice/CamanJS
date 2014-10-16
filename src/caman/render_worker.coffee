@@ -7,6 +7,7 @@ module.exports = class RenderWorker
   process: (job) ->
     # console.log "Worker #{@id} - rendering #{job.name}"
     processor = job.item
+    processor.setup()
     
     for i in [@start...@end] by 4
       processor.setPixel i, @pixelData[i],
@@ -16,7 +17,4 @@ module.exports = class RenderWorker
 
       processor.execute()
 
-      @pixelData[i]   = processor.r
-      @pixelData[i+1] = processor.g
-      @pixelData[i+2] = processor.b
-      @pixelData[i+3] = processor.a
+    processor.finish()

@@ -20,6 +20,7 @@
       this.noise(10);
       this.channels({red: 10, green: -20, blue: 40});
       this.exposure(-20);
+      this.boxBlur();
     }).then(function () {
       console.log("Rendered!");
       console.log((new Date()) - start + "ms")

@@ -10,6 +10,7 @@ RSVP.on 'error', (reason) ->
 module.exports = class Caman extends Module
   @Renderer: require('./caman/renderer.coffee')
   @Filter: require('./caman/filter.coffee')
+  @KernelFilter: require('./caman/kernel_filter.coffee')
   @Calculate: require('./caman/calculate.coffee')
   @Color: require('./caman/color.coffee')
 

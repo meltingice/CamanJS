@@ -46,5 +46,6 @@ module.exports = class Renderer
 
   processNext: ->
     job = @renderQueue.shift()
+    job.item.setContext(@context)
     worker.process(job) for worker in @workers
 

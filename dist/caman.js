@@ -8561,6 +8561,9 @@ var _,
 _ = require('lodash');
 
 module.exports = function(Caman) {
+  Caman.Renderer.register('boxBlur', function() {
+    return new Caman.KernelFilter([1, 1, 1, 1, 1, 1, 1, 1, 1]);
+  });
   Caman.Renderer.register('brightness', function(adjust) {
     adjust = Math.floor(255 * (adjust / 100));
     return new Caman.Filter(function() {
@@ -8809,9 +8812,7 @@ module.exports = function(Caman) {
 };
 
 
-},{"lodash":4}],"caman":[function(require,module,exports){
-module.exports=require('065tJr');
-},{}],"065tJr":[function(require,module,exports){
+},{"lodash":4}],"065tJr":[function(require,module,exports){
 var Caman, Context, Module, RSVP, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -8837,6 +8838,8 @@ module.exports = Caman = (function(_super) {
   Caman.Renderer = require('./caman/renderer.coffee');
 
   Caman.Filter = require('./caman/filter.coffee');
+
+  Caman.KernelFilter = require('./caman/kernel_filter.coffee');
 
   Caman.Calculate = require('./caman/calculate.coffee');
 
@@ -8892,7 +8895,9 @@ module.exports = Caman = (function(_super) {
 require('./caman-lib.coffee')(Caman);
 
 
-},{"./caman-lib.coffee":6,"./caman/calculate.coffee":10,"./caman/color.coffee":11,"./caman/context.coffee":12,"./caman/filter.coffee":13,"./caman/init.coffee":14,"./caman/renderer.coffee":16,"coffeescript-module":2,"lodash":4,"rsvp":5}],10:[function(require,module,exports){
+},{"./caman-lib.coffee":6,"./caman/calculate.coffee":10,"./caman/color.coffee":11,"./caman/context.coffee":12,"./caman/filter.coffee":13,"./caman/init.coffee":14,"./caman/kernel_filter.coffee":15,"./caman/renderer.coffee":17,"coffeescript-module":2,"lodash":4,"rsvp":5}],"caman":[function(require,module,exports){
+module.exports=require('065tJr');
+},{}],10:[function(require,module,exports){
 var Calculate;
 
 module.exports = Calculate = (function() {
@@ -9156,16 +9161,25 @@ module.exports = Context = (function(_super) {
 })(Module);
 
 
-},{"./renderer.coffee":16,"coffeescript-module":2}],13:[function(require,module,exports){
+},{"./renderer.coffee":17,"coffeescript-module":2}],13:[function(require,module,exports){
 var Filter;
 
 module.exports = Filter = (function() {
   function Filter(processFunc) {
     this.processFunc = processFunc;
+    this.context = null;
+    this.pixelData = null;
     this.loc = 0;
     this.r = this.g = this.b = 0;
     this.a = 255;
   }
+
+  Filter.prototype.setContext = function(context) {
+    this.context = context;
+    this.pixelData = this.context.pixelData;
+    this.width = this.context.width;
+    return this.height = this.context.height;
+  };
 
   Filter.prototype.setPixel = function(loc, r, g, b, a) {
     this.loc = loc;
@@ -9175,8 +9189,75 @@ module.exports = Filter = (function() {
     this.a = a;
   };
 
+  Filter.prototype.setup = function() {};
+
   Filter.prototype.execute = function() {
-    return this.processFunc.call(this);
+    this.processFunc.call(this);
+    this.pixelData[this.loc] = this.r;
+    this.pixelData[this.loc + 1] = this.g;
+    this.pixelData[this.loc + 2] = this.b;
+    return this.pixelData[this.loc + 3] = this.a;
+  };
+
+  Filter.prototype.finish = function() {};
+
+  Filter.prototype.coordinatesToLocation = function(x, y, width) {
+    return (y * width + x) * 4;
+  };
+
+  Filter.prototype.locationToCoordinates = function(loc, width) {
+    var x, y;
+    y = Math.floor(loc / (width * 4));
+    x = (loc % (width * 4)) / 4;
+    return [x, y];
+  };
+
+  Filter.prototype.locationXY = function() {
+    var x, y;
+    y = Math.floor(this.loc / (this.context.width * 4));
+    x = (this.loc % (this.context.width * 4)) / 4;
+    return [x, y];
+  };
+
+  Filter.prototype.pixelAtLocation = function(loc) {
+    return [this.pixelData[loc], this.pixelData[loc + 1], this.pixelData[loc + 2], this.pixelData[loc + 3]];
+  };
+
+  Filter.prototype.getPixelRelative = function(horiz, vert) {
+    var newLoc;
+    newLoc = this.loc + (this.width * 4 * vert) + (4 * horiz);
+    if (newLoc > this.pixelData.length || newLoc < 0) {
+      return [0, 0, 0, 255];
+    }
+    return this.pixelAtLocation(newLoc);
+  };
+
+  Filter.prototype.putPixelRelative = function(horiz, vert, rgba) {
+    var nowLoc;
+    nowLoc = this.loc + (this.width * 4 * vert) + (4 * horiz);
+    if (newLoc > this.pixelData.length || newLoc < 0) {
+      return;
+    }
+    this.pixelData[newLoc] = rgba.r;
+    this.pixelData[newLoc + 1] = rgba.g;
+    this.pixelData[newLoc + 2] = rgba.b;
+    this.pixelData[newLoc + 3] = rgba.a;
+    return true;
+  };
+
+  Filter.prototype.getPixel = function(x, y) {
+    var loc;
+    loc = this.coordinatesToLocation(x, y, this.width);
+    return this.pixelAtLocation(loc);
+  };
+
+  Filter.prototype.putPixel = function(x, y, rgba) {
+    var loc;
+    loc = this.coordinatesToLocation(x, y, this.width);
+    this.pixelData[loc] = rgba.r;
+    this.pixelData[loc + 1] = rgba.g;
+    this.pixelData[loc + 2] = rgba.b;
+    return this.pixelData[loc + 3] = rgba.a;
   };
 
   return Filter;
@@ -9240,6 +9321,87 @@ module.exports = {
 
 
 },{"rsvp":5}],15:[function(require,module,exports){
+var Filter, KernelFilter,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+Filter = require('./filter.coffee');
+
+module.exports = KernelFilter = (function(_super) {
+  __extends(KernelFilter, _super);
+
+  function KernelFilter(userKernel, divisor, bias) {
+    var i, _i, _ref;
+    this.userKernel = userKernel;
+    this.divisor = divisor != null ? divisor : 0;
+    this.bias = bias != null ? bias : 0;
+    if (this.divisor === 0) {
+      for (i = _i = 0, _ref = this.userKernel.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        this.divisor += this.userKernel[i];
+      }
+    }
+    this.userKernelSize = Math.sqrt(this.userKernel.length);
+    this.builder = (this.userKernelSize - 1) / 2;
+    this.currentKernel = [];
+    KernelFilter.__super__.constructor.call(this, null);
+  }
+
+  KernelFilter.prototype.setup = function() {
+    return this.targetData = new Uint8ClampedArray(this.pixelData.length);
+  };
+
+  KernelFilter.prototype.execute = function() {
+    this.generateKernel();
+    this.processKernel();
+    this.targetData[this.loc] = this.r;
+    this.targetData[this.loc + 1] = this.g;
+    this.targetData[this.loc + 2] = this.b;
+    return this.targetData[this.loc + 3] = this.pixelData[this.loc + 3];
+  };
+
+  KernelFilter.prototype.finish = function() {
+    var i, p, _i, _len, _ref;
+    _ref = this.targetData;
+    for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+      p = _ref[i];
+      this.pixelData[i] = p;
+    }
+    return this.targetData = null;
+  };
+
+  KernelFilter.prototype.generateKernel = function() {
+    var builderIndex, i, j, p, _i, _j, _ref, _ref1, _ref2, _ref3;
+    builderIndex = 0;
+    for (i = _i = _ref = -this.builder, _ref1 = this.builder; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = _ref <= _ref1 ? ++_i : --_i) {
+      for (j = _j = _ref2 = this.builder, _ref3 = -this.builder; _ref2 <= _ref3 ? _j <= _ref3 : _j >= _ref3; j = _ref2 <= _ref3 ? ++_j : --_j) {
+        p = this.getPixelRelative(i, j);
+        this.currentKernel[builderIndex * 3] = p[0];
+        this.currentKernel[builderIndex * 3 + 1] = p[1];
+        this.currentKernel[builderIndex * 3 + 2] = p[2];
+        builderIndex++;
+      }
+    }
+    return true;
+  };
+
+  KernelFilter.prototype.processKernel = function() {
+    var i, _i, _ref;
+    for (i = _i = 0, _ref = this.userKernel.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+      this.r += this.userKernel[i] * this.currentKernel[i * 3];
+      this.g += this.userKernel[i] * this.currentKernel[i * 3 + 1];
+      this.b += this.userKernel[i] * this.currentKernel[i * 3 + 2];
+    }
+    this.r = (this.r / this.divisor) + this.bias;
+    this.g = (this.g / this.divisor) + this.bias;
+    return this.b = (this.b / this.divisor) + this.bias;
+  };
+
+  return KernelFilter;
+
+})(Filter);
+
+
+},{"./filter.coffee":13}],16:[function(require,module,exports){
 var RSVP, RenderWorker;
 
 RSVP = require('rsvp');
@@ -9254,18 +9416,14 @@ module.exports = RenderWorker = (function() {
   }
 
   RenderWorker.prototype.process = function(job) {
-    var i, processor, _i, _ref, _ref1, _results;
+    var i, processor, _i, _ref, _ref1;
     processor = job.item;
-    _results = [];
+    processor.setup();
     for (i = _i = _ref = this.start, _ref1 = this.end; _i < _ref1; i = _i += 4) {
       processor.setPixel(i, this.pixelData[i], this.pixelData[i + 1], this.pixelData[i + 2], this.pixelData[i + 3]);
       processor.execute();
-      this.pixelData[i] = processor.r;
-      this.pixelData[i + 1] = processor.g;
-      this.pixelData[i + 2] = processor.b;
-      _results.push(this.pixelData[i + 3] = processor.a);
     }
-    return _results;
+    return processor.finish();
   };
 
   return RenderWorker;
@@ -9273,7 +9431,7 @@ module.exports = RenderWorker = (function() {
 })();
 
 
-},{"rsvp":5}],16:[function(require,module,exports){
+},{"rsvp":5}],17:[function(require,module,exports){
 var RSVP, RenderWorker, Renderer,
   __slice = [].slice;
 
@@ -9348,6 +9506,7 @@ module.exports = Renderer = (function() {
   Renderer.prototype.processNext = function() {
     var job, worker, _i, _len, _ref, _results;
     job = this.renderQueue.shift();
+    job.item.setContext(this.context);
     _ref = this.workers;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -9362,4 +9521,4 @@ module.exports = Renderer = (function() {
 })();
 
 
-},{"./render_worker.coffee":15,"rsvp":5}]},{},[])
+},{"./render_worker.coffee":16,"rsvp":5}]},{},[])
