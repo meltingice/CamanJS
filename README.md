@@ -43,7 +43,7 @@ Version 4 introduces better support for HiDPI (Retina) displays. It allows you t
 
 ## Upgrading to Version 4
 
-There is only 1 breaking change that occured with the version 4 release. When you initialize CamanJS with a canvas and an image, the parameter order has changed. It is now:
+There is only 1 breaking change that occurred with the version 4 release. When you initialize CamanJS with a canvas and an image, the parameter order has changed. It is now:
 
 ``` javascript
 Caman("#canvas-id", "/path/to/image.png", function() {});
