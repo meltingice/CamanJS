@@ -133,6 +133,9 @@ class Caman extends Module
       @cropped = false
       @resized = false
 
+      @rotated = false
+      @rotationAngle = 0
+
       @pixelStack = []  # Stores the pixel layers
       @layerStack = []  # Stores all of the layers waiting to be rendered
       @canvasQueue = [] # Stores all of the canvases to be processed
@@ -567,6 +570,36 @@ class Caman extends Module
 
       pixelData = ctx.getImageData(0, 0, @width, @height).data
       width = @width
+    else if @rotated
+      canvas = document.createElement('canvas')
+      canvas.width = @originalWidth
+      canvas.height = @originalHeight
+
+      ctx = canvas.getContext('2d')
+      imageData = ctx.getImageData 0, 0, canvas.width, canvas.height
+      pixelData = imageData.data
+
+      pixelData[i] = pixel for pixel, i in @originalPixelData
+
+      ctx.putImageData imageData, 0, 0
+
+      rotatedCanvas = document.createElement('canvas')
+      rotatedCanvas.width = @width
+      rotatedCanvas.height = @height
+      rotatedCanvasCtx = rotatedCanvas.getContext('2d')
+      rotatedCanvas.width = @canvas.width
+      rotatedCanvas.height = @canvas.height
+      x = rotatedCanvas.width / 2
+      y = rotatedCanvas.height / 2
+
+      rotatedCanvasCtx.save()
+      rotatedCanvasCtx.translate x, y
+      rotatedCanvasCtx.rotate @rotationAngle * Math.PI / 180
+      rotatedCanvasCtx.drawImage canvas, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height
+      rotatedCanvasCtx.restore()
+
+      pixelData = rotatedCanvasCtx.getImageData(0, 0, rotatedCanvas.width, rotatedCanvas.height).data
+      width = rotatedCanvas.width
     else
       pixelData = @originalPixelData
       width = @originalWidth
