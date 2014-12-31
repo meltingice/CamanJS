@@ -394,11 +394,16 @@
       this.image = this.initObj;
       this.canvas = document.createElement('canvas');
       this.context = this.canvas.getContext('2d');
+      this.renderingCanvas = document.createElement('canvas');
+      this.renderingContext = this.renderingCanvas.getContext('2d');
       Util.copyAttributes(this.image, this.canvas, {
         except: ['src']
       });
+      Util.copyAttributes(this.image, this.renderingCanvas, {
+        except: ['src']
+      });
       if (this.image.parentNode != null) {
-        this.image.parentNode.replaceChild(this.canvas, this.image);
+        this.image.parentNode.replaceChild(this.renderingCanvas, this.image);
       }
       this.imageAdjustments();
       return this.waitForImageLoaded();
@@ -407,6 +412,8 @@
     Caman.prototype.initCanvas = function() {
       this.canvas = this.initObj;
       this.context = this.canvas.getContext('2d');
+      this.renderingCanvas = document.createElement('canvas');
+      this.renderingContext = this.renderingCanvas.getContext('2d');
       if (this.imageUrl != null) {
         this.image = document.createElement('img');
         this.image.src = this.imageUrl;
@@ -460,9 +467,13 @@
       if (this.swapped) {
         this.canvas.width = this.imageWidth() / this.hiDPIRatio();
         this.canvas.height = this.imageHeight() / this.hiDPIRatio();
+        this.renderingCanvas.width = this.imageWidth() / this.hiDPIRatio();
+        this.renderingCanvas.height = this.imageHeight() / this.hiDPIRatio();
       } else {
         this.canvas.width = this.imageWidth();
         this.canvas.height = this.imageHeight();
+        this.renderingCanvas.width = this.imageWidth();
+        this.renderingCanvas.height = this.imageHeight();
       }
       return this.finishInit();
     };
@@ -480,6 +491,7 @@
       }
       if (this.image != null) {
         this.context.drawImage(this.image, 0, 0, this.imageWidth(), this.imageHeight(), 0, 0, this.preScaledWidth, this.preScaledHeight);
+        this.renderingContext.drawImage(this.image, 0, 0, this.imageWidth(), this.imageHeight(), 0, 0, this.preScaledWidth, this.preScaledHeight);
       }
       this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
       this.pixelData = this.imageData.data;
@@ -586,12 +598,20 @@
     };
 
     Caman.prototype.replaceCanvas = function(newCanvas) {
-      var oldCanvas;
-      oldCanvas = this.canvas;
+      var i, pixel, _i, _len, _ref;
       this.canvas = newCanvas;
       this.context = this.canvas.getContext('2d');
-      if (!Caman.NodeJS) {
-        oldCanvas.parentNode.replaceChild(this.canvas, oldCanvas);
+      this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+      this.pixelData = this.imageData.data;
+      if (Caman.allowRevert) {
+        this.initializedPixelData = Util.dataArray(this.pixelData.length);
+        this.originalPixelData = Util.dataArray(this.pixelData.length);
+        _ref = this.pixelData;
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          pixel = _ref[i];
+          this.initializedPixelData[i] = pixel;
+          this.originalPixelData[i] = pixel;
+        }
       }
       this.width = this.canvas.width;
       this.height = this.canvas.height;
@@ -609,7 +629,9 @@
       Event.trigger(this, "renderStart");
       return this.renderer.execute((function(_this) {
         return function() {
-          _this.context.putImageData(_this.imageData, 0, 0);
+          _this.renderingCanvas.width = _this.canvas.width;
+          _this.renderingCanvas.height = _this.canvas.height;
+          _this.renderingContext.putImageData(_this.imageData, 0, 0);
           return callback.call(_this);
         };
       })(this));
@@ -629,7 +651,7 @@
         this.pixelData[i] = pixel;
       }
       if (updateContext) {
-        return this.context.putImageData(this.imageData, 0, 0);
+        return this.renderingContext.putImageData(this.imageData, 0, 0);
       }
     };
 
@@ -657,70 +679,20 @@
     };
 
     Caman.prototype.originalVisiblePixels = function() {
-      var canvas, coord, ctx, endX, endY, i, imageData, pixel, pixelData, pixels, rotatedCanvas, rotatedCanvasCtx, scaledCanvas, startX, startY, width, x, y, _i, _j, _k, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4;
+      var coord, endX, endY, i, pixelData, pixels, startX, startY, width, _i, _ref, _ref1, _ref2;
       if (!Caman.allowRevert) {
         throw "Revert disabled";
       }
       pixels = [];
-      startX = this.cropCoordinates.x;
+      startX = 0;
       endX = startX + this.width;
-      startY = this.cropCoordinates.y;
+      startY = 0;
       endY = startY + this.height;
-      if (this.resized) {
-        canvas = document.createElement('canvas');
-        canvas.width = this.originalWidth;
-        canvas.height = this.originalHeight;
-        ctx = canvas.getContext('2d');
-        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        pixelData = imageData.data;
-        _ref = this.originalPixelData;
-        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-          pixel = _ref[i];
-          pixelData[i] = pixel;
-        }
-        ctx.putImageData(imageData, 0, 0);
-        scaledCanvas = document.createElement('canvas');
-        scaledCanvas.width = this.width;
-        scaledCanvas.height = this.height;
-        ctx = scaledCanvas.getContext('2d');
-        ctx.drawImage(canvas, 0, 0, this.originalWidth, this.originalHeight, 0, 0, this.width, this.height);
-        pixelData = ctx.getImageData(0, 0, this.width, this.height).data;
-        width = this.width;
-      } else if (this.rotated) {
-        canvas = document.createElement('canvas');
-        canvas.width = this.originalWidth;
-        canvas.height = this.originalHeight;
-        ctx = canvas.getContext('2d');
-        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        pixelData = imageData.data;
-        _ref1 = this.originalPixelData;
-        for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
-          pixel = _ref1[i];
-          pixelData[i] = pixel;
-        }
-        ctx.putImageData(imageData, 0, 0);
-        rotatedCanvas = document.createElement('canvas');
-        rotatedCanvas.width = this.width;
-        rotatedCanvas.height = this.height;
-        rotatedCanvasCtx = rotatedCanvas.getContext('2d');
-        rotatedCanvas.width = this.canvas.width;
-        rotatedCanvas.height = this.canvas.height;
-        x = rotatedCanvas.width / 2;
-        y = rotatedCanvas.height / 2;
-        rotatedCanvasCtx.save();
-        rotatedCanvasCtx.translate(x, y);
-        rotatedCanvasCtx.rotate(this.rotationAngle * Math.PI / 180);
-        rotatedCanvasCtx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
-        rotatedCanvasCtx.restore();
-        pixelData = rotatedCanvasCtx.getImageData(0, 0, rotatedCanvas.width, rotatedCanvas.height).data;
-        width = rotatedCanvas.width;
-      } else {
-        pixelData = this.originalPixelData;
-        width = this.originalWidth;
-      }
-      for (i = _k = 0, _ref2 = pixelData.length; _k < _ref2; i = _k += 4) {
+      pixelData = this.originalPixelData;
+      width = this.canvas.width;
+      for (i = _i = 0, _ref = pixelData.length; _i < _ref; i = _i += 4) {
         coord = Pixel.locationToCoordinates(i, width);
-        if (((startX <= (_ref3 = coord.x) && _ref3 < endX)) && ((startY <= (_ref4 = coord.y) && _ref4 < endY))) {
+        if (((startX <= (_ref1 = coord.x) && _ref1 < endX)) && ((startY <= (_ref2 = coord.y) && _ref2 < endY))) {
           pixels.push(pixelData[i], pixelData[i + 1], pixelData[i + 2], pixelData[i + 3]);
         }
       }

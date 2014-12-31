@@ -269,11 +269,16 @@ class Caman extends Module
     @image = @initObj
     @canvas = document.createElement 'canvas'
     @context = @canvas.getContext '2d'
-    Util.copyAttributes @image, @canvas, except: ['src']
 
-    # Swap out the image with the canvas element if the image exists
+    @renderingCanvas = document.createElement 'canvas'
+    @renderingContext = @renderingCanvas.getContext '2d'
+
+    Util.copyAttributes @image, @canvas, except: ['src']
+    Util.copyAttributes @image, @renderingCanvas, except: ['src']
+
+    # Swap out the image with the rendering canvas element if the image exists
     # in the DOM.
-    @image.parentNode.replaceChild @canvas, @image if @image.parentNode?
+    @image.parentNode.replaceChild @renderingCanvas, @image if @image.parentNode?
 
     @imageAdjustments()
     @waitForImageLoaded()
@@ -282,6 +287,9 @@ class Caman extends Module
   initCanvas: ->
     @canvas = @initObj
     @context = @canvas.getContext '2d'
+
+    @renderingCanvas = document.createElement 'canvas'
+    @renderingContext = @renderingCanvas.getContext '2d'
 
     if @imageUrl?
       @image = document.createElement 'img'
@@ -340,9 +348,13 @@ class Caman extends Module
     if @swapped
       @canvas.width = @imageWidth() / @hiDPIRatio()
       @canvas.height = @imageHeight() / @hiDPIRatio()
+      @renderingCanvas.width = @imageWidth() / @hiDPIRatio()
+      @renderingCanvas.height = @imageHeight() / @hiDPIRatio()
     else
       @canvas.width = @imageWidth()
       @canvas.height = @imageHeight()
+      @renderingCanvas.width = @imageWidth()
+      @renderingCanvas.height = @imageHeight()
 
     @finishInit()
 
@@ -362,6 +374,11 @@ class Caman extends Module
         0, 0, 
         @imageWidth(), @imageHeight(), 
         0, 0, 
+        @preScaledWidth, @preScaledHeight
+      @renderingContext.drawImage @image,
+        0, 0,
+        @imageWidth(), @imageHeight(),
+        0, 0,
         @preScaledWidth, @preScaledHeight
     
     @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
@@ -473,12 +490,19 @@ class Caman extends Module
   #
   # @param [DOMObject] newCanvas The canvas to swap into this instance.
   replaceCanvas: (newCanvas) ->
-    oldCanvas = @canvas
     @canvas = newCanvas
     @context = @canvas.getContext '2d'
 
+    @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
+    @pixelData = @imageData.data
 
-    oldCanvas.parentNode.replaceChild @canvas, oldCanvas if !Caman.NodeJS
+    if Caman.allowRevert
+      @initializedPixelData = Util.dataArray(@pixelData.length)
+      @originalPixelData = Util.dataArray(@pixelData.length)
+
+      for pixel, i in @pixelData
+        @initializedPixelData[i] = pixel
+        @originalPixelData[i] = pixel
     
     @width  = @canvas.width
     @height = @canvas.height
@@ -494,10 +518,13 @@ class Caman extends Module
   #
   # @param [Function] callback Function to call when rendering is finished.
   render: (callback = ->) ->
+
     Event.trigger @, "renderStart"
-    
+
     @renderer.execute =>
-      @context.putImageData @imageData, 0, 0
+      @renderingCanvas.width = @canvas.width
+      @renderingCanvas.height = @canvas.height
+      @renderingContext.putImageData @imageData, 0, 0
       callback.call @
 
   # Reverts the canvas back to it's original state while
@@ -509,7 +536,7 @@ class Caman extends Module
     throw "Revert disabled" unless Caman.allowRevert
 
     @pixelData[i] = pixel for pixel, i in @originalVisiblePixels()
-    @context.putImageData @imageData, 0, 0 if updateContext
+    @renderingContext.putImageData @imageData, 0, 0 if updateContext
 
   # Completely resets the canvas back to it's original state.
   # Any size adjustments will also be reset.
@@ -543,66 +570,13 @@ class Caman extends Module
 
     pixels = []
 
-    startX = @cropCoordinates.x
+    startX = 0
     endX = startX + @width
-    startY = @cropCoordinates.y
+    startY = 0
     endY = startY + @height
 
-    if @resized
-      canvas = document.createElement('canvas')
-      canvas.width = @originalWidth
-      canvas.height = @originalHeight
-
-      ctx = canvas.getContext('2d')
-      imageData = ctx.getImageData 0, 0, canvas.width, canvas.height
-      pixelData = imageData.data
-
-      pixelData[i] = pixel for pixel, i in @originalPixelData
-
-      ctx.putImageData imageData, 0, 0
-
-      scaledCanvas = document.createElement('canvas')
-      scaledCanvas.width = @width
-      scaledCanvas.height = @height
-
-      ctx = scaledCanvas.getContext('2d')
-      ctx.drawImage canvas, 0, 0, @originalWidth, @originalHeight, 0, 0, @width, @height
-
-      pixelData = ctx.getImageData(0, 0, @width, @height).data
-      width = @width
-    else if @rotated
-      canvas = document.createElement('canvas')
-      canvas.width = @originalWidth
-      canvas.height = @originalHeight
-
-      ctx = canvas.getContext('2d')
-      imageData = ctx.getImageData 0, 0, canvas.width, canvas.height
-      pixelData = imageData.data
-
-      pixelData[i] = pixel for pixel, i in @originalPixelData
-
-      ctx.putImageData imageData, 0, 0
-
-      rotatedCanvas = document.createElement('canvas')
-      rotatedCanvas.width = @width
-      rotatedCanvas.height = @height
-      rotatedCanvasCtx = rotatedCanvas.getContext('2d')
-      rotatedCanvas.width = @canvas.width
-      rotatedCanvas.height = @canvas.height
-      x = rotatedCanvas.width / 2
-      y = rotatedCanvas.height / 2
-
-      rotatedCanvasCtx.save()
-      rotatedCanvasCtx.translate x, y
-      rotatedCanvasCtx.rotate @rotationAngle * Math.PI / 180
-      rotatedCanvasCtx.drawImage canvas, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height
-      rotatedCanvasCtx.restore()
-
-      pixelData = rotatedCanvasCtx.getImageData(0, 0, rotatedCanvas.width, rotatedCanvas.height).data
-      width = rotatedCanvas.width
-    else
-      pixelData = @originalPixelData
-      width = @originalWidth
+    pixelData = @originalPixelData
+    width = @canvas.width
 
     for i in [0...pixelData.length] by 4
       coord = Pixel.locationToCoordinates(i, width)
