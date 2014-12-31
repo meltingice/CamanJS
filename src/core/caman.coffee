@@ -497,11 +497,9 @@ class Caman extends Module
     @pixelData = @imageData.data
 
     if Caman.allowRevert
-      @initializedPixelData = Util.dataArray(@pixelData.length)
       @originalPixelData = Util.dataArray(@pixelData.length)
 
       for pixel, i in @pixelData
-        @initializedPixelData[i] = pixel
         @originalPixelData[i] = pixel
     
     @width  = @canvas.width

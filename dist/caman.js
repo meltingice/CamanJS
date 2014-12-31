@@ -604,12 +604,10 @@
       this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
       this.pixelData = this.imageData.data;
       if (Caman.allowRevert) {
-        this.initializedPixelData = Util.dataArray(this.pixelData.length);
         this.originalPixelData = Util.dataArray(this.pixelData.length);
         _ref = this.pixelData;
         for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
           pixel = _ref[i];
-          this.initializedPixelData[i] = pixel;
           this.originalPixelData[i] = pixel;
         }
       }
