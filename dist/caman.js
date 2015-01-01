@@ -1591,7 +1591,7 @@
       type = "png";
     }
     type = type.toLowerCase();
-    return this.canvas.toDataURL("image/" + type);
+    return this.renderingCanvas.toDataURL("image/" + type);
   };
 
   IO = Caman.IO;
