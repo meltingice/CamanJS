@@ -387,6 +387,7 @@
       this.image.src = data;
       Log.debug("Image loaded. Width = " + (this.imageWidth()) + ", Height = " + (this.imageHeight()));
       this.canvas = new Canvas(this.imageWidth(), this.imageHeight());
+      this.renderingCanvas = new Canvas(this.imageWidth(), this.imageHeight());
       return this.finishInit();
     };
 
@@ -482,6 +483,9 @@
       var i, pixel, _i, _len, _ref;
       if (this.context == null) {
         this.context = this.canvas.getContext('2d');
+      }
+      if (this.renderingContext == null) {
+        this.renderingContext = this.renderingCanvas.getContext('2d');
       }
       this.originalWidth = this.preScaledWidth = this.width = this.canvas.width;
       this.originalHeight = this.preScaledHeight = this.height = this.canvas.height;

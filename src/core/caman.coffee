@@ -262,6 +262,7 @@ class Caman extends Module
 
     Log.debug "Image loaded. Width = #{@imageWidth()}, Height = #{@imageHeight()}"
     @canvas = new Canvas @imageWidth(), @imageHeight()
+    @renderingCanvas = new Canvas @imageWidth(), @imageHeight()
     @finishInit()
 
   # Initialization function for the browser and image objects.
@@ -362,6 +363,7 @@ class Caman extends Module
   # draw the image to the canvas (if applicable).
   finishInit: ->
     @context = @canvas.getContext '2d' unless @context?
+    @renderingContext = @renderingCanvas.getContext '2d' unless @renderingContext?
 
     @originalWidth = @preScaledWidth = @width = @canvas.width
     @originalHeight = @preScaledHeight = @height = @canvas.height

@@ -22,16 +22,19 @@ module.exports = function(config) {
       {pattern: 'test/ext/grey.png', watched: false, included: false}
     ],
 
-
     // list of files to exclude
     exclude: [
       
     ],
 
+    preprocessors: {
+        '**/*.coffee': 'coffee'
+    },
+
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress'],
+    reporters: ['dots'],
 
 
     // web server port
