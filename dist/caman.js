@@ -411,9 +411,9 @@
     };
 
     Caman.prototype.initCanvas = function() {
-      this.canvas = this.initObj;
+      this.canvas = document.createElement('canvas');
       this.context = this.canvas.getContext('2d');
-      this.renderingCanvas = document.createElement('canvas');
+      this.renderingCanvas = this.initObj;
       this.renderingContext = this.renderingCanvas.getContext('2d');
       if (this.imageUrl != null) {
         this.image = document.createElement('img');

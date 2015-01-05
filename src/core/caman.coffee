@@ -286,10 +286,10 @@ class Caman extends Module
 
   # Initialization function for the browser and canvas objects.
   initCanvas: ->
-    @canvas = @initObj
+    @canvas = document.createElement 'canvas'
     @context = @canvas.getContext '2d'
 
-    @renderingCanvas = document.createElement 'canvas'
+    @renderingCanvas = @initObj
     @renderingContext = @renderingCanvas.getContext '2d'
 
     if @imageUrl?
