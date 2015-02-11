@@ -33,7 +33,7 @@ class Util
   @copyAttributes: (from, to, opts={}) ->
     for attr in from.attributes
       continue if opts.except? and attr.nodeName in opts.except
-      to.setAttribute(attr.nodeName, attr.nodeValue)
+      to.setAttribute(attr.nodeName, attr.value)
 
   # Support for browsers that don't know Uint8Array (such as IE9)
   @dataArray: (length = 0) ->
