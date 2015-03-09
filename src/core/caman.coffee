@@ -292,6 +292,9 @@ class Caman extends Module
     @renderingCanvas = @initObj
     @renderingContext = @renderingCanvas.getContext '2d'
 
+    @canvas.width = @renderingCanvas.width
+    @canvas.height = @renderingCanvas.height
+
     if @imageUrl?
       @image = document.createElement 'img'
       @image.src = @imageUrl

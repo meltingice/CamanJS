@@ -415,6 +415,8 @@
       this.context = this.canvas.getContext('2d');
       this.renderingCanvas = this.initObj;
       this.renderingContext = this.renderingCanvas.getContext('2d');
+      this.canvas.width = this.renderingCanvas.width;
+      this.canvas.height = this.renderingCanvas.height;
       if (this.imageUrl != null) {
         this.image = document.createElement('img');
         this.image.src = this.imageUrl;

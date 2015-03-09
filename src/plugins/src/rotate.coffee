@@ -22,7 +22,7 @@ Caman.Plugin.register "rotate", (degrees) ->
     height = @canvas.height
     x = width/2
     y = height/2 
-  else 
+  else
     width = Math.sqrt(Math.pow(@originalWidth, 2) + Math.pow(@originalHeight, 2))
     height = width
     x = @canvas.height/2
