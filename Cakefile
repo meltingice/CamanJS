@@ -3,10 +3,7 @@ fs      = require 'fs'
 util    = require 'util'
 {jsmin} = require 'jsmin'
 
-try
-  packer = require 'packer'
-catch err
-  packer = null
+packer = null
 
 targetName    = "caman"
 

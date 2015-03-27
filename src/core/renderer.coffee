@@ -109,7 +109,8 @@ class Caman.Renderer
       pixel.b = @c.pixelData[i+2]
       pixel.a = @c.pixelData[i+3]
 
-      @currentJob.processFn pixel
+      if @currentJob.processFn
+        @currentJob.processFn pixel
 
       @c.pixelData[i]   = Util.clampRGB pixel.r
       @c.pixelData[i+1] = Util.clampRGB pixel.g
@@ -129,6 +130,11 @@ class Caman.Renderer
     n = @c.pixelData.length
 
     adjust = @currentJob.adjust
+
+    if !adjust
+      @blockFinished bnum
+      return
+
     adjustSize = Math.sqrt adjust.length
 
     kernel = []
