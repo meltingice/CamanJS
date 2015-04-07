@@ -2,6 +2,13 @@ Promise = require 'bluebird'
 
 module.exports =
   extended: (Caman) ->
+    @blank = (size = {}) ->
+      new Promise (resolve, reject) =>
+        canvas = document.createElement 'canvas'
+        canvas.width = size.width
+        canvas.height = size.height
+        resolve new Caman(canvas)
+
     @fromURL = (url) ->
       new Promise (resolve, reject) =>
         image = new Image()
