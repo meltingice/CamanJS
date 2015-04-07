@@ -1,5 +1,3 @@
-RSVP = require 'rsvp'
-
 module.exports = class RenderWorker
   constructor: (@context, @id, @start, @end) ->
     @pixelData = @context.pixelData

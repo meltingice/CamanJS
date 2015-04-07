@@ -1,4 +1,4 @@
-RSVP = require 'rsvp'
+Promise = require 'bluebird'
 RenderWorker = require './render_worker.coffee'
 
 module.exports = class Renderer
@@ -37,7 +37,7 @@ module.exports = class Renderer
     @renderQueue.push name: name, item: item
 
   render: ->
-    new RSVP.Promise (resolve, reject) =>
+    new Promise (resolve, reject) =>
       setTimeout =>
         @processNext() until @renderQueue.length is 0
         @context.update()

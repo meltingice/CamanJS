@@ -1,11 +1,7 @@
 _ = require 'lodash'
-RSVP = require 'rsvp'
 {Module} = require 'coffeescript-module'
 
 Context = require './caman/context.coffee'
-
-RSVP.on 'error', (reason) ->
-  console.assert(false, reason.stack)
 
 module.exports = class Caman extends Module
   @Renderer: require('./caman/renderer.coffee')
@@ -36,7 +32,7 @@ module.exports = class Caman extends Module
       func = args[1]
 
     func.call(@context.renderer)
-    @render() if opts.render
+    @render().bind(@context.renderer) if opts.render
 
   render: -> @context.renderer.render()
 

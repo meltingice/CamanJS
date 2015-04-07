@@ -7,25 +7,33 @@
   <script type="text/javascript">
   var Caman = require('caman');
 
-  Caman.fromURL("../images/test1_640.jpg").then(function (caman) {
-    caman.attach("#test-canvas");
-    
-    var start = new Date();
-    caman.pipeline(function () {
-      this.sharpen(10);
-      this.brightness(10);
-      this.contrast(40);
-      // this.colorize('#e58711', 50);
-      this.sepia(80);
-      this.gamma(1.1);
-      this.noise(10);
-      this.channels({red: 10, green: -20, blue: 40});
-      this.exposure(-20);
+  Caman.fromURL("../images/test1_640.jpg")
+    .then(function (caman) {
+      caman.attach("#test-canvas");
+      
+      var start = new Date();
+      return caman.pipeline(function () {
+        this.sharpen(10);
+        this.brightness(10);
+        this.contrast(40);
+        this.sepia(80);
+        this.gamma(1.1);
+        this.noise(10);
+        this.channels({red: 10, green: -20, blue: 40});
+        this.exposure(-20);
+      }).then(function () {
+        console.log("First pipeline finished.");
+        console.log((new Date()) - start + "ms");
+        
+        this.colorize('#e58711', 50);
+      }).then(function () {
+        console.log("Second pipeline finished.");
+        console.log((new Date()) - start + "ms");
+      });
     }).then(function () {
-      console.log("Rendered!");
-      console.log((new Date()) - start + "ms")
-    }, function (e) { console.error(e); });
-  });
+      console.log("Rendering finished.");
+    }
+  );
   </script>
 </head>
 <body>
