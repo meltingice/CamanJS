@@ -1,5 +1,5 @@
 # Various image analysis methods
-class Caman.Analyze
+module.exports = class Analyze
   constructor: (@c) ->
 
   # Calculates the number of occurances of each color value throughout the image.
@@ -32,5 +32,3 @@ class Caman.Analyze
       levels.b[i] /= numPixels
 
     levels
-
-Analyze = Caman.Analyze

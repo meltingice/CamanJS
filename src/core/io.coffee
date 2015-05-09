@@ -1,5 +1,5 @@
 # Various I/O based operations
-class Caman.IO
+module.exports = class IO
   # Used for parsing image URLs for domain names.
   @domainRegex: /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/
 
@@ -62,52 +62,3 @@ class Caman.IO
     lang = lang.toLowerCase()
     lang = langToExt[lang] if langToExt[lang]?
     "proxies/caman_proxy.#{lang}"
-
-  # Grabs the canvas data, encodes it to Base64, then sets the browser location to 
-  # the encoded data so that the user will be prompted to download it.
-  # If we're in NodeJS, then we can save the image to disk.
-  # @see Caman
-Caman::save = ->
-    if exports?
-      @nodeSave.apply @, arguments
-    else
-      @browserSave.apply @, arguments
-
-Caman::browserSave = (type = "png") ->
-    type = type.toLowerCase()
-
-    # Force download (its a bit hackish)
-    image = @toBase64(type).replace "image/#{type}", "image/octet-stream"
-    document.location.href = image
-
-Caman::nodeSave = (file, overwrite = true, callback = null) ->
-    try
-      stats = fs.statSync file
-      return false if stats.isFile() and not overwrite
-    catch e
-      Log.debug "Creating output file #{file}"
-
-    fs.writeFile file, @canvas.toBuffer(), (err) ->
-      Log.debug "Finished writing to #{file}"
-      callback.call this, err if callback
-
-  # Takes the current canvas data, converts it to Base64, then sets it as the source 
-  # of a new Image object and returns it.
-Caman::toImage = (type) ->
-    img = new Image()
-    img.src = @toBase64 type
-    img.width = @dimensions.width
-    img.height = @dimensions.height
-
-    if window.devicePixelRatio
-      img.width /= window.devicePixelRatio
-      img.height /= window.devicePixelRatio
-
-    return img
-
-  # Base64 encodes the current canvas
-Caman::toBase64 = (type = "png") ->
-    type = type.toLowerCase()
-    return @canvas.toDataURL "image/#{type}"
-
-IO = Caman.IO

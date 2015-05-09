@@ -1,5 +1,5 @@
 # Various math-heavy helpers that are used throughout CamanJS.
-class Caman.Calculate
+module.exports = class Calculate
   # Calculates the distance between two points.
 
   # @param [Number] x1 1st point x-coordinate.
@@ -186,5 +186,3 @@ class Caman.Calculate
       return ret
 
     return values
-
-Calculate = Caman.Calculate

@@ -355,5 +355,4 @@ class Caman.Convert
     @xyzToLab xyz
 
   @labToRGB: (l, a, b) ->
-    
-Convert = Caman.Convert
+  

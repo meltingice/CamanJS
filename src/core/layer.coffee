@@ -1,3 +1,8 @@
+Util = require './util.coffee'
+
+unless window?
+  Canvas = require 'canvas'
+
 # The entire layering system for Caman resides in this file. Layers get their own canvasLayer 
 # objectwhich is created when newLayer() is called. For extensive information regarding the 
 # specifics of howthe layering system works, there is an in-depth blog post on this very topic. 
@@ -11,7 +16,7 @@
 #
 # You can also load an image (local or remote, with a proxy) into a canvas layer, which is useful 
 # if you want to add textures to an image.
-class Caman.Layer
+module.exports = class Layer
   constructor: (@c) ->
     # Compatibility
     @filter = @c
@@ -24,7 +29,7 @@ class Caman.Layer
     @layerID = Util.uniqid.get()
 
     # Create the canvas for this layer
-    @canvas = if exports? then new Canvas() else document.createElement('canvas')
+    @canvas = if window? then document.createElement('canvas') else new Canvas()
     
     @canvas.width = @c.dimensions.width
     @canvas.height = @c.dimensions.height
@@ -68,7 +73,7 @@ class Caman.Layer
     if typeof image is "object"
       image = image.src
     else if typeof image is "string" and image[0] is "#"
-      image = $(image).src
+      image = Util.$(image).src
 
     return @ if not image
 
@@ -114,5 +119,3 @@ class Caman.Layer
       parentData[i+2] = rgbaParent.b - (
         (rgbaParent.b - result.b) * (@options.opacity * (result.a / 255))
       )
-
-Layer = Caman.Layer

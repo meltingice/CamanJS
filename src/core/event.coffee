@@ -1,6 +1,6 @@
 # Event system that can be used to register callbacks that get fired
 # during certain times in the render process.
-class Caman.Event
+module.exports = class Event
   @events = {}
 
   # All of the supported event types
@@ -53,5 +53,3 @@ class Caman.Event
     @events[type].push target: target, fn: fn
 
     return true
-
-Event = Caman.Event

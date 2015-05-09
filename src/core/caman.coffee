@@ -1,15 +1,15 @@
+{Module} = require 'coffeescript-module'
+
 # NodeJS compatibility
-if exports?
+if window?
+  Root = window
+else
   Root = exports
   Canvas = require 'canvas'
   Image = Canvas.Image
 
-  Fiber = require 'fibers'
-
   fs = require 'fs'
   http = require 'http'
-else
-  Root = window
 
 # Here it begins. Caman is defined.
 # There are many different initialization for Caman, which are described on the 
@@ -24,6 +24,20 @@ else
 # 
 # The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
 class Caman extends Module
+  @Analyze: require('./analyze.coffee')
+  @Blender: require('./blender.coffee')
+  @Calculate: require('./calculate.coffee')
+  @Convert: require('./convert.coffee')
+  @Event: require('./event.coffee')
+  @IO: require('./io.coffee')
+  @Layer: require('./layer.coffee')
+  @Logger: require('./logger.coffee')
+  @Pixel: require('./pixel.coffee')
+  @Plugin: require('./plugin.coffee')
+  @Renderer: require('./renderer.coffee')
+  @Store: require('./store.coffee')
+  @Util: require('./util.coffee')
+
   # The current version.
   @version:
     release: "4.1.2"
@@ -64,7 +78,7 @@ class Caman extends Module
     return true if Caman.NodeJS
 
     if typeof canvas is "string"
-      canvas = $(canvas)
+      canvas = @Util.$(canvas)
 
     return null unless canvas? and canvas.getAttribute?
     canvas.getAttribute 'data-caman-id'
@@ -664,5 +678,52 @@ class Caman extends Module
 
   # Applies the current layer to its parent layer.
   applyCurrentLayer: -> @currentLayer.applyToParent()
+
+  # Grabs the canvas data, encodes it to Base64, then sets the browser location to 
+  # the encoded data so that the user will be prompted to download it.
+  # If we're in NodeJS, then we can save the image to disk.
+  # @see Caman
+  save: ->
+    if exports?
+      @nodeSave.apply @, arguments
+    else
+      @browserSave.apply @, arguments
+
+  browserSave: (type = "png") ->
+    type = type.toLowerCase()
+
+    # Force download (its a bit hackish)
+    image = @toBase64(type).replace "image/#{type}", "image/octet-stream"
+    document.location.href = image
+
+  nodeSave: (file, overwrite = true, callback = null) ->
+    try
+      stats = fs.statSync file
+      return false if stats.isFile() and not overwrite
+    catch e
+      Log.debug "Creating output file #{file}"
+
+    fs.writeFile file, @canvas.toBuffer(), (err) ->
+      Log.debug "Finished writing to #{file}"
+      callback.call this, err if callback
+
+  # Takes the current canvas data, converts it to Base64, then sets it as the source 
+  # of a new Image object and returns it.
+  toImage: (type) ->
+    img = new Image()
+    img.src = @toBase64 type
+    img.width = @dimensions.width
+    img.height = @dimensions.height
+
+    if window.devicePixelRatio
+      img.width /= window.devicePixelRatio
+      img.height /= window.devicePixelRatio
+
+    return img
+
+  # Base64 encodes the current canvas
+  toBase64: (type = "png") ->
+    type = type.toLowerCase()
+    return @canvas.toDataURL "image/#{type}"
 
 Root.Caman = Caman

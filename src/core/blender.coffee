@@ -1,5 +1,5 @@
 # Built-in layer blenders. Many of these mimic Photoshop blend modes.
-class Caman.Blender
+module.exports = class Blender
   @blenders = {}
 
   # Registers a blender. Can be used to add your own blenders outside of
@@ -17,5 +17,3 @@ class Caman.Blender
   # @return [Object] RGBA object representing the blended pixel.
   @execute: (name, rgbaLayer, rgbaParent) ->
     @blenders[name](rgbaLayer, rgbaParent)
-
-Blender = Caman.Blender

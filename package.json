@@ -47,21 +47,22 @@
     "url": "http://github.com/meltingice/CamanJS.git"
   },
   "dependencies": {
-    "canvas": "*",
-    "fibers": "*"
+    "paralleljs": "~ 0.2",
+    "coffeescript-module": "*"
   },
   "devDependencies": {
-    "coffee-script": ">= 1.6.1",
+    "bluebird": "*",
+    "browserify": "~ 9.0",
+    "coffeeify": "~ 1.0",
+    "coffee-script": "~ 1.9.1",
     "docco": "0.6.2",
     "codo": "*",
     "jsmin": "*",
-    "packer": "*",
     "chai": "*",
     "servedir": "*",
     "cli": "*",
     "cli-table": "*",
-    "karma": "~ 0.10",
-    "karma-mocha": "*"
+    "uglify-js": "*"
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/.bin/karma start --single-run --browsers Firefox",

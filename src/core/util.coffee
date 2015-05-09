@@ -1,13 +1,10 @@
-# Look what you make me do Javascript
-slice = Array::slice
+module.exports = class Util
+  # DOM simplifier (no jQuery dependency)
+  # NodeJS compatible
+  @$: (sel, root = document) ->
+    return sel if typeof sel is "object" or exports?
+    root.querySelector sel
 
-# DOM simplifier (no jQuery dependency)
-# NodeJS compatible
-$ = (sel, root = document) ->
-  return sel if typeof sel is "object" or exports?
-  root.querySelector sel
-
-class Util
   # Unique value utility
   @uniqid = do ->
     id = 0
