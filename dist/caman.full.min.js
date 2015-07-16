@@ -123,7 +123,7 @@ if(indexOf.call(this.types,type)<0){return false;}
 if(!this.events[type]){this.events[type]=[];}
 this.events[type].push({target:target,fn:fn});return true;};return Event;})();Event=Caman.Event;Caman.Filter=(function(){function Filter(){}
 Filter.Type={Single:1,Kernel:2,LayerDequeue:3,LayerFinished:4,LoadOverlay:5,Plugin:6};Filter.register=function(name,filterFunc){return Caman.prototype[name]=filterFunc;};return Filter;})();Filter=Caman.Filter;Caman.IO=(function(){function IO(){}
-IO.domainRegex=/(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/;IO.isRemote=function(img){if(img==null){return false;}
+IO.domainRegex=/(?:(?:http|https):\/\/)((?:[-|\w]+)\.(?:(?:-|\w|\.)+))/;IO.isRemote=function(img){if(img==null){return false;}
 if(this.corsEnabled(img)){return false;}
 return this.isURLRemote(img.src);};IO.corsEnabled=function(img){var ref;return(img.crossOrigin!=null)&&((ref=img.crossOrigin.toLowerCase())==='anonymous'||ref==='use-credentials');};IO.isURLRemote=function(url){var matches;matches=url.match(this.domainRegex);if(matches){return matches[1]!==document.domain;}else{return false;}};IO.remoteCheck=function(src){if(this.isURLRemote(src)){if(!Caman.remoteProxy.length){Log.info("Attempting to load a remote image without a configured proxy. URL: "+src);}else{if(Caman.isURLRemote(Caman.remoteProxy)){Log.info("Cannot use a remote proxy for loading images.");return;}
 return this.proxyUrl(src);}}};IO.proxyUrl=function(src){return Caman.remoteProxy+"?"+Caman.proxyParam+"="+(encodeURIComponent(src));};IO.useProxy=function(lang){var langToExt;langToExt={ruby:'rb',python:'py',perl:'pl',javascript:'js'};lang=lang.toLowerCase();if(langToExt[lang]!=null){lang=langToExt[lang];}
