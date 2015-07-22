@@ -18,7 +18,7 @@ module.exports = function(config) {
       'test/ext/test-loader.js',
       'test/ext/grey.js',
       'dist/caman.full.js',
-      'test/unit/*.coffee',
+      'test/unit/**/*.coffee',
       {pattern: 'test/ext/grey.png', watched: false, included: false}
     ],
 
