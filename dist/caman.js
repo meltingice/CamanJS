@@ -335,6 +335,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var job = this.renderQueue.shift();
 	      job.item.setContext(this.context);
 	
+	      console.log("Processing:", job.name);
 	      var _iteratorNormalCompletion = true;
 	      var _didIteratorError = false;
 	      var _iteratorError = undefined;
@@ -559,7 +560,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _filters = __webpack_require__(6);
 	
-	var _convolution = __webpack_require__(7);
+	var _convolution = __webpack_require__(9);
 	
 	function CamanLib(Caman) {
 	  (0, _filters.Filters)(Caman);
@@ -577,6 +578,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.Filters = Filters;
 	
+	var _calculate = __webpack_require__(7);
+	
+	var _calculate2 = _interopRequireDefault(_calculate);
+	
+	var _color = __webpack_require__(8);
+	
+	var _color2 = _interopRequireDefault(_color);
+	
 	var _filter = __webpack_require__(4);
 	
 	var _filter2 = _interopRequireDefault(_filter);
@@ -593,10 +602,136 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.b += adjust;
 	    });
 	  });
+	
+	  Caman.Renderer.register("fillColor", function () {
+	    var color = void 0;
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    if (args.length === 1) {
+	      color = _color2.default.hexToRGB(args[0]);
+	    } else {
+	      color = args;
+	    }
+	
+	    return new _filter2.default(function () {
+	      this.r = color[0];
+	      this.g = color[1];
+	      this.b = color[2];
+	      this.a = 255;
+	    });
+	  });
+	
+	  Caman.Renderer.register("saturation", function (adjust) {
+	    adjust *= -0.01;
+	
+	    return new _filter2.default(function () {
+	      var max = Math.max(this.r, this.g, this.b);
+	      if (this.r !== max) this.r += (max - this.r) * adjust;
+	      if (this.g !== max) this.g += (max - this.g) * adjust;
+	      if (this.b !== max) this.b += (max - this.b) * adjust;
+	    });
+	  });
+	
+	  Caman.Renderer.register("vibrance", function (adjust) {
+	    adjust *= -1;
+	
+	    return new _filter2.default(function () {
+	      var max = Math.max(this.r, this.g, this.b);
+	      var avg = (this.r + this.g + this.b) / 3;
+	      var amt = Math.abs(max - avg) * 2 / 255 * adjust / 100;
+	
+	      if (this.r !== max) this.r += (max - this.r) * amt;
+	      if (this.g !== max) this.g += (max - this.g) * amt;
+	      if (this.b !== max) this.b += (max - this.b) * amt;
+	    });
+	  });
+	
+	  Caman.Renderer.register("greyscale", function (adjust) {
+	    return new _filter2.default(function () {
+	      this.r = this.g = this.b = _calculate2.default.luminance(this.r, this.g, this.b);
+	    });
+	  });
+	
+	  Caman.Renderer.register("contrast", function (adjust) {
+	    adjust = Math.pow((adjust + 100) / 100, 2);
+	
+	    return new _filter2.default(function () {
+	      this.r = ((this.r / 255 - 0.5) * adjust + 0.5) * 255;
+	      this.g = ((this.g / 255 - 0.5) * adjust + 0.5) * 255;
+	      this.b = ((this.b / 255 - 0.5) * adjust + 0.5) * 255;
+	    });
+	  });
 	}
 
 /***/ },
 /* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Calculate = function () {
+	  function Calculate() {
+	    _classCallCheck(this, Calculate);
+	  }
+	
+	  _createClass(Calculate, null, [{
+	    key: "luminance",
+	    value: function luminance(r, g, b) {
+	      return 0.299 * r + 0.587 * g + 0.114 * b;
+	    }
+	  }]);
+	
+	  return Calculate;
+	}();
+	
+	exports.default = Calculate;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Color = function () {
+	  function Color() {
+	    _classCallCheck(this, Color);
+	  }
+	
+	  _createClass(Color, null, [{
+	    key: "hexToRGB",
+	    value: function hexToRGB(hex) {
+	      if (hex.charAt(0) == "#") hex = hex.substr(1);
+	
+	      return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
+	    }
+	  }]);
+	
+	  return Color;
+	}();
+	
+	exports.default = Color;
+
+/***/ },
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -606,7 +741,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.Convolution = Convolution;
 	
-	var _kernel_filter = __webpack_require__(8);
+	var _kernel_filter = __webpack_require__(10);
 	
 	var _kernel_filter2 = _interopRequireDefault(_kernel_filter);
 	
@@ -615,7 +750,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function Convolution(Caman) {}
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";

@@ -11,9 +11,15 @@
     .then(function (caman) {
       caman.attach("#test-canvas");
       
+      var start = new Date();
       return caman.pipeline(function () {
         this.brightness(40);
+        this.vibrance(50);
+        this.contrast(-10);
+        // this.greyscale();
         return this.render();
+      }).then(function () {
+        console.log("Pipeline finished.", ((new Date()) - start) + "ms");
       });
     }).then(function () {
       console.log("Rendering finished.");

@@ -63,6 +63,7 @@ class Renderer {
     let job = this.renderQueue.shift();
     job.item.setContext(this.context);
 
+    console.log("Processing:", job.name);
     for (let worker of this.workers) {
       worker.process(job);
     }
