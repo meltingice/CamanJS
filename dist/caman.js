@@ -576,6 +576,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
 	exports.Filters = Filters;
 	
 	var _calculate = __webpack_require__(7);
@@ -664,6 +667,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.b = ((this.b / 255 - 0.5) * adjust + 0.5) * 255;
 	    });
 	  });
+	
+	  Caman.Renderer.register("hue", function (adjust) {
+	    return new _filter2.default(function () {
+	      var _Color$rgbToHSV = _color2.default.rgbToHSV(this.r, this.g, this.b);
+	
+	      var _Color$rgbToHSV2 = _slicedToArray(_Color$rgbToHSV, 3);
+	
+	      var h = _Color$rgbToHSV2[0];
+	      var s = _Color$rgbToHSV2[1];
+	      var v = _Color$rgbToHSV2[2];
+	
+	      h = (h * 100 + Math.abs(adjust)) % 100 / 100;
+	
+	      var _Color$hsvToRGB = _color2.default.hsvToRGB(h, s, v);
+	
+	      var _Color$hsvToRGB2 = _slicedToArray(_Color$hsvToRGB, 3);
+	
+	      this.r = _Color$hsvToRGB2[0];
+	      this.g = _Color$hsvToRGB2[1];
+	      this.b = _Color$hsvToRGB2[2];
+	    });
+	  });
 	}
 
 /***/ },
@@ -722,6 +747,67 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (hex.charAt(0) == "#") hex = hex.substr(1);
 	
 	      return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
+	    }
+	  }, {
+	    key: "rgbToHSV",
+	    value: function rgbToHSV(r, b, g) {
+	      r /= 255;
+	      g /= 255;
+	      b /= 255;
+	
+	      var max = Math.max(r, g, b);
+	      var min = Math.min(r, g, b);
+	      var d = max - min;
+	
+	      var h = void 0,
+	          s = max === 0 ? 0 : d / max,
+	          v = max;
+	
+	      if (max === min) {
+	        h = 0;
+	      } else {
+	        switch (max) {
+	          case r:
+	            h = (g - b) / d + (g < b ? 6 : 0);break;
+	          case g:
+	            h = (b - r) / d + 2;break;
+	          case b:
+	            h = (r - g) / d + 4;
+	        }
+	
+	        h /= 6;
+	      }
+	
+	      return [h, s, v];
+	    }
+	  }, {
+	    key: "hsvToRGB",
+	    value: function hsvToRGB(h, s, v) {
+	      var i = Math.floor(h * 6);
+	      var f = h * 6 - i;
+	      var p = v * (1 - s);
+	      var q = v * (1 - f * s);
+	      var t = v * (1 - (1 - f) * s);
+	
+	      var r = void 0,
+	          g = void 0,
+	          b = void 0;
+	      switch (i % 6) {
+	        case 0:
+	          r = v;g = t;b = p;break;
+	        case 1:
+	          r = q;g = v;b = p;break;
+	        case 2:
+	          r = p;g = v;b = t;break;
+	        case 3:
+	          r = p;g = q;b = v;break;
+	        case 4:
+	          r = t;g = p;b = v;break;
+	        case 5:
+	          r = v;g = p;b = q;break;
+	      }
+	
+	      return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
 	    }
 	  }]);
 	

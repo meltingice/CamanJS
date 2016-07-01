@@ -69,4 +69,12 @@ export function Filters(Caman) {
       this.b = ((((this.b / 255) - 0.5) * adjust) + 0.5) * 255;
     });
   });
+
+  Caman.Renderer.register("hue", function (adjust) {
+    return new Filter(function () {
+      let [h, s, v] = Color.rgbToHSV(this.r, this.g, this.b);
+      h = (((h * 100) + Math.abs(adjust)) % 100) / 100;
+      [this.r, this.g, this.b] = Color.hsvToRGB(h, s, v);
+    });
+  });
 }
