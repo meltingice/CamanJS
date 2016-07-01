@@ -1,3 +1,5 @@
+import { Context } from "./caman/context";
+
 class Caman {
   static blank(size) {
     return new Promise(function (resolve, reject) {
@@ -50,6 +52,7 @@ class Caman {
   }
 
   constructor(canvas) {
+    this.context = new Context(canvas);
     this.canvas = canvas;
     this.contexts = [];
   }
@@ -59,9 +62,9 @@ class Caman {
     dest.parentNode.replaceChild(this.canvas, dest);
   }
 
-  newContext(func) {
+  pipeline(func) {
     func.call(this.context.renderer);
-    return this.render().bind(this);
+    return this.render().bind(this.context.renderer);
   }
 
   render() {
