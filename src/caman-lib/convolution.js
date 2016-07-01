@@ -1,4 +1,4 @@
-import { KernelFilter } from "../caman/kernel_filter"
+import KernelFilter from "../caman/kernel_filter"
 
 export function Convolution(Caman) {
   

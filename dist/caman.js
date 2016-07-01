@@ -66,9 +66,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _context = __webpack_require__(1);
 	
-	var _filter = __webpack_require__(3);
+	var _context2 = _interopRequireDefault(_context);
 	
-	var _camanLib = __webpack_require__(4);
+	var _filter = __webpack_require__(4);
+	
+	var _filter2 = _interopRequireDefault(_filter);
+	
+	var _renderer = __webpack_require__(2);
+	
+	var _renderer2 = _interopRequireDefault(_renderer);
+	
+	var _camanLib = __webpack_require__(5);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -133,7 +143,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function Caman(canvas) {
 	    _classCallCheck(this, Caman);
 	
-	    this.context = new _context.Context(canvas);
+	    this.context = new _context2.default(canvas);
 	    this.canvas = canvas;
 	    this.contexts = [];
 	  }
@@ -148,7 +158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'pipeline',
 	    value: function pipeline(func) {
 	      func.call(this.context.renderer);
-	      return this.render().bind(this.context.renderer);
+	      return this.render();
 	    }
 	  }, {
 	    key: 'render',
@@ -160,7 +170,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return Caman;
 	}();
 	
-	Caman.Filter = _filter.Filter;
+	Caman.Filter = _filter2.default;
+	
+	Caman.Renderer = _renderer2.default;
 	
 	(0, _camanLib.CamanLib)(Caman);
 	
@@ -180,6 +192,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _renderer = __webpack_require__(2);
 	
+	var _renderer2 = _interopRequireDefault(_renderer);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Context = function () {
@@ -192,7 +208,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.height = this.canvas.height;
 	    this.load();
 	
-	    this.renderer = new _renderer.Renderer(this);
+	    this.renderer = new _renderer2.default(this);
 	  }
 	
 	  _createClass(Context, [{
@@ -215,6 +231,144 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _render_worker = __webpack_require__(3);
+	
+	var _render_worker2 = _interopRequireDefault(_render_worker);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Renderer = function () {
+	  _createClass(Renderer, null, [{
+	    key: "register",
+	    value: function register(processName, processFunc) {
+	      this.prototype[processName] = function () {
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	          args[_key] = arguments[_key];
+	        }
+	
+	        this.enqueue(processName, processFunc.apply(this, args));
+	        return this;
+	      };
+	    }
+	  }, {
+	    key: "registerAlias",
+	    value: function registerAlias(processName, processFunc) {
+	      this.prototype[processName] = function () {
+	        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	          args[_key2] = arguments[_key2];
+	        }
+	
+	        processFunc.apply(this, args);
+	      };
+	    }
+	  }, {
+	    key: "Blocks",
+	    get: function get() {
+	      return 1;
+	    }
+	  }]);
+	
+	  function Renderer(context) {
+	    _classCallCheck(this, Renderer);
+	
+	    this.context = context;
+	    this.renderQueue = [];
+	    this.pixelData = this.context.pixelData;
+	    this.workers = [];
+	
+	    this.createWorkers();
+	  }
+	
+	  _createClass(Renderer, [{
+	    key: "createWorkers",
+	    value: function createWorkers() {
+	      var n = this.pixelData.length;
+	      var blockPixelLength = Math.floor(n / 4 / Renderer.Blocks);
+	      var blockN = blockPixelLength * 4;
+	      var lastBlockN = blockN + n / 4 % Renderer.Blocks * 4;
+	      var start = void 0,
+	          end = void 0;
+	
+	      for (var i = 0; i < Renderer.Blocks; i++) {
+	        start = i * blockN;
+	        end = start + (i == Renderer.Blocks - 1 ? lastBlockN : blockN);
+	
+	        this.workers.push(new _render_worker2.default(this.context, i, start, end));
+	      }
+	    }
+	  }, {
+	    key: "enqueue",
+	    value: function enqueue(name, item) {
+	      this.renderQueue.push({ name: name, item: item });
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      var _this = this;
+	
+	      return new Promise(function (resolve, reject) {
+	        setTimeout(function () {
+	          while (_this.renderQueue.length > 0) {
+	            _this.processNext();
+	          }
+	
+	          _this.context.update();
+	          resolve();
+	        }, 0);
+	      });
+	    }
+	  }, {
+	    key: "processNext",
+	    value: function processNext() {
+	      var job = this.renderQueue.shift();
+	      job.item.setContext(this.context);
+	
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
+	
+	      try {
+	        for (var _iterator = this.workers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var worker = _step.value;
+	
+	          worker.process(job);
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+	    }
+	  }]);
+	
+	  return Renderer;
+	}();
+	
+	exports.default = Renderer;
+
+/***/ },
+/* 3 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -223,16 +377,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var Renderer = function Renderer() {
-	  _classCallCheck(this, Renderer);
-	};
+	var RenderWorker = function () {
+	  function RenderWorker(context, id, start, end) {
+	    _classCallCheck(this, RenderWorker);
 	
-	exports.default = Renderer;
+	    this.context = context;
+	    this.id = id;
+	    this.start = start;
+	    this.end = end;
+	    this.pixelData = this.context.pixelData;
+	  }
+	
+	  _createClass(RenderWorker, [{
+	    key: "process",
+	    value: function process(job) {
+	      var processor = job.item;
+	      processor.setup();
+	
+	      for (var i = this.start; i < this.end; i += 4) {
+	        processor.setPixel(i, this.pixelData[i], this.pixelData[i + 1], this.pixelData[i + 2], this.pixelData[i + 3]);
+	
+	        processor.execute();
+	      }
+	
+	      processor.finish();
+	    }
+	  }]);
+	
+	  return RenderWorker;
+	}();
+	
+	exports.default = RenderWorker;
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -261,6 +443,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: "setContext",
 	    value: function setContext(context) {
 	      this.context = context;
+	      this.pixelData = context.pixelData;
 	      this.width = context.width;
 	      this.height = context.height;
 	    }
@@ -364,7 +547,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Filter;
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -374,38 +557,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.CamanLib = CamanLib;
 	
-	var _filters = __webpack_require__(5);
+	var _filters = __webpack_require__(6);
 	
-	var _convolution = __webpack_require__(6);
+	var _convolution = __webpack_require__(7);
 	
 	function CamanLib(Caman) {
 	  (0, _filters.Filters)(Caman);
 	  (0, _convolution.Convolution)(Caman);
-	}
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.Filters = Filters;
-	
-	var _filter = __webpack_require__(3);
-	
-	function Filters(Caman) {
-	  Caman.Renderer.register("brightness", function (adjust) {
-	    adjust = Math.floor(255 * (adjust / 100));
-	
-	    return new _filter.Filter(function () {
-	      this.r += adjust;
-	      this.g += adjust;
-	      this.b += adjust;
-	    });
-	  });
 	}
 
 /***/ },
@@ -417,14 +575,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.Filters = Filters;
+	
+	var _filter = __webpack_require__(4);
+	
+	var _filter2 = _interopRequireDefault(_filter);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function Filters(Caman) {
+	  Caman.Renderer.register("brightness", function (adjust) {
+	    adjust = Math.floor(255 * (adjust / 100));
+	
+	    return new _filter2.default(function () {
+	      this.r += adjust;
+	      this.g += adjust;
+	      this.b += adjust;
+	    });
+	  });
+	}
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.Convolution = Convolution;
 	
-	var _kernel_filter = __webpack_require__(7);
+	var _kernel_filter = __webpack_require__(8);
+	
+	var _kernel_filter2 = _interopRequireDefault(_kernel_filter);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function Convolution(Caman) {}
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";

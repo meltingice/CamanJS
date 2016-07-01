@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CamanJS Examples</title>
+  <script type="text/javascript" src="../../dist/caman.js"></script>
+
+  <script type="text/javascript">
+  var Caman = Caman.default;
+
+  Caman.fromURL("../images/test1_640.jpg")
+    .then(function (caman) {
+      caman.attach("#test-canvas");
+      
+      return caman.pipeline(function () {
+        this.brightness(40);
+        return this.render();
+      });
+    }).then(function () {
+      console.log("Rendering finished.");
+    }
+  );
+  </script>
+</head>
+<body>
+  <h1>CamanJS Examples</h1>
+  <p>Note: this cannot be accessed locally via the file:// protocol thanks to same-domain origin policy. It must be placed behind a webserver. Images may take a few seconds to render.</p>
+  
+  <table>
+    <tr>
+      <td>
+        <div id="test-canvas"></div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

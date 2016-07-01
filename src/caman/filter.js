@@ -10,6 +10,7 @@ class Filter {
 
   setContext(context) {
     this.context = context;
+    this.pixelData = context.pixelData;
     this.width = context.width;
     this.height = context.height;
   }

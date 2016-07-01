@@ -1,4 +1,4 @@
-import { Filter } from "../caman/filter";
+import Filter from "../caman/filter";
 
 export function Filters(Caman) {
   Caman.Renderer.register("brightness", function (adjust) {

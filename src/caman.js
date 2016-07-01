@@ -1,4 +1,4 @@
-import { Context } from "./caman/context";
+import Context from "./caman/context";
 
 class Caman {
   static blank(size) {
@@ -64,7 +64,7 @@ class Caman {
 
   pipeline(func) {
     func.call(this.context.renderer);
-    return this.render().bind(this.context.renderer);
+    return this.render();
   }
 
   render() {
@@ -72,8 +72,11 @@ class Caman {
   }
 }
 
-import { Filter } from "./caman/filter";
+import Filter from "./caman/filter";
 Caman.Filter = Filter;
+
+import Renderer from "./caman/renderer";
+Caman.Renderer = Renderer;
 
 import { CamanLib } from "./caman-lib";
 CamanLib(Caman);
