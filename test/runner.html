@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- You need to run `gulp test-browser` before opening this in your browser -->
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <title>Tests</title>
+  <link rel='stylesheet' href='../node_modules/mocha/mocha.css' />
+
+  <!-- Polyfill (required by Babel) -->
+  <script src='../node_modules/babel-polyfill/dist/polyfill.js'></script>
+
+  <!-- Testing libraries -->
+  <script src='../node_modules/mocha/mocha.js'></script>
+  <script src='../node_modules/chai/chai.js'></script>
+  <script src='../node_modules/sinon/pkg/sinon.js'></script>
+  <script src='../node_modules/sinon-chai/lib/sinon-chai.js'></script>
+
+  <!-- Livereload -->
+  <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+
+  <!-- Load the built library -->
+  <script src='../tmp/__spec-build.js'></script>
+</head>
+<body>
+  <!-- Required for browser reporter -->
+  <div id='mocha'></div>
+</body>
+</html>

@@ -1,72 +1,58 @@
 {
   "name": "caman",
-  "version": "4.1.2",
+  "version": "5.0.0",
   "description": "Javascript (Ca)nvas (Man)ipulation for NodeJS and the browser",
-  "keywords": [
-    "canvas",
-    "image",
-    "manipulate",
-    "filter",
-    "image manipulation",
-    "editing"
-  ],
-  "homepage": "http://camanjs.com",
-  "author": {
-    "name": "Ryan LeFevre",
-    "email": "meltingice8917@gmail.com",
-    "url": "http://meltingice.net"
+  "main": "dist/caman.js",
+  "scripts": {
+    "test": "gulp",
+    "lint": "gulp lint",
+    "test-browser": "gulp test-browser",
+    "watch": "gulp watch",
+    "build": "gulp build",
+    "coverage": "gulp coverage"
   },
-  "engines": {
-    "node": ">= 0.6.18"
-  },
-  "contributors": [
-    {
-      "name": "Rick Waldron",
-      "url": "http://github.com/rwldrn"
-    },
-    {
-      "name": "Cezar Sa Espinola",
-      "url": "http://github.com/cezarsa"
-    },
-    {
-      "name": "Jarques Pretorius",
-      "url": "http://twitter.com/jarques"
-    },
-    {
-      "name": "Hosselaer",
-      "url": "https://github.com/Hosselaer"
-    },
-    {
-      "name": "Mario Klingemann",
-      "url": "http://www.quasimondo.com"
-    }
-  ],
-  "main": "./dist/caman.full.js",
   "repository": {
     "type": "git",
-    "url": "http://github.com/meltingice/CamanJS.git"
+    "url": "https://github.com/meltingice/CamanJS.git"
   },
-  "dependencies": {
-    "canvas": "*",
-    "fibers": "*"
+  "keywords": [],
+  "author": "Ryan LeFevre <meltingice8917@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meltingice/CamanJS/issues"
   },
+  "homepage": "https://github.com/meltingice/CamanJS",
   "devDependencies": {
-    "coffee-script": ">= 1.6.1",
-    "docco": "0.6.2",
-    "codo": "*",
-    "jsmin": "*",
-    "packer": "*",
-    "chai": "*",
-    "servedir": "*",
-    "cli": "*",
-    "cli-table": "*",
-    "karma": "~ 0.10",
-    "karma-mocha": "*"
+    "babel-core": "^6.3.26",
+    "babel-loader": "^6.2.0",
+    "babel-polyfill": "^6.3.14",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-register": "^6.3.13",
+    "chai": "^3.4.1",
+    "del": "^2.2.0",
+    "glob": "^7.0.3",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^2.0.0",
+    "gulp-filter": "^4.0.0",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-livereload": "^3.8.1",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-mocha": "^2.2.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.1",
+    "isparta": "^4.0.0",
+    "json-loader": "^0.5.3",
+    "mocha": "^2.3.4",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0",
+    "vinyl-source-stream": "^1.1.0",
+    "webpack": "^1.12.9",
+    "webpack-stream": "^3.1.0"
   },
-  "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/.bin/karma start --single-run --browsers Firefox",
-    "examples": "./node_modules/servedir/bin/servedir",
-    "docs": "codo",
-    "docs-server": "codo --server"
+  "babelBoilerplateOptions": {
+    "entryFileName": "caman.js",
+    "mainVarName": "Caman"
   }
 }
