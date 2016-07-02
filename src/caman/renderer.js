@@ -3,8 +3,15 @@ import RenderWorker from "./render_worker";
 class Renderer {
   static register(processName, processFunc) {
     this.prototype[processName] = function (...args) {
-      this.enqueue(processName, processFunc.apply(this, args));
-      return this;
+      // TODO: adjust this to work in NodeJS too
+      if (typeof window != "undefined" && window.document) {
+        // We're in the main browser context
+        this.enqueue(processName, processFunc.apply(this, args));
+        return this;
+      } else {
+        // We're in a Worker context
+        return processFunc.apply(this, args);
+      }
     }
   }
 
@@ -15,7 +22,7 @@ class Renderer {
   }
 
   static get Blocks() {
-    return (false && typeof window != "undefined" && window.Worker) ? 4 : 1;
+    return (typeof window != "undefined" && window.Worker) ? 4 : 1;
   }
 
   constructor(context) {

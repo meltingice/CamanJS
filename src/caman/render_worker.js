@@ -7,10 +7,10 @@ class RenderWorker {
     this.pixelData = this.context.pixelData;
     this.worker = null;
 
-    if (false && typeof window != "undefined" && window.Worker) {
-      this.worker = new Worker("processor.js");
+    if (typeof window != "undefined" && window.Worker) {
+      this.worker = new Worker(window.Caman.workerUrl || "processor.js");
       this.worker.onmessage = this._workerFinished.bind(this);
-      this.worker.postMessage({ data: this.context.imageData, start: this.start, end: this.end });
+      this.worker.postMessage({ action: 'init', data: this.context.imageData, start: this.start, end: this.end });
     }
   }
 
@@ -25,7 +25,7 @@ class RenderWorker {
   }
 
   _processWithWorker(job) {
-    this.worker.postMessage({ job: job });
+    this.worker.postMessage({ action: 'process', job: job.name, args: job.item.args });
   }
 
   _workerFinished(e) {

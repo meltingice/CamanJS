@@ -50,7 +50,7 @@ function lintGulpfile() {
 }
 
 function build() {
-  return gulp.src(path.join('src', config.entryFileName))
+  gulp.src(path.join('src', config.entryFileName))
     .pipe(webpackStream({
       output: {
         filename: exportFileName + '.js',
@@ -65,7 +65,7 @@ function build() {
       externals: {},
       module: {
         loaders: [
-          { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' }
+          { test: /\.js$/, exclude: /node_modules|processor\.js/, loader: 'babel-loader' }
         ]
       },
       devtool: 'source-map'
@@ -76,6 +76,9 @@ function build() {
     .pipe($.sourcemaps.init({ loadMaps: true }))
     .pipe($.uglify())
     .pipe($.sourcemaps.write('./'))
+    .pipe(gulp.dest(destinationFolder));
+
+  gulp.src(path.join('src', 'processor.js'))
     .pipe(gulp.dest(destinationFolder));
 }
 

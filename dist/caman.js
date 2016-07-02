@@ -258,8 +258,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	          args[_key] = arguments[_key];
 	        }
 	
-	        this.enqueue(processName, processFunc.apply(this, args));
-	        return this;
+	        // TODO: adjust this to work in NodeJS too
+	        if (typeof window != "undefined" && window.document) {
+	          // We're in the main browser context
+	          this.enqueue(processName, processFunc.apply(this, args));
+	          return this;
+	        } else {
+	          // We're in a Worker context
+	          return processFunc.apply(this, args);
+	        }
 	      };
 	    }
 	  }, {
@@ -276,7 +283,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "Blocks",
 	    get: function get() {
-	      return  false ? 4 : 1;
+	      return typeof window != "undefined" && window.Worker ? 4 : 1;
 	    }
 	  }]);
 	
@@ -379,7 +386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	"use strict";
 	
@@ -402,10 +409,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.pixelData = this.context.pixelData;
 	    this.worker = null;
 	
-	    if (false) {
-	      this.worker = new Worker("processor.js");
+	    if (typeof window != "undefined" && window.Worker) {
+	      this.worker = new Worker(window.Caman.workerUrl || "processor.js");
 	      this.worker.onmessage = this._workerFinished.bind(this);
-	      this.worker.postMessage({ data: this.context.imageData, start: this.start, end: this.end });
+	      this.worker.postMessage({ action: 'init', data: this.context.imageData, start: this.start, end: this.end });
 	    }
 	  }
 	
@@ -425,7 +432,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "_processWithWorker",
 	    value: function _processWithWorker(job) {
-	      this.worker.postMessage({ job: job });
+	      this.worker.postMessage({ action: 'process', job: job.name, args: job.item.args });
 	    }
 	  }, {
 	    key: "_workerFinished",
