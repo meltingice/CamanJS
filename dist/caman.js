@@ -276,7 +276,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "Blocks",
 	    get: function get() {
-	      return 4;
+	      return  false ? 4 : 1;
 	    }
 	  }]);
 	
@@ -350,17 +350,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _iteratorError = undefined;
 	
 	      try {
-	        var _loop = function _loop() {
+	        for (var _iterator = this.workers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	          var worker = _step.value;
 	
-	          setTimeout(function () {
-	            worker.process(job);
-	            workerFinished();
-	          }, 0);
-	        };
-	
-	        for (var _iterator = this.workers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          _loop();
+	          worker.process(job, workerFinished);
 	        }
 	      } catch (err) {
 	        _didIteratorError = true;
@@ -386,7 +379,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
@@ -407,21 +400,57 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.start = start;
 	    this.end = end;
 	    this.pixelData = this.context.pixelData;
+	    this.worker = null;
+	
+	    if (false) {
+	      this.worker = new Worker("processor.js");
+	      this.worker.onmessage = this._workerFinished.bind(this);
+	      this.worker.postMessage({ data: this.context.imageData, start: this.start, end: this.end });
+	    }
 	  }
 	
 	  _createClass(RenderWorker, [{
 	    key: "process",
 	    value: function process(job) {
-	      var processor = job.item;
-	      processor.setup();
+	      var finished = arguments.length <= 1 || arguments[1] === undefined ? function () {} : arguments[1];
 	
-	      for (var i = this.start; i < this.end; i += 4) {
-	        processor.setPixel(i, this.pixelData[i], this.pixelData[i + 1], this.pixelData[i + 2], this.pixelData[i + 3]);
+	      this.finishedCb = finished;
 	
-	        processor.execute();
+	      if (this.worker) {
+	        this._processWithWorker(job);
+	      } else {
+	        this._processWithoutWorker(job);
 	      }
+	    }
+	  }, {
+	    key: "_processWithWorker",
+	    value: function _processWithWorker(job) {
+	      this.worker.postMessage({ job: job });
+	    }
+	  }, {
+	    key: "_workerFinished",
+	    value: function _workerFinished(e) {
+	      this.finishedCb();
+	    }
+	  }, {
+	    key: "_processWithoutWorker",
+	    value: function _processWithoutWorker(job) {
+	      var _this = this;
 	
-	      processor.finish();
+	      setTimeout(function () {
+	        var processor = job.item;
+	        processor.setup();
+	
+	        for (var i = _this.start; i < _this.end; i += 4) {
+	          processor.setPixel(i, _this.pixelData[i], _this.pixelData[i + 1], _this.pixelData[i + 2], _this.pixelData[i + 3]);
+	
+	          processor.execute();
+	        }
+	
+	        processor.finish();
+	
+	        _this.finishedCb();
+	      }, 0);
 	    }
 	  }]);
 	
@@ -449,6 +478,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _classCallCheck(this, Filter);
 	
 	    this.processFunc = processFunc;
+	
+	    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	      args[_key - 1] = arguments[_key];
+	    }
+	
+	    this.args = args;
 	    this.context = null;
 	    this.pixelData = null;
 	    this.loc = 0;
@@ -479,7 +514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "execute",
 	    value: function execute() {
-	      this.processFunc.call(this);
+	      this.processFunc.apply(this, this.args);
 	
 	      this.pixelData[this.loc] = this.r;
 	      this.pixelData[this.loc + 1] = this.g;
@@ -615,11 +650,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Caman.Renderer.register("brightness", function (adjust) {
 	    adjust = Math.floor(255 * (adjust / 100));
 	
-	    return new _filter2.default(function () {
+	    return new _filter2.default(function (adjust) {
 	      this.r += adjust;
 	      this.g += adjust;
 	      this.b += adjust;
-	    });
+	    }, adjust);
 	  });
 	
 	  Caman.Renderer.register("fillColor", function () {
@@ -635,29 +670,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	      color = args;
 	    }
 	
-	    return new _filter2.default(function () {
+	    return new _filter2.default(function (color) {
 	      this.r = color[0];
 	      this.g = color[1];
 	      this.b = color[2];
 	      this.a = 255;
-	    });
+	    }, color);
 	  });
 	
 	  Caman.Renderer.register("saturation", function (adjust) {
 	    adjust *= -0.01;
 	
-	    return new _filter2.default(function () {
+	    return new _filter2.default(function (adjust) {
 	      var max = Math.max(this.r, this.g, this.b);
 	      if (this.r !== max) this.r += (max - this.r) * adjust;
 	      if (this.g !== max) this.g += (max - this.g) * adjust;
 	      if (this.b !== max) this.b += (max - this.b) * adjust;
-	    });
+	    }, adjust);
 	  });
 	
 	  Caman.Renderer.register("vibrance", function (adjust) {
 	    adjust *= -1;
 	
-	    return new _filter2.default(function () {
+	    return new _filter2.default(function (adjust) {
 	      var max = Math.max(this.r, this.g, this.b);
 	      var avg = (this.r + this.g + this.b) / 3;
 	      var amt = Math.abs(max - avg) * 2 / 255 * adjust / 100;
@@ -665,10 +700,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.r !== max) this.r += (max - this.r) * amt;
 	      if (this.g !== max) this.g += (max - this.g) * amt;
 	      if (this.b !== max) this.b += (max - this.b) * amt;
-	    });
+	    }, adjust);
 	  });
 	
-	  Caman.Renderer.register("greyscale", function (adjust) {
+	  Caman.Renderer.register("greyscale", function () {
 	    return new _filter2.default(function () {
 	      this.r = this.g = this.b = _calculate2.default.luminance(this.r, this.g, this.b);
 	    });
@@ -677,15 +712,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Caman.Renderer.register("contrast", function (adjust) {
 	    adjust = Math.pow((adjust + 100) / 100, 2);
 	
-	    return new _filter2.default(function () {
+	    return new _filter2.default(function (adjust) {
 	      this.r = ((this.r / 255 - 0.5) * adjust + 0.5) * 255;
 	      this.g = ((this.g / 255 - 0.5) * adjust + 0.5) * 255;
 	      this.b = ((this.b / 255 - 0.5) * adjust + 0.5) * 255;
-	    });
+	    }, adjust);
 	  });
 	
 	  Caman.Renderer.register("hue", function (adjust) {
-	    return new _filter2.default(function () {
+	    return new _filter2.default(function (adjust) {
 	      var _Color$rgbToHSV = _color2.default.rgbToHSV(this.r, this.g, this.b);
 	
 	      var _Color$rgbToHSV2 = _slicedToArray(_Color$rgbToHSV, 3);
@@ -703,7 +738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.r = _Color$hsvToRGB2[0];
 	      this.g = _Color$hsvToRGB2[1];
 	      this.b = _Color$hsvToRGB2[2];
-	    });
+	    }, adjust);
 	  });
 	
 	  Caman.Renderer.register("colorize", function () {
@@ -722,11 +757,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      level = args[3] / 100;
 	    }
 	
-	    return new _filter2.default(function () {
+	    return new _filter2.default(function (rgb, level) {
 	      this.r -= (this.r - rgb[0]) * level;
 	      this.g -= (this.g - rgb[1]) * level;
 	      this.b -= (this.b - rgb[2]) * level;
-	    });
+	    }, rgb, level);
 	  });
 	
 	  Caman.Renderer.register("invert", function () {
@@ -740,19 +775,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Caman.Renderer.register("sepia", function (adjust) {
 	    adjust /= 100;
 	
-	    return new _filter2.default(function () {
+	    return new _filter2.default(function (adjust) {
 	      this.r = Math.min(255, this.r * (1 - 0.607 * adjust) + this.g * (0.769 * adjust) + this.b * (0.189 * adjust));
 	      this.g = Math.min(255, this.r * (0.349 * adjust) + this.g * (1 - 0.314 * adjust) + this.b * (0.168 * adjust));
 	      this.b = Math.min(255, this.r * (0.272 * adjust) + this.g * (0.534 * adjust) + this.b * (1 - 0.869 * adjust));
-	    });
+	    }, adjust);
 	  });
 	
 	  Caman.Renderer.register("gamma", function (adjust) {
-	    return new _filter2.default(function () {
+	    return new _filter2.default(function (adjust) {
 	      this.r = Math.pow(this.r / 255, adjust) * 255;
 	      this.g = Math.pow(this.g / 255, adjust) * 255;
 	      this.b = Math.pow(this.b / 255, adjust) * 255;
-	    });
+	    }, adjust);
 	  });
 	}
 

@@ -15,7 +15,7 @@ class Renderer {
   }
 
   static get Blocks() {
-    return 4;
+    return (false && typeof window != "undefined" && window.Worker) ? 4 : 1;
   }
 
   constructor(context) {
@@ -72,10 +72,7 @@ class Renderer {
 
     console.log("Processing:", job.name);
     for (let worker of this.workers) {
-      setTimeout(() => {
-        worker.process(job);
-        workerFinished();
-      }, 0);
+      worker.process(job, workerFinished);
     }
   }
 }

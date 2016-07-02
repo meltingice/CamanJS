@@ -1,6 +1,7 @@
 class Filter {
-  constructor(processFunc) {
+  constructor(processFunc, ...args) {
     this.processFunc = processFunc;
+    this.args = args;
     this.context = null;
     this.pixelData = null;
     this.loc = 0;
@@ -26,7 +27,7 @@ class Filter {
   setup() { /* noop */ }
 
   execute() {
-    this.processFunc.call(this);
+    this.processFunc.apply(this, this.args);
 
     this.pixelData[this.loc] = this.r;
     this.pixelData[this.loc + 1] = this.g;

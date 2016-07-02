@@ -6,11 +6,11 @@ export function Filters(Caman) {
   Caman.Renderer.register("brightness", function (adjust) {
     adjust = Math.floor(255 * (adjust / 100));
 
-    return new Filter(function () {
+    return new Filter(function (adjust) {
       this.r += adjust;
       this.g += adjust;
       this.b += adjust;
-    });
+    }, adjust);
   });
 
   Caman.Renderer.register("fillColor", function (...args) {
@@ -21,29 +21,29 @@ export function Filters(Caman) {
       color = args;
     }
 
-    return new Filter(function () {
+    return new Filter(function (color) {
       this.r = color[0];
       this.g = color[1];
       this.b = color[2];
       this.a = 255;
-    });
+    }, color);
   });
 
   Caman.Renderer.register("saturation", function (adjust) {
     adjust *= -0.01;
 
-    return new Filter(function () {
+    return new Filter(function (adjust) {
       let max = Math.max(this.r, this.g, this.b);
       if (this.r !== max) this.r += (max - this.r) * adjust;
       if (this.g !== max) this.g += (max - this.g) * adjust;
       if (this.b !== max) this.b += (max - this.b) * adjust;
-    });
+    }, adjust);
   });
 
   Caman.Renderer.register("vibrance", function (adjust) {
     adjust *= -1;
 
-    return new Filter(function () {
+    return new Filter(function (adjust) {
       let max = Math.max(this.r, this.g, this.b);
       let avg = (this.r + this.g + this.b) / 3;
       let amt = ((Math.abs(max - avg) * 2 / 255) * adjust) / 100;
@@ -51,10 +51,10 @@ export function Filters(Caman) {
       if (this.r !== max) this.r += (max - this.r) * amt;
       if (this.g !== max) this.g += (max - this.g) * amt;
       if (this.b !== max) this.b += (max - this.b) * amt;
-    });
+    }, adjust);
   });
 
-  Caman.Renderer.register("greyscale", function (adjust) {
+  Caman.Renderer.register("greyscale", function () {
     return new Filter(function () {
       this.r = this.g = this.b = Calculate.luminance(this.r, this.g, this.b);
     });
@@ -63,19 +63,19 @@ export function Filters(Caman) {
   Caman.Renderer.register("contrast", function (adjust) {
     adjust = Math.pow((adjust + 100) / 100, 2);
 
-    return new Filter(function () {
+    return new Filter(function (adjust) {
       this.r = ((((this.r / 255) - 0.5) * adjust) + 0.5) * 255;
       this.g = ((((this.g / 255) - 0.5) * adjust) + 0.5) * 255;
       this.b = ((((this.b / 255) - 0.5) * adjust) + 0.5) * 255;
-    });
+    }, adjust);
   });
 
   Caman.Renderer.register("hue", function (adjust) {
-    return new Filter(function () {
+    return new Filter(function (adjust) {
       let [h, s, v] = Color.rgbToHSV(this.r, this.g, this.b);
       h = (((h * 100) + Math.abs(adjust)) % 100) / 100;
       [this.r, this.g, this.b] = Color.hsvToRGB(h, s, v);
-    });
+    }, adjust);
   });
 
   Caman.Renderer.register("colorize", function (...args) {
@@ -88,11 +88,11 @@ export function Filters(Caman) {
       level = args[3] / 100;
     }
 
-    return new Filter(function () {
+    return new Filter(function (rgb, level) {
       this.r -= (this.r - rgb[0]) * level;
       this.g -= (this.g - rgb[1]) * level;
       this.b -= (this.b - rgb[2]) * level;
-    });
+    }, rgb, level);
   });
 
   Caman.Renderer.register("invert", function () {
@@ -106,18 +106,18 @@ export function Filters(Caman) {
   Caman.Renderer.register("sepia", function (adjust) {
     adjust /= 100;
 
-    return new Filter(function () {
+    return new Filter(function (adjust) {
       this.r = Math.min(255, (this.r * (1 - (0.607 * adjust))) + (this.g * (0.769 * adjust)) + (this.b * (0.189 * adjust)));
       this.g = Math.min(255, (this.r * (0.349 * adjust)) + (this.g * (1 - (0.314 * adjust))) + (this.b * (0.168 * adjust)));
       this.b = Math.min(255, (this.r * (0.272 * adjust)) + (this.g * (0.534 * adjust)) + (this.b * (1- (0.869 * adjust))));
-    });
+    }, adjust);
   });
 
   Caman.Renderer.register("gamma", function (adjust) {
-    return new Filter(function () {
+    return new Filter(function (adjust) {
       this.r = Math.pow(this.r / 255, adjust) * 255;
       this.g = Math.pow(this.g / 255, adjust) * 255;
       this.b = Math.pow(this.b / 255, adjust) * 255;
-    });
+    }, adjust);
   });
 }
