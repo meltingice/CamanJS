@@ -689,6 +689,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.b = _Color$hsvToRGB2[2];
 	    });
 	  });
+	
+	  Caman.Renderer.register("colorize", function () {
+	    var rgb = void 0,
+	        level = void 0;
+	
+	    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	      args[_key2] = arguments[_key2];
+	    }
+	
+	    if (args.length === 2) {
+	      rgb = _color2.default.hexToRGB(args[0]);
+	      level = args[1] / 100;
+	    } else {
+	      rgb = args.slice(0, 3);
+	      level = args[3] / 100;
+	    }
+	
+	    return new _filter2.default(function () {
+	      this.r -= (this.r - rgb[0]) * level;
+	      this.g -= (this.g - rgb[1]) * level;
+	      this.b -= (this.b - rgb[2]) * level;
+	    });
+	  });
+	
+	  Caman.Renderer.register("invert", function () {
+	    return new _filter2.default(function () {
+	      this.r = 255 - this.r;
+	      this.g = 255 - this.g;
+	      this.b = 255 - this.b;
+	    });
+	  });
+	
+	  Caman.Renderer.register("sepia", function (adjust) {
+	    adjust /= 100;
+	
+	    return new _filter2.default(function () {
+	      this.r = Math.min(255, this.r * (1 - 0.607 * adjust) + this.g * (0.769 * adjust) + this.b * (0.189 * adjust));
+	      this.g = Math.min(255, this.r * (0.349 * adjust) + this.g * (1 - 0.314 * adjust) + this.b * (0.168 * adjust));
+	      this.b = Math.min(255, this.r * (0.272 * adjust) + this.g * (0.534 * adjust) + this.b * (1 - 0.869 * adjust));
+	    });
+	  });
+	
+	  Caman.Renderer.register("gamma", function (adjust) {
+	    return new _filter2.default(function () {
+	      this.r = Math.pow(this.r / 255, adjust) * 255;
+	      this.g = Math.pow(this.g / 255, adjust) * 255;
+	      this.b = Math.pow(this.b / 255, adjust) * 255;
+	    });
+	  });
 	}
 
 /***/ },
