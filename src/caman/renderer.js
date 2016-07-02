@@ -15,7 +15,7 @@ class Renderer {
   }
 
   static get Blocks() {
-    return 1;
+    return 4;
   }
 
   constructor(context) {
@@ -48,24 +48,34 @@ class Renderer {
 
   render() {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        while (this.renderQueue.length > 0) {
-          this.processNext();
+      let renderNext = function () {
+        if (this.renderQueue.length > 0) {
+          this._processNext(() => { renderNext(); });  
+        } else {
+          this.context.update();
+          resolve();
         }
+      }.bind(this);
 
-        this.context.update();
-        resolve();
-      }, 0);
+      renderNext();
     });
   }
 
-  processNext() {
+  _processNext(finished) {
     let job = this.renderQueue.shift();
     job.item.setContext(this.context);
 
+    let completed = 0;
+    let workerFinished = function () {
+      if (++completed === Renderer.Blocks) finished();
+    };
+
     console.log("Processing:", job.name);
     for (let worker of this.workers) {
-      worker.process(job);
+      setTimeout(() => {
+        worker.process(job);
+        workerFinished();
+      }, 0);
     }
   }
 }

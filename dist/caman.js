@@ -276,7 +276,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: "Blocks",
 	    get: function get() {
-	      return 1;
+	      return 4;
 	    }
 	  }]);
 	
@@ -319,21 +319,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this = this;
 	
 	      return new Promise(function (resolve, reject) {
-	        setTimeout(function () {
-	          while (_this.renderQueue.length > 0) {
-	            _this.processNext();
+	        var renderNext = function () {
+	          if (this.renderQueue.length > 0) {
+	            this._processNext(function () {
+	              renderNext();
+	            });
+	          } else {
+	            this.context.update();
+	            resolve();
 	          }
+	        }.bind(_this);
 	
-	          _this.context.update();
-	          resolve();
-	        }, 0);
+	        renderNext();
 	      });
 	    }
 	  }, {
-	    key: "processNext",
-	    value: function processNext() {
+	    key: "_processNext",
+	    value: function _processNext(finished) {
 	      var job = this.renderQueue.shift();
 	      job.item.setContext(this.context);
+	
+	      var completed = 0;
+	      var workerFinished = function workerFinished() {
+	        if (++completed === Renderer.Blocks) finished();
+	      };
 	
 	      console.log("Processing:", job.name);
 	      var _iteratorNormalCompletion = true;
@@ -341,10 +350,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _iteratorError = undefined;
 	
 	      try {
-	        for (var _iterator = this.workers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	        var _loop = function _loop() {
 	          var worker = _step.value;
 	
-	          worker.process(job);
+	          setTimeout(function () {
+	            worker.process(job);
+	            workerFinished();
+	          }, 0);
+	        };
+	
+	        for (var _iterator = this.workers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          _loop();
 	        }
 	      } catch (err) {
 	        _didIteratorError = true;
