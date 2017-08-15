@@ -169,6 +169,7 @@
     http = require('http');
   } else {
     Root = window;
+    Image = window.Image;
   }
 
   Caman = (function(_super) {
