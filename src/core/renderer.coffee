@@ -36,6 +36,8 @@ class Caman.Renderer
         @processNext()
       when Filter.Type.LoadOverlay
         @loadOverlay @currentJob.layer, @currentJob.src
+      when Filter.Type.LoadLayerMask
+        @loadLayerMask @currentJob.layer, @currentJob.src
       when Filter.Type.Plugin
         @executePlugin()
       else
@@ -212,6 +214,23 @@ class Caman.Renderer
       layer.pixelData = layer.imageData.data
 
       @c.pixelData = layer.pixelData
+
+      @processNext()
+
+    proxyUrl = IO.remoteCheck src
+    img.src = if proxyUrl? then proxyUrl else src
+
+  # Loads an image and save as mask data
+  loadLayerMask: (layer, src) ->
+    img = new Image()
+    img.onload = =>
+      canvas = if exports? then new Canvas() else document.createElement('canvas')
+      canvas.width = @c.dimensions.width
+      canvas.height = @c.dimensions.height
+      context = canvas.getContext '2d'
+      context.drawImage img, 0, 0, @c.dimensions.width, @c.dimensions.height
+      maskData = context.getImageData 0, 0, @c.dimensions.width, @c.dimensions.height
+      layer.maskData = maskData.data
 
       @processNext()
 

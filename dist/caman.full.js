@@ -1438,6 +1438,7 @@
       LayerDequeue: 3,
       LayerFinished: 4,
       LoadOverlay: 5,
+      LoadLayerMask: 7,
       Plugin: 6
     };
 
@@ -1649,10 +1650,28 @@
       return this;
     };
 
+    Layer.prototype.layerMask = function(image) {
+      if (typeof image === "object") {
+        image = image.src;
+      } else if (typeof image === "string" && image[0] === "#") {
+        image = $(image).src;
+      }
+      if (!image) {
+        return this;
+      }
+      this.c.renderer.renderQueue.push({
+        type: Filter.Type.LoadLayerMask,
+        src: image,
+        layer: this
+      });
+      return this;
+    };
+
     Layer.prototype.applyToParent = function() {
-      var i, layerData, parentData, result, rgbaLayer, rgbaParent, _i, _ref, _results;
+      var i, layerData, opacity, parentData, result, rgbaLayer, rgbaParent, _i, _ref, _results;
       parentData = this.c.pixelStack[this.c.pixelStack.length - 1];
       layerData = this.c.pixelData;
+      opacity = this.options.opacity;
       _results = [];
       for (i = _i = 0, _ref = layerData.length; _i < _ref; i = _i += 4) {
         rgbaParent = {
@@ -1667,6 +1686,9 @@
           b: layerData[i + 2],
           a: layerData[i + 3]
         };
+        if (this.maskData) {
+          opacity = this.maskData[i] / 255;
+        }
         result = Blender.execute(this.options.blendingMode, rgbaLayer, rgbaParent);
         result.r = Util.clampRGB(result.r);
         result.g = Util.clampRGB(result.g);
@@ -1674,9 +1696,9 @@
         if (result.a == null) {
           result.a = rgbaLayer.a;
         }
-        parentData[i] = rgbaParent.r - ((rgbaParent.r - result.r) * (this.options.opacity * (result.a / 255)));
-        parentData[i + 1] = rgbaParent.g - ((rgbaParent.g - result.g) * (this.options.opacity * (result.a / 255)));
-        _results.push(parentData[i + 2] = rgbaParent.b - ((rgbaParent.b - result.b) * (this.options.opacity * (result.a / 255))));
+        parentData[i] = rgbaParent.r - ((rgbaParent.r - result.r) * (opacity * (result.a / 255)));
+        parentData[i + 1] = rgbaParent.g - ((rgbaParent.g - result.g) * (opacity * (result.a / 255)));
+        _results.push(parentData[i + 2] = rgbaParent.b - ((rgbaParent.b - result.b) * (opacity * (result.a / 255))));
       }
       return _results;
     };
@@ -1895,6 +1917,8 @@
           return this.processNext();
         case Filter.Type.LoadOverlay:
           return this.loadOverlay(this.currentJob.layer, this.currentJob.src);
+        case Filter.Type.LoadLayerMask:
+          return this.loadLayerMask(this.currentJob.layer, this.currentJob.src);
         case Filter.Type.Plugin:
           return this.executePlugin();
         default:
@@ -2075,6 +2099,25 @@
         layer.imageData = layer.context.getImageData(0, 0, _this.c.dimensions.width, _this.c.dimensions.height);
         layer.pixelData = layer.imageData.data;
         _this.c.pixelData = layer.pixelData;
+        return _this.processNext();
+      };
+      proxyUrl = IO.remoteCheck(src);
+      return img.src = proxyUrl != null ? proxyUrl : src;
+    };
+
+    Renderer.prototype.loadLayerMask = function(layer, src) {
+      var img, proxyUrl,
+        _this = this;
+      img = new Image();
+      img.onload = function() {
+        var canvas, context, maskData;
+        canvas = typeof exports !== "undefined" && exports !== null ? new Canvas() : document.createElement('canvas');
+        canvas.width = _this.c.dimensions.width;
+        canvas.height = _this.c.dimensions.height;
+        context = canvas.getContext('2d');
+        context.drawImage(img, 0, 0, _this.c.dimensions.width, _this.c.dimensions.height);
+        maskData = context.getImageData(0, 0, _this.c.dimensions.width, _this.c.dimensions.height);
+        layer.maskData = maskData.data;
         return _this.processNext();
       };
       proxyUrl = IO.remoteCheck(src);

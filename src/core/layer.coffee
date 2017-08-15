@@ -79,11 +79,28 @@ class Caman.Layer
 
     return @
   
+  # Loads a layer mask, to affect the opacity of individual pixels during blending
+  layerMask: (image) ->
+    if typeof image is "object"
+      image = image.src
+    else if typeof image is "string" and image[0] is "#"
+      image = $(image).src
+
+    return @ if not image
+
+    @c.renderer.renderQueue.push
+      type: Filter.Type.LoadLayerMask
+      src: image
+      layer: @
+
+    return @
+
   # Takes the contents of this layer and applies them to the parent layer at render time. This
   # should never be called explicitly by the user.
   applyToParent: ->
     parentData = @c.pixelStack[@c.pixelStack.length - 1]
     layerData = @c.pixelData
+    opacity = @options.opacity
     
     for i in [0...layerData.length] by 4
       rgbaParent =
@@ -98,6 +115,9 @@ class Caman.Layer
         b: layerData[i+2]
         a: layerData[i+3]
 
+      if @maskData
+        opacity = @maskData[i] / 255; # only the red channel is used
+
       result = Blender.execute @options.blendingMode, rgbaLayer, rgbaParent
 
       result.r = Util.clampRGB result.r
@@ -106,13 +126,13 @@ class Caman.Layer
       result.a = rgbaLayer.a if not result.a?
 
       parentData[i]   = rgbaParent.r - (
-        (rgbaParent.r - result.r) * (@options.opacity * (result.a / 255))
+        (rgbaParent.r - result.r) * (opacity * (result.a / 255))
       )
       parentData[i+1] = rgbaParent.g - (
-        (rgbaParent.g - result.g) * (@options.opacity * (result.a / 255))
+        (rgbaParent.g - result.g) * (opacity * (result.a / 255))
       )
       parentData[i+2] = rgbaParent.b - (
-        (rgbaParent.b - result.b) * (@options.opacity * (result.a / 255))
+        (rgbaParent.b - result.b) * (opacity * (result.a / 255))
       )
 
 Layer = Caman.Layer
