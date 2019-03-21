@@ -1,3 +1,0 @@
-[submodule "src/plugins"]
-	path = src/plugins
-	url = https://github.com/meltingice/CamanJS-Plugins.git

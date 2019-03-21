@@ -179,9 +179,10 @@ class Caman.Calculate
               rightCoord = [j, values[j]]
               break
 
-          ret[i] = leftCoord[1] +
-            ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) *
-            (i - leftCoord[0])
+          if rightCoord
+            ret[i] = leftCoord[1] +
+              ((rightCoord[1] - leftCoord[1]) / (rightCoord[0] - leftCoord[0])) *
+              (i - leftCoord[0])
 
       return ret
 

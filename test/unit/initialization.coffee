@@ -51,7 +51,7 @@ describe "Initialization", ->
     canvas.width = 1
     canvas.height = 1
 
-    Caman canvas, -> 
+    Caman canvas, ->
       assert.equal @width, 1
       assert.equal @height, 1
       done()

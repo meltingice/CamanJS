@@ -60,11 +60,12 @@
     "servedir": "*",
     "cli": "*",
     "cli-table": "*",
-    "karma": "~ 0.10",
-    "karma-mocha": "*"
+    "karma": "*",
+    "karma-mocha": "*",
+    "canvas": "*"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/.bin/karma start --single-run --browsers Firefox",
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/karma/bin/karma start --single-run --browsers Firefox",
     "examples": "./node_modules/servedir/bin/servedir",
     "docs": "codo",
     "docs-server": "codo --server"

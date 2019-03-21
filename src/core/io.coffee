@@ -1,7 +1,7 @@
 # Various I/O based operations
 class Caman.IO
   # Used for parsing image URLs for domain names.
-  @domainRegex: /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/
+  @domainRegex: /(?:(?:http|https):\/\/)((?:[-|\w]+)\.(?:(?:-|\w|\.)+))/
 
   # Is the given URL remote?
   # If a cross-origin setting is set, we assume you have CORS
@@ -18,7 +18,7 @@ class Caman.IO
   # @param [DOMObject] img The image to check.
   # @return [Boolean]
   @corsEnabled: (img) ->
-    img.crossOrigin? and img.crossOrigin.toLowerCase() in ['anonymous', 'use-credentials']
+    true
 
   # Does the given URL exist on a different domain than the current one?
   # This is done by comparing the URL to `document.domain`.
@@ -40,7 +40,7 @@ class Caman.IO
         if Caman.isURLRemote Caman.remoteProxy
           Log.info "Cannot use a remote proxy for loading images."
           return
-          
+
         return @proxyUrl(src)
 
   # Given a URL, get the proxy URL for it.
@@ -63,7 +63,7 @@ class Caman.IO
     lang = langToExt[lang] if langToExt[lang]?
     "proxies/caman_proxy.#{lang}"
 
-  # Grabs the canvas data, encodes it to Base64, then sets the browser location to 
+  # Grabs the canvas data, encodes it to Base64, then sets the browser location to
   # the encoded data so that the user will be prompted to download it.
   # If we're in NodeJS, then we can save the image to disk.
   # @see Caman
@@ -91,7 +91,7 @@ Caman::nodeSave = (file, overwrite = true, callback = null) ->
       Log.debug "Finished writing to #{file}"
       callback.call this, err if callback
 
-  # Takes the current canvas data, converts it to Base64, then sets it as the source 
+  # Takes the current canvas data, converts it to Base64, then sets it as the source
   # of a new Image object and returns it.
 Caman::toImage = (type) ->
     img = new Image()
@@ -108,6 +108,6 @@ Caman::toImage = (type) ->
   # Base64 encodes the current canvas
 Caman::toBase64 = (type = "png") ->
     type = type.toLowerCase()
-    return @canvas.toDataURL "image/#{type}"
+    return @renderingCanvas.toDataURL "image/#{type}"
 
 IO = Caman.IO
