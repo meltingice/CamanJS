@@ -12,17 +12,17 @@ else
   Root = window
 
 # Here it begins. Caman is defined.
-# There are many different initialization for Caman, which are described on the 
+# There are many different initialization for Caman, which are described on the
 # [Guides](http://camanjs.com/guides).
 #
-# Initialization is tricky because we need to make sure everything we need is actually fully 
-# loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the 
-# image is done loading before converting it to a canvas element and writing the pixel data. If we 
-# do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that 
-# we initialize Caman on a canvas element while specifying an image URL, we need to create a new 
+# Initialization is tricky because we need to make sure everything we need is actually fully
+# loaded in the DOM before proceeding. When initialized on an image, we need to make sure that the
+# image is done loading before converting it to a canvas element and writing the pixel data. If we
+# do this prematurely, the browser will throw a DOM Error, and chaos will ensue. In the event that
+# we initialize Caman on a canvas element while specifying an image URL, we need to create a new
 # image element, load the image, then continue with initialization.
-# 
-# The main goal for Caman was simplicity, so all of this is handled transparently to the end-user. 
+#
+# The main goal for Caman was simplicity, so all of this is handled transparently to the end-user.
 class Caman extends Module
   # The current version.
   @version:
@@ -71,40 +71,40 @@ class Caman extends Module
 
   # The Caman function. While technically a constructor, it was made to be called without
   # the `new` keyword. Caman will figure it out.
-  # 
+  #
   # @param [DOMObject, String] initializer The DOM selector or DOM object to initialize.
   # @overload Caman(initializer)
   #   Initialize Caman without a callback.
-  # 
+  #
   # @overload Caman(initializer, callback)
   #   Initialize Caman with a callback.
   #   @param [Function] callback Function to call once initialization completes.
-  # 
+  #
   # @overload Caman(initializer, url)
   #   Initialize Caman with a URL to an image and no callback.
   #   @param [String] url URl to an image to draw to the canvas.
-  # 
+  #
   # @overload Caman(initializer, url, callback)
   #   Initialize Caman with a canvas, URL to an image, and a callback.
   #   @param [String] url URl to an image to draw to the canvas.
   #   @param [Function] callback Function to call once initialization completes.
-  # 
+  #
   # @overload Caman(file)
   #   **NodeJS**: Initialize Caman with a path to an image file and no callback.
   #   @param [String, File] file File object or path to image to read.
-  # 
+  #
   # @overload Caman(file, callback)
   #   **NodeJS**: Initialize Caman with a file and a callback.
   #   @param [String, File] file File object or path to image to read.
   #   @param [Function] callback Function to call once initialization completes.
-  # 
+  #
   # @return [Caman] Initialized Caman instance.
   constructor: ->
     throw "Invalid arguments" if arguments.length is 0
 
     if @ instanceof Caman
       # We have to do this to avoid polluting the global scope
-      # because of how Coffeescript binds functions specified 
+      # because of how Coffeescript binds functions specified
       # with => and the fact that Caman can be invoked as both
       # a function and as a 'new' object.
       @finishInit = @finishInit.bind(@)
@@ -124,10 +124,10 @@ class Caman extends Module
         if !isNaN(id) and Store.has(id)
           return Store.execute(id, callback)
 
-      # Every instance gets a unique ID. Makes it much simpler to check if two variables are the 
+      # Every instance gets a unique ID. Makes it much simpler to check if two variables are the
       # same instance.
       @id = Util.uniqid.get()
-      
+
       @initializedPixelData = @originalPixelData = null
       @cropCoordinates = x: 0, y: 0
       @cropped = false
@@ -145,7 +145,7 @@ class Caman extends Module
       @analyze = new Analyze @
       @renderer = new Renderer @
 
-      @domIsLoaded =>  
+      @domIsLoaded =>
         @parseArguments(args)
         @setup()
 
@@ -156,7 +156,7 @@ class Caman extends Module
   # Checks to ensure the DOM is loaded. Ensures the callback is always fired, even
   # if the DOM is already loaded before it's invoked. The callback is also always
   # called asynchronously.
-  # 
+  #
   # @param [Function] cb The callback function to fire when the DOM is ready.
   domIsLoaded: (cb) ->
     if Caman.NodeJS
@@ -193,11 +193,11 @@ class Caman extends Module
     # First argument is always our canvas/image
     @setInitObject args[0]
     return if args.length is 1
-    
+
     switch typeof args[1]
       when "string" then @imageUrl = args[1]
       when "function" then @callback = args[1]
-      
+
     return if args.length is 2
 
     @callback = args[2]
@@ -297,6 +297,7 @@ class Caman extends Module
 
     if @imageUrl?
       @image = document.createElement 'img'
+      @image.crossOrigin = 'anonymous'
       @image.src = @imageUrl
 
       @imageAdjustments()
@@ -375,20 +376,20 @@ class Caman extends Module
     @assignId() unless @hasId()
 
     if @image?
-      @context.drawImage @image, 
-        0, 0, 
-        @imageWidth(), @imageHeight(), 
-        0, 0, 
+      @context.drawImage @image,
+        0, 0,
+        @imageWidth(), @imageHeight(),
+        0, 0,
         @preScaledWidth, @preScaledHeight
       @renderingContext.drawImage @image,
         0, 0,
         @imageWidth(), @imageHeight(),
         0, 0,
         @preScaledWidth, @preScaledHeight
-    
+
     @imageData = @context.getImageData 0, 0, @canvas.width, @canvas.height
     @pixelData = @imageData.data
-    
+
     if Caman.allowRevert
       @initializedPixelData = Util.dataArray(@pixelData.length)
       @originalPixelData = Util.dataArray(@pixelData.length)
@@ -506,7 +507,7 @@ class Caman extends Module
 
       for pixel, i in @pixelData
         @originalPixelData[i] = pixel
-    
+
     @width  = @canvas.width
     @height = @canvas.height
 
@@ -584,9 +585,9 @@ class Caman extends Module
     for i in [0...pixelData.length] by 4
       coord = Pixel.locationToCoordinates(i, width)
       if (startX <= coord.x < endX) and (startY <= coord.y < endY)
-        pixels.push pixelData[i], 
+        pixels.push pixelData[i],
           pixelData[i+1],
-          pixelData[i+2], 
+          pixelData[i+2],
           pixelData[i+3]
 
     pixels
