@@ -10,6 +10,7 @@ if exports?
   http = require 'http'
 else
   Root = window
+  Image = window.Image
 
 # Here it begins. Caman is defined.
 # There are many different initialization for Caman, which are described on the 

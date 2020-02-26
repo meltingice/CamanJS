@@ -7,6 +7,7 @@ class Caman.Filter
     LayerDequeue: 3
     LayerFinished: 4
     LoadOverlay: 5
+    LoadLayerMask: 7
     Plugin: 6
 
   # Registers a filter function.

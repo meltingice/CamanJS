@@ -7,6 +7,12 @@
   <script type="text/javascript">
   Caman.DEBUG = ('console' in window);
   Caman("#test-image", function() {
+    this.newLayer(function() {
+        this.copyParent();
+        this.filter.colorize("#00AAFF",50);
+        this.setBlendingMode("lighten");
+        this.layerMask("../images/test1_mask.jpg");
+    });
     this.sunrise();
     this.render();
   });
