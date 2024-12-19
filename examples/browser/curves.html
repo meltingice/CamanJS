@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CamanJS Examples: Curves</title>
+  
+  <script type="text/javascript" src="../../dist/caman.full.js"></script>
+</head>
+<body>
+  <h1>CamanJS Examples: Curves</h1>
+  <p>Note: this cannot be accessed locally via the file:// protocol thanks to same-domain origin policy. It must be placed behind a webserver. Images may take a few seconds to render.</p>
+  
+  <table>
+    <tr>
+      <td>
+       <img id="test" src="../images/test1_640.jpg" />
+      </td>
+      <td>
+       <img id="hermite_test" src="../images/test1_640.jpg" />
+      </td>
+    </tr>
+  </table>
+
+  <script type="text/javascript">
+  Caman.DEBUG = ('console' in window);
+  var test = Caman("#test", function () {
+      this.curves('v', [0, 0], [100, 30], [180, 240], [255, 255]);
+      this.curves('r', [0, 0], [40, 200], [255, 255])
+
+      this.render();
+  });
+
+  var hermiteTest = Caman("#hermite_test", function () {
+      this.curves('rgb', [0, 0], [55, 43], [94, 226], [255, 255], 'hermite');
+
+      this.render();
+  });
+  </script>
+</body>
+</html>

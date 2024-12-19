@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CamanJS Documentation</title>
+  <link rel='stylesheet' href='../../assets/codo.css' type='text/css'>
+  <script src='../../assets/codo.js'></script>
+  <script src='../../assets/search_data.js'></script>
+</head>
+  <body>
+    <div id='base' data-path='../../'></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='../../README.md.html' title='CamanJS'>CamanJS</a>
+    &raquo;
+    <a href='../../class_index.html' title='Index'>Index</a>
+    &raquo;
+    <a href='../../classes/Caman.html' title='Caman'>Caman</a>
+    &raquo;
+    <span class='title'>Layer</span>
+    <nav>
+      <ul>
+        <li class='noframes'>
+          (<a class='noframes' href='#'>no frames</a>)
+        </li>
+      </ul>
+    </nav>
+    <div id='search'>
+      <a id='class_list_link' href='../../class_list.html'>Classes</a>
+      <a id='file_list_link' href='../../file_list.html'>Files</a>
+      <a id='method_list_link' href='../../method_list.html'>Methods</a>
+      <a id='extra_list_link' href='../../extra_list.html'>Extras</a>
+    </div>
+  </div>
+  <iframe id='search_frame'></iframe>
+  <div id='fuzzySearch'>
+    <input type='text'>
+    <ol></ol>
+  </div>
+  <div id='help'>
+    <p>
+      Quickly fuzzy find classes, mixins, methods, file:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-T</span>
+        Open fuzzy finder dialog
+      </li>
+    </ul>
+    <p>
+      In frame mode you can toggle the list naviation frame on the left side:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-L</span>
+        Toggle list view
+      </li>
+    </ul>
+    <p>
+      You can focus a list in frame mode or toggle a tab in frameless mode:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-C</span>
+        Class list
+      </li>
+      <li>
+        <span>Ctrl-I</span>
+        Mixin list
+      </li>
+      <li>
+        <span>Ctrl-F</span>
+        File list
+      </li>
+      <li>
+        <span>Ctrl-M</span>
+        Method list
+      </li>
+      <li>
+        <span>Ctrl-E</span>
+        Extras list
+      </li>
+    </ul>
+    <p>
+      You can focus and blur the search input:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-S</span>
+        Focus search input
+      </li>
+      <li>
+        <span>Esc</span>
+        Blur search input
+      </li>
+    </ul>
+    <p>
+      In frameless mode you can close the list tab:
+    </p>
+    <ul>
+      <li>
+        <span>Esc</span>
+        Close list tab
+      </li>
+    </ul>
+  </div>
+</div>
+    <div id='content'>
+      <h1>
+        Class:
+        Caman.Layer
+      </h1>
+      <table class='box'>
+        <tr>
+          <td>Defined in:</td>
+          <td>src&#47;core&#47;layer.coffee</td>
+        </tr>
+      </table>
+      <h2>Overview</h2>
+      <div class='docstring'>
+  <p>The entire layering system for Caman resides in this file. Layers get their own canvasLayer 
+objectwhich is created when newLayer() is called. For extensive information regarding the 
+specifics of howthe layering system works, there is an in-depth blog post on this very topic. 
+Instead of copying the entirety of that post, I&#39;ll simply point you towards the 
+<a href="http://blog.meltingice.net/programming/implementing-layers-camanjs">blog link</a>.</p><p>However, the gist of the layering system is that, for each layer, it creates a new canvas 
+element and then either copies the parent layer&#39;s data or applies a solid color to the new 
+layer. After some (optional) effects are applied, the layer is blended back into the parent 
+canvas layer using one of many different blending algorithms.</p><p>You can also load an image (local or remote, with a proxy) into a canvas layer, which is useful 
+if you want to add textures to an image.</p>
+</div>
+<div class='tags'>
+</div>
+      <h2>Instance Method Summary</h2>
+      <ul class='summary'>
+  <li>
+    <span class='signature'>
+      <a href='#constructor-instance'>
+        - (void) <strong>constructor</strong>(c)
+      </a>
+    </span>
+    <span class='constructor note title'>Constructor</span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#newLayer-instance'>
+        - (void) <strong>newLayer</strong>(cb)
+      </a>
+    </span>
+    <span class='desc'>
+      If you want to create nested layers
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#setBlendingMode-instance'>
+        - (void) <strong>setBlendingMode</strong>(mode)
+      </a>
+    </span>
+    <span class='desc'>
+      Sets the blending mode of this layer.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#opacity-instance'>
+        - (void) <strong>opacity</strong>(opacity)
+      </a>
+    </span>
+    <span class='desc'>
+      Sets the opacity of this layer.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#copyParent-instance'>
+        - (void) <strong>copyParent</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      Copies the contents of the parent layer to this layer
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#fillColor-instance'>
+        - (void) <strong>fillColor</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      Fills this layer with a single color
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#overlayImage-instance'>
+        - (void) <strong>overlayImage</strong>(image)
+      </a>
+    </span>
+    <span class='desc'>
+      Loads and overlays an image onto this layer
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#applyToParent-instance'>
+        - (void) <strong>applyToParent</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      Takes the contents of this layer and applies them to the parent layer at render time.
+    </span>
+  </li>
+</ul>
+      <h2>Constructor Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='constructor-instance'>
+      - (void) <strong>constructor</strong>(c)
+    </p>
+    <div class='tags'>
+</div>
+  </div>
+</div>
+      <h2>Instance Method Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='newLayer-instance'>
+      - (void) <strong>newLayer</strong>(cb)
+    </p>
+    <div class='docstring'>
+  <p>If you want to create nested layers</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='setBlendingMode-instance'>
+      - (void) <strong>setBlendingMode</strong>(mode)
+    </p>
+    <div class='docstring'>
+  <p>Sets the blending mode of this layer. The mode is the name of a blender function.</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='opacity-instance'>
+      - (void) <strong>opacity</strong>(opacity)
+    </p>
+    <div class='docstring'>
+  <p>Sets the opacity of this layer. This affects how much of this layer is applied to the parent
+layer at render time.</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='copyParent-instance'>
+      - (void) <strong>copyParent</strong>()
+    </p>
+    <div class='docstring'>
+  <p>Copies the contents of the parent layer to this layer</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='fillColor-instance'>
+      - (void) <strong>fillColor</strong>()
+    </p>
+    <div class='docstring'>
+  <p>Fills this layer with a single color</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='overlayImage-instance'>
+      - (void) <strong>overlayImage</strong>(image)
+    </p>
+    <div class='docstring'>
+  <p>Loads and overlays an image onto this layer</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='applyToParent-instance'>
+      - (void) <strong>applyToParent</strong>()
+    </p>
+    <div class='docstring'>
+  <p>Takes the contents of this layer and applies them to the parent layer at render time. This
+should never be called explicitly by the user.</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+</div>
+    </div>
+    <div id='footer'>
+  Generated on
+  Wed Nov 13 2013 09:33:09 GMT-0500 (EST)
+  by
+  <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
+  v1.7.0
+  (Node.js v0.10.21).
+  &#10034;
+  Press Ctrl-h to see the keyboard shortcuts
+  &#10034;
+  <a href='http://twitter.com/#!/netzpirat'>@netzpirat</a>
+  &#10034;
+  <a href='https://mksoft.ch'>mksoft.ch</a>
+</div>
+  </body>
+</html>

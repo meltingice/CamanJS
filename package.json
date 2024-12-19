@@ -1,0 +1,72 @@
+{
+  "name": "caman",
+  "version": "4.1.2",
+  "description": "Javascript (Ca)nvas (Man)ipulation for NodeJS and the browser",
+  "keywords": [
+    "canvas",
+    "image",
+    "manipulate",
+    "filter",
+    "image manipulation",
+    "editing"
+  ],
+  "homepage": "http://camanjs.com",
+  "author": {
+    "name": "Ryan LeFevre",
+    "email": "meltingice8917@gmail.com",
+    "url": "http://meltingice.net"
+  },
+  "engines": {
+    "node": ">= 0.6.18"
+  },
+  "contributors": [
+    {
+      "name": "Rick Waldron",
+      "url": "http://github.com/rwldrn"
+    },
+    {
+      "name": "Cezar Sa Espinola",
+      "url": "http://github.com/cezarsa"
+    },
+    {
+      "name": "Jarques Pretorius",
+      "url": "http://twitter.com/jarques"
+    },
+    {
+      "name": "Hosselaer",
+      "url": "https://github.com/Hosselaer"
+    },
+    {
+      "name": "Mario Klingemann",
+      "url": "http://www.quasimondo.com"
+    }
+  ],
+  "main": "./dist/caman.full.js",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/meltingice/CamanJS.git"
+  },
+  "dependencies": {
+    "canvas": "*",
+    "fibers": "*"
+  },
+  "devDependencies": {
+    "coffee-script": ">= 1.6.1",
+    "docco": "0.6.2",
+    "codo": "*",
+    "jsmin": "*",
+    "packer": "*",
+    "chai": "*",
+    "servedir": "*",
+    "cli": "*",
+    "cli-table": "*",
+    "karma": "~ 0.10",
+    "karma-mocha": "*"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/.bin/karma start --single-run --browsers Firefox",
+    "examples": "./node_modules/servedir/bin/servedir",
+    "docs": "codo",
+    "docs-server": "codo --server"
+  }
+}

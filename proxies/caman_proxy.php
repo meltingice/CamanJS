@@ -3,12 +3,14 @@
 // end in an image file extension. E.g. through another proxy of kinds.
 define('ALLOW_NO_EXT', false);
 
-if (!$_GET['url']) {
+$proxyParam = 'camanProxyUrl';
+
+if (!$_GET[$proxyParam]) {
   exit;
 }
 
 // Grab the URL
-$url = trim(urldecode($_GET['url']));
+$url = trim(urldecode($_GET[$proxyParam]));
 
 $urlinfo = parse_url($url, PHP_URL_PATH);
 $ext = array_reverse(explode(".", $urlinfo));

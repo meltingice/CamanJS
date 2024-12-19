@@ -69,3 +69,13 @@ Blender.register "softLight", (rgbaLayer, rgbaParent) ->
     else (rgbaParent.b * (rgbaLayer.b + 128)) / 255
 
   result
+
+Blender.register "lighten", (rgbaLayer, rgbaParent) ->
+  r: if rgbaParent.r > rgbaLayer.r then rgbaParent.r else rgbaLayer.r
+  g: if rgbaParent.g > rgbaLayer.g then rgbaParent.g else rgbaLayer.g
+  b: if rgbaParent.b > rgbaLayer.b then rgbaParent.b else rgbaLayer.b
+
+Blender.register "darken", (rgbaLayer, rgbaParent) ->
+  r: if rgbaParent.r > rgbaLayer.r then rgbaLayer.r else rgbaParent.r
+  g: if rgbaParent.g > rgbaLayer.g then rgbaLayer.g else rgbaParent.g
+  b: if rgbaParent.b > rgbaLayer.b then rgbaLayer.b else rgbaParent.b

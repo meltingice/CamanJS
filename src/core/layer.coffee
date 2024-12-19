@@ -11,7 +11,7 @@
 #
 # You can also load an image (local or remote, with a proxy) into a canvas layer, which is useful 
 # if you want to add textures to an image.
-class Layer
+class Caman.Layer
   constructor: (@c) ->
     # Compatibility
     @filter = @c
@@ -24,7 +24,7 @@ class Layer
     @layerID = Util.uniqid.get()
 
     # Create the canvas for this layer
-    @canvas = document.createElement 'canvas'
+    @canvas = if exports? then new Canvas() else document.createElement('canvas')
     
     @canvas.width = @c.dimensions.width
     @canvas.height = @c.dimensions.height
@@ -72,7 +72,7 @@ class Layer
 
     return @ if not image
 
-    @c.renderQueue.push
+    @c.renderer.renderQueue.push
       type: Filter.Type.LoadOverlay
       src: image
       layer: @
@@ -114,3 +114,5 @@ class Layer
       parentData[i+2] = rgbaParent.b - (
         (rgbaParent.b - result.b) * (@options.opacity * (result.a / 255))
       )
+
+Layer = Caman.Layer

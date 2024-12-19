@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CamanJS Examples</title>
+  <script type="text/javascript" src="../../dist/caman.full.js"></script>
+
+  <script type="text/javascript">
+  Caman.DEBUG = ('console' in window);
+  Caman("#test-image", function() {
+    this.sunrise();
+    this.render();
+  });
+
+  // Caman("#test-canvas", "../images/test1_640.jpg", function () {
+  //   this.sunrise();
+  //   this.render();
+  // });
+  </script>
+</head>
+<body>
+  <h1>CamanJS Examples</h1>
+  <p>Note: this cannot be accessed locally via the file:// protocol thanks to same-domain origin policy. It must be placed behind a webserver. Images may take a few seconds to render.</p>
+  
+  <table>
+    <tr>
+      <td>
+       	<img id="test-image" src="../images/test1_640.jpg" />
+        <canvas id="test-canvas"></canvas>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

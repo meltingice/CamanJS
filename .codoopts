@@ -1,0 +1,5 @@
+--name "CamanJS"
+--readme README.md
+--title "CamanJS Documentation"
+--output-dir ./api
+./src

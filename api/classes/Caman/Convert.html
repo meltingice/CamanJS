@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CamanJS Documentation</title>
+  <link rel='stylesheet' href='../../assets/codo.css' type='text/css'>
+  <script src='../../assets/codo.js'></script>
+  <script src='../../assets/search_data.js'></script>
+</head>
+  <body>
+    <div id='base' data-path='../../'></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='../../README.md.html' title='CamanJS'>CamanJS</a>
+    &raquo;
+    <a href='../../class_index.html' title='Index'>Index</a>
+    &raquo;
+    <a href='../../classes/Caman.html' title='Caman'>Caman</a>
+    &raquo;
+    <span class='title'>Convert</span>
+    <nav>
+      <ul>
+        <li class='noframes'>
+          (<a class='noframes' href='#'>no frames</a>)
+        </li>
+      </ul>
+    </nav>
+    <div id='search'>
+      <a id='class_list_link' href='../../class_list.html'>Classes</a>
+      <a id='file_list_link' href='../../file_list.html'>Files</a>
+      <a id='method_list_link' href='../../method_list.html'>Methods</a>
+      <a id='extra_list_link' href='../../extra_list.html'>Extras</a>
+    </div>
+  </div>
+  <iframe id='search_frame'></iframe>
+  <div id='fuzzySearch'>
+    <input type='text'>
+    <ol></ol>
+  </div>
+  <div id='help'>
+    <p>
+      Quickly fuzzy find classes, mixins, methods, file:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-T</span>
+        Open fuzzy finder dialog
+      </li>
+    </ul>
+    <p>
+      In frame mode you can toggle the list naviation frame on the left side:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-L</span>
+        Toggle list view
+      </li>
+    </ul>
+    <p>
+      You can focus a list in frame mode or toggle a tab in frameless mode:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-C</span>
+        Class list
+      </li>
+      <li>
+        <span>Ctrl-I</span>
+        Mixin list
+      </li>
+      <li>
+        <span>Ctrl-F</span>
+        File list
+      </li>
+      <li>
+        <span>Ctrl-M</span>
+        Method list
+      </li>
+      <li>
+        <span>Ctrl-E</span>
+        Extras list
+      </li>
+    </ul>
+    <p>
+      You can focus and blur the search input:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-S</span>
+        Focus search input
+      </li>
+      <li>
+        <span>Esc</span>
+        Blur search input
+      </li>
+    </ul>
+    <p>
+      In frameless mode you can close the list tab:
+    </p>
+    <ul>
+      <li>
+        <span>Esc</span>
+        Close list tab
+      </li>
+    </ul>
+  </div>
+</div>
+    <div id='content'>
+      <h1>
+        Class:
+        Caman.Convert
+      </h1>
+      <table class='box'>
+        <tr>
+          <td>Defined in:</td>
+          <td>src&#47;core&#47;convert.coffee</td>
+        </tr>
+      </table>
+      <h2>Overview</h2>
+      <div class='docstring'>
+  <p>Tons of color conversion utility functions.</p>
+</div>
+<div class='tags'>
+</div>
+      <h2>Class Method Summary</h2>
+      <ul class='summary'>
+  <li>
+    <span class='signature'>
+      <a href='#hexToRGB-class'>
+        + (Array) <strong>hexToRGB</strong>(hex)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts the hex representation of a color to RGB values.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#rgbToHSL-class'>
+        + (Array) <strong>rgbToHSL</strong>(r, g, b)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts an RGB color to HSL.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#hslToRGB-class'>
+        + (Array) <strong>hslToRGB</strong>(h, s, l)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts an HSL color value to RGB.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#hueToRGB-class'>
+        + (Number) <strong>hueToRGB</strong>(p, q, t)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts from the hue color space back to RGB.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#rgbToHSV-class'>
+        + (Array) <strong>rgbToHSV</strong>(r, g, b)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts an RGB color value to HSV.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#hsvToRGB-class'>
+        + (Array) <strong>hsvToRGB</strong>(h, s, v)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts an HSV color value to RGB.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#rgbToXYZ-class'>
+        + (Array) <strong>rgbToXYZ</strong>(r, g, b)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts a RGB color value to the XYZ color space.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#xyzToRGB-class'>
+        + (Array) <strong>xyzToRGB</strong>(x, y, z)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts a XYZ color value to the sRGB color space.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#xyzToLab-class'>
+        + (Array) <strong>xyzToLab</strong>(x, y, z)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts a XYZ color value to the CIELAB color space.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#labToXYZ-class'>
+        + (Array) <strong>labToXYZ</strong>(l, a, b)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts a L<em>, a</em>, b* color values from the CIELAB color space to the XYZ color space.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#rgbToLab-class'>
+        + (void) <strong>rgbToLab</strong>(r, g, b)
+      </a>
+    </span>
+    <span class='desc'>
+      Converts L<em>, a</em>, b* back to RGB values.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#labToRGB-class'>
+        + (void) <strong>labToRGB</strong>(l, a, b)
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+</ul>
+      <h2>Class Method Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='hexToRGB-class'>
+      + (Array) <strong>hexToRGB</strong>(hex)
+    </p>
+    <div class='docstring'>
+  <p>Converts the hex representation of a color to RGB values.
+Hex value can optionally start with the hash (#).</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>hex</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The colors hex value</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>The RGB representation</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='rgbToHSL-class'>
+      + (Array) <strong>rgbToHSL</strong>(r, g, b)
+      <br>
+      + (Array) <strong>rgbToHSL</strong>(rgb)
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Converts an RGB color to HSL.
+Assumes r, g, and b are in the set [0, 255] and
+returns h, s, and l in the set [0, 1].</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>The HSL representation</span>
+    </li>
+  </ul>
+  <div class='overloads'>
+    <h3>Overloads:</h3>
+    <div class='overload'>
+      <p class='signature'>
+        + (Array) <strong>rgbToHSL</strong>(r, g, b)
+      </p>
+      <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>r</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Red channel</span>
+    </li>
+    <li>
+      <span class='name'>g</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Green channel</span>
+    </li>
+    <li>
+      <span class='name'>b</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Blue channel</span>
+    </li>
+  </ul>
+</div>
+    </div>
+    <div class='overload'>
+      <p class='signature'>
+        + (Array) <strong>rgbToHSL</strong>(rgb)
+      </p>
+      <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>rgb</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The RGB object.</span>
+    </li>
+  </ul>
+  <h3>
+    Options Hash:
+    (rgb):
+  </h3>
+  <ul class='options'>
+    <li>
+      <span class='name'>r</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The red channel.</span>
+    </li>
+    <li>
+      <span class='name'>g</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The green channel.</span>
+    </li>
+    <li>
+      <span class='name'>b</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The blue channel.</span>
+    </li>
+  </ul>
+</div>
+    </div>
+  </div>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='hslToRGB-class'>
+      + (Array) <strong>hslToRGB</strong>(h, s, l)
+      <br>
+      + (Array) <strong>hslToRGB</strong>(hsl)
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Converts an HSL color value to RGB. Conversion formula
+adapted from <a href="http://en.wikipedia.org/wiki/HSL_color_space">http://en.wikipedia.org/wiki/HSL_color_space</a>.
+Assumes h, s, and l are contained in the set [0, 1] and
+returns r, g, and b in the set [0, 255].</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>The RGB representation</span>
+    </li>
+  </ul>
+  <div class='overloads'>
+    <h3>Overloads:</h3>
+    <div class='overload'>
+      <p class='signature'>
+        + (Array) <strong>hslToRGB</strong>(h, s, l)
+      </p>
+      <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>h</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The hue</span>
+    </li>
+    <li>
+      <span class='name'>s</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The saturation</span>
+    </li>
+    <li>
+      <span class='name'>l</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The lightness</span>
+    </li>
+  </ul>
+</div>
+    </div>
+    <div class='overload'>
+      <p class='signature'>
+        + (Array) <strong>hslToRGB</strong>(hsl)
+      </p>
+      <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>hsl</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The HSL object.</span>
+    </li>
+  </ul>
+  <h3>
+    Options Hash:
+    (hsl):
+  </h3>
+  <ul class='options'>
+    <li>
+      <span class='name'>h</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The hue.</span>
+    </li>
+    <li>
+      <span class='name'>s</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The saturation.</span>
+    </li>
+    <li>
+      <span class='name'>l</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The lightness.</span>
+    </li>
+  </ul>
+</div>
+    </div>
+  </div>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='hueToRGB-class'>
+      + (Number) <strong>hueToRGB</strong>(p, q, t)
+    </p>
+    <div class='docstring'>
+  <p>Converts from the hue color space back to RGB.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>p</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+    </li>
+    <li>
+      <span class='name'>q</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+    </li>
+    <li>
+      <span class='name'>t</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Number</tt>)
+      &mdash;
+      <span class='desc'>RGB value</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='rgbToHSV-class'>
+      + (Array) <strong>rgbToHSV</strong>(r, g, b)
+    </p>
+    <div class='docstring'>
+  <p>Converts an RGB color value to HSV. Conversion formula
+adapted from {<a href="http://en.wikipedia.org/wiki/HSV_color_space}">http://en.wikipedia.org/wiki/HSV_color_space}</a>.
+Assumes r, g, and b are contained in the set [0, 255] and
+returns h, s, and v in the set [0, 1].</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>r</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The red color value</span>
+    </li>
+    <li>
+      <span class='name'>g</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The green color value</span>
+    </li>
+    <li>
+      <span class='name'>b</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The blue color value</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>The HSV representation</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='hsvToRGB-class'>
+      + (Array) <strong>hsvToRGB</strong>(h, s, v)
+    </p>
+    <div class='docstring'>
+  <p>Converts an HSV color value to RGB. Conversion formula
+adapted from <a href="http://en.wikipedia.org/wiki/HSV_color_space">http://en.wikipedia.org/wiki/HSV_color_space</a>.
+Assumes h, s, and v are contained in the set [0, 1] and
+returns r, g, and b in the set [0, 255].</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>h</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The hue</span>
+    </li>
+    <li>
+      <span class='name'>s</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The saturation</span>
+    </li>
+    <li>
+      <span class='name'>v</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The value</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>The RGB representation</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='rgbToXYZ-class'>
+      + (Array) <strong>rgbToXYZ</strong>(r, g, b)
+    </p>
+    <div class='docstring'>
+  <p>Converts a RGB color value to the XYZ color space. Formulas
+are based on <a href="http://en.wikipedia.org/wiki/SRGB">http://en.wikipedia.org/wiki/SRGB</a> assuming that
+RGB values are sRGB.</p><p>Assumes r, g, and b are contained in the set [0, 255] and
+returns x, y, and z.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>r</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The red color value</span>
+    </li>
+    <li>
+      <span class='name'>g</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The green color value</span>
+    </li>
+    <li>
+      <span class='name'>b</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The blue color value</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>The XYZ representation</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='xyzToRGB-class'>
+      + (Array) <strong>xyzToRGB</strong>(x, y, z)
+    </p>
+    <div class='docstring'>
+  <p>Converts a XYZ color value to the sRGB color space. Formulas
+are based on <a href="http://en.wikipedia.org/wiki/SRGB">http://en.wikipedia.org/wiki/SRGB</a> and the resulting
+RGB value will be in the sRGB color space.
+Assumes x, y and z values are whatever they are and returns
+r, g and b in the set [0, 255].</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>x</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The X value</span>
+    </li>
+    <li>
+      <span class='name'>y</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The Y value</span>
+    </li>
+    <li>
+      <span class='name'>z</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The Z value</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>The RGB representation</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='xyzToLab-class'>
+      + (Array) <strong>xyzToLab</strong>(x, y, z)
+      <br>
+      + (Array) <strong>xyzToLab</strong>(xyz)
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Converts a XYZ color value to the CIELAB color space. Formulas
+are based on <a href="http://en.wikipedia.org/wiki/Lab_color_space">http://en.wikipedia.org/wiki/Lab_color_space</a>
+The reference white point used in the conversion is D65.
+Assumes x, y and z values are whatever they are and returns
+L<em>, a</em> and b* values</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>The Lab representation</span>
+    </li>
+  </ul>
+  <div class='overloads'>
+    <h3>Overloads:</h3>
+    <div class='overload'>
+      <p class='signature'>
+        + (Array) <strong>xyzToLab</strong>(x, y, z)
+      </p>
+      <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>x</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The X value</span>
+    </li>
+    <li>
+      <span class='name'>y</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The Y value</span>
+    </li>
+    <li>
+      <span class='name'>z</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The Z value</span>
+    </li>
+  </ul>
+</div>
+    </div>
+    <div class='overload'>
+      <p class='signature'>
+        + (Array) <strong>xyzToLab</strong>(xyz)
+      </p>
+      <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>xyz</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The XYZ object.</span>
+    </li>
+  </ul>
+  <h3>
+    Options Hash:
+    (xyz):
+  </h3>
+  <ul class='options'>
+    <li>
+      <span class='name'>x</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The X value.</span>
+    </li>
+    <li>
+      <span class='name'>y</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The Y value.</span>
+    </li>
+    <li>
+      <span class='name'>z</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The z value.</span>
+    </li>
+  </ul>
+</div>
+    </div>
+  </div>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='labToXYZ-class'>
+      + (Array) <strong>labToXYZ</strong>(l, a, b)
+      <br>
+      + (Array) <strong>labToXYZ</strong>(lab)
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Converts a L<em>, a</em>, b* color values from the CIELAB color space
+to the XYZ color space. Formulas are based on
+<a href="http://en.wikipedia.org/wiki/Lab_color_space">http://en.wikipedia.org/wiki/Lab_color_space</a></p><p>The reference white point used in the conversion is D65.
+Assumes L<em>, a</em> and b* values are whatever they are and returns
+x, y and z values.</p>
+</div>
+<div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Array</tt>)
+      &mdash;
+      <span class='desc'>The XYZ representation</span>
+    </li>
+  </ul>
+  <div class='overloads'>
+    <h3>Overloads:</h3>
+    <div class='overload'>
+      <p class='signature'>
+        + (Array) <strong>labToXYZ</strong>(l, a, b)
+      </p>
+      <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>l</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The L* value</span>
+    </li>
+    <li>
+      <span class='name'>a</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The a* value</span>
+    </li>
+    <li>
+      <span class='name'>b</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The b* value</span>
+    </li>
+  </ul>
+</div>
+    </div>
+    <div class='overload'>
+      <p class='signature'>
+        + (Array) <strong>labToXYZ</strong>(lab)
+      </p>
+      <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>lab</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The LAB values</span>
+    </li>
+  </ul>
+  <h3>
+    Options Hash:
+    (lab):
+  </h3>
+  <ul class='options'>
+    <li>
+      <span class='name'>l</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The L* value.</span>
+    </li>
+    <li>
+      <span class='name'>a</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The a* value.</span>
+    </li>
+    <li>
+      <span class='name'>b</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>The b* value.</span>
+    </li>
+  </ul>
+</div>
+    </div>
+  </div>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='rgbToLab-class'>
+      + (void) <strong>rgbToLab</strong>(r, g, b)
+    </p>
+    <div class='docstring'>
+  <p>Converts L<em>, a</em>, b* back to RGB values.</p>
+</div>
+<div class='tags'>
+  <h3>See also:</h3>
+  <ul class='see'>
+    <li>
+      Convert.rgbToXYZ
+    </li>
+    <li>
+      Convert.xyzToLab
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='labToRGB-class'>
+      + (void) <strong>labToRGB</strong>(l, a, b)
+    </p>
+    <div class='tags'>
+</div>
+  </div>
+</div>
+    </div>
+    <div id='footer'>
+  Generated on
+  Wed Nov 13 2013 09:33:09 GMT-0500 (EST)
+  by
+  <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
+  v1.7.0
+  (Node.js v0.10.21).
+  &#10034;
+  Press Ctrl-h to see the keyboard shortcuts
+  &#10034;
+  <a href='http://twitter.com/#!/netzpirat'>@netzpirat</a>
+  &#10034;
+  <a href='https://mksoft.ch'>mksoft.ch</a>
+</div>
+  </body>
+</html>

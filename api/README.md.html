@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CamanJS Documentation</title>
+  <link rel='stylesheet' href='assets/codo.css' type='text/css'>
+  <script src='assets/codo.js'></script>
+  <script src='assets/search_data.js'></script>
+</head>
+  <body>
+    <div id='base' data-path=''></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='README.md.html' title='CamanJS'>CamanJS</a>
+    &raquo;
+    <a href='class_index.html' title='Index'>Index</a>
+    &raquo;
+    <span class='title'>README.md</span>
+    <nav>
+      <ul>
+        <li class='noframes'>
+          (<a class='noframes' href='#'>no frames</a>)
+        </li>
+      </ul>
+    </nav>
+    <div id='search'>
+      <a id='class_list_link' href='class_list.html'>Classes</a>
+      <a id='file_list_link' href='file_list.html'>Files</a>
+      <a id='method_list_link' href='method_list.html'>Methods</a>
+      <a id='extra_list_link' href='extra_list.html'>Extras</a>
+    </div>
+  </div>
+  <iframe id='search_frame'></iframe>
+  <div id='fuzzySearch'>
+    <input type='text'>
+    <ol></ol>
+  </div>
+  <div id='help'>
+    <p>
+      Quickly fuzzy find classes, mixins, methods, file:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-T</span>
+        Open fuzzy finder dialog
+      </li>
+    </ul>
+    <p>
+      In frame mode you can toggle the list naviation frame on the left side:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-L</span>
+        Toggle list view
+      </li>
+    </ul>
+    <p>
+      You can focus a list in frame mode or toggle a tab in frameless mode:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-C</span>
+        Class list
+      </li>
+      <li>
+        <span>Ctrl-I</span>
+        Mixin list
+      </li>
+      <li>
+        <span>Ctrl-F</span>
+        File list
+      </li>
+      <li>
+        <span>Ctrl-M</span>
+        Method list
+      </li>
+      <li>
+        <span>Ctrl-E</span>
+        Extras list
+      </li>
+    </ul>
+    <p>
+      You can focus and blur the search input:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-S</span>
+        Focus search input
+      </li>
+      <li>
+        <span>Esc</span>
+        Blur search input
+      </li>
+    </ul>
+    <p>
+      In frameless mode you can close the list tab:
+    </p>
+    <ul>
+      <li>
+        <span>Esc</span>
+        Close list tab
+      </li>
+    </ul>
+  </div>
+</div>
+    <div id='content'>
+      <nav class='toc'>
+        <p class='title'>
+          <a class='hide_toc' href='#'>
+            <strong>Table of Contents</strong>
+          </a>
+          <small>
+            (<a class='float_toc' href='#'>left</a>)
+          </small>
+        </p>
+      </nav>
+      <div id='filecontents'>
+        <h1>About the Project</h1><p><a href="http://travis-ci.org/meltingice/CamanJS"><img src="https://secure.travis-ci.org/meltingice/CamanJS.png" alt="Build Status"></a></p><p>The main focus of CamanJS is manipulating images using the HTML5 canvas and Javascript. It&#39;s a combination of a simple-to-use interface with advanced and efficient image/canvas editing techniques. It is also completely library independent and can be safely used next to jQuery, YUI, Scriptaculous, MooTools, etc.</p><p>CamanJS is very easy to extend with new filters and plugins, and it comes with a wide array of image editing functionality, which is only growing as the community makes more plugins. All features that are not a part of the core CamanJS library are in a <a href="https://github.com/meltingice/CamanJS-Plugins">separate plugins repository</a>.</p><p>For more information, I highly recommend taking a look at the <a href="http://camanjs.com">official website</a> where there is more comprehensive documentation and interactive demos. You can also <a href="https://github.com/meltingice/CamanJS/wiki">read the wiki</a> for some basic information about the project and how to use it.</p><p>CamanJS is written in <a href="http://coffeescript.org">Coffeescript</a> as of version 3.0. <strong>It works both in-browser and in NodeJS.</strong></p><h2>Usage</h2><p>Include one of the versions in the <code>dist/</code> folder, then you can run:</p><pre><code class="lang-js">Caman(&quot;#image-id&quot;, function () {
+  this.brightness(10);
+  this.contrast(20);
+  this.render(function () {
+    alert(&quot;Done!&quot;);
+  });
+});</code></pre><p>Caman also supports modifying images via the <code>data-caman</code> HTML attribute. Simply separate each instruction with a space. Images with the <code>data-caman</code> attribute will automatically be modified at page load.</p><pre><code class="lang-html">&lt;img data-caman=&quot;saturation(-10) brightness(20) vignette(&#39;10%&#39;)&quot; src=&quot;path/to/image.jpg&quot;&gt;</code></pre>
+<h3>HiDPI Support</h3><p>Version 4 introduces better support for HiDPI (Retina) displays. It allows you to specify a higher resolution replacement using HTML data attributes. Keep in mind, however, that higher resolution images take longer to render.</p><p><strong>HTML data attributes</strong></p><ul>
+<li><code>data-caman-hidpi</code>: URL to the high resolution replacement image</li>
+<li><code>data-caman-hidpi-disabled</code>: HiDPI support is enabled by default, so add this attribute if you wish to force disable it</li>
+</ul>
+<h2>Upgrading to Version 4</h2><p>There is only 1 breaking change that occured with the version 4 release. When you initialize CamanJS with a canvas and an image, the parameter order has changed. It is now:</p><pre><code class="lang-javascript">Caman(&quot;#canvas-id&quot;, &quot;/path/to/image.png&quot;, function() {});</code></pre><p>This is in order to be more consistent with initialization, such that the &quot;initialization object&quot; is always the first parameter. Update your code accordingly.</p><h2>Development</h2><p>If you are a developer who is contributing directly to the project, there are some tools to help you out.</p><h3>Building</h3><p>To install all dependencies required for development, run <code>npm install -d</code>.</p><p>Because all plugins are in a separate repository, make sure you run:</p><pre><code>git submodule init &amp;&amp; git submodule update</code></pre><p>To build, simply run <code>cake build</code>. The resulting files will be placed in the dist/ folder. Plugins will be automatically discovered and added to caman.full.js after the core library. You can also auto-compile when a file changes by using <code>cake watch</code>.</p><p>If you add any files to the core library, you will need to add them to the <code>coffeeFiles</code> array in the Cakefile. The point of this is so that order is preserved when generating the file JS file. Plugins do not need to be added to the Cakefile.</p><p>You will probably want to generate documentation if you make any changes. In addition to the normal requirements, you will also need the Python library Pygments.</p><p>To generate the documentation, run <code>cake docs</code>.</p><h2>CDN JS Hosting</h2><p>CamanJS is hosted on CDN JS if you&#39;re looking for a CDN hosting solution. It is the full and minified version of the library, which means all plugins are included. Simply load CamanJS directly from <a href="http://cdnjs.cloudflare.com/ajax/libs/camanjs/3.3.0/caman.full.min.js">this URL</a> for usage on your site.</p><h2>NodeJS Compatibility</h2><p>CamanJS is fully compatible with NodeJS. The easiest way to install it is:</p><pre><code>npm install caman</code></pre><p><strong>Saving from NodeJS</strong></p><p>To save your modified image in NodeJS, simply call the save() function <strong>after</strong> rendering is finished by passing a callback function to <code>render()</code>. Trying to save before rendering is finished will cause issues.</p><pre><code class="lang-javascript">Caman = require(&#39;caman&#39;).Caman;
+
+Caman(&quot;./path/to/file.jpg&quot;, function () {
+  this.brightness(40);
+  this.render(function () {
+    this.save(&quot;./output.png&quot;);
+  });
+});</code></pre>
+<h2>Testing</h2><p>Tests for CamanJS run both in NodeJS and the browser.</p><h3>NodeJS</h3><p>The NodeJS tests use mocha as the test runner. The simplest way to run the test suite is by running <code>npm test</code>.</p><h3>Browser</h3><p>The browser tests are run by Karma. It will start up Chrome, Firefox, and Safari (if running OSX) in the background. You can minimize each of these browsers if desired. It will automatically run tests after CamanJS is recompiled by the Cakefile as well.</p><p>You can run Karma by running <code>karma start</code>, or you can do a single run with the NodeJS tests by running <code>npm test</code>.</p>
+      </div>
+    </div>
+    <div id='footer'>
+  Generated on
+  Wed Nov 13 2013 09:33:09 GMT-0500 (EST)
+  by
+  <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
+  v1.7.0
+  (Node.js v0.10.21).
+  &#10034;
+  Press Ctrl-h to see the keyboard shortcuts
+  &#10034;
+  <a href='http://twitter.com/#!/netzpirat'>@netzpirat</a>
+  &#10034;
+  <a href='https://mksoft.ch'>mksoft.ch</a>
+</div>
+  </body>
+</html>
