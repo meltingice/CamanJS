@@ -1562,7 +1562,7 @@
 
   Caman.prototype.toImage = function(type) {
     var img;
-    img = new Image();
+    img = new window.Image();
     img.src = this.toBase64(type);
     img.width = this.dimensions.width;
     img.height = this.dimensions.height;
