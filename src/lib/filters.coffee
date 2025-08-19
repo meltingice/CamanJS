@@ -371,11 +371,9 @@ Filter.register "curves", (chans, cps...) ->
 Filter.register "exposure", (adjust) ->
   p = Math.abs(adjust) / 100
 
-  ctrl1 = [0, 255 * p]
-  ctrl2 = [255 - (255 * p), 255]
-
   if adjust < 0
-    ctrl1 = ctrl1.reverse()
-    ctrl2 = ctrl2.reverse()
+    ctrl = [255 * p, 0]
+  else
+    ctrl = [255 * (1 - p), 255]
 
-  @curves 'rgb', [0, 0], ctrl1, ctrl2, [255, 255]
+  @curves 'rgb', [0, 0], ctrl, [255, 255]
