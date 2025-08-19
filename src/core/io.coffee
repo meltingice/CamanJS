@@ -1,7 +1,7 @@
 # Various I/O based operations
 class Caman.IO
   # Used for parsing image URLs for domain names.
-  @domainRegex: /(?:(?:http|https):\/\/)((?:\w+)\.(?:(?:\w|\.)+))/
+  @domainRegex: /(?:(?:http|https):\/\/)((?:[a-zA-Z0-9_-]+)\.(?:(?:[a-zA-Z0-9_-]*|\.)+))/;
 
   # Is the given URL remote?
   # If a cross-origin setting is set, we assume you have CORS
