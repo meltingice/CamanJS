@@ -531,7 +531,7 @@ class Caman extends Module
     @replaceCanvas(canvas)
 
   # Returns the original pixel data while maintaining any
-  # cropping or resizing that may have occured.
+  # cropping or resizing that may have occurred.
   # **Warning**: this is currently in beta status.
   #
   # @return [Array] Original pixel values still visible after cropping or resizing.
